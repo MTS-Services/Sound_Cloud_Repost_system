@@ -1223,65 +1223,29 @@ class Campaign extends Component
             }
         }
 
-        // $response = null;
-        // $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
         $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
-        $urn = $resolvedData['urn'];
-        $user = $resolvedData['user'];
-        if ($this->activeTab === 'playlists') {
-            if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-                $this->soundCloudService->syncUserPlaylists($user, $resolvedData);
-                Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-            } else {
-                $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
+        if (isset($resolvedData) && $resolvedData != null) {
+            $urn = $resolvedData['urn'];
+            if ($this->activeTab === 'playlists') {
+                if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
+                }
+            } elseif ($this->activeTab === 'tracks') {
+                if (!isset($resolvedData['tracks'])) {
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
+                }
             }
-        } elseif ($this->activeTab === 'tracks') {
-            if (!isset($resolvedData['tracks'])) {
-                $this->soundCloudService->syncUserTracks($user, $resolvedData);
-                Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-            } else {
-                $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
-            }
+            $this->processSearchData($urn);
+            Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        } else {
+            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
-
-        $this->processSearchData($urn);
-        Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-
-        // if ($response->successful()) {
-        //     $resolvedData = $response->json();
-        //     $urn = $resolvedData['urn'];
-        //     if ($this->activeTab === 'playlists') {
-        //         if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-        //             $this->soundCloudService->unknownPlaylistAdd($resolvedData);
-        //             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        //         } else {
-        //             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
-        //         }
-        //     } elseif ($this->activeTab === 'tracks') {
-        //         if (!isset($resolvedData['tracks'])) {
-        //             // $this->soundCloudService->unknownTrackAdd($resolvedData);
-        //             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        //         } else {
-        //             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
-        //         }
-        //     }
-        //     $this->processSearchData($urn);
-        //     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        // } else {
-        //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-        //         $this->allPlaylistTracks = collect();
-        //         $this->tracks = collect();
-        //     } else {
-        //         if ($this->activeTab === 'tracks') {
-        //             $this->allTracks = collect();
-        //             $this->tracks = collect();
-        //         } elseif ($this->activeTab === 'playlists') {
-        //             $this->allPlaylists = collect();
-        //             $this->playlists = collect();
-        //         }
-        //     }
-        //     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-        // }
     }
 
     protected function processSearchData($urn)
