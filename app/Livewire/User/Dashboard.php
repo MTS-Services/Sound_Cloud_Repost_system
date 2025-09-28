@@ -1146,11 +1146,8 @@ class Dashboard extends Component
     }
     public function confirmRepost($requestId)
     {
-        $this->reset([
-            'showRepostConfirmationModal',
-            'request',  
-        ]);
         $this->showRepostConfirmationModal = true;
+        $this->request = null;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
         $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
         if ($response->isNotEmpty()) {
@@ -1189,7 +1186,7 @@ class Dashboard extends Component
             $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully.');
         }
         $this->showRepostConfirmationModal = false;
-
+         $this->reset();
         $this->dispatch('alert', type: $result['status'], message: $result['message']);
     }
 
