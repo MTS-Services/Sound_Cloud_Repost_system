@@ -140,6 +140,9 @@ class Dashboard extends Component
     public array $genreBreakdown = [];
     public array $userGenres = [];
 
+    public $activities_score = 0.0;
+    public $activities_change_rate = 0.0;
+
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
     private const MIN_SEARCH_LENGTH = 2;
@@ -204,28 +207,52 @@ class Dashboard extends Component
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
-
-        // $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
-        // $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
-        // $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
-        // $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
-
-        // if ($lastWeek > 0) {
-        //     $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
-        // } else {
-        //     $this->followerPercentage = 0;
-        // }
+        $this->getAnalyticsData(user());
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
         $this->userGenres = user()->genres->pluck('genre')->toArray();
         $this->genreBreakdown = $this->analyticsService->getGenreBreakdown('last_month', null, null, $this->userGenres);
     }
 
+    public function getAnalyticsData($user)
+    {
+
+
+        $activities_analytics = $this->analyticsService->getAnalyticsData(filter: 'last_month', actUserUrn: $user->urn);
+
+        $following_analytics = $activities_analytics['overall_metrics']['total_followers'];
+        $following_analytics = $following_analytics['change_avg_percent'] >= 0 ? $following_analytics['change_avg_percent'] : 0;
+        $repost_analytics = $activities_analytics['overall_metrics']['total_reposts'];
+        $repost_analytics = $repost_analytics['change_avg_percent'] >= 0 ? $repost_analytics['change_avg_percent'] : 0;
+        $like_activity = $activities_analytics['overall_metrics']['total_likes'];
+        $like_activity = $like_activity['change_avg_percent'] >= 0 ? $like_activity['change_avg_percent'] : 0;
+        $comment_activity = $activities_analytics['overall_metrics']['total_comments'];
+        $comment_activity = $comment_activity['change_avg_percent'] >= 0 ? $comment_activity['change_avg_percent'] : 0;
+        $play_activity = $activities_analytics['overall_metrics']['total_plays'];
+        $play_activity = $play_activity['change_avg_percent'] >= 0 ? $play_activity['change_avg_percent'] : 0;
+        $view_activity = $activities_analytics['overall_metrics']['total_views'];
+        $view_activity = $view_activity['change_avg_percent'] >= 0 ? $view_activity['change_avg_percent'] : 0;
+
+
+        $following_rate_analytics = $activities_analytics['overall_metrics']['total_followers']['change_avg_rate'];
+        $repost_rate_analytics = $activities_analytics['overall_metrics']['total_reposts']['change_avg_rate'];
+        $like_rate_activity = $activities_analytics['overall_metrics']['total_likes']['change_avg_rate'];
+        $comment_rate_activity = $activities_analytics['overall_metrics']['total_comments']['change_avg_rate'];
+        $play_rate_activity = $activities_analytics['overall_metrics']['total_plays']['change_avg_rate'];
+        $view_rate_activity = $activities_analytics['overall_metrics']['total_views']['change_avg_rate'];
+
+        $activities_score = ($following_analytics + $repost_analytics + $like_activity + $comment_activity + $play_activity + $view_activity) / 6;
+        $activities_change_rate = ($following_rate_analytics + $repost_rate_analytics + $like_rate_activity + $comment_rate_activity + $play_rate_activity + $view_rate_activity) / 6;
+        $this->activities_score = number_format($activities_score >= 0 ? $activities_score : 0, 2);
+        $this->activities_change_rate = number_format($activities_change_rate, 2);
+
+
+    }
+
+
 
     public function updated($propertyName)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -843,7 +870,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;

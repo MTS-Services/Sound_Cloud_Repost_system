@@ -334,10 +334,10 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">
-                        {{ $userFollowerAnalysis['averageCredibilityScore'] ?? 0 }}%</p>
+                        {{ number_format($activities_score, 2) }}%</p>
                     <p
-                        class="text-sm flex items-center space-x-1 {{ $followerPercentage >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        <span>{{ $followerPercentage }}% from
+                        class="text-sm flex items-center space-x-1 {{ $activities_change_rate >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                        <span>{{ $activities_change_rate }}% from
                             last week</span>
                     </p>
                 </div>
