@@ -63,9 +63,12 @@
                                         <div class="flex-1">
                                             <div
                                                 class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
-                                                <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
+                                                <h3
+                                                    class="text-black dark:text-gray-100 font-semibold text-lg 
+                                                          sm:line-clamp-2 2xl:line-clamp-none">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
+
                                                 <a href="{{ $campaign_->music?->permalink_url }}" target="_blank"
                                                     class="cursor-pointer">
                                                     <!-- Pencil Icon -->
@@ -291,7 +294,7 @@
                     </div>
 
                     <!-- Reach More Section -->
-                    <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
+                    {{-- <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
                         <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more people</h2>
                         <hr class="text-red-500 mb-4">
                         @if (featuredAgain() && $latestCampaign)
@@ -341,7 +344,7 @@
                                     x-on:click="showUpgradeModal = true">Need to get featured?(Pro)</x-gabutton>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                 </aside>
             </div>
         </div>
