@@ -1226,7 +1226,7 @@ class Campaign extends Component
         // $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
         $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
-        dd($resolvedData, $response);
+        dd($resolvedData, $response->json());
         $urn = $resolvedData['urn'];
         if ($this->activeTab === 'playlists') {
         } elseif ($this->activeTab === 'tracks') {

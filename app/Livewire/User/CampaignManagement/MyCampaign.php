@@ -735,6 +735,7 @@ class MyCampaign extends Component
 
         $response = null;
         $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
+        dd($response->json());
 
         if ($response->successful()) {
             $resolvedData = $response->json();
