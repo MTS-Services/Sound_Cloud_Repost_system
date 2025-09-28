@@ -421,18 +421,6 @@ class Member extends Component
 
             $this->selectedMusicId = $musicId;
             $this->music = Track::find($musicId);
-            $favariteTracks = $this->soundCloudService->fetchTracksFavorites($this->music);
-            $collection = collect($favariteTracks['collection']);
-            $searchUserUrn = user()->urn;
-            $found = $collection->first(function ($item) use ($searchUserUrn) {
-                return isset($item['urn']) && $item['urn'] === $searchUserUrn;
-            });
-
-            if ($found) {
-                dd($found);
-            } else {
-                dd("User not found");
-            }
         }
 
         $this->showRepostsModal = true;

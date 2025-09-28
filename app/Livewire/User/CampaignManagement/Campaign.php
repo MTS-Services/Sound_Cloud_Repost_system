@@ -974,6 +974,22 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
+        if ($this->campaign->music_type == Track::class) {
+            $favariteTracks = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
+            $collection = collect($favariteTracks['collection']);
+            $searchUserUrn = user()->urn;
+            $found = $collection->first(function ($item) use ($searchUserUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUserUrn;
+            });
+
+            if ($found) {
+                dd($found);
+            } else {
+                dd("User not found");
+            }
+        } elseif ($this->campaign->music_type == Playlist::class) {
+        }
+
         $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
         if ($response->isNotEmpty()) {
             $already_following = $response->where('urn', user()->urn)->first();
