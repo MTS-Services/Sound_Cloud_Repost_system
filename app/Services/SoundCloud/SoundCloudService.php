@@ -195,9 +195,10 @@ class SoundCloudService
         $this->ensureSoundCloudConnection(user: user());
 
         try {
-            $response = Http::get($this->resolverUrl, [
-                'url' => $endpoint
-            ]);
+            $response = Http::withToken(user()->token)->get("{$this->resolverUrl}?url={$endpoint}");
+            // $response = Http::get($this->resolverUrl, [
+            //     'url' => $endpoint
+            // ]);
             if ($response->successful()) {
                 return $response->json();
             }
