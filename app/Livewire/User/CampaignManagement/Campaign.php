@@ -975,19 +975,25 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
-        if ($this->campaign->music_type == Track::class) {
-            $favariteTracks = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
-            $collection = collect($favariteTracks['collection']);
-            $searchUserUrn = user()->urn;
-            $found = $collection->first(function ($item) use ($searchUserUrn) {
-                return isset($item['urn']) && $item['urn'] === $searchUserUrn;
+        if ($this->campaign->music) {
+            if($this->campaign->music_type == Track::class){
+                $favariteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
+                $searchUrn = user()->urn;
+            }elseif($this->campaign->music_type == Playlist::class){
+                $favariteData = $this->soundCloudService->fetchPlaylistFavorites($this->campaign->music);
+                $searchUrn = $this->campaign->music->soundcloud_urn;
+                
+            }
+            $collection = collect($favariteData['collection']);
+            
+            $found = $collection->first(function ($item) use ($searchUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUrn;
             });
 
             if ($found) {
                 $this->liked = false;
                 $this->alreadyLiked = true;
             }
-        } elseif ($this->campaign->music_type == Playlist::class) {
         }
 
         $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
