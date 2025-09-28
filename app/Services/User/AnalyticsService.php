@@ -373,14 +373,24 @@ class AnalyticsService
      */
     private function getStartDateForFilter(string $filter, Carbon $now): Carbon
     {
+        // return match ($filter) {
+        //     'daily' => $now->copy()->startOfDay(),
+        //     'last_week' => $now->copy()->subDays(6)->startOfDay(),
+        //     'last_month' => $now->copy()->subDays(29)->startOfDay(),
+        //     'last_90_days' => $now->copy()->subDays(89)->startOfDay(),
+        //     'last_year' => $now->copy()->subDays(364)->startOfDay(),
+        //     'current_year' => $now->copy()->startOfYear(),
+        //     default => $now->copy()->subDays(6)->startOfDay(),
+        // };
+
         return match ($filter) {
             'daily' => $now->copy()->startOfDay(),
-            'last_week' => $now->copy()->subDays(6)->startOfDay(),
-            'last_month' => $now->copy()->subDays(29)->startOfDay(),
-            'last_90_days' => $now->copy()->subDays(89)->startOfDay(),
-            'last_year' => $now->copy()->subDays(364)->startOfDay(),
+            'last_week' => $now->copy()->subWeeks(1)->startOfDay(),
+            'last_month' => $now->copy()->subMonths(1)->startOfDay(),
+            'last_90_days' => $now->copy()->subDays(90)->startOfDay(),
+            'last_year' => $now->copy()->subYears(1)->startOfYear(),
             'current_year' => $now->copy()->startOfYear(),
-            default => $now->copy()->subDays(6)->startOfDay(),
+            default => $now->copy()->subWeeks(1)->startOfDay(),
         };
     }
 
