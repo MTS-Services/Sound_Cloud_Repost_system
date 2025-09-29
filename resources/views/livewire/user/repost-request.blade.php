@@ -126,7 +126,8 @@
                 @if (!$repostRequest->music && !isset($repostRequest->music->permalink_url))
                     @continue;
                 @endif
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
+                <div
+                    class="request-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
                     <div class="flex flex-col lg:flex-row" wire:key="request-{{ $repostRequest->id }}">
                         <!-- Left Column - Track Info -->
                         <div
@@ -424,6 +425,31 @@
 
         playerContainers.forEach(container => {
             const requestId = container.dataset.requestId;
+
+            let currentRequestCard = container.closest('.request-card');
+
+            // Safety check - make sure we found the card
+            if (!currentRequestCard) {
+                console.error('Could not find the parent request-card for requestId', requestId);
+                return;
+            }
+
+            // 2. Find the next request-card sibling
+            const nextRequestCard = currentRequestCard.nextElementSibling;
+
+            // 3. Find the iframe inside the NEXT request card
+            let nextIframe = null;
+            let nextRequestId = null;
+
+            if (nextRequestCard && nextRequestCard.classList.contains('request-card')) {
+                // Find the iframe inside the next card
+                const nextPlayerContainer = nextRequestCard.querySelector('[id^="soundcloud-player-"]');
+
+                if (nextPlayerContainer) {
+                    nextIframe = nextPlayerContainer.querySelector('iframe');
+                    nextRequestId = nextPlayerContainer.dataset.requestId;
+                }
+            }
             const iframe = container.querySelector('iframe');
 
             if (iframe && requestId) {
@@ -439,6 +465,10 @@
 
                 widget.bind(SC.Widget.Events.FINISH, () => {
                     @this.call('handleAudioEnded', requestId);
+                    if (nextRequestId && nextIframe) {
+                        const nextWidget = SC.Widget(nextIframe);
+                        nextWidget.play();
+                    }
                 });
 
                 widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
@@ -446,6 +476,30 @@
                     @this.call('handleAudioTimeUpdate', requestId, currentTime);
                 });
             }
+
+
+            // const iframe = container.querySelector('iframe');
+
+            // if (iframe && requestId) {
+            //     const widget = SC.Widget(iframe);
+
+            //     widget.bind(SC.Widget.Events.PLAY, () => {
+            //         @this.call('handleAudioPlay', requestId);
+            //     });
+
+            //     widget.bind(SC.Widget.Events.PAUSE, () => {
+            //         @this.call('handleAudioPause', requestId);
+            //     });
+
+            //     widget.bind(SC.Widget.Events.FINISH, () => {
+            //         @this.call('handleAudioEnded', requestId);
+            //     });
+
+            //     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+            //         const currentTime = data.currentPosition / 1000;
+            //         @this.call('handleAudioTimeUpdate', requestId, currentTime);
+            //     });
+            // }
         });
     }
 
