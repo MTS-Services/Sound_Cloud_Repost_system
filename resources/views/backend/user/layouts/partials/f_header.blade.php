@@ -1,42 +1,46 @@
- <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent backdrop-blur-sm">
-     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-         <a href="{{ route('f.landing') }}" wire:navigate>
-             <div class="w-72">
-                 <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
+<!-- Alpine.js -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<header x-data="{ open: false, darkMode: localStorage.getItem('theme') === 'dark' }"
+        x-init="$watch('darkMode', val => { 
+            document.documentElement.classList.toggle('dark', val); 
+            localStorage.setItem('theme', val ? 'dark' : 'light'); 
+        })"
+        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent backdrop-blur-sm">
+
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="{{ route('f.landing') }}" wire:navigate>
+            <div class="w-72">
+                <img src="{{ app_setting('app_logo_dark') ? asset('storage/' . app_setting('app_logo_dark')) : asset('assets/logo/rc-logo-white.png') }}"
                      alt="{{ config('app.name') }}" class="w-36 lg:w-48 object-contain">
-             </div>
-         </a>
+            </div>
+        </a>
 
-         <nav class="hidden md:flex items-center space-x-8">
-             <a href="{{ route('f.landing') }}#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
-             <a href="{{ route('f.plan') }}" wire:navigate
-                 class="text-gray-300 hover:text-white transition-colors">Plan</a>
-             <a href="{{ route('f.landing') }}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
-             <a href="{{ route('f.landing') }}#how-it-works"
-                 class="text-gray-300 hover:text-white transition-colors">How it Works</a>
-             <a href="{{ route('f.landing') }}#features"
-                 class="text-gray-300 hover:text-white transition-colors">Features</a>
-             <a href="{{ route('f.landing') }}#testimonials"
-                 class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
+        <!-- Desktop Menu -->
+        <nav class="hidden md:flex items-center space-x-6">
+            <a href="{{ route('f.landing') }}#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
+            <a href="{{ route('f.plan') }}" wire:navigate class="text-gray-300 hover:text-white transition-colors">Plan</a>
+            <a href="{{ route('f.landing') }}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
+            <a href="{{ route('f.landing') }}#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
+            <a href="{{ route('f.landing') }}#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
+            <a href="{{ route('f.landing') }}#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
 
-             @if (Auth::check())
-                 <x-gabutton variant="primary" href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
-             @else
-                 <x-gabutton variant="primary" href="{{ route('soundcloud.redirect') }}">
-                     <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor"
-                         xmlns="http://www.w3.org/2000/svg">
-                         <path
-                             d="M437.019 211.35c-13.398 0-26.193 2.519-38.018 7.477-7.664-67.457-65.098-120.037-134.644-120.037-6.837 0-13.672 0.557-20.342 1.66-9.725 1.558-16.883 10.135-16.883 20.004v231.77c0 11.175 9.064 20.238 20.238 20.238h189.649c49.452 0 89.981-40.529 89.981-89.981s-40.529-89.981-89.981-89.981zM65.26 239.723c-11.156 0-20.238 9.082-20.238 20.238v81.481c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238v-81.481c0-11.156-9.082-20.238-20.238-20.238zm53.744-34.942c-11.156 0-20.238 9.082-20.238 20.238v116.423c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V224.999c0-11.156-9.082-20.238-20.238-20.238zm53.744-25.26c-11.156 0-20.238 9.082-20.238 20.238v141.683c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V200.02c0-11.156-9.082-20.238-20.238-20.238zm53.744-13.385c-11.156 0-20.238 9.082-20.238 20.238v154.98c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V186.376c0-11.156-9.082-20.238-20.238-20.238z" />
-                     </svg>
-                     <span class="ms-1">Continue with SoundCloud</span>
-                 </x-gabutton>
-             @endif
 
-         </nav>
+            @if (Auth::check())
+                <x-gabutton variant="primary" href="{{ route('user.dashboard') }}">{{ __('Dashboard') }}</x-gabutton>
+            @else
+                <x-gabutton variant="primary" href="{{ route('soundcloud.redirect') }}">
+                    Continue with SoundCloud
+                </x-gabutton>
+            @endif
+        </nav>
 
-         <div class="md:hidden flex items-center space-x-4">
-             <button class="p-2 rounded-full hover:bg-dark-lighter text-gray-300" id="theme-toggle-mobile">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center space-x-3">
+            {{-- <!-- Dark Mode Toggle (Mobile) -->
+            <button @click="darkMode = !darkMode" class="text-gray-300 hover:text-white">
+                <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                      stroke-linejoin="round">
                      <circle cx="12" cy="12" r="4"></circle>
@@ -49,39 +53,54 @@
                      <path d="m6.34 17.66-1.41 1.41"></path>
                      <path d="m19.07 4.93-1.41 1.41"></path>
                  </svg>
-             </button>
-             <button class="text-gray-200 hover:text-white" id="mobile-menu-toggle">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round">
-                     <line x1="4" x2="20" y1="12" y2="12"></line>
-                     <line x1="4" x2="20" y1="6" y2="6"></line>
-                     <line x1="4" x2="20" y1="18" y2="18"></line>
-                 </svg>
-             </button>
-         </div>
-     </div>
+                <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
+                     viewBox="0 0 24 24">
+                    <path d="M21.64 13.65a1 1 0 0 0-1.05-.14 8 8 0 0 1-10.1-10.1 1 1 0 0 0-1.19-1.28 10 10 0 1 0 12.61 12.61 1 1 0 0 0-.27-1.19Z"/>
+                </svg>
+            </button> --}}
 
-     <!-- Mobile Menu -->
-     <div class="mobile-menu bg-dark-card border-t border-dark-border md:hidden" id="mobile-menu">
-         <div class="container mx-auto px-4 py-4 space-y-4">
-             <a href="#about" class="block text-gray-300 hover:text-white transition-colors">About</a>
-             <a href="#how-it-works" class="block text-gray-300 hover:text-white transition-colors">How it Works</a>
-             <a href="#features" class="block text-gray-300 hover:text-white transition-colors">Features</a>
-             <a href="#testimonials" class="block text-gray-300 hover:text-white transition-colors">Testimonials</a>
-             <a href="#faq" class="block text-gray-300 hover:text-white transition-colors">FAQ</a>
-             <div class="pt-4">
-                 <a href="{{ route('soundcloud.redirect') }}"
-                     class="w-fit px-2 py-1 flex gap-2 items-center justify-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                     <svg width="24" height="24" viewBox="0 0 512 512" fill="currentColor"
-                         xmlns="http://www.w3.org/2000/svg">
-                         <path
-                             d="M437.019 211.35c-13.398 0-26.193 2.519-38.018 7.477-7.664-67.457-65.098-120.037-134.644-120.037-6.837 0-13.672 0.557-20.342 1.66-9.725 1.558-16.883 10.135-16.883 20.004v231.77c0 11.175 9.064 20.238 20.238 20.238h189.649c49.452 0 89.981-40.529 89.981-89.981s-40.529-89.981-89.981-89.981zM65.26 239.723c-11.156 0-20.238 9.082-20.238 20.238v81.481c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238v-81.481c0-11.156-9.082-20.238-20.238-20.238zm53.744-34.942c-11.156 0-20.238 9.082-20.238 20.238v116.423c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V224.999c0-11.156-9.082-20.238-20.238-20.238zm53.744-25.26c-11.156 0-20.238 9.082-20.238 20.238v141.683c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V200.02c0-11.156-9.082-20.238-20.238-20.238zm53.744-13.385c-11.156 0-20.238 9.082-20.238 20.238v154.98c0 11.156 9.082 20.238 20.238 20.238s20.238-9.082 20.238-20.238V186.376c0-11.156-9.082-20.238-20.238-20.238z" />
-                     </svg>
+            <!-- Toggle Button -->
+            <button @click="open = !open" class="text-gray-200 hover:text-white">
+                <!-- Hamburger -->
+                <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" x2="20" y1="12" y2="12"></line>
+                    <line x1="4" x2="20" y1="6" y2="6"></line>
+                    <line x1="4" x2="20" y1="18" y2="18"></line>
+                </svg>
+                <!-- Close -->
+                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
 
-                     Continue with SoundCloud
-                 </a>
-             </div>
-         </div>
-     </div>
- </header>
+    <!-- Mobile Menu -->
+    <div x-show="open" x-transition class="md:hidden bg-dark-card border-t border-dark-border">
+        <div class="container mx-auto px-4 py-4 space-y-4">
+            <a href="{{ route('f.landing') }}#home" class="block text-gray-300 hover:text-white transition-colors">Home</a>
+            <a href="{{ route('f.plan') }}" wire:navigate class="block text-gray-300 hover:text-white transition-colors">Plan</a>
+            <a href="{{ route('f.landing') }}#about" class="block text-gray-300 hover:text-white transition-colors">About</a>
+            <a href="{{ route('f.landing') }}#how-it-works" class="block text-gray-300 hover:text-white transition-colors">How it Works</a>
+            <a href="{{ route('f.landing') }}#features" class="block text-gray-300 hover:text-white transition-colors">Features</a>
+            <a href="{{ route('f.landing') }}#testimonials" class="block text-gray-300 hover:text-white transition-colors">Testimonials</a>
+            
+            @if (Auth::check())
+                <a href="{{ route('user.dashboard') }}"
+                   class="block text-center w-full px-3 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                   Dashboard
+                </a>
+            @else
+                <a href="{{ route('soundcloud.redirect') }}"
+                   class="block text-center w-full px-3 py-2 rounded-md bg-orange-600 text-white hover:bg-orange-700">
+                   Continue with SoundCloud
+                </a>
+            @endif
+        </div>
+    </div>
+</header>
