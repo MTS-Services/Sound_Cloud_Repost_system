@@ -1038,9 +1038,10 @@ for ($week = 0; $week < $weeksCount; $week++) {
 
                 playerContainers.forEach(container => {
                     const campaignId = container.dataset.campaignId;
-
+                    console.log('campaignId', campaignId);
 
                     let currentCampaignCard = container.closest('.player-card');
+                    console.log('currentCampaignCard', currentCampaignCard);
 
                     // Safety check - make sure we found the card
                     if (!currentCampaignCard) {
