@@ -51,10 +51,17 @@
                         <!-- Quick Tip Text -->
                         <span class="text-sm font-medium text-gray-700 dark:text-white">Quick Tip</span>
                     </div>
-                    <div x-data="{ on: false }" class="inline-flex items-center cursor-not-allowed"
-                        data-has-alpine-state="true">
-                        <input type="checkbox" class="sr-only peer" wire:model.live="requestReceiveable" checked=""
-                            disabled="">
+                    <!-- Content -->
+                    <div class="flex-1 flex flex-col space-y-2">
+                        <!-- Message Text -->
+                        <p class="text-sm text-gray-700 dark:text-white">
+                            Your response rate could be better! Improve your response rate and get more requests by
+                            accepting OR
+                            declining requests quickly.
+                        </p>
+                        <!-- Response Rate -->
+                        <div class="flex items-center space-x-1">
+                            <div class="w-4 h-4 rounded-full bg-orange-500"></div>
 
                             <span class="text-xs text-orange-600 font-semibold">{{ user()->responseRate() }}% <span
                                     class="text-gray-900 dark:text-white">Response rate.</span></span>
@@ -83,12 +90,6 @@
                                     @endunless
                                 </span>
                             </div>
-                            <span class="text-sm text-gray-700 dark:text-white">
-                                Accepting Requests
-                                <!--[if BLOCK]><![endif]-->
-                                <span class="ml-2 text-red-500">(Verify email first)</span>
-                                <!--[if ENDBLOCK]><![endif]-->
-                            </span>
                         </div>
                     </div>
                 </div>
