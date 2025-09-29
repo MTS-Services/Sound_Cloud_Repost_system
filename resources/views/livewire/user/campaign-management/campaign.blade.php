@@ -694,7 +694,6 @@
                 return;
             }
             const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-            console.log('playerContainers', playerContainers);
 
             playerContainers.forEach(container => {
                 const campaignId = container.dataset.campaignId;
