@@ -437,15 +437,15 @@ for ($week = 0; $week < $weeksCount; $week++) {
                                                                     style="padding-top: 18px;">
                                                                     <div class="h-[10px] leading-[10px] mb-[2px]">Sun
                                                                     </div>
-                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">Mon
                                                                     </div>
                                                                     <div class="h-[10px] leading-[10px] mb-[2px]">Tue
                                                                     </div>
-                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">Wed
                                                                     </div>
                                                                     <div class="h-[10px] leading-[10px] mb-[2px]">Thu
                                                                     </div>
-                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">Fri
                                                                     </div>
                                                                     <div class="h-[10px] leading-[10px]">Sat</div>
                                                                 </div>
