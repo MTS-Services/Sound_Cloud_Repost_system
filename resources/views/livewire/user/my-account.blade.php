@@ -376,188 +376,186 @@
                                                 </h4>
 
                                                 <!-- GitHub-style contribution chart -->
-                                                <div class="activity-chart-container">
-                                                    <!-- Chart wrapper with proper responsive handling -->
-                                                    <div class="overflow-hidden">
-                                                        <div class="min-w-full" style="min-width: 720px;">
-                                                            <!-- Month labels -->
-                                                            <div
-                                                                class="grid grid-cols-12 gap-1 mb-2 text-xs text-gray-500 dark:text-slate-400">
-                                                                <div class="col-span-1"></div>
-                                                                <!-- Space for day labels -->
-                                                                <div class="text-center">Jan</div>
-                                                                <div class="text-center">Feb</div>
-                                                                <div class="text-center">Mar</div>
-                                                                <div class="text-center">Apr</div>
-                                                                <div class="text-center">May</div>
-                                                                <div class="text-center">Jun</div>
-                                                                <div class="text-center">Jul</div>
-                                                                <div class="text-center">Aug</div>
-                                                                <div class="text-center">Sep</div>
-                                                                <div class="text-center">Oct</div>
-                                                                <div class="text-center">Nov</div>
-                                                            </div>
+                                                <div class="activity-chart-container h-auto">
+                                                    <div class="h-[7rem] overflow-x-auto">
+                                                        <div class="inline-block min-w-full h-auto">
+                                                            @php
+                                                                use Carbon\Carbon;
 
-                                                            <!-- Chart grid -->
-                                                            <div class="flex">
-                                                                <!-- Day labels -->
-                                                                <div
-                                                                    class="flex flex-col justify-between text-xs text-gray-500 dark:text-slate-400 mr-2">
-                                                                    <span class="h-3 flex items-center">Mon</span>
-                                                                    <span class="h-3 flex items-center">Tue</span>
-                                                                    <span class="h-3 flex items-center">Wed</span>
-                                                                    <span class="h-3 flex items-center">Thu</span>
-                                                                    <span class="h-3 flex items-center">Fri</span>
-                                                                    <span class="h-3 flex items-center">Sat</span>
-                                                                    <span class="h-3 flex items-center">Sun</span>
+                                                                // Get today's date
+$today = now();
+
+// Calculate the start date (1 year ago from today)
+$endDate = $today->copy();
+$startDate = $today->copy()->subYear()->addDay();
+
+// Find the Sunday on or before start date (GitHub weeks start on Sunday)
+$gridStartDate = $startDate->copy();
+while ($gridStartDate->dayOfWeek !== Carbon::SUNDAY) {
+    $gridStartDate->subDay();
+}
+
+// Find the Saturday on or after end date
+$gridEndDate = $endDate->copy();
+while ($gridEndDate->dayOfWeek !== Carbon::SATURDAY) {
+    $gridEndDate->addDay();
+}
+
+// Calculate weeks needed
+$totalDays =
+    $gridStartDate->diffInDays($gridEndDate) + 1;
+$weeksCount = ceil($totalDays / 7);
+
+// Create lookup array for data
+$dataByDate = [];
+foreach ($chart_data as $item) {
+    if (isset($item['date'])) {
+        $dataByDate[$item['date']] = $item;
+    }
+}
+
+// Generate month labels
+$monthLabels = [];
+$currentMonthLabel = null;
+
+for ($week = 0; $week < $weeksCount; $week++) {
+    $weekDate = $gridStartDate->copy()->addWeeks($week);
+    $monthLabel = $weekDate->format('M');
+
+    if ($monthLabel !== $currentMonthLabel) {
+        $monthLabels[$week] = $monthLabel;
+        $currentMonthLabel = $monthLabel;
+    } else {
+        $monthLabels[$week] = '';
+                                                                    }
+                                                                }
+                                                            @endphp
+
+                                                            <div class="flex gap-2">
+                                                                <!-- Day labels column -->
+                                                                <div class="flex flex-col text-[11px] text-gray-500 dark:text-slate-400"
+                                                                    style="padding-top: 18px;">
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">Sun
+                                                                    </div>
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">
+                                                                    </div>
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">Tue
+                                                                    </div>
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">
+                                                                    </div>
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">Thu
+                                                                    </div>
+                                                                    <div class="h-[10px] leading-[10px] mb-[2px]">
+                                                                    </div>
+                                                                    <div class="h-[10px] leading-[10px]">Sat</div>
                                                                 </div>
 
-                                                                <!-- Activity grid -->
-                                                                {{-- <div class="flex-1">
-                                                                    <div class="grid grid-cols-53 gap-1"
-                                                                        style="grid-template-columns: repeat(53, minmax(0, 1fr));">
-                                                                        @php
-                                                                            $totalDays = 371; // 53 weeks × 7 days
-                                                                            $dataCount = count($chart_data);
-                                                                        @endphp
-
-                                                                        @for ($dayIndex = 0; $dayIndex < $totalDays; $dayIndex++)
-                                                                            @php
-                                                                                // Get data for this day if available, otherwise use default values
-                                                                                $activityRate = 0;
-                                                                                $hasData = false;
-
-                                                                                if (
-                                                                                    $dayIndex < $dataCount &&
-                                                                                    isset($chart_data[$dayIndex])
-                                                                                ) {
-                                                                                    $activityRate =
-                                                                                        $chart_data[$dayIndex][
-                                                                                            'avg_activities_rate'
-                                                                                        ] ?? 0;
-                                                                                    $hasData = true;
-                                                                                }
-
-                                                                                // Determine color class based on activity rate
-                                                                                $colorClass =
-                                                                                    'bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700'; // Default for no data/0 activity
-
-                                                                                if ($activityRate > 75) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-600 dark:bg-orange-500';
-                                                                                } elseif ($activityRate > 50) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-500 dark:bg-orange-400';
-                                                                                } elseif ($activityRate > 25) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-400 dark:bg-orange-300';
-                                                                                } elseif ($activityRate > 0) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-200 dark:bg-orange-600';
-                                                                                }
-
-                                                                                $date = now()
-                                                                                    ->subDays($totalDays - $dayIndex)
-                                                                                    ->format('M j, Y');
-                                                                                $tooltipText = $hasData
-                                                                                    ? number_format($activityRate, 1) .
-                                                                                        '% activity on ' .
-                                                                                        $date
-                                                                                    : 'No activity data on ' . $date;
-                                                                            @endphp
-
-                                                                            <div class="w-3 h-3 rounded-sm {{ $colorClass }} transition-all duration-200 hover:scale-110 hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-300 cursor-pointer"
-                                                                                data-tooltip="true"
-                                                                                data-date="{{ $date }}"
-                                                                                data-activity="{{ $hasData ? number_format($activityRate, 1) . '%' : 'No data' }}"
-                                                                                title="{{ $tooltipText }}"></div>
-                                                                        @endfor
+                                                                <!-- Chart area -->
+                                                                <div class="w-full">
+                                                                    <!-- Month labels row -->
+                                                                    <div class="flex gap-[2px] mb-1 text-[11px] text-gray-500 dark:text-slate-400 justify-between w-full"
+                                                                        style="height: 15px;">
+                                                                        @foreach ($monthLabels as $label)
+                                                                            <div style="width: 10px;">
+                                                                                {{ $label }}
+                                                                            </div>
+                                                                        @endforeach
                                                                     </div>
-                                                                </div> --}}
-                                                                <div class="flex-1">
-                                                                    <div class="grid grid-cols-53 gap-1"
-                                                                        style="grid-template-columns: repeat(53, minmax(0, 1fr));">
-                                                                        @php
-                                                                            $totalDays = 371; // 53 weeks × 7 days
-                                                                            $dataCount = count($chart_data);
 
-                                                                            // Calculate the start date (371 days ago from today)
-                                                                            $startDate = now()->subDays($totalDays - 1);
-                                                                        @endphp
+                                                                    <!-- Weeks grid (each column is a week) -->
+                                                                    <div class="flex gap-[2px]">
+                                                                        @for ($week = 0; $week < $weeksCount; $week++)
+                                                                            <div
+                                                                                class="flex flex-col gap-[2px] justify-between w-full">
+                                                                                @for ($day = 0; $day < 7; $day++)
+                                                                                    @php
+                                                                                        $currentDate = $gridStartDate
+                                                                                            ->copy()
+                                                                                            ->addWeeks($week)
+                                                                                            ->addDays($day);
+                                                                                        $dateKey = $currentDate->format(
+                                                                                            'Y-m-d',
+                                                                                        );
 
-                                                                        @for ($dayIndex = 0; $dayIndex < $totalDays; $dayIndex++)
-                                                                            @php
-                                                                                // Calculate the actual date for this grid position
-                                                                                $currentDate = $startDate
-                                                                                    ->copy()
-                                                                                    ->addDays($dayIndex);
+                                                                                        // Check if date is within actual range
+                                                                                        $isInRange =
+                                                                                            $currentDate >=
+                                                                                                $startDate &&
+                                                                                            $currentDate <= $endDate;
 
-                                                                                // Get data for this day if available, otherwise use default values
-                                                                                $activityRate = 0;
-                                                                                $hasData = false;
+                                                                                        // Get data for this day
+                                                                                        $activityRate = 0;
+                                                                                        $hasData = false;
 
-                                                                                // Find matching data for this specific date
-                                                                                // Option 1: Loop through data (safer but slower)
-                                                                                foreach ($chart_data as $dataItem) {
-                                                                                    if (
-                                                                                        isset($dataItem['date']) &&
-                                                                                        Carbon\Carbon::parse(
-                                                                                            $dataItem['date'],
-                                                                                        )->format('Y-m-d') ===
-                                                                                            $currentDate->format(
-                                                                                                'Y-m-d',
-                                                                                            )
-                                                                                    ) {
-                                                                                        $activityRate =
-                                                                                            $dataItem[
-                                                                                                'avg_activities_rate'
-                                                                                            ] ?? 0;
-                                                                                        $hasData = true;
-                                                                                        break;
-                                                                                    }
-                                                                                }
+                                                                                        if (
+                                                                                            $isInRange &&
+                                                                                            isset($dataByDate[$dateKey])
+                                                                                        ) {
+                                                                                            $activityRate =
+                                                                                                $dataByDate[$dateKey][
+                                                                                                    'avg_activities_rate'
+                                                                                                ] ?? 0;
+                                                                                            $hasData = true;
+                                                                                        }
 
-                                                                                // Option 2: If your chart_data is keyed by date string (faster)
-                                                                                // $dateKey = $currentDate->format('Y-m-d');
-                                                                                // if (isset($chart_data[$dateKey])) {
-                                                                                //     $activityRate = $chart_data[$dateKey]['avg_activities_rate'] ?? 0;
-                                                                                //     $hasData = true;
-                                                                                // }
+                                                                                        // Determine color class
+                                                                                        if (!$isInRange) {
+                                                                                            $colorClass =
+                                                                                                'bg-transparent';
+                                                                                        } elseif ($activityRate > 75) {
+                                                                                            $colorClass =
+                                                                                                'bg-orange-600 dark:bg-orange-500';
+                                                                                        } elseif ($activityRate > 50) {
+                                                                                            $colorClass =
+                                                                                                'bg-orange-500 dark:bg-orange-400';
+                                                                                        } elseif ($activityRate > 25) {
+                                                                                            $colorClass =
+                                                                                                'bg-orange-400 dark:bg-orange-300';
+                                                                                        } elseif ($activityRate > 0) {
+                                                                                            $colorClass =
+                                                                                                'bg-orange-200 dark:bg-orange-600';
+                                                                                        } else {
+                                                                                            $colorClass =
+                                                                                                'bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700';
+                                                                                        }
 
-                                                                                // Determine color class based on activity rate
-                                                                                $colorClass =
-                                                                                    'bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700'; // Default for no data/0 activity
+                                                                                        $formattedDate = $currentDate->format(
+                                                                                            'M j, Y',
+                                                                                        );
+                                                                                        $dayOfWeek = $currentDate->format(
+                                                                                            'D',
+                                                                                        );
+                                                                                        $tooltipText = $hasData
+                                                                                            ? number_format(
+                                                                                                    $activityRate,
+                                                                                                    1,
+                                                                                                ) .
+                                                                                                '% activity on ' .
+                                                                                                $dayOfWeek .
+                                                                                                ', ' .
+                                                                                                $formattedDate
+                                                                                            : ($isInRange
+                                                                                                ? 'No activity on ' .
+                                                                                                    $dayOfWeek .
+                                                                                                    ', ' .
+                                                                                                    $formattedDate
+                                                                                                : '');
+                                                                                    @endphp
 
-                                                                                if ($activityRate > 75) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-600 dark:bg-orange-500';
-                                                                                } elseif ($activityRate > 50) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-500 dark:bg-orange-400';
-                                                                                } elseif ($activityRate > 25) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-400 dark:bg-orange-300';
-                                                                                } elseif ($activityRate > 0) {
-                                                                                    $colorClass =
-                                                                                        'bg-orange-200 dark:bg-orange-600';
-                                                                                }
-
-                                                                                $formattedDate = $currentDate->format(
-                                                                                    'M j, Y',
-                                                                                );
-                                                                                $tooltipText = $hasData
-                                                                                    ? number_format($activityRate, 1) .
-                                                                                        '% activity on ' .
-                                                                                        $formattedDate
-                                                                                    : 'No activity data on ' .
-                                                                                        $formattedDate;
-                                                                            @endphp
-
-                                                                            <div class="w-3 h-3 rounded-sm {{ $colorClass }} transition-all duration-200 hover:scale-110 hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-300 cursor-pointer"
-                                                                                data-tooltip="true"
-                                                                                data-date="{{ $formattedDate }}"
-                                                                                data-activity="{{ $hasData ? number_format($activityRate, 1) . '%' : 'No data' }}"
-                                                                                title="{{ $tooltipText }}"></div>
+                                                                                    @if ($isInRange)
+                                                                                        <div class="w-[10px] h-[10px] rounded-sm {{ $colorClass }} transition-all duration-200 hover:scale-125 hover:ring-1 hover:ring-orange-400 cursor-pointer"
+                                                                                            data-tooltip="true"
+                                                                                            data-date="{{ $formattedDate }}"
+                                                                                            data-day="{{ $dayOfWeek }}"
+                                                                                            data-activity="{{ $hasData ? number_format($activityRate, 1) . '%' : 'No data' }}"
+                                                                                            title="{{ $tooltipText }}">
+                                                                                        </div>
+                                                                                    @else
+                                                                                        <div class="w-[10px] h-[10px]">
+                                                                                        </div>
+                                                                                    @endif
+                                                                                @endfor
+                                                                            </div>
                                                                         @endfor
                                                                     </div>
                                                                 </div>
@@ -568,39 +566,41 @@
 
                                                 <!-- Legend and info -->
                                                 <div
-                                                    class="flex items-center justify-between text-xxs sm:text-xs text-gray-500 dark:text-slate-400 mt-3 sm:mt-4">
-                                                    <span>Last 12 months</span>
-                                                    <div class="flex items-center space-x-2">
-                                                        <span class="hidden sm:inline">Less</span>
-                                                        <div class="flex items-center space-x-1">
+                                                    class="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 mt-3 sm:mt-4">
+                                                    <span class="text-[11px] sm:text-xs">Last 12 months
+                                                        ({{ $startDate->format('M j, Y') }} -
+                                                        {{ $endDate->format('M j, Y') }})</span>
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="hidden sm:inline text-[11px]">Less</span>
+                                                        <div class="flex items-center gap-[3px]">
                                                             <div
-                                                                class="w-2 h-2 bg-gray-100 dark:bg-slate-800 rounded-sm border border-gray-200 dark:border-slate-600">
+                                                                class="w-[10px] h-[10px] bg-gray-100 dark:bg-slate-800 rounded-sm border border-gray-200 dark:border-slate-600">
                                                             </div>
                                                             <div
-                                                                class="w-2 h-2 bg-orange-200 dark:bg-orange-600 rounded-sm">
+                                                                class="w-[10px] h-[10px] bg-orange-200 dark:bg-orange-600 rounded-sm">
                                                             </div>
                                                             <div
-                                                                class="w-2 h-2 bg-orange-400 dark:bg-orange-300 rounded-sm">
+                                                                class="w-[10px] h-[10px] bg-orange-400 dark:bg-orange-300 rounded-sm">
                                                             </div>
                                                             <div
-                                                                class="w-2 h-2 bg-orange-500 dark:bg-orange-400 rounded-sm">
+                                                                class="w-[10px] h-[10px] bg-orange-500 dark:bg-orange-400 rounded-sm">
                                                             </div>
                                                             <div
-                                                                class="w-2 h-2 bg-orange-600 dark:bg-orange-500 rounded-sm">
+                                                                class="w-[10px] h-[10px] bg-orange-600 dark:bg-orange-500 rounded-sm">
                                                             </div>
                                                         </div>
-                                                        <span class="hidden sm:inline">More</span>
+                                                        <span class="hidden sm:inline text-[11px]">More</span>
                                                     </div>
                                                 </div>
 
                                                 <!-- Enhanced tooltip -->
                                                 <div id="activity-tooltip"
-                                                    class="fixed z-50 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-black rounded-md shadow-lg pointer-events-none opacity-0 transition-opacity duration-200"
-                                                    style="transform: translateY(-100%);">
-                                                    <div class="font-medium" id="tooltip-content"></div>
-                                                    <div
-                                                        class="w-2 h-2 bg-gray-900 dark:bg-black absolute top-full left-1/2 transform -translate-x-1/2 rotate-45">
+                                                    class="fixed z-50 px-3 py-2 text-xs text-white bg-gray-900 dark:bg-slate-800 rounded-lg shadow-lg pointer-events-none opacity-0 transition-opacity duration-200"
+                                                    style="transform: translate(-50%, -100%); margin-top: -8px;">
+                                                    <div class="font-medium whitespace-nowrap" id="tooltip-content">
                                                     </div>
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900 dark:border-t-slate-800"
+                                                        style="margin-top: -1px;"></div>
                                                 </div>
                                             </div>
 
