@@ -2,7 +2,7 @@
 
     <x-slot name="page_slug">campaigns</x-slot>
 
-    <div class="p-6">
+    <div class="md:p-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
             <!-- Title -->
             <div>
@@ -50,19 +50,18 @@
 
         <div class="space-y-6" id="campaigns-list">
 
-            <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
+            <div class="flex flex-col lg:flex-row justify-between gap-6 ">
                 <!-- Main Content -->
                 <div class="w-full flex flex-col gap-6">
                     @forelse ($campaigns as $campaign_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden relative">
                             <div class="p-2 sm:p-4">
-                                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
-                                    <div class="flex flex-col sm:flex-row gap-4">
+                                <div class="flex justify-between gap-2 md:gap-4">
+                                    <div class="flex gap-2 md:gap-4">
                                         <img src="{{ soundcloud_image($campaign_->music?->artwork_url) }}"
                                             alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
                                         <div class="flex-1">
-                                            <div
-                                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
+                                            <div class="flex space-x-2 md:space-x-3 mb-2">
                                                 <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
@@ -88,7 +87,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
+                                            <div class="mb-4 text-sm text-slate-400">
                                                 Budget used: {{ number_format($campaign_->credits_spent) }} /
                                                 {{ number_format($campaign_->budget_credits) }} credits
                                             </div>
@@ -96,13 +95,13 @@
                                     </div>
 
                                     <!-- Right Stats Block -->
-                                    <div class="text-center sm:text-right">
+                                    <div class="text-right">
                                         <div class="flex items-center justify-center sm:justify-end">
                                             <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
                                             <span class=" text-green-600 dark:text-gray-100"> Running</span>
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
-                                        <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
+                                        <div class="flex flex-wrap justify-end items-center mt-2">
                                             {{-- <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
                                             <span class="text-slate-500">Stop</span> --}}
                                             <div wire:click="editCampaign({{ $campaign_->id }})"
@@ -120,7 +119,7 @@
 
                                 <!-- Stats -->
                                 <div class="flex justify-between gap-6">
-                                    <div class="flex gap-6">
+                                    <div class="flex gap-2 md:gap-6">
                                         <div class="text-center">
                                             <div class="flex items-center justify-center ">
 
@@ -164,22 +163,22 @@
                                             </div>
 
                                         </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center ">
 
-                                                <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
-                                                    class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
-                                                    All</span>
-                                            </div>
-
+                                            <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
+                                                class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
+                                                All</span>
                                         </div>
+
                                     </div>
 
                                     {{-- <div>
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
                                     </div> --}}
                                 </div>
-                                <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
+                                <div class="flex justify-end items-center gap-4 mt-2">
                                     @if (featuredAgain() && !$campaign_->is_featured)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if (proUser())
