@@ -724,7 +724,7 @@
                         nextCampaignId = nextPlayerContainer.dataset.campaignId;
                     }
                 }
-
+ 
                 const iframe = container.querySelector('iframe');
 
                 console.log('campaignId', campaignId);
