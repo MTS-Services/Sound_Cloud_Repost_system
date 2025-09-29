@@ -1020,7 +1020,7 @@ for ($week = 0; $week < $weeksCount; $week++) {
                     script.src = 'https://w.soundcloud.com/player/api.js';
                     script.async = true; // Load asynchronously
                     document.body.appendChild(script);
-                    console.log('SoundCloud Widget API loadededddddd.');
+                    console.log('SoundCloud Widget API loaded.');
 
                     script.onload = function() {
                         console.log('SoundCloud Widget API loaded.');
@@ -1032,7 +1032,6 @@ for ($week = 0; $week < $weeksCount; $week++) {
 
                     return;
                 }
-                console.log('SoundCloud Widget API loaded. Reinitialising widgets.');
 
                 const playerLists = [
                     '.track-card', // from the $tracks loop
@@ -1078,20 +1077,13 @@ for ($week = 0; $week < $weeksCount; $week++) {
                                 nextIframeId = nextIframe.id;
                             }
                         }
-                        console.log('nextIframeId', nextIframeId,)
-                        console.log('nextIframe', nextIframe);
 
                         // 4. Bind SoundCloud Widget events
                         const widget = SC.Widget(iframe);
                         widget.bind(SC.Widget.Events.FINISH, () => {
-                            console.log(`Audio ended for ${listSelector} track: ${currentIframeId}`);
-
                             if (nextIframe) {
-                                console.log(`Playing next track in ${listSelector}: ${nextIframeId}`);
                                 const nextWidget = SC.Widget(nextIframe);
                                 nextWidget.play();
-                            } else {
-                                console.log(`End of ${listSelector} list reached.`);
                             }
                         });
                     });
