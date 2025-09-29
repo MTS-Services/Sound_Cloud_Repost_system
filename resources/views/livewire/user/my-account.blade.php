@@ -634,7 +634,8 @@
                                         @foreach ($tracks as $track)
                                             <div
                                                 class="bg-gray-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
-                                                <div id="soundcloud-player-{{ $track->id }}"
+                                                <div id="soundcloud-player-track-{{ $track->id }}"
+                                                    class="track-card player-card"
                                                     data-campaign-id="{{ $track->id }}" wire:ignore>
                                                     <x-sound-cloud.sound-cloud-player :track="$track"
                                                         :visual="false" />
@@ -800,8 +801,8 @@
                                             @if ($playlistTracks && $playlistTracks->count() > 0)
                                                 @foreach ($playlistTracks as $track)
                                                     <div
-                                                        class="bg-gray-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
-                                                        <div id="soundcloud-player-playlist-{{ $track->id }}"
+                                                        class="playlist-track-card player-card bg-gray-100 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+                                                        <div id="soundcloud-player-playlist-track-{{ $track->id }}"
                                                             data-campaign-id="{{ $track->id }}" wire:ignore>
                                                             <x-sound-cloud.sound-cloud-player :track="$track"
                                                                 :visual="false" />
@@ -851,7 +852,8 @@
                                             {{-- SoundCloud Player --}}
                                             <div class="sm:w-1/2 w-full">
                                                 @if ($repost)
-                                                    <div id="soundcloud-player-{{ $repost->source_id }}"
+                                                    <div id="soundcloud-player-repost-{{ $repost->source_id }}"
+                                                        class="repost-card player-card"
                                                         data-campaign-id="{{ $repost->source_id }}" wire:ignore>
                                                         <x-sound-cloud.sound-cloud-player :track="$repost->source"
                                                             :visual="false" />
@@ -1011,6 +1013,15 @@
 
     @push('js')
         <script>
+            function initializeSoundCloudWidgets() {
+                if (typeof SC === 'undefined') {
+                    setTimeout(initializeSoundCloudWidgets, 500);
+                    return;
+                }
+                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+                console.log('playerContainers', playerContainers);                
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
                 const tooltip = document.getElementById('activity-tooltip');
                 const tooltipContent = document.getElementById('tooltip-content');
@@ -1037,6 +1048,10 @@
                         tooltip.classList.add('opacity-0');
                     });
                 });
+            });
+
+            document.addEventListener('livewire:initialized', function() {
+                initializeSoundCloudWidgets();
             });
         </script>
     @endpush
