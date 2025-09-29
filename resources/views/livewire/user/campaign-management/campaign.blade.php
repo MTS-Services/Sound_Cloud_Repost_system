@@ -701,13 +701,15 @@
             playerContainers.forEach(container => {
                 const campaignId = container.dataset.campaignId;
                 const iframe = container.querySelector('iframe');
+                const nextIframe = iframe.nextElementSibling;
+                console.log('campaignId', campaignId);
                 console.log('iframe', iframe);
+                console.log('nextIframe', nextIframe);
 
                 if (iframe && campaignId) {
                     const widget = SC.Widget(iframe);
 
                     widget.bind(SC.Widget.Events.PLAY, () => {
-                        console.log('SoundCloud event: PLAY sent for campaignId:', campaignId);
                         @this.call('handleAudioPlay', campaignId);
                     });
 
@@ -716,12 +718,10 @@
                     });
 
                     widget.bind(SC.Widget.Events.FINISH, () => {
-                        console.log('SoundCloud event: FINISH sent for campaignId:', campaignId);
                         @this.call('handleAudioEnded', campaignId);
                     });
 
                     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                        console.log('SoundCloud event: PLAY_PROGRESS sent for campaignId:', campaignId);
                         const currentTime = data.currentPosition / 1000;
                         console.log('Current Time:', currentTime);
                         @this.call('handleAudioTimeUpdate', campaignId, currentTime);
