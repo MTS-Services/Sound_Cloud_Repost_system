@@ -1012,6 +1012,7 @@
     </section>
 
     @push('js')
+        <script src="https://w.soundcloud.com/player/api.js"></script>
         <script>
             function initializeSoundCloudWidgets() {
                 if (typeof SC === 'undefined') {
