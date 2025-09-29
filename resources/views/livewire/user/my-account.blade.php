@@ -1016,6 +1016,7 @@
             function initializeSoundCloudWidgets() {
                 if (typeof SC === 'undefined') {
                     setTimeout(initializeSoundCloudWidgets, 500);
+                    console.log('SC undefined');
                     return;
                 }
                 const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
