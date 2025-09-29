@@ -17,9 +17,9 @@
         }
     </style>
 
-    <div class="w-full max-h-screen mx-auto flex flex-col gap-y-4 ">
+    <div class="max-w-screen-xl max-h-screen mx-auto flex flex-col gap-y-4 ">
         <!-- Stats Grid -->
-        <div class="grid grid-cols-4 gap-4 lg:col-span-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:col-span-2">
 
             <!-- Stat Card -->
             <div

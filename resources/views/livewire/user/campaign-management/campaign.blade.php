@@ -75,6 +75,8 @@
                         </span>
                     </x-gbutton>
                 </div>
+
+
             </div>
 
             <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }"
