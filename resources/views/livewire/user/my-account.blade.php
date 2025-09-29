@@ -1078,6 +1078,8 @@ for ($week = 0; $week < $weeksCount; $week++) {
                                 nextIframeId = nextIframe.id;
                             }
                         }
+                        console.log('nextIframeId', nextIframeId,)
+                        console.log('nextIframe', nextIframe);
 
                         // 4. Bind SoundCloud Widget events
                         const widget = SC.Widget(iframe);
@@ -1095,64 +1097,6 @@ for ($week = 0; $week < $weeksCount; $week++) {
                     });
                 });
 
-
-
-                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                console.log('playerContainers', playerContainers);
-
-                playerContainers.forEach(container => {
-                    const campaignId = container.dataset.campaignId;
-                    console.log('campaignId', campaignId);
-
-                    let currentCampaignCard = container.closest('.player-card');
-                    console.log('currentCampaignCard', currentCampaignCard);
-
-                    // Safety check - make sure we found the card
-                    if (!currentCampaignCard) {
-                        console.error('Could not find the parent campaign-card for campaignId', campaignId);
-                        return;
-                    }
-
-                    // 2. Find the next campaign-card sibling
-                    const nextCampaignCard = currentCampaignCard.nextElementSibling;
-                    console.log('nextCampaignCard', nextCampaignCard);
-
-                    // 3. Find the iframe inside the NEXT campaign card
-                    let nextIframe = null;
-                    let nextCampaignId = null;
-
-                    if (nextCampaignCard && nextCampaignCard.classList.contains('player-card')) {
-                        // Find the iframe inside the next card
-                        const nextPlayerContainer = nextCampaignCard.querySelector(
-                            '[id^="soundcloud-player-"]');
-                        console.log('nextPlayerContainer', nextPlayerContainer);
-                        if (nextPlayerContainer) {
-
-                            nextIframe = nextPlayerContainer.querySelector('iframe');
-                            nextCampaignId = nextPlayerContainer.dataset.campaignId;
-                            console.log('nextIframe', nextIframe);
-                            console.log('nextCampaignId', nextCampaignId);
-                        }
-                    }
-                    const iframe = container.querySelector('iframe');
-
-                    if (iframe && campaignId) {
-                        const widget = SC.Widget(iframe);
-
-                        widget.bind(SC.Widget.Events.PLAY, () => {
-                            console.log('Audio play event for campaignId', campaignId);
-                        });
-
-                        widget.bind(SC.Widget.Events.FINISH, () => {
-                            console.log('Audio ended event for campaignId', campaignId);
-                            if (nextCampaignId && nextIframe) {
-                                console.log('Playing next campaignId', nextCampaignId);
-                                const nextWidget = SC.Widget(nextIframe);
-                                nextWidget.play();
-                            }
-                        });
-                    }
-                });
             }
 
             document.addEventListener('DOMContentLoaded', function() {
