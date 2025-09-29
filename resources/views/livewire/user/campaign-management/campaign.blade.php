@@ -724,13 +724,7 @@
                         nextCampaignId = nextPlayerContainer.dataset.campaignId;
                     }
                 }
- 
                 const iframe = container.querySelector('iframe');
-
-                console.log('campaignId', campaignId);
-                console.log('iframe', iframe);
-                console.log('nextCampaignId', nextCampaignId);
-                console.log('nextIframe', nextIframe);
 
                 if (iframe && campaignId) {
                     const widget = SC.Widget(iframe);
@@ -746,8 +740,6 @@
                     widget.bind(SC.Widget.Events.FINISH, () => {
                         @this.call('handleAudioEnded', campaignId);
                         if (nextCampaignId && nextIframe) {
-                            console.log('Play start for nextIframe', nextIframe);
-                            console.log('Play start for nextCampaignId', nextCampaignId);
                             const nextWidget = SC.Widget(nextIframe);
                             nextWidget.play();
                         }
