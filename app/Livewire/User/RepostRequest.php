@@ -27,6 +27,7 @@ use Throwable;
 class RepostRequest extends Component
 {
     public $repostRequests;
+    public $pendingRequestCount = 0;
     public $track;
     public $activeMainTab = 'incoming_request'; // Default tab
 
