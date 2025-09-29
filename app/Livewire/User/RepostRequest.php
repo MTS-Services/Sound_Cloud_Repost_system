@@ -453,7 +453,7 @@ class RepostRequest extends Component
                 $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'previously_reposted':
-                $query->self()->where('campaign_id', null)->approved();
+                $query->incoming()->where('campaign_id', null)->approved();
                 break;
         }
         // Order by created_at desc and paginate
