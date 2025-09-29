@@ -2,9 +2,9 @@
     <x-slot name="page_slug">request</x-slot>
         
     <div class="flex justify-end items-center gap-2 text-xl text-black dark:text-gray-100 font-bold">
-        <button @click="showDashboard = !showDashboard">  
+        <button >  
             Show Stats</button>
-            <span><x-lucide-menu class="w-5 h-5 " /></span>
+            <span @click="showDashboard = !showDashboard"><x-lucide-menu class="w-5 h-5 " /></span>
     </div>
 
     <div x-show="showDashboard" class="w-full p-4">
@@ -14,7 +14,7 @@
 
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
-    <div class="w-full pt-52 lg:pt-0">
+    <div class="w-full mx-auto pt-52 lg:pt-0 p-4">
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
                 <div>
                     <h1 class="text-xl text-black dark:text-gray-100 font-bold">

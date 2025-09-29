@@ -17,10 +17,9 @@
         }
     </style>
 
-    <div class="w-full max-h-screen mx-auto flex flex-col gap-y-4 ">
+    <div class="w-full  mx-auto flex flex-col gap-y-4 ">
         <!-- Stats Grid -->
-        <div class="grid grid-cols-4 gap-4 lg:col-span-2">
-
+        <div class="grid lg:grid-cols-4 grid-cols-2 gap-4 lg:col-span-2">
             <!-- Stat Card -->
             <div
                 class="bg-white w-full dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
@@ -74,53 +73,57 @@
                 <a href="#" class="inline-block mt-2 text-sm font-semibold text-orange-500 hover:underline">Get
                     higher limit</a>
             </div>
-
         </div>
 
         <!-- Promotion Stats -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow flex flex-col gap-4">
-            <h3 class="text-xl font-semibold dark:text-gray-100">Promotion Stats</h3>
-
-            <div class="flex flex-col sm:flex-row justify-around text-center gap-4">
-                <div class="flex-1">
-                    <div class="flex items-center justify-center gap-2">
-                        <span><x-lucide-credit-card class="w-6 h-6 text-orange-500" /></span>
-                        <div class="text-xl font-semibold dark:text-gray-100">{{ $credits }}</div>
-                    </div>
-                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Available Credits</div>
+ <div class="grid lg:grid-cols-2 gap-1">
+    <!-- Promotion Stats -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow flex flex-col gap-4 ">
+        <h3 class="text-xl font-semibold dark:text-gray-100">Promotion Stats</h3>
+       
+        <div class="flex flex-col sm:flex-row justify-around text-center gap-4 ">
+            <div class="flex-1">
+                <div class="flex items-center justify-center gap-2">
+                    <x-lucide-credit-card class="w-6 h-6 text-orange-500" />
+                    <div class="text-xl font-semibold dark:text-gray-100">{{ $credits }}</div>
                 </div>
-                <div class="flex-1">
-                    <div class="flex items-center justify-center gap-2">
-                        <span><x-lucide-signal class="w-6 h-6 text-orange-500" /></span>
-                        <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}
-                        </div>
-                    </div>
-                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Campaign Limit</div>
-                </div>
+                <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Available Credits</div>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <a href="{{ route('user.add-credits') }}" wire:navigate
-                    class="flex items-center justify-center gap-2 text-sm font-semibold py-2 border border-[#e2e8f0] dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-50 transition">
-                    <span><x-lucide-shopping-cart class="w-6 h-6 text-orange-500" /></span>
-                    Buy more credits
-                 </a>
-                <a href="{{ route('user.plans') }}" wire:navigate
-                    class="flex items-center justify-center gap-2 text-sm font-semibold py-2 bg-orange-500 text-white rounded-lg hover:opacity-90 transition">
-                    <span><x-lucide-rocket class="w-6 h-6 text-white" /></span>
-                    Upgrade plan
-                </a>
+            <div class="flex-1">
+                <div class="flex items-center justify-center gap-2">
+                    <x-lucide-signal class="w-6 h-6 text-orange-500" />
+                    <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}</div>
+                </div>
+                <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Campaign Limit</div>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl lg:p-4 p-1  shadow min-h-56">
-            <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
-            <p class="text-sm text-[#718096] dark:text-gray-100">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum quibusdam, inventore, quidem numquam
-                voluptatibus rem quod beatae vitae repellendus totam odit nostrum velit, in perferendis ut harum minus
-                id molestias debitis! Minus architecto provident reprehenderit tempora, quas consequuntur, voluptas
-                aliquid earum tenetur autem sint. Maiores velit inventore exercitationem quam iure.
-            </p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 ">
+            <a href="{{ route('user.add-credits') }}" wire:navigate
+               class="flex items-center justify-center gap-2 text-sm font-semibold py-2 border border-[#e2e8f0] dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-50 transition">
+                <x-lucide-shopping-cart class="w-6 h-6 text-orange-500" />
+                Buy more credits
+            </a>
+            <a href="{{ route('user.plans') }}" wire:navigate
+               class="flex items-center justify-center gap-2 text-sm font-semibold py-2 bg-orange-500 text-white rounded-lg hover:opacity-90 transition">
+                <x-lucide-rocket class="w-6 h-6 text-white" />
+                Upgrade plan
+            </a>
         </div>
+    </div>
+
+    <!-- About Direct Requests -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-2 shadow min-h-56 lg:col-span-1 ">
+        <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
+        <p class="text-sm text-[#718096] dark:text-gray-100">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum quibusdam, inventore, quidem numquam
+            voluptatibus rem quod beatae vitae repellendus totam odit nostrum velit, in perferendis ut harum minus
+            id molestias debitis! Minus architecto provident reprehenderit tempora, quas consequuntur, voluptas
+            aliquid earum tenetur autem sint. Maiores velit inventore exercitationem quam iure.
+        </p>
+    </div>
+</div>
+        
     </div>
 
     <script>
