@@ -1045,8 +1045,6 @@ for ($week = 0; $week < $weeksCount; $week++) {
                     if (containers.length === 0) {
                         return; // Skip if no players are found for this selector
                     }
-
-                    console.log(`Processing list: ${listSelector}. Found ${containers.length} players.`);
                     containers.forEach((container, index) => {
 
                         // The container variable is now the outer div (e.g., the one with class="track-card")
