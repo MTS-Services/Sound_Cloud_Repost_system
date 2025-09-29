@@ -175,9 +175,9 @@
                                         </div>
                                     </div>
 
-                                    <div>
+                                    {{-- <div>
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
                                     @if (featuredAgain() && !$campaign_->is_featured)
