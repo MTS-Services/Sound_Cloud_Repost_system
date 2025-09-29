@@ -1018,6 +1018,20 @@
                 if (typeof SC === 'undefined') {
                     setTimeout(initializeSoundCloudWidgets, 500);
                     console.log('SC undefined');
+                    var script = document.createElement('script');
+                    script.src = 'https://w.soundcloud.com/player/api.js';
+                    script.async = true; // Load asynchronously
+                    document.body.appendChild(script);
+                    console.log('SoundCloud Widget API loadededddddd.');
+
+                    script.onload = function() {
+                        console.log('SoundCloud Widget API loaded.');
+                        initSoundCloudWidget();
+                    };
+                    script.onerror = function() {
+                        console.error('Failed to load SoundCloud Widget API.');
+                    };
+                    
                     return;
                 }
                 const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
