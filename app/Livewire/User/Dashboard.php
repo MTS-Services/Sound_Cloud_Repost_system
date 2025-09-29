@@ -228,21 +228,21 @@ class Dashboard extends Component
         $like_activity = $like_activity['change_avg_percent'] >= 0 ? $like_activity['change_avg_percent'] : 0;
         $comment_activity = $activities_analytics['overall_metrics']['total_comments'];
         $comment_activity = $comment_activity['change_avg_percent'] >= 0 ? $comment_activity['change_avg_percent'] : 0;
-        $play_activity = $activities_analytics['overall_metrics']['total_plays'];
-        $play_activity = $play_activity['change_avg_percent'] >= 0 ? $play_activity['change_avg_percent'] : 0;
-        $view_activity = $activities_analytics['overall_metrics']['total_views'];
-        $view_activity = $view_activity['change_avg_percent'] >= 0 ? $view_activity['change_avg_percent'] : 0;
+        // $play_activity = $activities_analytics['overall_metrics']['total_plays'];
+        // $play_activity = $play_activity['change_avg_percent'] >= 0 ? $play_activity['change_avg_percent'] : 0;
+        // $view_activity = $activities_analytics['overall_metrics']['total_views'];
+        // $view_activity = $view_activity['change_avg_percent'] >= 0 ? $view_activity['change_avg_percent'] : 0;
 
 
         $following_rate_analytics = $activities_analytics['overall_metrics']['total_followers']['change_avg_rate'];
         $repost_rate_analytics = $activities_analytics['overall_metrics']['total_reposts']['change_avg_rate'];
         $like_rate_activity = $activities_analytics['overall_metrics']['total_likes']['change_avg_rate'];
         $comment_rate_activity = $activities_analytics['overall_metrics']['total_comments']['change_avg_rate'];
-        $play_rate_activity = $activities_analytics['overall_metrics']['total_plays']['change_avg_rate'];
-        $view_rate_activity = $activities_analytics['overall_metrics']['total_views']['change_avg_rate'];
+        // $play_rate_activity = $activities_analytics['overall_metrics']['total_plays']['change_avg_rate'];
+        // $view_rate_activity = $activities_analytics['overall_metrics']['total_views']['change_avg_rate'];
 
-        $activities_score = ($following_analytics + $repost_analytics + $like_activity + $comment_activity + $play_activity + $view_activity) / 6;
-        $activities_change_rate = ($following_rate_analytics + $repost_rate_analytics + $like_rate_activity + $comment_rate_activity + $play_rate_activity + $view_rate_activity) / 6;
+        $activities_score = ($following_analytics + $repost_analytics + $like_activity + $comment_activity) / 4;
+        $activities_change_rate = ($following_rate_analytics + $repost_rate_analytics + $like_rate_activity + $comment_rate_activity) / 4;
         $this->activities_score = number_format($activities_score >= 0 ? $activities_score : 0, 2);
         $this->activities_change_rate = number_format($activities_change_rate, 2);
 
@@ -1185,7 +1185,7 @@ class Dashboard extends Component
             $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully.');
         }
         $this->showRepostConfirmationModal = false;
-         $this->reset();
+        $this->reset();
         $this->dispatch('alert', type: $result['status'], message: $result['message']);
     }
 
