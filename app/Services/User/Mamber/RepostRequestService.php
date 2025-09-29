@@ -8,7 +8,9 @@ use App\Models\Playlist;
 use App\Models\Repost;
 use App\Models\RepostRequest;
 use App\Models\Track;
+use App\Models\UserAnalytics;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\AnalyticsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -18,12 +20,14 @@ use Throwable;
 class RepostRequestService
 {
     protected SoundCloudService $soundCloudService;
+    protected AnalyticsService $analyticsService;
 
     protected string $baseUrl = 'https://api.soundcloud.com';
 
-    public function __construct(SoundCloudService $soundCloudService)
+    public function __construct(SoundCloudService $soundCloudService, AnalyticsService $analyticsService)
     {
         $this->soundCloudService = $soundCloudService;
+        $this->analyticsService = $analyticsService;
     }
 
     // public function getReportRequests($orderBy = 'sort_order', $order = 'asc')
@@ -61,8 +65,8 @@ class RepostRequestService
 
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                ->where('repost_request_id', $requestId)
-                ->exists()
+                    ->where('repost_request_id', $requestId)
+                    ->exists()
             ) {
                 return ['status' => 'error', 'message' => 'You have already reposted this request.'];
             }
@@ -113,27 +117,23 @@ class RepostRequestService
 
             // Optional: Handle non-fatal comment/like/follow failures
             if ($comment_response && !$comment_response->successful()) {
+                $commented = null;
                 Log::warning('Comment failed for repost request: ' . $requestId);
             }
 
             if ($like_response && !$like_response->successful()) {
+                $liked = false;
                 Log::warning('Like failed for repost request: ' . $requestId);
             }
 
             if ($follow_response && !$follow_response->successful()) {
+                $followed = false;
                 Log::warning('Follow failed for repost request: ' . $requestId);
             }
 
             $soundcloudRepostId = $response->json('id');
 
-            DB::transaction(function () use (
-                $requestId,
-                $request,
-                $currentUserUrn,
-                $soundcloudRepostId,
-                $commented,
-                $liked
-            ) {
+            DB::transaction(function () use ($requestId, $request, $currentUserUrn, $soundcloudRepostId, $commented, $liked, $followed) {
                 $trackOwnerUrn = $request->music->user?->urn ?? $request->user?->urn;
                 $trackOwnerName = $request->music->user?->name ?? $request->user?->name;
 
@@ -148,6 +148,21 @@ class RepostRequestService
                     'reposted_at' => now(),
                     'credits_earned' => (float) user()->repost_price,
                 ]);
+
+
+                if ($repost != null) {
+                    $this->analyticsService->recordAnalytics($request->music, $request, UserAnalytics::TYPE_REPOST, $request?->music?->genre);
+                }
+
+                if ($commented) {
+                    $this->analyticsService->recordAnalytics($request->music, $request, UserAnalytics::TYPE_COMMENT, $request?->music?->genre);
+                }
+                if ($liked) {
+                    $this->analyticsService->recordAnalytics($request->music, $request, UserAnalytics::TYPE_LIKE, $request?->music?->genre);
+                }
+                if ($followed) {
+                    $this->analyticsService->recordAnalytics($request->music, $request, UserAnalytics::TYPE_FOLLOW, $request?->music?->genre);
+                }
 
                 $request->update([
                     'status' => RepostRequest::STATUS_APPROVED,
@@ -176,12 +191,14 @@ class RepostRequestService
 
             // Send email notification
             if (hasEmailSentPermission('em_repost_accepted', $request->requester_urn)) {
-                NotificationMailSent::dispatch([[
-                    'email' => $request->requester->email,
-                    'subject' => 'Repost Request Accepted',
-                    'title' => 'Dear ' . $request->requester->name,
-                    'body' => 'Your request for repost has been accepted. Please login to your Repostchain account to listen to the music.',
-                ]]);
+                NotificationMailSent::dispatch([
+                    [
+                        'email' => $request->requester->email,
+                        'subject' => 'Repost Request Accepted',
+                        'title' => 'Dear ' . $request->requester->name,
+                        'body' => 'Your request for repost has been accepted. Please login to your Repostchain account to listen to the music.',
+                    ]
+                ]);
             }
 
             return ['status' => 'success', 'message' => 'Request reposted successfully.'];

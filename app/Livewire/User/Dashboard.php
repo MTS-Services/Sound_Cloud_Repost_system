@@ -219,7 +219,6 @@ class Dashboard extends Component
 
 
         $activities_analytics = $this->analyticsService->getAnalyticsData(filter: 'last_month', actUserUrn: $user->urn);
-        dd($activities_analytics);
 
         $following_analytics = $activities_analytics['overall_metrics']['total_followers'];
         $following_analytics = $following_analytics['change_avg_percent'] >= 0 ? $following_analytics['change_avg_percent'] : 0;

@@ -86,7 +86,7 @@ class MyAccount extends Component
     public function mount($user_name = null): void
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user();
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->getAnalyticsData($user);
 
         $this->activeTab = request()->query('tab', $this->activeTab);
