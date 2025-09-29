@@ -98,7 +98,7 @@
                             </div>
                         </div>
                         <div x-show="dashboardSummary" class="4xl:hidden mb-8" x-cloak x-transition>
-                            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
+                            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="user()->responseRate()"
                                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']"
                                 :campaignLimit="proUser() ? 10 : 2" />
                         </div>
@@ -402,7 +402,7 @@
         </div>
         {{-- Right Side --}}
         <div class="max-w-[400px] hidden 4xl:block" x-cloak x-transition>
-            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="30"
+            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="user()->responseRate()"
                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
 
