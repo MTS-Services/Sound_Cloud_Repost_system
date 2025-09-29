@@ -696,15 +696,18 @@
             console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
 
             const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+            console.log('playerContainers', playerContainers);
 
             playerContainers.forEach(container => {
                 const campaignId = container.dataset.campaignId;
                 const iframe = container.querySelector('iframe');
+                console.log('iframe', iframe);
 
                 if (iframe && campaignId) {
                     const widget = SC.Widget(iframe);
 
                     widget.bind(SC.Widget.Events.PLAY, () => {
+                        console.log('SoundCloud event: PLAY sent for campaignId:', campaignId);
                         @this.call('handleAudioPlay', campaignId);
                     });
 
@@ -713,11 +716,14 @@
                     });
 
                     widget.bind(SC.Widget.Events.FINISH, () => {
+                        console.log('SoundCloud event: FINISH sent for campaignId:', campaignId);
                         @this.call('handleAudioEnded', campaignId);
                     });
 
                     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                        console.log('SoundCloud event: PLAY_PROGRESS sent for campaignId:', campaignId);
                         const currentTime = data.currentPosition / 1000;
+                        console.log('Current Time:', currentTime);
                         @this.call('handleAudioTimeUpdate', campaignId, currentTime);
                     });
                 }
