@@ -546,7 +546,7 @@ class UserController extends Controller implements HasMiddleware
 
         try {
             DB::transaction(function () use ($request) {
-                // $this->userSettingsService->createOrUpdate(user()->urn, ['auto_boost' => 1]);
+                $this->userSettingsService->createOrUpdate(decrypt($request->user_urn), ['auto_boost' => 1]);
                 $user = $this->userService->getUser($request->user_urn, 'urn');
                 $plan = $this->planService->getPlan($request->plan_id);
                 $yearly_plan = $request->yearly_plan == 1 ? 1 : 0;
