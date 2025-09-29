@@ -1,19 +1,47 @@
-<div x-data="{ activeMainTab: @entangle('activeMainTab').live }">
+<div x-data="{ activeMainTab: @entangle('activeMainTab').live, dashboardSummary: false }">
     <x-slot name="page_slug">request</x-slot>
 
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
-        <div class="w-full lg:w-[75%]">
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 space-y-3 sm:space-y-0">
-                <div>
-                    <h1 class="text-xl text-black dark:text-gray-100 font-bold">
-                        {{ __('Repost Requests') }}
-                    </h1>
+        <div class="w-full">
+            <div class="flex justify-between 2xl:block">
+                <div
+                    class="flex 2xl:flex-row 2xl:justify-between 2xl:items-center mb-5 space-y-3 2xl:space-y-0 flex-col-reverse">
+                    <div>
+                        <h1 class="text-2xl text-black dark:text-gray-100 font-bold">
+                            {{ __('Repost Requests') }}
+                        </h1>
+                    </div>
+                    <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}"
+                        class="w-[230px] 2xl:w-auto mb-2 2xl:mb-0">
+                        <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
+                        Send a New Request
+                    </x-gbutton>
                 </div>
-                <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}" class="w-full sm:w-auto">
-                    <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
-                    Send a New Request
-                </x-gbutton>
+                <div class="2xl:hidden">
+                    <button @click="dashboardSummary = !dashboardSummary"
+                        class="flex items-center gap-1 text-sm text-orange-500" aria-expanded="false"
+                        :aria-expanded="dashboardSummary.toString()">
+                        <template x-if="!dashboardSummary">
+                            <span class="flex items-center gap-1">
+                                <span>Show Stats</span>
+                                <x-lucide-chevron-down class="w-4 h-4" />
+                            </span>
+                        </template>
+
+                        <template x-if="dashboardSummary">
+                            <span class="flex items-center gap-1">
+                                <span>Hide Stats</span>
+                                <x-lucide-chevron-up class="w-4 h-4" />
+                            </span>
+                        </template>
+                    </button>
+                </div>
+
+            </div>
+            <div x-show="dashboardSummary" class="2xl:hidden mb-8" x-cloak x-transition>
+                <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
+                    :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
             </div>
 
             <div class="mb-8">
@@ -222,8 +250,9 @@
                                                                 @disabled(!$this->canRepost($repostRequest->id))>
 
                                                                 <!-- Repost Icon -->
-                                                                <svg width="26" height="18" viewBox="0 0 26 18"
-                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <svg width="26" height="18"
+                                                                    viewBox="0 0 26 18" fill="none"
+                                                                    xmlns="http://www.w3.org/2000/svg">
                                                                     <rect x="1" y="1" width="24" height="16"
                                                                         rx="3" fill="none"
                                                                         stroke="currentColor" stroke-width="2" />
@@ -370,7 +399,7 @@
 
         </div>
         {{-- Right Side --}}
-        <div class="w-full lg:w-[25%]">
+        <div class="max-w-[400px] hidden 2xl:block" x-cloak x-transition>
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
