@@ -1012,7 +1012,6 @@ for ($week = 0; $week < $weeksCount; $week++) {
     </section>
 
     @push('js')
-        <script src="https://w.soundcloud.com/player/api.js"></script>
         <script>
             function initializeSoundCloudWidgets() {
                 if (typeof SC === 'undefined') {
@@ -1031,11 +1030,59 @@ for ($week = 0; $week < $weeksCount; $week++) {
                     script.onerror = function() {
                         console.error('Failed to load SoundCloud Widget API.');
                     };
-                    
+
                     return;
                 }
                 const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
                 console.log('playerContainers', playerContainers);
+
+                playerContainers.forEach(container => {
+                    const campaignId = container.dataset.campaignId;
+
+
+                    let currentCampaignCard = container.closest('.player-card');
+
+                    // Safety check - make sure we found the card
+                    if (!currentCampaignCard) {
+                        console.error('Could not find the parent campaign-card for campaignId', campaignId);
+                        return;
+                    }
+
+                    // 2. Find the next campaign-card sibling
+                    const nextCampaignCard = currentCampaignCard.nextElementSibling;
+
+                    // 3. Find the iframe inside the NEXT campaign card
+                    let nextIframe = null;
+                    let nextCampaignId = null;
+
+                    if (nextCampaignCard && nextCampaignCard.classList.contains('player-card')) {
+                        // Find the iframe inside the next card
+                        const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+
+                        if (nextPlayerContainer) {
+                            nextIframe = nextPlayerContainer.querySelector('iframe');
+                            nextCampaignId = nextPlayerContainer.dataset.campaignId;
+                        }
+                    }
+                    const iframe = container.querySelector('iframe');
+
+                    if (iframe && campaignId) {
+                        const widget = SC.Widget(iframe);
+
+                        widget.bind(SC.Widget.Events.PLAY, () => {
+                            console.log('Audio play event for campaignId', campaignId);
+                        });
+
+                        widget.bind(SC.Widget.Events.FINISH, () => {
+                            console.log('Audio ended event for campaignId', campaignId);
+                            if (nextCampaignId && nextIframe) {
+                                console.log('Playing next campaignId', nextCampaignId);
+                                const nextWidget = SC.Widget(nextIframe);
+                                nextWidget.play();
+                            }
+                        });
+                    }
+                });
             }
 
             document.addEventListener('DOMContentLoaded', function() {
