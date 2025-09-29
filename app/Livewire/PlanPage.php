@@ -45,7 +45,7 @@ class PlanPage extends Component
         try {
             $order = DB::transaction(function () use ($plan_id) {
                 $plan = $this->planService->getPlan($plan_id);
-                // $this->userSettingsService->createOrUpdate(user()->urn, ['auto_boost' => 1]);
+                $this->userSettingsService->createOrUpdate(user()->urn, ['auto_boost' => 1]);
 
                 $data['source_id'] = $plan->id;
                 $data['source_type'] = Plan::class;
