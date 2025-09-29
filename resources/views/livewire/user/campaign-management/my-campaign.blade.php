@@ -56,16 +56,14 @@
                     @forelse ($campaigns as $campaign_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden relative">
                             <div class="p-2 sm:p-4">
-                                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                                <div class="flex flex-col sm:flex-row sm:justify-between lg:gap-4 md:gap-4">
                                     <div class="flex flex-col sm:flex-row gap-4">
                                         <img src="{{ soundcloud_image($campaign_->music?->artwork_url) }}"
                                             alt="Sample Track 3" class="w-100 h-50 md:w-20 md:h-20  lg:w-20 lg:h-20  rounded-lg mx-auto sm:mx-0">
                                         <div class="flex-1">
                                             <div
-                                                class="flex flex-col sm:flex-row sm:items-center  sm:space-x-3 mb-2 text-center sm:text-left">
-                                                <h3
-                                                    class="text-black dark:text-gray-100 font-semibold text-lg 
-                                                          line-clamp-2">
+                                                class="flex flex-row items-center justify-left lg:justify-center md:justify-center sm:space-x-3 mb-2 ">
+                                                <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
 
@@ -91,7 +89,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
+                                            <div class="mb-4 text-sm lg:text-center text-left md:text-center sm:text-left text-slate-400">
                                                 Budget used: {{ number_format($campaign_->credits_spent) }} /
                                                 {{ number_format($campaign_->budget_credits) }} credits
                                             </div>
@@ -99,13 +97,13 @@
                                     </div>
 
                                     <!-- Right Stats Block -->
-                                    <div class="text-center sm:text-right">
-                                        <div class="flex items-center justify-center sm:justify-end">
+                                    <div class="text-left md:text-center lg:text-center sm:text-right">
+                                        <div class="flex items-center md:justify-center justify-left lg:justify-center sm:justify-end">
                                             <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
                                             <span class=" text-green-600 dark:text-gray-100"> Running</span>
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
-                                        <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
+                                        <div class="flex flex-wrap md:justify-center lg:justify-center justify-left sm:justify-end items-center mt-2">
                                             {{-- <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
                                             <span class="text-slate-500">Stop</span> --}}
                                             <div wire:click="editCampaign({{ $campaign_->id }})"
@@ -124,7 +122,7 @@
                                 <!-- Stats -->
                                 <div class="flex flex-col md:flex-row md:justify-between gap-6">
                         <!-- Left Section -->
-                        <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                        <div class="flex flex-wrap justify-left md:justify-center lg:justify-center md:justify-start gap-4">
                             <!-- Repeat block with different data -->
                             <div class="text-center">
                                 <div class="flex items-center justify-center">
@@ -198,7 +196,7 @@
                         </div>
 
                         <!-- Right Section -->
-                        <div class="text-center md:text-right">
+                        <div class="text-left lg:text-center  md:text-right">
                             <p class="text-slate-400 text-sm">-.- avg. rating</p>
                         </div>
                     </div>

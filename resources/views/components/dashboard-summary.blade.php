@@ -17,17 +17,17 @@
         }
     </style>
 
-    <div class="max-w-screen-xl max-h-screen mx-auto flex flex-col gap-y-4">
+    <div class="max-w-screen-xl max-h-screen mx-auto flex flex-col gap-y-4 ">
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:col-span-2">
 
             <!-- Stat Card -->
             <div
-                class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
-                <div class="flex items-center gap-2">
+                class="bg-white w-full dark:bg-gray-800 rounded-xl p-4 shadow hover:shadow-lg transition-transform transform hover:-translate-y-1">
+                 <div class="flex items-center gap-2">
                     <span><x-lucide-bar-chart-2 class="w-6 h-6 text-orange-500" /></span>
                     <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Earnings per Repost</span>
-                </div>
+                 </div>
                 <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $earnings }}</div>
             </div>
 
@@ -112,7 +112,7 @@
                 </a>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56">
+        <div class="bg-white dark:bg-gray-800 rounded-xl lg:p-4 p-1  shadow min-h-56">
             <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
             <p class="text-sm text-[#718096] dark:text-gray-100">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum quibusdam, inventore, quidem numquam
