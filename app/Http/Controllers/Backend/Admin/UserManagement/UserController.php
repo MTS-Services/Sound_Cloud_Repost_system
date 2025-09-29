@@ -541,6 +541,7 @@ class UserController extends Controller implements HasMiddleware
     {
         $request->validate([
             'yearly_plan' => 'nullable|boolean',
+            'user_urn' => 'required',
         ]);
 
         try {
