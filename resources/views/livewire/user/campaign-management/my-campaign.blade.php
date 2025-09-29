@@ -55,42 +55,49 @@
                 <div class="w-full flex flex-col gap-6">
                     @forelse ($campaigns as $campaign_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden relative">
-                            <div class="p-2 sm:p-4">
+                            <div class="p-4">
+                                <!-- Top Flex Row -->
                                 <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
-                                    <div class="flex flex-col sm:flex-row gap-4">
+                                    <!-- Left: Artwork + Info -->
+                                    <div class="flex flex-col sm:flex-row gap-4 flex-1">
                                         <img src="{{ soundcloud_image($campaign_->music?->artwork_url) }}"
-                                            alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                            alt="Sample Track 3"
+                                            class="w-20 h-20 rounded-lg mx-auto sm:mx-0 shrink-0" />
+
                                         <div class="flex-1">
+                                            <!-- Title & Tags -->
                                             <div
-                                                class="flex flex-col sm:flex-row sm:items-center  sm:space-x-3 mb-2 text-center sm:text-left">
+                                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-3 mb-2 text-center sm:text-left">
                                                 <h3
-                                                    class="text-black dark:text-gray-100 font-semibold text-lg 
-                                                          line-clamp-2">
+                                                    class="text-black dark:text-gray-100 font-semibold text-lg line-clamp-2">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
 
                                                 <a href="{{ $campaign_->music?->permalink_url }}" target="_blank"
                                                     class="cursor-pointer">
-                                                    <!-- Pencil Icon -->
                                                     <x-lucide-external-link
                                                         class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
                                                 </a>
-                                                <div class="flex items-center gap-2">
+
+                                                <!-- Badges -->
+                                                <div
+                                                    class="flex items-center gap-2 mt-2 sm:mt-0 justify-center sm:justify-start">
                                                     @if (!featuredAgain() && $campaign_->is_featured)
                                                         <span
-                                                            class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
-                                                            {{ !featuredAgain() ? 'Featured' : '' }}
+                                                            class="text-xs font-semibold px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                            Featured
                                                         </span>
                                                     @endif
                                                     @if (!boostAgain() && $campaign_->is_boost)
                                                         <span
-                                                            class="text-xs font-semibold mr-2 px-2.5 py-0.5 rounded bg-orange-500 text-white">
-                                                            {{ !boostAgain() ? 'Boosted' : '' }}
+                                                            class="text-xs font-semibold px-2.5 py-0.5 rounded bg-orange-500 text-white">
+                                                            Boosted
                                                         </span>
                                                     @endif
                                                 </div>
                                             </div>
 
+                                            <!-- Budget Info -->
                                             <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
                                                 Budget used: {{ number_format($campaign_->credits_spent) }} /
                                                 {{ number_format($campaign_->budget_credits) }} credits
@@ -98,109 +105,91 @@
                                         </div>
                                     </div>
 
-                                    <!-- Right Stats Block -->
-                                    <div class="text-center sm:text-right">
+                                    <!-- Right: Status + Edit -->
+                                    <div class="w-full sm:w-auto text-center sm:text-right">
                                         <div class="flex items-center justify-center sm:justify-end">
-                                            <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
-                                            <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                            <x-lucide-trending-up class="m-2 w-5 h-5 text-green-600" />
+                                            <span class="text-green-600 dark:text-gray-100">Running</span>
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
+
                                         <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
-                                            {{-- <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
-                                            <span class="text-slate-500">Stop</span> --}}
                                             <div wire:click="editCampaign({{ $campaign_->id }})"
                                                 class="flex items-center cursor-pointer">
                                                 <x-lucide-square-pen
                                                     class="w-5 h-5 m-2 dark:text-white text-gray-500" />
-                                                <span
-                                                    class="font-medium cursor-pointer text-gray-800 dark:text-gray-100">Edit</span>
+                                                <span class="font-medium text-gray-800 dark:text-gray-100">Edit</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <hr class="my-1 border-gray-300 dark:border-gray-600" />
+                                <!-- Divider -->
+                                <hr class="my-3 border-gray-300 dark:border-gray-600" />
 
-                                <!-- Stats -->
-                                <div class="flex justify-between gap-6">
-                                    <div class="flex gap-6">
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
+                                <!-- Stats Row -->
+                                <div class="flex flex-wrap justify-between gap-4">
+                                    <!-- Icons & Counts -->
+                                    <div class="flex flex-wrap gap-4 justify-center sm:justify-start flex-1">
+                                        @php
+                                            $stats = [
+                                                ['icon' => 'repeat', 'value' => totalReposts($campaign_)],
+                                                ['icon' => 'user-plus', 'value' => $campaign_->followowers_count ?? 0],
+                                                ['icon' => 'heart', 'value' => $campaign_->like_count ?? 0],
+                                                ['icon' => 'message-square', 'value' => $campaign_->comment_count ?? 0],
+                                                ['icon' => 'play', 'value' => $campaign_->playback_count ?? 0],
+                                            ];
+                                        @endphp
 
-                                                <x-lucide-repeat class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
+                                        @foreach ($stats as $stat)
+                                            <div class="text-center w-16">
+                                                <div class="flex items-center justify-center">
+                                                    <x-dynamic-component :component="'lucide-' . $stat['icon']"
+                                                        class="w-5 h-5 m-1 text-gray-500 dark:text-white" />
+                                                </div>
                                                 <span
-                                                    class=" text-black dark:text-white">{{ totalReposts($campaign_) }}</span>
+                                                    class="text-black dark:text-gray-100 block">{{ $stat['value'] }}</span>
                                             </div>
+                                        @endforeach
 
-                                        </div>
-                                        <!-- Repeat block with different data -->
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-user-plus class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followowers_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-heart class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->like_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-message-square
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->comment_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-play class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->playback_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-
-                                                <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
-                                                    class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
-                                                    All</span>
-                                            </div>
-
+                                        <div class="text-center w-16">
+                                            <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
+                                                class="text-orange-500 font-medium mt-2 cursor-pointer hover:underline transition-all duration-300 block">Show
+                                                All</span>
                                         </div>
                                     </div>
 
-                                    <div>
+                                    <!-- Avg. Rating -->
+                                    <div class="text-center sm:text-right">
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
                                     </div>
                                 </div>
-                                <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
+
+                                <!-- Bottom Buttons -->
+                                <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4 mt-4">
                                     @if (featuredAgain() && !$campaign_->is_featured)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">
                                             @if (proUser())
                                                 <x-gbutton variant="secondary"
-                                                    wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
+                                                    wire:click="setFeatured({{ $campaign_->id }})">
+                                                    {{ __('Set Featured') }}
+                                                </x-gbutton>
                                             @else
                                                 <x-gabutton variant="primary" wire:navigate
-                                                    href="{{ route('user.plans') }}">Need to get featured?
-                                                    (Pro)
+                                                    href="{{ route('user.plans') }}">
+                                                    Need to get featured? (Pro)
                                                 </x-gabutton>
                                             @endif
                                         </div>
                                     @endif
+
                                     @if (boostAgain() && !$campaign_->is_boost)
                                         @if (proUser())
                                             <div>
                                                 <x-gbutton variant="secondary"
-                                                    wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                                    wire:click="freeBoost({{ $campaign_->id }})">
+                                                    {{ __('Free Boost') }}
+                                                </x-gbutton>
                                             </div>
                                         @endif
                                     @endif
