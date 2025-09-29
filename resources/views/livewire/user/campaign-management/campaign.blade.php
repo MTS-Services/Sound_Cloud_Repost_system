@@ -15,10 +15,10 @@
                             <!-- Recommended Pro -->
                             <button
                                 @click="
-                    activeMainTab = 'recommended_pro';
-                    $wire.setActiveMainTab('recommended_pro');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                                        activeMainTab = 'recommended_pro';
+                                        $wire.setActiveMainTab('recommended_pro');
+                                        $nextTick(() => initializeSoundCloudWidgets());
+                                    "
                                 :class="activeMainTab === 'recommended_pro'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
@@ -32,10 +32,10 @@
                             <!-- Recommended -->
                             <button
                                 @click="
-                    activeMainTab = 'recommended';
-                    $wire.setActiveMainTab('recommended');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                                    activeMainTab = 'recommended';
+                                    $wire.setActiveMainTab('recommended');
+                                    $nextTick(() => initializeSoundCloudWidgets());
+                                "
                                 :class="activeMainTab === 'recommended'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
@@ -49,10 +49,10 @@
                             <!-- All -->
                             <button
                                 @click="
-                    activeMainTab = 'all';
-                    $wire.setActiveMainTab('all');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                                    activeMainTab = 'all';
+                                    $wire.setActiveMainTab('all');
+                                    $nextTick(() => initializeSoundCloudWidgets());
+                                "
                                 :class="activeMainTab === 'all'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
@@ -214,7 +214,7 @@
                     @continue;
                 @endif
                 {{-- 📢 NEW: Add a class and data attributes to collect playlist info --}}
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+                <div class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
                     data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
@@ -693,17 +693,43 @@
                 setTimeout(initializeSoundCloudWidgets, 500);
                 return;
             }
-            console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
-
             const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
             console.log('playerContainers', playerContainers);
 
             playerContainers.forEach(container => {
                 const campaignId = container.dataset.campaignId;
+
+
+                let currentCampaignCard = container.closest('.campaign-card');
+
+                // Safety check - make sure we found the card
+                if (!currentCampaignCard) {
+                    console.error('Could not find the parent campaign-card for campaignId', campaignId);
+                    return;
+                }
+
+                // 2. Find the next campaign-card sibling
+                const nextCampaignCard = currentCampaignCard.nextElementSibling;
+
+                // 3. Find the iframe inside the NEXT campaign card
+                let nextIframe = null;
+                let nextCampaignId = null;
+
+                if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
+                    // Find the iframe inside the next card
+                    const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+
+                    if (nextPlayerContainer) {
+                        nextIframe = nextPlayerContainer.querySelector('iframe');
+                        nextCampaignId = nextPlayerContainer.dataset.campaignId;
+                    }
+                }
+
                 const iframe = container.querySelector('iframe');
-                const nextIframe = iframe.nextElementSibling;
+
                 console.log('campaignId', campaignId);
                 console.log('iframe', iframe);
+                console.log('nextCampaignId', nextCampaignId);
                 console.log('nextIframe', nextIframe);
 
                 if (iframe && campaignId) {
