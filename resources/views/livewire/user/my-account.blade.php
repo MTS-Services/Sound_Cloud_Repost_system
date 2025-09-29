@@ -1019,7 +1019,7 @@
                     return;
                 }
                 const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                console.log('playerContainers', playerContainers);                
+                console.log('playerContainers', playerContainers);
             }
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -1051,6 +1051,18 @@
             });
 
             document.addEventListener('livewire:initialized', function() {
+                initializeSoundCloudWidgets();
+            });
+            document.addEventListener('livewire:navigated', function() {
+                initializeSoundCloudWidgets();
+            });
+            document.addEventListener('livewire:load', function() {
+                initializeSoundCloudWidgets();
+            });
+            document.addEventListener('livewire:updated', function() {
+                initializeSoundCloudWidgets();
+            });
+            document.addEventListener('DOMContentLoaded', function() {
                 initializeSoundCloudWidgets();
             });
         </script>
