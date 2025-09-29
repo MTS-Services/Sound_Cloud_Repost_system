@@ -240,16 +240,16 @@
                             <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">Badges Awarded
                             </h3>
                             <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg py-3  text-center">
                                     <div class="text-xl sm:text-2xl mb-1 sm:mb-2">👥</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Quality Followers
                                     </h4>
                                 </div>
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg py-3  text-center">
                                     <div class="text-xl sm:text-2xl mb-1 sm:mb-2">⭐</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Top Follower</h4>
                                 </div>
-                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg p-3 sm:p-4 text-center">
+                                <div class="bg-gray-200 dark:bg-slate-700 rounded-lg py-3  text-center">
                                     <div class="text-xl sm:text-2xl mb-1 sm:mb-2">📅</div>
                                     <h4 class="text-gray-900 dark:text-white font-medium text-xs">Be Da Regular
                                     </h4>

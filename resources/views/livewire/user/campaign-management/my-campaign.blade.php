@@ -2,7 +2,7 @@
 
     <x-slot name="page_slug">campaigns</x-slot>
 
-    <div class="p-6">
+    <div class="lg:p-6">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
             <!-- Title -->
             <div>
@@ -50,27 +50,25 @@
 
         <div class="space-y-6" id="campaigns-list">
 
-            <div class="flex flex-col lg:flex-row justify-between gap-6 px-4">
+            <div class="flex flex-col lg:flex-row justify-between gap-6 lg:px-4">
                 <!-- Main Content -->
                 <div class="w-full flex flex-col gap-6">
                     @forelse ($campaigns as $campaign_)
                         <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden relative">
                             <div class="p-2 sm:p-4">
-                                <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                                <div class="flex flex-col sm:flex-row sm:justify-between lg:gap-4 md:gap-4">
                                     <div class="flex flex-col sm:flex-row gap-4">
                                         <img src="{{ soundcloud_image($campaign_->music?->artwork_url) }}"
-                                            alt="Sample Track 3" class="w-20 h-20 rounded-lg mx-auto sm:mx-0">
+                                            alt="Sample Track 3" class="w-100 h-50 md:w-20 md:h-20  lg:w-20 lg:h-20  rounded-lg mx-auto sm:mx-0">
                                         <div class="flex-1">
                                             <div
-                                                class="flex flex-col sm:flex-row sm:items-center  sm:space-x-3 mb-2 text-center sm:text-left">
-                                                <h3
-                                                    class="text-black dark:text-gray-100 font-semibold text-lg 
-                                                          line-clamp-2">
+                                                class="flex flex-row items-center justify-left lg:justify-center md:justify-center sm:space-x-3 mb-2 ">
+                                                <h3 class="text-black dark:text-gray-100 font-semibold text-lg">
                                                     {{ $campaign_->music?->title }}
                                                 </h3>
 
                                                 <a href="{{ $campaign_->music?->permalink_url }}" target="_blank"
-                                                    class="cursor-pointer">
+                                                    class="cursor-pointer px-2">
                                                     <!-- Pencil Icon -->
                                                     <x-lucide-external-link
                                                         class="w-6 h-6 text-gray-500 hover:text-orange-500 transition-colors" />
@@ -91,7 +89,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mb-4 text-sm text-center sm:text-left text-slate-400">
+                                            <div class="mb-4 text-sm lg:text-center text-left md:text-center sm:text-left text-slate-400">
                                                 Budget used: {{ number_format($campaign_->credits_spent) }} /
                                                 {{ number_format($campaign_->budget_credits) }} credits
                                             </div>
@@ -99,13 +97,13 @@
                                     </div>
 
                                     <!-- Right Stats Block -->
-                                    <div class="text-center sm:text-right">
-                                        <div class="flex items-center justify-center sm:justify-end">
+                                    <div class="text-left md:text-center lg:text-center sm:text-right">
+                                        <div class="flex items-center md:justify-center justify-left lg:justify-center sm:justify-end">
                                             <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
                                             <span class=" text-green-600 dark:text-gray-100"> Running</span>
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
-                                        <div class="flex flex-wrap justify-center sm:justify-end items-center mt-2">
+                                        <div class="flex flex-wrap md:justify-center lg:justify-center justify-left sm:justify-end items-center mt-2">
                                             {{-- <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
                                             <span class="text-slate-500">Stop</span> --}}
                                             <div wire:click="editCampaign({{ $campaign_->id }})"
@@ -122,66 +120,87 @@
                                 <hr class="my-1 border-gray-300 dark:border-gray-600" />
 
                                 <!-- Stats -->
-                                <div class="flex justify-between gap-6">
-                                    <div class="flex gap-6">
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-
-                                                <x-lucide-repeat class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-white">{{ totalReposts($campaign_) }}</span>
-                                            </div>
-
-                                        </div>
-                                        <!-- Repeat block with different data -->
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-user-plus class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followowers_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-heart class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->like_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-message-square
-                                                    class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->comment_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-                                                <x-lucide-play class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
-                                                <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->playback_count ?? 0 }}</span>
-                                            </div>
-
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="flex items-center justify-center ">
-
-                                                <span wire:click="openViewDetailsModal({{ $campaign_->id }})"
-                                                    class="text-orange-500 items-end font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">Show
-                                                    All</span>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p class="text-slate-400 text-sm">-.- avg. rating</p>
-                                    </div>
+                                <div class="flex flex-col md:flex-row md:justify-between gap-6">
+                        <!-- Left Section -->
+                        <div class="flex flex-wrap justify-left md:justify-center lg:justify-center md:justify-start gap-4">
+                            <!-- Repeat block with different data -->
+                            <div class="text-center">
+                                <div class="flex items-center justify-center">
+                                    <svg class="text-gray-500 w-5 h-5 m-2 dark:text-white" xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m17 2 4 4-4 4"></path>
+                                        <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+                                        <path d="m7 22-4-4 4-4"></path>
+                                        <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+                                    </svg>
+                                    <span class="text-black dark:text-white">0</span>
                                 </div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="flex items-center justify-center">
+                                    <svg class="text-gray-500 w-5 h-5 m-2 dark:text-white" xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <line x1="19" x2="19" y1="8" y2="14"></line>
+                                        <line x1="22" x2="16" y1="11" y2="11"></line>
+                                    </svg>
+                                    <span class="text-black dark:text-gray-100">0</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="flex items-center justify-center">
+                                    <svg class="text-gray-500 w-5 h-5 m-2 dark:text-white" xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                                    </svg>
+                                    <span class="text-black dark:text-gray-100">0</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="flex items-center justify-center">
+                                    <svg class="text-gray-500 w-5 h-5 m-2 dark:text-white" xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                    <span class="text-black dark:text-gray-100">0</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="flex items-center justify-center">
+                                    <svg class="text-gray-500 w-5 h-5 m-2 dark:text-white" xmlns="http://www.w3.org/2000/svg" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                                    </svg>
+                                    <span class="text-black dark:text-gray-100">0</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="flex items-center justify-center">
+                                    <span wire:click="openViewDetailsModal(1)" 
+                                        class="text-orange-500 font-medium mt-2 cursor-pointer hover:underline transition-all duration-300">
+                                        Show All
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Section -->
+                        <div class="text-left lg:text-center  md:text-right">
+                            <p class="text-slate-400 text-sm">-.- avg. rating</p>
+                        </div>
+                    </div>
+
                                 <div class="flex flex-col sm:flex-row sm:justify-end items-center gap-4">
                                     @if (featuredAgain() && !$campaign_->is_featured)
                                         <div class="flex flex-wrap justify-center sm:justify-end gap-4">

@@ -10,15 +10,15 @@
                 <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
                     class="flex flex-col-reverse sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
 
-                    <div>
-                        <nav class="-mb-px flex space-x-8">
-                            <!-- Recommended Pro -->
-                            <button
-                                @click="
-                                        activeMainTab = 'recommended_pro';
-                                        $wire.setActiveMainTab('recommended_pro');
-                                        $nextTick(() => initializeSoundCloudWidgets());
-                                    "
+    <div class="order-2 sm:order-0">
+        <nav class="-mb-px flex space-x-8">
+            <!-- Recommended Pro -->
+            <button
+                @click="
+                    activeMainTab = 'recommended_pro';
+                    $wire.setActiveMainTab('recommended_pro');
+                    $nextTick(() => initializeSoundCloudWidgets());
+                "
                                 :class="activeMainTab === 'recommended_pro'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
