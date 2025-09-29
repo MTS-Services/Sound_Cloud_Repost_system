@@ -381,7 +381,6 @@
                                                         <div class="inline-block min-w-full h-auto">
                                                             @php
                                                                 use Carbon\Carbon;
-
                                                                 // Get today's date
 $today = now();
 
@@ -1033,6 +1032,71 @@ for ($week = 0; $week < $weeksCount; $week++) {
 
                     return;
                 }
+                console.log('SoundCloud Widget API loaded. Reinitialising widgets.');
+
+                const playerLists = [
+                    '.track-card', // from the $tracks loop
+                    '.playlist-track-card', // from the $playlistTracks loop
+                    '.repost-card' // from the $reposts loop
+                ];
+
+                playerLists.forEach(listSelector => {
+                    const containers = document.querySelectorAll(listSelector);
+
+                    if (containers.length === 0) {
+                        return; // Skip if no players are found for this selector
+                    }
+
+                    console.log(`Processing list: ${listSelector}. Found ${containers.length} players.`);
+                    containers.forEach((container, index) => {
+
+                        // The container variable is now the outer div (e.g., the one with class="track-card")
+                        // The iframe is nested a level deeper within the <div id="soundcloud-player-...">
+
+                        const iframe = container.querySelector('iframe');
+
+                        if (!iframe) {
+                            console.warn(
+                                `Iframe not found inside container for ${listSelector} at index ${index}`);
+                            return;
+                        }
+
+                        const currentIframeId = iframe.id;
+
+                        // 3. Find the NEXT player using the current list's index
+                        let nextIframe = null;
+                        let nextIframeId = null;
+
+                        if (index < containers.length - 1) {
+                            // Get the next container card from the current list (containers NodeList)
+                            const nextContainerCard = containers[index + 1];
+
+                            // Query for the iframe inside the next card
+                            nextIframe = nextContainerCard.querySelector('iframe');
+
+                            if (nextIframe) {
+                                nextIframeId = nextIframe.id;
+                            }
+                        }
+
+                        // 4. Bind SoundCloud Widget events
+                        const widget = SC.Widget(iframe);
+                        widget.bind(SC.Widget.Events.FINISH, () => {
+                            console.log(`Audio ended for ${listSelector} track: ${currentIframeId}`);
+
+                            if (nextIframe) {
+                                console.log(`Playing next track in ${listSelector}: ${nextIframeId}`);
+                                const nextWidget = SC.Widget(nextIframe);
+                                nextWidget.play();
+                            } else {
+                                console.log(`End of ${listSelector} list reached.`);
+                            }
+                        });
+                    });
+                });
+
+
+
                 const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
                 console.log('playerContainers', playerContainers);
 
@@ -1059,7 +1123,8 @@ for ($week = 0; $week < $weeksCount; $week++) {
 
                     if (nextCampaignCard && nextCampaignCard.classList.contains('player-card')) {
                         // Find the iframe inside the next card
-                        const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+                        const nextPlayerContainer = nextCampaignCard.querySelector(
+                            '[id^="soundcloud-player-"]');
                         console.log('nextPlayerContainer', nextPlayerContainer);
                         if (nextPlayerContainer) {
 
@@ -1100,12 +1165,14 @@ for ($week = 0; $week < $weeksCount; $week++) {
                         const date = e.target.getAttribute('data-date');
                         const activity = e.target.getAttribute('data-activity');
 
-                        tooltipContent.innerHTML = `<strong>${activity} activity</strong><br>${date}`;
+                        tooltipContent.innerHTML =
+                            `<strong>${activity} activity</strong><br>${date}`;
 
                         const rect = e.target.getBoundingClientRect();
                         const tooltipRect = tooltip.getBoundingClientRect();
 
-                        tooltip.style.left = `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
+                        tooltip.style.left =
+                            `${rect.left + rect.width / 2 - tooltipRect.width / 2}px`;
                         tooltip.style.top = `${rect.top - 10}px`;
                         tooltip.classList.remove('opacity-0');
                         tooltip.classList.add('opacity-100');
