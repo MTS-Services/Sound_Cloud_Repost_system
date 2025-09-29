@@ -27,6 +27,7 @@ use Throwable;
 class RepostRequest extends Component
 {
     public $repostRequests;
+    public $pendingRequestCount = 0;
     public $track;
     public $activeMainTab = 'incoming_request'; // Default tab
 
@@ -443,16 +444,18 @@ class RepostRequest extends Component
         $query = ModelsRepostRequest::with(['music', 'targetUser']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
+        $pendingRequests = $query->where('target_user_urn', user()->urn)->pending();
+        $this->pendingRequestCount = $pendingRequests->count();
 
         switch ($tab) {
             case 'incoming_request':
-                $query->incoming()->pending()->notExpired();
+                $query = $pendingRequests->where('expired_at', '>', now());
                 break;
             case 'outgoing_request':
                 $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'previously_reposted':
-                $query->incoming()->where('campaign_id', null)->approved();
+                $query->where('target_user_urn', user()->urn)->where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
         }
         // Order by created_at desc and paginate
