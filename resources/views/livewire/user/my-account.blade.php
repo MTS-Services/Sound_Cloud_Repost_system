@@ -1050,6 +1050,7 @@ for ($week = 0; $week < $weeksCount; $week++) {
 
                     // 2. Find the next campaign-card sibling
                     const nextCampaignCard = currentCampaignCard.nextElementSibling;
+                    console.log('nextCampaignCard', nextCampaignCard);
 
                     // 3. Find the iframe inside the NEXT campaign card
                     let nextIframe = null;
@@ -1058,10 +1059,13 @@ for ($week = 0; $week < $weeksCount; $week++) {
                     if (nextCampaignCard && nextCampaignCard.classList.contains('player-card')) {
                         // Find the iframe inside the next card
                         const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
-
+                        console.log('nextPlayerContainer', nextPlayerContainer);
                         if (nextPlayerContainer) {
+
                             nextIframe = nextPlayerContainer.querySelector('iframe');
                             nextCampaignId = nextPlayerContainer.dataset.campaignId;
+                            console.log('nextIframe', nextIframe);
+                            console.log('nextCampaignId', nextCampaignId);
                         }
                     }
                     const iframe = container.querySelector('iframe');
