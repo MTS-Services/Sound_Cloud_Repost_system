@@ -1,14 +1,15 @@
 <div wire:poll.1s="updatePlayingTimes">
     <x-slot name="page_slug">campaign-feed</x-slot>
 
-    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
+    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6" x-data="{ dashboardSummary: false }">
+
         {{-- Left Side --}}
-        <div class="w-full lg:w-[75%]">
+        <div class="w-full">
             <!-- Header Section -->
-            <div class="w-full mt-6 relative">
+            <div class="w-full mt-2 lg:mt-6 relative">
                 <!-- Header Tabs & Button -->
                 <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
-                    class="flex flex-col-reverse sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
+                    class="flex flex-col-reverse 4xl:flex-row justify-between border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
 
                     <div>
                         <nav class="-mb-px flex space-x-8">
@@ -65,18 +66,44 @@
                         </nav>
                     </div>
 
-                    <!-- Start Campaign Button -->
-                    <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
-                        <span>
-                            <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
-                        </span>
-                        <span class="text-base lg:text-sm xl:text-base">
-                            {{ __('Start a new campaign') }}
-                        </span>
-                    </x-gbutton>
+                    <div>
+                        <div class="flex justify-between">
+                            <!-- Start Campaign Button -->
+                            <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
+                                <span>
+                                    <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
+                                </span>
+                                <span class="text-base lg:text-sm xl:text-base">
+                                    {{ __('Start a new campaign') }}
+                                </span>
+                            </x-gbutton>
+                            <div class="4xl:hidden">
+                                <button @click="dashboardSummary = !dashboardSummary"
+                                    class="flex items-center gap-1 text-sm text-orange-500" aria-expanded="false"
+                                    :aria-expanded="dashboardSummary.toString()">
+                                    <template x-if="!dashboardSummary">
+                                        <span class="flex items-center gap-1">
+                                            <span>Show Stats</span>
+                                            <x-lucide-chevron-down class="w-4 h-4" />
+                                        </span>
+                                    </template>
+
+                                    <template x-if="dashboardSummary">
+                                        <span class="flex items-center gap-1">
+                                            <span>Hide Stats</span>
+                                            <x-lucide-chevron-up class="w-4 h-4" />
+                                        </span>
+                                    </template>
+                                </button>
+                            </div>
+                        </div>
+                        <div x-show="dashboardSummary" class="4xl:hidden mb-8" x-cloak x-transition>
+                            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
+                                :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']"
+                                :campaignLimit="proUser() ? 10 : 2" />
+                        </div>
+                    </div>
                 </div>
-
-
             </div>
 
             <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }"
@@ -374,7 +401,7 @@
             @endif
         </div>
         {{-- Right Side --}}
-        <div class="w-full xl:w-[25%]">
+        <div class="max-w-[400px] hidden 4xl:block" x-cloak x-transition>
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="30"
                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>

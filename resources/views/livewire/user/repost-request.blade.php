@@ -4,21 +4,21 @@
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
         <div class="w-full">
-            <div class="flex justify-between 2xl:block">
+            <div class="flex justify-between 4xl:block">
                 <div
-                    class="flex 2xl:flex-row 2xl:justify-between 2xl:items-center mb-5 space-y-3 2xl:space-y-0 flex-col-reverse">
+                    class="flex 4xl:flex-row 4xl:justify-between 4xl:items-center mb-5 space-y-3 4xl:space-y-0 flex-col-reverse">
                     <div>
-                        <h1 class="text-2xl text-black dark:text-gray-100 font-bold">
+                        <h1 class="text-4xl text-black dark:text-gray-100 font-bold">
                             {{ __('Repost Requests') }}
                         </h1>
                     </div>
                     <x-gbutton variant="primary" wire:navigate href="{{ route('user.members') }}"
-                        class="w-[230px] 2xl:w-auto mb-2 2xl:mb-0">
+                        class="w-[230px] 4xl:w-auto mb-2 4xl:mb-0">
                         <span><x-lucide-plus class="w-5 h-5 mr-1" /></span>
                         Send a New Request
                     </x-gbutton>
                 </div>
-                <div class="2xl:hidden">
+                <div class="4xl:hidden">
                     <button @click="dashboardSummary = !dashboardSummary"
                         class="flex items-center gap-1 text-sm text-orange-500" aria-expanded="false"
                         :aria-expanded="dashboardSummary.toString()">
@@ -39,7 +39,7 @@
                 </div>
 
             </div>
-            <div x-show="dashboardSummary" class="2xl:hidden mb-8" x-cloak x-transition>
+            <div x-show="dashboardSummary" class="4xl:hidden mb-8" x-cloak x-transition>
                 <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
                     :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
             </div>
@@ -400,7 +400,7 @@
 
         </div>
         {{-- Right Side --}}
-        <div class="max-w-[400px] hidden 2xl:block" x-cloak x-transition>
+        <div class="max-w-[400px] hidden 4xl:block" x-cloak x-transition>
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="0"
                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
