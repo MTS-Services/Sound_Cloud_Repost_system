@@ -8,7 +8,7 @@
             <div class="w-full mt-6 relative">
                 <!-- Header Tabs & Button -->
                 <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
-                    class="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
+                    class="flex flex-col-reverse sm:flex-row items-center justify-between px-2 sm:px-0 sm:ps-2 pt-3 border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
 
     <div class="order-2 sm:order-0">
         <nav class="-mb-px flex space-x-8">
@@ -32,10 +32,10 @@
                             <!-- Recommended -->
                             <button
                                 @click="
-                    activeMainTab = 'recommended';
-                    $wire.setActiveMainTab('recommended');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
+                                    activeMainTab = 'recommended';
+                                    $wire.setActiveMainTab('recommended');
+                                    $nextTick(() => initializeSoundCloudWidgets());
+                                "
                                 :class="activeMainTab === 'recommended'
                                     ?
                                     'border-orange-500 text-orange-600 border-b-2' :
@@ -49,72 +49,20 @@
                             <!-- All -->
                             <button
                                 @click="
-                    activeMainTab = 'all';
-                    $wire.setActiveMainTab('all');
-                    $nextTick(() => initializeSoundCloudWidgets());
-                "
-                :class="activeMainTab === 'all'
-                    ? 'border-orange-500 text-orange-600 border-b-2'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                class="tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2">
-                {{ __('All') }}
-                <span class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
-            </button>
-        </nav>
-    </div>
-
-    <!-- Start Campaign Button -->
-    <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
-        <span>
-            <x-lucide-plus class=" w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
-        </span>
-        <span class="text-base lg:text-sm xl:text-base">
-            {{ __('Start a new campaign') }}
-        </span>
-    </x-gbutton>
-</div>
-
-
-            </div>
-
-          <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }"
-    class="flex flex-col flex-row sm:items-center sm:justify-start gap-4 mt-4 mb-2 relative">
-
-    <!-- Filters wrapper (track + genre side by side even on mobile) -->
-    <div class="flex w-full sm:w-auto gap-2 order-1">
-        <!-- Filter by track -->
-        <div class="relative flex-1 sm:flex-none">
-            <button @click="openFilterByTrack = !openFilterByTrack , openFilterByGenre = false"
-                wire:click="getAllTrackTypes" @click.outside="openFilterByTrack = false"
-                class="bg-orange-100 !hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors cursor-pointer w-full sm:w-auto">
-                Filter by track type /{{ $searchMusicType }}
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m6 9 6 6 6-6" />
-                </svg>
-            </button>
-
-            <div x-show="openFilterByTrack" x-transition:enter="transition ease-out duration-100"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
-                <div class="rounded-md shadow-xs bg-white dark:bg-slate-800">
-                    <div class="py-1">
-                        <button wire:click="filterByTrackType('all')"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                            All
-                        </button>
-                        <button wire:click="filterByTrackType('{{ Track::class }}')"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                            Tracks
-                        </button>
-                        <button wire:click="filterByTrackType('{{ Playlist::class }}')"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
-                            Playlists
-                        </button>
+                                    activeMainTab = 'all';
+                                    $wire.setActiveMainTab('all');
+                                    $nextTick(() => initializeSoundCloudWidgets());
+                                "
+                                :class="activeMainTab === 'all'
+                                    ?
+                                    'border-orange-500 text-orange-600 border-b-2' :
+                                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                                class="tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2">
+                                {{ __('All') }}
+                                <span
+                                    class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCampaign }}</span>
+                            </button>
+                        </nav>
                     </div>
 
                     <!-- Start Campaign Button -->
@@ -265,7 +213,9 @@
                 @if (!$campaign_->music && !isset($campaign_->music->permalink_url))
                     @continue;
                 @endif
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm">
+                {{-- 📢 NEW: Add a class and data attributes to collect playlist info --}}
+                <div class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+                    data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
                         <div
@@ -273,7 +223,7 @@
                             <div class="flex flex-col md:flex-row gap-4">
                                 <!-- Track Details -->
                                 <div class="flex-1 flex flex-col justify-between relative">
-                                    <!-- Your Original SoundCloud Player -->
+                                    {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
                                         <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
@@ -425,7 +375,7 @@
         </div>
         {{-- Right Side --}}
         <div class="w-full xl:w-[25%]">
-            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="proUser() ? 100 : 20" :responseRate="30"
+            <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="30"
                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
 
@@ -743,13 +693,44 @@
                 setTimeout(initializeSoundCloudWidgets, 500);
                 return;
             }
-            console.log('SoundCloud Widget API loaded. Reinisialized widgets.');
-
             const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+            console.log('playerContainers', playerContainers);
 
             playerContainers.forEach(container => {
                 const campaignId = container.dataset.campaignId;
+
+
+                let currentCampaignCard = container.closest('.campaign-card');
+
+                // Safety check - make sure we found the card
+                if (!currentCampaignCard) {
+                    console.error('Could not find the parent campaign-card for campaignId', campaignId);
+                    return;
+                }
+
+                // 2. Find the next campaign-card sibling
+                const nextCampaignCard = currentCampaignCard.nextElementSibling;
+
+                // 3. Find the iframe inside the NEXT campaign card
+                let nextIframe = null;
+                let nextCampaignId = null;
+
+                if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
+                    // Find the iframe inside the next card
+                    const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+
+                    if (nextPlayerContainer) {
+                        nextIframe = nextPlayerContainer.querySelector('iframe');
+                        nextCampaignId = nextPlayerContainer.dataset.campaignId;
+                    }
+                }
+ 
                 const iframe = container.querySelector('iframe');
+
+                console.log('campaignId', campaignId);
+                console.log('iframe', iframe);
+                console.log('nextCampaignId', nextCampaignId);
+                console.log('nextIframe', nextIframe);
 
                 if (iframe && campaignId) {
                     const widget = SC.Widget(iframe);
@@ -764,6 +745,12 @@
 
                     widget.bind(SC.Widget.Events.FINISH, () => {
                         @this.call('handleAudioEnded', campaignId);
+                        if (nextCampaignId && nextIframe) {
+                            console.log('Play start for nextIframe', nextIframe);
+                            console.log('Play start for nextCampaignId', nextCampaignId);
+                            const nextWidget = SC.Widget(nextIframe);
+                            nextWidget.play();
+                        }
                     });
 
                     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {

@@ -15,6 +15,8 @@ use App\Services\PlaylistService;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
+use App\Services\User\AnalyticsService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
@@ -63,13 +65,20 @@ class MyAccount extends Component
     private SoundCloudService $soundCloudService;
 
     private FollowerAnalyzer $followerAnalyzer;
+    private AnalyticsService $analyticsService;
 
     public $userFollowerAnalysis = [];
 
     public $followerGrowth = 0;
 
+
+    public $follower_growth;
+    public $repost_effieciency;
+    public $activities_score;
+    public $chart_data;
+
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer, AnalyticsService $analyticsService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
@@ -77,24 +86,15 @@ class MyAccount extends Component
         $this->soundCloudService = $soundCloudService;
         $this->playlistService = $playlistService;
         $this->followerAnalyzer = $followerAnalyzer;
+        $this->analyticsService = $analyticsService;
     }
 
     public function mount($user_name = null): void
     {
         $user = $user_name ? User::where('name', $user_name)->first() : user();
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        // $followers = $this->soundCloudService->getAuthUserFollowers();
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($followers);
-        // $currentWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'this_month');
-        // $lastWeekStats = $this->followerAnalyzer->getQuickStats($followers, 'last_month');
-        // $analyze = $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
-        // $currentWeekFollowers = $currentWeekStats['totalFollowers'];
-        // $lastWeekFollowers = $lastWeekStats['totalFollowers'];
-        // if ($lastWeekFollowers > 0) {
-        //     $this->followerGrowth = ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) > 0 ? ((($currentWeekFollowers - $lastWeekFollowers) / $lastWeekFollowers) * 100) : 0;
-        // } else {
-        //     $this->followerGrowth = 0; // Avoid division by zero
-        // }
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->getAnalyticsData($user);
+
         $this->activeTab = request()->query('tab', $this->activeTab);
 
         $userUrn = $user->urn ?? user()->urn;
@@ -106,9 +106,40 @@ class MyAccount extends Component
         $this->socialLinks();
     }
 
+
+    public function getAnalyticsData($user)
+    {
+        $analytics_data = $this->analyticsService->getAnalyticsData(filter: 'last_month', ownerUserUrn: $user->urn);
+
+        $follower_growth = $analytics_data['overall_metrics']['total_followers']['change_avg_percent'];
+        $this->follower_growth = $follower_growth >= 0 ? $follower_growth : 0;
+        $repost_effieciency = $analytics_data['overall_metrics']['total_reposts']['change_avg_percent'];
+        $this->repost_effieciency = $repost_effieciency >= 0 ? $repost_effieciency : 0;
+
+        $activities_analytics = $this->analyticsService->getAnalyticsData(filter: 'last_month', actUserUrn: $user->urn);
+
+        $following_analytics = $activities_analytics['overall_metrics']['total_followers']['change_avg_percent'];
+        $following_analytics = $following_analytics >= 0 ? $following_analytics : 0;
+        $repost_analytics = $activities_analytics['overall_metrics']['total_reposts']['change_avg_percent'];
+        $repost_analytics = $repost_analytics >= 0 ? $repost_analytics : 0;
+        $like_activity = $activities_analytics['overall_metrics']['total_likes']['change_avg_percent'];
+        $like_activity = $like_activity >= 0 ? $like_activity : 0;
+        $comment_activity = $activities_analytics['overall_metrics']['total_comments']['change_avg_percent'];
+        $comment_activity = $comment_activity >= 0 ? $comment_activity : 0;
+        $play_activity = $activities_analytics['overall_metrics']['total_plays']['change_avg_percent'];
+        $play_activity = $play_activity >= 0 ? $play_activity : 0;
+        $view_activity = $activities_analytics['overall_metrics']['total_views']['change_avg_percent'];
+        $view_activity = $view_activity >= 0 ? $view_activity : 0;
+
+        $activities_score = ($following_analytics + $repost_analytics + $like_activity + $comment_activity + $play_activity + $view_activity) / 6;
+        $this->activities_score = $activities_score >= 0 ? $activities_score : 0;
+
+        $this->chart_data = $this->analyticsService->getChartData(filter: 'current_year', actUserUrn: $user->urn);
+        // dd($this->chart_data);
+    }
+
     public function updated()
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updatedActiveTab()

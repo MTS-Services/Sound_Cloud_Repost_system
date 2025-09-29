@@ -5,8 +5,11 @@ namespace App\Livewire\User;
 use App\Jobs\NotificationMailSent;
 use App\Jobs\TrackViewCount;
 use App\Models\CreditTransaction;
+use App\Models\Playlist;
 use App\Models\RepostRequest as ModelsRepostRequest;
 use App\Models\Repost;
+use App\Models\Track;
+use App\Models\User;
 use App\Models\UserAnalytics;
 use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
@@ -44,6 +47,7 @@ class RepostRequest extends Component
     public $totalRepostPrice = 0;
     public $request = null;
     public $liked = false;
+    public $alreadyLiked = false;
     public string $commented = '';
     public $following = true;
     public $alreadyFollowing = false;
@@ -310,12 +314,11 @@ class RepostRequest extends Component
     public function confirmRepost($requestId)
     {
         if (!$this->canRepost($requestId)) {
-            $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+            $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
             return;
         }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
-
         $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
         if ($response->isNotEmpty()) {
             $already_following = $response->where('urn', user()->urn)->first();
@@ -323,6 +326,24 @@ class RepostRequest extends Component
                 Log::info('Repost request Page:- Already following');
                 $this->following = false;
                 $this->alreadyFollowing = true;
+            }
+        }
+
+        if ($this->request->music) {
+            if ($this->request->music_type == Track::class) {
+                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
+                $searchUrn = user()->urn;
+            } elseif ($this->request->music_type == Playlist::class) {
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
+                $searchUrn = $this->request->music->soundcloud_urn;
+            }
+            $collection = collect($favoriteData['collection']);
+            $found = $collection->first(function ($item) use ($searchUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUrn;
+            });
+            if ($found) {
+                $this->liked = false;
+                $this->alreadyLiked = true;
             }
         }
     }
@@ -431,13 +452,14 @@ class RepostRequest extends Component
                 $query = $pendingRequests->where('expired_at', '>', now());
                 break;
             case 'outgoing_request':
-                $query->self()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
+                $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
                 break;
             case 'previously_reposted':
-            case 'accept_requests':
                 $query->where('target_user_urn', user()->urn)->where('campaign_id', null)->where('status', ModelsRepostRequest::STATUS_APPROVED);
                 break;
         }
+        // Order by created_at desc and paginate
+        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
         // Order by created_at desc and paginate
         $this->repostRequests = $query->latest()->orderBy('status', 'asc')->take(10)->get();
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
@@ -447,17 +469,22 @@ class RepostRequest extends Component
 
     public function render()
     {
-        $user = user()->withCount([
+        $user = User::withCount([
             'reposts as reposts_count_today' => function ($query) {
-                $query->whereDate('created_at', '>=', Carbon::today());
+                $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
             },
             'campaigns',
-            'requests',
-        ])->first();
+            'requests' => function ($query) {
+                $query->pending();
+            },
+        ])->find(user()->id);
 
-        $data['dailyRepostCount'] = $user->reposts_count_today ?? 0;
+        $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-        return view('livewire.user.repost-request',[
+        $data['pendingRequests'] = $user->requests_count ?? 0;
+        return view(
+            'livewire.user.repost-request',
+            [
                 'repostRequests' => $this->repostRequests,
                 'data' => $data,
             ]

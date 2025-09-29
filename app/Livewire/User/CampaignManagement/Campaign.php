@@ -193,6 +193,7 @@ class Campaign extends Component
     public $totalRepostPrice = 0;
     public $campaign = null;
     public $liked = false;
+    public $alreadyLiked = false;
     public $commented = null;
     public $followed = true;
     public $alreadyFollowing = false;
@@ -247,7 +248,7 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -974,6 +975,24 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
+        if ($this->campaign->music) {
+            if ($this->campaign->music_type == Track::class) {
+                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
+                $searchUrn = user()->urn;
+            } elseif ($this->campaign->music_type == Playlist::class) {
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
+                $searchUrn = $this->campaign->music->soundcloud_urn;
+            }
+            $collection = collect($favoriteData['collection']);
+            $found = $collection->first(function ($item) use ($searchUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUrn;
+            });
+            if ($found) {
+                $this->liked = false;
+                $this->alreadyLiked = true;
+            }
+        }
+
         $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
         if ($response->isNotEmpty()) {
             $already_following = $response->where('urn', user()->urn)->first();
@@ -1181,7 +1200,6 @@ class Campaign extends Component
 
     protected function resolveSoundcloudUrl()
     {
-
         if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
             $baseUrl = strtok($this->searchQuery, '?');
             $tracksFromDb = Playlist::findOrFail($this->selectedPlaylistId)->tracks()
@@ -1223,52 +1241,29 @@ class Campaign extends Component
             }
         }
 
-        // $response = null;
-        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
         $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
-        dd($resolvedData, $response);
-        $urn = $resolvedData['urn'];
-        if ($this->activeTab === 'playlists') {
-        } elseif ($this->activeTab === 'tracks') {
+        if (isset($resolvedData) && $resolvedData != null) {
+            $urn = $resolvedData['urn'];
+            if ($this->activeTab === 'playlists') {
+                if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
+                }
+            } elseif ($this->activeTab === 'tracks') {
+                if (!isset($resolvedData['tracks'])) {
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+                } else {
+                    $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
+                }
+            }
+            $this->processSearchData($urn);
+            Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
+        } else {
+            $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
-        $this->processSearchData($urn);
-        Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-
-        // if ($response->successful()) {
-        //     $resolvedData = $response->json();
-        //     $urn = $resolvedData['urn'];
-        //     if ($this->activeTab === 'playlists') {
-        //         if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-        //             $this->soundCloudService->unknownPlaylistAdd($resolvedData);
-        //             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        //         } else {
-        //             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
-        //         }
-        //     } elseif ($this->activeTab === 'tracks') {
-        //         if (!isset($resolvedData['tracks'])) {
-        //             // $this->soundCloudService->unknownTrackAdd($resolvedData);
-        //             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        //         } else {
-        //             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
-        //         }
-        //     }
-        //     $this->processSearchData($urn);
-        //     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
-        // } else {
-        //     if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-        //         $this->allPlaylistTracks = collect();
-        //         $this->tracks = collect();
-        //     } else {
-        //         if ($this->activeTab === 'tracks') {
-        //             $this->allTracks = collect();
-        //             $this->tracks = collect();
-        //         } elseif ($this->activeTab === 'playlists') {
-        //             $this->allPlaylists = collect();
-        //             $this->playlists = collect();
-        //         }
-        //     }
-        //     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
-        // }
     }
 
     protected function processSearchData($urn)
@@ -1518,7 +1513,7 @@ class Campaign extends Component
         //     }
         // }
         try {
-            $user = user()->withCount([
+            $user = User::withCount([
                 'reposts as reposts_count_today' => function ($query) {
                     $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
                 },
@@ -1526,11 +1521,12 @@ class Campaign extends Component
                 'requests' => function ($query) {
                     $query->pending();
                 },
-            ])->first();
+            ])->find(user()->id);
 
             $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
-            $data['totalMyCampaign'] = count($user->campaigns) ?? 0;
-            $data['pendingRequests'] = count($user->requests) ?? 0;
+            $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+            $data['pendingRequests'] = $user->requests_count ?? 0;
+
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $campaigns = collect();

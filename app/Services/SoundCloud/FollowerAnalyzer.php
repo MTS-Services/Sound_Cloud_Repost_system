@@ -3,7 +3,7 @@
 namespace App\Services\SoundCloud;
 
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Log;
 
 class FollowerAnalyzer
 {
@@ -682,8 +682,6 @@ class FollowerAnalyzer
     public function syncUserRealFollowers($followers, $user)
     {
         // Fetch followers from SoundCloud API
-
-
         if (empty($followers)) {
             $user->real_followers = 0;
             $user->real_followers_percentage = 100;
@@ -701,6 +699,6 @@ class FollowerAnalyzer
 
         // Optionally, store detailed analysis in a related table or cache
         // For simplicity, we'll just log the summary here
-        \Log::info('Follower analysis summary for user ' . $user->id, $followers['counts']);
+        Log::info('Follower analysis summary for user ' . $user->id, $followers['counts']);
     }
 }

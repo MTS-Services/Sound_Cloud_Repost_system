@@ -15,38 +15,16 @@
                     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 }) : ['No Data'],
                 datasets: [{
-                    label: 'Views',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_views || 0) : [0],
-                    borderColor: '#E9E294',
-                    backgroundColor: 'rgba(233, 226, 148, 0.1)',
+                    label: 'Followers',
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_followers || 0) : [0],
+                    borderColor: '#f5540b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
                     tension: 0.4,
                     fill: true,
-                    pointBackgroundColor: '#E9E294',
+                    pointBackgroundColor: '#f5540b',
                     pointBorderColor: '#fff',
                     pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#E9E294',
-                }, {
-                    label: 'Streams',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_plays || 0) : [0],
-                    borderColor: '#ff6b35',
-                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#ff6b35',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#ff6b35',
-                }, {
-                    label: 'Likes',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_likes || 0) : [0],
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#10b981',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#10b981',
+                    pointHoverBorderColor: '#f5540b',
                 }, {
                     label: 'Reposts',
                     data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
@@ -58,17 +36,6 @@
                     pointBorderColor: '#fff',
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: '#8b5cf6',
-                }, {
-                    label: 'Comments',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_comments || 0) : [0],
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#f59e0b',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#f59e0b',
                 }]
             },
             options: {
@@ -271,18 +238,19 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ userCredits() }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ number_format(userCredits(), 2) }}
+                    </p>
                     @if ($creditPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $creditPercentage }}% from last week</span>
+                            <span>+{{ number_format($creditPercentage, 2) }}% from last week</span>
                         </p>
                     @elseif($creditPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>{{ $creditPercentage }}% from last week</span>
+                            <span>{{ number_format($creditPercentage, 2) }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
-                            <span>0% from last week</span>
+                            <span>0.00% from last week</span>
                         </p>
                     @endif
                 </div>
@@ -302,18 +270,18 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ $totalCams }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ number_format($totalCams, 2) }}</p>
                     @if ($campaignPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $campaignPercentage }}% from last week</span>
+                            <span>+{{ number_format($campaignPercentage, 2) }}% from last week</span>
                         </p>
                     @elseif($campaignPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>{{ $campaignPercentage }}% from last week</span>
+                            <span>{{ number_format($campaignPercentage, 2) }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
-                            <span>0% from last week</span>
+                            <span>0.00% from last week</span>
                         </p>
                     @endif
                 </div>
@@ -335,18 +303,19 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ $totalCount }}</p>
+                    <p class="text-2xl font-bold text-slate-700 dark:text-white">{{ number_format($totalCount, 2) }}
+                    </p>
                     @if ($repostRequestPercentage >= 0)
                         <p class="text-sm flex items-center space-x-1 text-green-400">
-                            <span>+{{ $repostRequestPercentage }}% from last week</span>
+                            <span>+{{ number_format($repostRequestPercentage, 2) }}% from last week</span>
                         </p>
                     @elseif($repostRequestPercentage < 0)
                         <p class="text-sm flex items-center space-x-1 text-red-400">
-                            <span>{{ $repostRequestPercentage }}% from last week</span>
+                            <span>{{ number_format($repostRequestPercentage, 2) }}% from last week</span>
                         </p>
                     @else
                         <p class="text-sm flex items-center space-x-1 text-gray-400">
-                            <span>0% from last week</span>
+                            <span>0.00% from last week</span>
                         </p>
                     @endif
                 </div>
@@ -367,10 +336,11 @@
                 </div>
                 <div class="space-y-2">
                     <p class="text-2xl font-bold text-slate-700 dark:text-white">
-                        {{ $userFollowerAnalysis['averageCredibilityScore'] ?? 0 }}%</p>
+                        {{ $activities_score ? number_format($activities_score, 2) : '0.00' }}%</p>
                     <p
-                        class="text-sm flex items-center space-x-1 {{ $followerPercentage >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        <span>{{ $followerPercentage }}% from
+                        class="text-sm flex items-center space-x-1 {{ $activities_change_rate >= 0 ? 'text-green-400' : 'text-red-400' }}">
+                        <span>{{ $activities_change_rate >= 0 ? '+' : '-' }}{{ $activities_change_rate ?? '0.00' }}%
+                            from
                             last week</span>
                     </p>
                 </div>
@@ -477,35 +447,35 @@
                             href="{{ route('user.reposts-request') }}">View all →</a>
                     @endif
                 </div>
-                @foreach ($repostRequests as $request)
+                @foreach ($repostRequests as $request_)
                     <div class="space-y-4">
                         <div class="shadow-sm rounded-lg p-4">
                             <div class="flex justify-between text-sm mb-3">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request?->music?->title }}</span>
+                                    <span class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
                                 </div>
-                                <span class="text-slate-400">{{ $request?->music?->genre }}</span>
+                                <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
                             </div>
                             <div class="flex items-start space-x-3 mb-3">
-                                <img src="{{ $request?->requester?->avatar }}" class="w-8 h-8 rounded-full"
+                                <img src="{{ $request_?->requester?->avatar }}" class="w-8 h-8 rounded-full"
                                     alt="">
                                 <div class="flex-1">
-                                    <h4 class="text-sm font-medium">{{ $request?->requester?->name }}</h4>
-                                    <p class="text-slate-400 text-xs">by {{ $request?->requester?->email }}</p>
+                                    <h4 class="text-sm font-medium">{{ $request_?->requester?->name }}</h4>
+                                    <p class="text-slate-400 text-xs">by {{ $request_?->requester?->email }}</p>
                                 </div>
                                 <span
-                                    class="text-orange-500 font-semibold text-sm">+{{ $request->credits_spent ?? '0' }}
+                                    class="text-orange-500 font-semibold text-sm">+{{ $request_->credits_spent ?? '0' }}
                                     credits</span>
                             </div>
                             <div class="flex space-x-2">
                                 <div class="flex-1">
                                     <x-gbutton variant="secondary" full-width="true"
-                                        wire:click="declineRepost('{{ encrypt($request->id) }}')">Decline</x-gbutton>
+                                        wire:click="declineRepost('{{ encrypt($request_->id) }}')">Decline</x-gbutton>
                                 </div>
                                 <div class="flex-1">
                                     <x-gbutton variant="primary" full-width="true"
-                                        wire:click="confirmRepost('{{ $request->id }}')">Repost</x-gbutton>
+                                        wire:click="confirmRepost('{{ $request_->id }}')">Repost</x-gbutton>
                                 </div>
                             </div>
                         </div>

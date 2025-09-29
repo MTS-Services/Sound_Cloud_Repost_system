@@ -12,6 +12,7 @@ use App\Models\Track;
 use App\Models\User;
 use App\Models\UserCredits;
 use App\Models\UserInformation;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -27,7 +28,12 @@ use Throwable;
 
 class SoundCloudController extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService) {}
+    protected SoundCloudService $soundCloudService;
+
+    public function __construct(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
 
     public function redirect(): RedirectResponse
     {
@@ -106,6 +112,7 @@ class SoundCloudController extends Controller
                 $this->soundCloudService->syncUserTracks($user, []);
                 $this->soundCloudService->syncUserPlaylists($user);
                 $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+                $this->soundCloudService->syncUserRealFollowers($user);
             });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [

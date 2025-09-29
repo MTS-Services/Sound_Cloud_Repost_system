@@ -92,8 +92,8 @@
                     </div>
                 </div>
                 <!-- Search Input -->
-                <div class="flex-1 relative">
-                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-gray dark:text-gray-400 "
+                <div class="flex-1 relative mt-2 lg:mt-0">
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-gray dark:text-gray-400"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -102,14 +102,16 @@
                         wire:model.live="search"
                         class="w-full bg-card-blue border border-gray-300 dark:border-gray-600 hover:border-orange-500 transition-colors rounded-md pl-10 pr-4 py-2 text-gray-900 dark:text-white dark:bg-gray-900 placeholder-text-gray focus:outline-none focus:border-orange-500">
                 </div>
-
-
             </div>
 
 
 
+
+
+
+
             <!-- Member Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
                     <div wire:loading.remove wire:target="search"
                         class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)]">

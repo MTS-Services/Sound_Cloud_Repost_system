@@ -132,12 +132,16 @@ class Dashboard extends Component
     // Confirmation Repost
     public $request = null;
     public bool $liked = false;
+    public bool $alreadyLiked = false;
     public string $commented = '';
     public bool $followed = true;
     public bool $alreadyFollowing = false;
 
     public array $genreBreakdown = [];
     public array $userGenres = [];
+
+    public $activities_score = 0.0;
+    public $activities_change_rate = 0.0;
 
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
@@ -203,28 +207,52 @@ class Dashboard extends Component
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
-        // $this->userFollowerAnalysis = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers());
-
-        // $lastWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'last_week');
-        // $currentWeekFollowerPercentage = $this->followerAnalyzer->getQuickStats($this->soundCloudService->getAuthUserFollowers(), 'this_week');
-        // $lastWeek = $lastWeekFollowerPercentage['averageCredibilityScore'];
-        // $currentWeek = $currentWeekFollowerPercentage['averageCredibilityScore'];
-
-        // if ($lastWeek > 0) {
-        //     $this->followerPercentage = (($currentWeek - $lastWeek) / $lastWeek) * 100;
-        // } else {
-        //     $this->followerPercentage = 0;
-        // }
+        $this->getAnalyticsData(user());
         $this->loadDashboardData();
         $this->calculateFollowersLimit();
         $this->userGenres = user()->genres->pluck('genre')->toArray();
         $this->genreBreakdown = $this->analyticsService->getGenreBreakdown('last_month', null, null, $this->userGenres);
     }
 
+    public function getAnalyticsData($user)
+    {
+
+
+        $activities_analytics = $this->analyticsService->getAnalyticsData(filter: 'last_month', actUserUrn: $user->urn);
+
+        $following_analytics = $activities_analytics['overall_metrics']['total_followers'];
+        $following_analytics = $following_analytics['change_avg_percent'] >= 0 ? $following_analytics['change_avg_percent'] : 0;
+        $repost_analytics = $activities_analytics['overall_metrics']['total_reposts'];
+        $repost_analytics = $repost_analytics['change_avg_percent'] >= 0 ? $repost_analytics['change_avg_percent'] : 0;
+        $like_activity = $activities_analytics['overall_metrics']['total_likes'];
+        $like_activity = $like_activity['change_avg_percent'] >= 0 ? $like_activity['change_avg_percent'] : 0;
+        $comment_activity = $activities_analytics['overall_metrics']['total_comments'];
+        $comment_activity = $comment_activity['change_avg_percent'] >= 0 ? $comment_activity['change_avg_percent'] : 0;
+        $play_activity = $activities_analytics['overall_metrics']['total_plays'];
+        $play_activity = $play_activity['change_avg_percent'] >= 0 ? $play_activity['change_avg_percent'] : 0;
+        $view_activity = $activities_analytics['overall_metrics']['total_views'];
+        $view_activity = $view_activity['change_avg_percent'] >= 0 ? $view_activity['change_avg_percent'] : 0;
+
+
+        $following_rate_analytics = $activities_analytics['overall_metrics']['total_followers']['change_avg_rate'];
+        $repost_rate_analytics = $activities_analytics['overall_metrics']['total_reposts']['change_avg_rate'];
+        $like_rate_activity = $activities_analytics['overall_metrics']['total_likes']['change_avg_rate'];
+        $comment_rate_activity = $activities_analytics['overall_metrics']['total_comments']['change_avg_rate'];
+        $play_rate_activity = $activities_analytics['overall_metrics']['total_plays']['change_avg_rate'];
+        $view_rate_activity = $activities_analytics['overall_metrics']['total_views']['change_avg_rate'];
+
+        $activities_score = ($following_analytics + $repost_analytics + $like_activity + $comment_activity + $play_activity + $view_activity) / 6;
+        $activities_change_rate = ($following_rate_analytics + $repost_rate_analytics + $like_rate_activity + $comment_rate_activity + $play_rate_activity + $view_rate_activity) / 6;
+        $this->activities_score = number_format($activities_score >= 0 ? $activities_score : 0, 2);
+        $this->activities_change_rate = number_format($activities_change_rate, 2);
+
+
+    }
+
+
 
     public function updated($propertyName)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -989,22 +1017,19 @@ class Dashboard extends Component
             }
         }
 
-        Log::info('Resolving Soundcloud URL. Step 13. end of if playListTrackShow == true && activeTab === tracks');
-        $response = null;
-        $response = Http::withToken(user()->token)->get("https://api.soundcloud.com/resolve?url=" . $this->searchQuery);
-        if ($response->successful()) {
-            $resolvedData = $response->json();
+        $resolvedData = $this->soundCloudService->makeResolveApiRequest($this->searchQuery, 'Failed to resolve SoundCloud URL');
+        if (isset($resolvedData) && $resolvedData != null) {
             $urn = $resolvedData['urn'];
             if ($this->activeTab === 'playlists') {
                 if (isset($resolvedData['tracks']) && count($resolvedData['tracks']) > 0) {
-                    // $this->soundCloudService->unknownPlaylistAdd($resolvedData);
+                    $this->soundCloudService->unknownPlaylistAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Playlist URL.');
                 }
             } elseif ($this->activeTab === 'tracks') {
                 if (!isset($resolvedData['tracks'])) {
-                    // $this->soundCloudService->unknownTrackAdd($resolvedData);
+                    $this->soundCloudService->unknownTrackAdd($resolvedData);
                     Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
                 } else {
                     $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the Track URL.');
@@ -1013,19 +1038,6 @@ class Dashboard extends Component
             $this->processSearchData($urn);
             Log::info('Resolved SoundCloud URL: ' . "Successfully resolved SoundCloud URL: " . $this->searchQuery);
         } else {
-            Log::info('Resolving Soundcloud URL. Step 24. end of if playListTrackShow == true && activeTab === tracks and response is not successful');
-            if ($this->playListTrackShow == true && $this->activeTab === 'tracks') {
-                $this->allPlaylistTracks = collect();
-                $this->tracks = collect();
-            } else {
-                if ($this->activeTab === 'tracks') {
-                    $this->allTracks = collect();
-                    $this->tracks = collect();
-                } elseif ($this->activeTab === 'playlists') {
-                    $this->allPlaylists = collect();
-                    $this->playlists = collect();
-                }
-            }
             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
         }
     }
@@ -1136,15 +1148,33 @@ class Dashboard extends Component
     {
         $this->showRepostConfirmationModal = true;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
-        // $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
-        // if ($response->isNotEmpty()) {
-        //     $already_following = $response->where('urn', user()->urn)->first();
-        //     if ($already_following !== null) {
-        //         Log::info('Repost request Page:- Already following');
-        //         $this->followed = false;
-        //         $this->alreadyFollowing = true;
-        //     }
-        // }
+        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
+        if ($response->isNotEmpty()) {
+            $already_following = $response->where('urn', user()->urn)->first();
+            if ($already_following !== null) {
+                Log::info('Repost request Page:- Already following');
+                $this->followed = false;
+                $this->alreadyFollowing = true;
+            }
+        }
+
+        if ($this->request->music) {
+            if ($this->request->music_type == Track::class) {
+                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
+                $searchUrn = user()->urn;
+            } elseif ($this->request->music_type == Playlist::class) {
+                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
+                $searchUrn = $this->request->music->soundcloud_urn;
+            }
+            $collection = collect($favoriteData['collection']);
+            $found = $collection->first(function ($item) use ($searchUrn) {
+                return isset($item['urn']) && $item['urn'] === $searchUrn;
+            });
+            if ($found) {
+                $this->liked = false;
+                $this->alreadyLiked = true;
+            }
+        }
     }
     public function repost($requestId)
     {
@@ -1155,7 +1185,7 @@ class Dashboard extends Component
             $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully.');
         }
         $this->showRepostConfirmationModal = false;
-
+         $this->reset();
         $this->dispatch('alert', type: $result['status'], message: $result['message']);
     }
 
