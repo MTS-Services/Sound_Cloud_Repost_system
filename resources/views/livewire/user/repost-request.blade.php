@@ -9,7 +9,7 @@
 
     <div x-show="showDashboard" class="w-full p-4">
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="proUser() ? 100 : 20" :responseRate="30"
-                :pendingRequests="$pendingRequestCount" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
+                :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
     </div>
 
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
