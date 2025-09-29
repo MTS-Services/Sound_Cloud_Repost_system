@@ -745,6 +745,12 @@
 
                     widget.bind(SC.Widget.Events.FINISH, () => {
                         @this.call('handleAudioEnded', campaignId);
+                        if (nextCampaignId && nextIframe) {
+                            console.log('Play start for nextIframe', nextIframe);
+                            console.log('Play start for nextCampaignId', nextCampaignId);
+                            const nextWidget = SC.Widget(nextIframe);
+                            nextWidget.play();
+                        }
                     });
 
                     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
