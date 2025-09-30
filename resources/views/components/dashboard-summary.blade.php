@@ -9,6 +9,8 @@
         'credits',
         'campaigns',
         'campaignLimit',
+        'canResetResponseRate' => user()->canResetResponseRate(),
+        'resetResponseRateAction',
     ])
 
     <style>
@@ -55,7 +57,7 @@
                 </div>
                 <div class="flex justify-between items-center mt-3">
                     <div class="text-xl font-semibold dark:text-gray-100">{{ $responseRate }}%</div>
-                    <a href="#" class="text-sm font-semibold text-orange-500 hover:underline">Reset</a>
+                    <button wire:click="{{ $resetResponseRateAction }}" {{ $canResetResponseRate ? '' : 'disabled' }} class="text-sm font-semibold text-orange-500 {{ $canResetResponseRate ? 'hover:underline cursor-pointer' : '!cursor-not-allowed' }}">Reset</button>
                 </div>
                 <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 dark:text-gray-700 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-orange-500 h-full" style="width: {{ $responseRate }}%"></div>

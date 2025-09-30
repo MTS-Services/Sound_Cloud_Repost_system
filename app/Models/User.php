@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use App\Http\Traits\UserModificationTrait;
+use Carbon\Carbon;
 
 class User extends AuthBaseModel implements MustVerifyEmail
 {
@@ -291,13 +292,13 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         $resetAt = $this->userSettings?->response_rate_reset;
         $query = $this->responses()->whereNotNull('requested_at');
-        
+
         if ($resetAt) {
             $query->where('requested_at', '>=', $resetAt);
         }
-        
+
         $totalRequests = $query->count();
-        
+
         if ($totalRequests === 0) {
             return 100;
         }
@@ -321,5 +322,14 @@ class User extends AuthBaseModel implements MustVerifyEmail
     public function userSettings(): HasOne
     {
         return $this->hasOne(UserSetting::class, 'user_urn', 'urn');
+    }
+    public function canResetResponseRate(): bool
+    {
+        $resetAt = $this->userSettings?->response_rate_reset;
+
+        if (!$resetAt) {
+            return true;
+        }
+        return !Carbon::parse($resetAt)->isSameMonth(now());
     }
 }

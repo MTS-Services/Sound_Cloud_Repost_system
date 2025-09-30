@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\UserAnalytics;
 use App\Models\UserPlan;
+use App\Models\UserSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -1485,6 +1486,18 @@ class Campaign extends Component
                     $query->whereIn('genre', $userGenres);
                 })->count();
         }
+    }
+
+    public function responseReset()
+    {
+        $responseAt = UserSetting::self()->value('response_rate_reset');
+        if ($responseAt && Carbon::parse($responseAt)->greaterThan(now()->subDays(30))) {
+            $this->dispatch('alert', type: 'error', message: 'You can only reset your response rate once every 30 days.');
+            return;
+        }
+        $userUrn = user()->urn;
+        $this->userSettingsService->createOrUpdate($userUrn, ['response_rate_reset' => now()]);
+        $this->dispatch('alert', type: 'success', message: 'Your response rate has been reset.');
     }
 
     /**

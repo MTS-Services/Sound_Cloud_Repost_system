@@ -8,7 +8,7 @@ use Illuminate\View\Component;
 
 class DashboardSummary extends Component
 {
-    public $earnings, $dailyRepostCurrent, $dailyRepostMax, $responseRate, $pendingRequests, $requestLimit, $credits, $campaigns, $campaignLimit;
+    public $earnings, $dailyRepostCurrent, $dailyRepostMax, $responseRate, $pendingRequests, $requestLimit, $credits, $campaigns, $campaignLimit, $resetResponseRateAction;
 
     /**
      * Create a new component instance.
@@ -22,7 +22,8 @@ class DashboardSummary extends Component
         $requestLimit = 0,
         $credits = 0,
         $campaigns = 0,
-        $campaignLimit = 0
+        $campaignLimit = 0,
+        $resetResponseRateAction = 'responseReset',
     ) {
         $this->earnings = $earnings;
         $this->dailyRepostCurrent = $dailyRepostCurrent;
@@ -33,6 +34,7 @@ class DashboardSummary extends Component
         $this->credits = $credits;
         $this->campaigns = $campaigns;
         $this->campaignLimit = $campaignLimit;
+        $this->resetResponseRateAction = $resetResponseRateAction;
     }
 
 
