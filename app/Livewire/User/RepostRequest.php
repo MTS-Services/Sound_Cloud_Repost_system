@@ -464,6 +464,18 @@ class RepostRequest extends Component
 
         return $this->repostRequests;
     }
+    public function responseReset()
+    {
+        $responseAt = UserSetting::self()->value('response_rate_reset');
+        if ($responseAt && Carbon::parse($responseAt)->greaterThan(now()->subDays(30))) {
+            $this->dispatch('alert', type: 'error', message: 'You can only reset your response rate once every 30 days.');
+            return;
+        }
+        $userUrn = user()->urn;
+        $this->userSettingsService->createOrUpdate($userUrn, ['response_rate_reset' => now()]);
+        $this->dataLoad();
+        $this->dispatch('alert', type: 'success', message: 'Your response rate has been reset.');
+    }
 
     public function render()
     {

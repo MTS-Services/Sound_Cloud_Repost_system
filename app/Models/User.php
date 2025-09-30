@@ -287,33 +287,39 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return (!$this->isOnline() && $this->last_seen_at !== null && $this->last_seen_at->diffInMinutes(now()) < 60) ? round($this->last_seen_at->diffInMinutes(now())) . ' min' : 'Offline';
     }
-
-
     public function responseRate(): float
     {
-        // Total requests ever received by this user
-        $totalRequests = $this->responses()
-            ->whereNotNull('requested_at')
-            ->count();
-
+        $resetAt = $this->userSettings?->response_rate_reset;
+        $query = $this->responses()->whereNotNull('requested_at');
+        
+        if ($resetAt) {
+            $query->where('requested_at', '>=', $resetAt);
+        }
+        
+        $totalRequests = $query->count();
+        
         if ($totalRequests === 0) {
-            return 100; // No requests, so response rate is 0%
+            return 100;
         }
 
-        // Count requests where the user responded within 24 hours
-        $respondedWithin24Hours = $this->responses()
-            ->whereNotNull('requested_at')
+        // Clone the query to count responses within 24 hours
+        $respondedWithin24Hours = (clone $query)
             ->whereNotNull('responded_at')
             ->whereRaw('TIMESTAMPDIFF(HOUR, requested_at, responded_at) <= 24')
             ->count();
 
-        // Calculate response rate
+        // Calculate percentage
         return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
     }
+
 
 
     public function getRepostPriceAttribute()
     {
         return $this->real_followers && ceil($this->real_followers / 100) > 0 ? ceil($this->real_followers / 100) : 1;
+    }
+    public function userSettings(): HasOne
+    {
+        return $this->hasOne(UserSetting::class, 'user_urn', 'urn');
     }
 }

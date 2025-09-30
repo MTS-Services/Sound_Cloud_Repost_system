@@ -93,8 +93,8 @@
 
                             <span class="text-xs text-orange-600 font-semibold">{{ user()->responseRate() }}% <span
                                     class="text-gray-900 dark:text-white">Response rate.</span></span>
-                            <a href="{{ route('user.reposts-request') }}" wire:navigate
-                                class="text-xs text-red-500 underline">Reset</a>
+                            <button wire:click="responseReset"
+                                class="text-xs text-red-500 underline cursor-pointer font-semibold">Reset</button>
                         </div>
                         <div x-data="{ on: {{ $requestReceiveable ? 'false' : 'true' }} }"
                             class="inline-flex items-center {{ user()->email_verified_at ? 'cursor-pointer' : 'cursor-not-allowed' }}"

@@ -58,6 +58,8 @@ class UserSetting extends BaseModel
 
         // Subscription
         'sub_plan',
+        // Response Rate Reset
+        'response_rate_reset',
     ];
 
 

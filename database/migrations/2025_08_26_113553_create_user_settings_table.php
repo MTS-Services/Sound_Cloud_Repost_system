@@ -66,6 +66,9 @@ return new class extends Migration
             // Subscription
             $table->string('sub_plan')->default('Free Forever Plan');
 
+            // Reset Response Rate
+            $table->timestamp('response_rate_reset')->nullable();
+
             $table->foreign('user_urn')
                 ->references('urn')->on('users')
                 ->onDelete('cascade')->onUpdate('cascade');
