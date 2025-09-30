@@ -330,6 +330,6 @@ class User extends AuthBaseModel implements MustVerifyEmail
         if (!$resetAt) {
             return true;
         }
-        return !Carbon::parse($resetAt)->isSameMonth(now());
+        return !Carbon::parse($resetAt)->greaterThan(now()->subMonth(1));
     }
 }
