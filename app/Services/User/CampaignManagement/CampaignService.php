@@ -74,33 +74,23 @@ class CampaignService
                     NotificationMailSent::dispatch($datas);
                 }
 
-                // ######################################
-                $campaign->increment('comment_count');
-                $campaign->increment('like_count');
-                $campaign->increment('followowers_count');
-
-                // ######################################
-
                 if ($repost != null) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
                 }
 
-                if ($likeCommentAbleData['comment']) {
-                    // Log::info("likeCommentAbleData", $likeCommentAbleData);
+                if ($likeCommentAbleData['comment'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
-                        // $repost->increment('comment_count');
                     }
                 }
-                if ($likeCommentAbleData['likeable']) {
+                if ($likeCommentAbleData['likeable'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('like_count');
-                        // $repost->increment('like_count');
                     }
                 }
-                if ($likeCommentAbleData['follow']) {
+                if ($likeCommentAbleData['follow'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('followowers_count');

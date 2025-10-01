@@ -1082,9 +1082,12 @@ class Campaign extends Component
             switch ($campaign->music_type) {
                 case Track::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
+                    Log::info('repost response for track urn:' . $musicUrn . 'response: ' . json_encode($response));
                     if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
-                        Log::info('comment_response for track urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
+                        if ($campaign?->music?->commentable == true) {
+                            $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
+                            Log::info('comment_response for track urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
+                        }
                     }
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
@@ -1097,6 +1100,7 @@ class Campaign extends Component
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
+                    Log::info('repost response for playlist urn:' . $musicUrn . 'response: ' . json_encode($response));
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
                         Log::info('like_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($like_response));
@@ -1115,10 +1119,11 @@ class Campaign extends Component
                     return;
             }
             $data = [
-                'likeable' => $like_response ? $this->liked : false,
-                'comment' => $comment_response ? $this->commented : false,
-                'follow' => $follow_response ? $this->followed : false
+                'likeable' => $like_response->successful() ? true : false,
+                'comment' => $comment_response->successful() ? true : false,
+                'follow' => $follow_response->successful() ? true : false
             ];
+            dd($response, $like_response, $comment_response, $follow_response);
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
