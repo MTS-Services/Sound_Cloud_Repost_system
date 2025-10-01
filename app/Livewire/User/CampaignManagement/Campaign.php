@@ -1084,7 +1084,7 @@ class Campaign extends Component
             switch ($campaign->music_type) {
                 case Track::class:
 
-                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
                     $previous_likes = $checkLiked['collection']['playback_count'];
                     $previous_reposts = $checkLiked['collection']['reposts_count'];
 
@@ -1107,7 +1107,7 @@ class Campaign extends Component
                         Log::info('follow_response for track urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
                     }
 
-                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
                     $newLikes = $checkLiked['collection']['playback_count'];
                     $newReposts = $checkLiked['collection']['reposts_count'];
                     if ($newLikes > $previous_likes) {
@@ -1118,6 +1118,12 @@ class Campaign extends Component
                     }
                     break;
                 case Playlist::class:
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+                    dd($checkLiked);
+                    $previous_likes = $checkLiked['collection']['playback_count'];
+                    $previous_reposts = $checkLiked['collection']['reposts_count'];
+
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                     Log::info('repost response for playlist urn:' . $musicUrn . 'response: ' . json_encode($response));
                     if ($this->liked) {
@@ -1131,6 +1137,16 @@ class Campaign extends Component
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
                         Log::info('follow_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
+                    }
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+                    $newLikes = $checkLiked['collection']['playback_count'];
+                    $newReposts = $checkLiked['collection']['reposts_count'];
+                    if ($newLikes > $previous_likes) {
+                        $increse_likes = true;
+                    }
+                    if ($newReposts > $previous_reposts) {
+                        $increse_reposts = true;
                     }
                     break;
                 default:
