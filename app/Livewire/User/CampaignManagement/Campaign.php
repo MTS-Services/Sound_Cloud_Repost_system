@@ -1085,7 +1085,7 @@ class Campaign extends Component
                 case Track::class:
 
                     $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
-                    $previous_likes = $checkLiked['collection']['playback_count'];
+                    $previous_likes = $checkLiked['collection']['favoritings_count'];
                     $previous_reposts = $checkLiked['collection']['reposts_count'];
 
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
@@ -1108,7 +1108,7 @@ class Campaign extends Component
                     }
 
                     $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
-                    $newLikes = $checkLiked['collection']['playback_count'];
+                    $newLikes = $checkLiked['collection']['favoritings_count'];
                     $newReposts = $checkLiked['collection']['reposts_count'];
                     if ($newLikes > $previous_likes) {
                         $increse_likes = true;
@@ -1120,9 +1120,8 @@ class Campaign extends Component
                 case Playlist::class:
 
                     $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
-                    dd($checkLiked);
-                    $previous_likes = $checkLiked['collection']['playback_count'];
-                    $previous_reposts = $checkLiked['collection']['reposts_count'];
+                    $previous_likes = $checkLiked['collection']['likes_count'];
+                    $previous_reposts = $checkLiked['collection']['repost_count'];
 
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                     Log::info('repost response for playlist urn:' . $musicUrn . 'response: ' . json_encode($response));
@@ -1140,8 +1139,8 @@ class Campaign extends Component
                     }
 
                     $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
-                    $newLikes = $checkLiked['collection']['playback_count'];
-                    $newReposts = $checkLiked['collection']['reposts_count'];
+                    $newLikes = $checkLiked['collection']['likes_count'];
+                    $newReposts = $checkLiked['collection']['repost_count'];
                     if ($newLikes > $previous_likes) {
                         $increse_likes = true;
                     }
@@ -1155,7 +1154,7 @@ class Campaign extends Component
             }
 
             if ($increse_reposts == false) {
-                $this->dispatch('alert', type: 'error', message: 'You have already repost this track from your soundcloud');
+                $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') .  ' from your soundcloud');
                 return;
             }
 
