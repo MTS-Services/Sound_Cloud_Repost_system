@@ -1092,6 +1092,7 @@ class Campaign extends Component
                     }
                     if ($this->liked) {
                         $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                        dd($checkLiked);
                         $previous_likes = $checkLiked['playback_count'];
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
                         $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
