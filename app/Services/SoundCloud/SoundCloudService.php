@@ -381,6 +381,7 @@ class SoundCloudService
         return $this->makeGetApiRequest(
             endpoint: '/users/' . $user->urn,
             errorMessage: 'Failed to fetch user profile',
+            authUser: $user
         );
     }
 
@@ -914,9 +915,10 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, ?array $playlistsData = null, ?User $authUser = null): int
     {
         try {
+            Log::info("Auth user urn: {$authUser->urn} step 1");
             // Fetch data outside transaction (API call)
             if (is_null($playlistsData)) {
-                Log::info("Auth user urn: {$authUser->urn} step 1");
+
                 $response = $this->fetchUserPlaylists(user: $user, authUser: $authUser);
                 $playlistsData = $response['collection'];
             }
