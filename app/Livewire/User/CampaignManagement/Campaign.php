@@ -1159,9 +1159,9 @@ class Campaign extends Component
             }
 
             $data = [
-                'likeable' => $like_response->successful() && $increse_likes ? true : false,
-                'comment' => $comment_response->successful() ? true : false,
-                'follow' => $follow_response->successful() ? true : false
+                'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
+                'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
+                'follow' => $follow_response != null ? ($follow_response->successful() ? true : false) : false,
             ];
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
