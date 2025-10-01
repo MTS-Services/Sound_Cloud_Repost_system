@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\UserAnalytics;
 use App\Models\UserPlan;
 use App\Models\UserSetting;
+use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -223,8 +224,9 @@ class Campaign extends Component
     protected ?SoundCloudService $soundCloudService = null;
     protected ?AnalyticsService $analyticsService = null;
     protected ?MyCampaignService $myCampaignService = null;
+    protected ?UserSettingsService $userSettingsService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService, MyCampaignService $myCampaignService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService, MyCampaignService $myCampaignService, UserSettingsService $userSettingsService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
@@ -232,6 +234,7 @@ class Campaign extends Component
         $this->soundCloudService = $soundCloudService;
         $this->analyticsService = $analyticsService;
         $this->myCampaignService = $myCampaignService;
+        $this->userSettingsService = $userSettingsService;
     }
 
     public function mount(Request $request)
