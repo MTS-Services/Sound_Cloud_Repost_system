@@ -976,32 +976,46 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
-        if ($this->campaign->music) {
-            if ($this->campaign->music_type == Track::class) {
-                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
-                $searchUrn = user()->urn;
-            } elseif ($this->campaign->music_type == Playlist::class) {
-                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
-                $searchUrn = $this->campaign->music->soundcloud_urn;
-            }
-            $collection = collect($favoriteData['collection']);
-            $found = $collection->first(function ($item) use ($searchUrn) {
-                return isset($item['urn']) && $item['urn'] === $searchUrn;
-            });
-            if ($found) {
-                $this->liked = false;
-                $this->alreadyLiked = true;
-            }
-        }
+        // if ($this->campaign->music) {
+        //     if ($this->campaign->music_type == Track::class) {
+        //         $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
+        //         $searchUrn = user()->urn;
+        //     } elseif ($this->campaign->music_type == Playlist::class) {
+        //         $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
+        //         $searchUrn = $this->campaign->music->soundcloud_urn;
+        //     }
+        //     $collection = collect($favoriteData['collection']);
+        //     $found = $collection->first(function ($item) use ($searchUrn) {
+        //         return isset($item['urn']) && $item['urn'] === $searchUrn;
+        //     });
+        //     if ($found) {
+        //         $this->liked = false;
+        //         $this->alreadyLiked = true;
+        //     }
+        // }
 
-        $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Repost request Page:- Already following');
-                $this->followed = false;
-                $this->alreadyFollowing = true;
-            }
+        // $response = $this->soundCloudService->getAuthUserFollowers($this->campaign->music->user);
+        // if ($response->isNotEmpty()) {
+        //     $already_following = $response->where('urn', user()->urn)->first();
+        //     if ($already_following !== null) {
+        //         Log::info('Repost request Page:- Already following');
+        //         $this->followed = false;
+        //         $this->alreadyFollowing = true;
+        //     }
+        // }
+
+        $query = UserAnalytics::where('owner_user_urn', $this->campaign->music->user->urn)
+            ->where('act_user_urn', user()->urn)->where('source_type', get_class($this->campaign->music));
+        $followAble = $query->where('type', UserAnalytics::TYPE_FOLLOW)->first();
+        $likeAble = $query->where('type', UserAnalytics::TYPE_LIKE)->first();
+
+        if ($likeAble->isNotEmpty()) {
+            $this->liked = false;
+            $this->alreadyLiked = true;
+        }
+        if ($followAble->isNotEmpty()) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
         }
     }
 

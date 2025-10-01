@@ -28,6 +28,7 @@ use App\Models\Feature;
 use App\Models\UserAnalytics;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\AnalyticsService;
 use Illuminate\Http\Client\Request;
 use Livewire\Attributes\Url;
 
@@ -90,7 +91,8 @@ class Member extends Component
     protected RepostRequestService $repostRequestService;
     protected SoundCloudService $soundCloudService;
     protected FollowerAnalyzer $followerAnalyzer;
-    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer)
+    protected AnalyticsService $analyticsService;
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer, AnalyticsService $analyticsService)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
@@ -98,6 +100,7 @@ class Member extends Component
         $this->soundCloudService = $soundCloudService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
         $this->followerAnalyzer = $followerAnalyzer;
+        $this->analyticsService = $analyticsService;
     }
 
     public function rules()
@@ -339,8 +342,8 @@ class Member extends Component
             $this->dispatch('alert', type: 'error', message: 'Please verify your email to send a request.');
             return;
         }
-        // $this->soundCloudService->syncUserTracks(user(), []);
-        // $this->soundCloudService->syncUserPlaylists(user());
+        $this->soundCloudService->syncUserTracks(user(), []);
+        $this->soundCloudService->syncUserPlaylists(user());
 
         $this->reset([
             'showModal',
@@ -435,19 +438,19 @@ class Member extends Component
             }
         }
 
-        $followAble = UserAnalytics::where('owner_user_urn', user()->urn)
-            ->where('act_user_urn', $this->user->urn)
-            ->where('type', UserAnalytics::TYPE_FOLLOW)
-            ->where('source_type', Track::class)
-            ->first();
-        dd($followAble, $this->following, $this->alreadyFollowing);
-        if ($followAble) {
-            $this->following = false;
-            $this->alreadyFollowing = true;
-        } else {
-            $this->following = true;
-            $this->alreadyFollowing = false;
-        }
+        // $followAble = UserAnalytics::where('owner_user_urn', user()->urn)
+        //     ->where('act_user_urn', $this->user->urn)
+        //     ->where('type', UserAnalytics::TYPE_FOLLOW)
+        //     ->where('source_type', Track::class)
+        //     ->first();
+        // dd($followAble, $this->following, $already_following);
+        // if ($followAble) {
+        //     $this->following = false;
+        //     $this->alreadyFollowing = true;
+        // } else {
+        //     $this->following = true;
+        //     $this->alreadyFollowing = false;
+        // }
     }
 
     public function closeRepostModal()
