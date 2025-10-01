@@ -976,11 +976,11 @@ class SoundCloudService
                             'last_modified' => isset($playlistData['last_modified']) ? Carbon::parse($playlistData['last_modified'])->toDateTimeString() : null,
                         ]
                     );
-                    Log::info("Auth user urn: {$authUser->urn} step 2");
+                    Log::info("Auth user urn: {$authUser?->urn} step 2");
                     $trackResponse = $this->fetchUserPlaylistTracks(user: $user, playlistUrn: $playlist->soundcloud_urn, authUser: $authUser);
                     $playlistTrackData = $trackResponse['collection'];
                     if (!empty($playlistTrackData)) {
-                        Log::info("Auth user urn: {$authUser->urn} step 3");
+                        Log::info("Auth user urn: {$authUser?->urn} step 3");
                         $this->syncUserTracks($user, tracksData: $playlistTrackData, playlist_urn: $playlist->soundcloud_urn, authUser: $authUser);
                     }
 
