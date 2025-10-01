@@ -357,14 +357,15 @@ class SoundCloudService
      * @param string $playlistUrn The URN of the playlist to fetch tracks from.
      * @return array The JSON response from the API.
      */
-    public function fetchUserPlaylistTracks(User $user, string $playlistUrn): array
+    public function fetchUserPlaylistTracks(User $user, string $playlistUrn, ?User $authUser = null): array
     {
         return $this->makeGetApiRequest(
             endpoint: '/playlists/' . $playlistUrn . '/tracks',
             errorMessage: 'Failed to fetch playlist tracks',
             options: [
                 'access' => 'playable,preview,blocked',
-            ]
+            ],
+            authUser: $authUser
         );
     }
 
@@ -923,7 +924,7 @@ class SoundCloudService
             $playlistIdsInResponse = [];
 
             // Wrap all database operations in transaction
-            DB::transaction(function () use ($user, $playlistsData, &$syncedCount, &$playlistIdsInResponse) {
+            DB::transaction(function () use ($user, $playlistsData, &$syncedCount, &$playlistIdsInResponse, $authUser) {
                 foreach ($playlistsData as $playlistData) {
                     // Skip private playlists
                     if (($playlistData['sharing'] ?? '') === 'private') {
@@ -973,10 +974,10 @@ class SoundCloudService
                         ]
                     );
 
-                    $trackResponse = $this->fetchUserPlaylistTracks($user, $playlist->soundcloud_urn);
+                    $trackResponse = $this->fetchUserPlaylistTracks(user: $user, playlistUrn: $playlist->soundcloud_urn, authUser: $authUser);
                     $playlistTrackData = $trackResponse['collection'];
                     if (!empty($playlistTrackData)) {
-                        $this->syncUserTracks($user, $playlistTrackData, $playlist->soundcloud_urn);
+                        $this->syncUserTracks($user, tracksData: $playlistTrackData, playlist_urn: $playlist->soundcloud_urn, authUser: $authUser);
                     }
 
                     if ($playlist->wasRecentlyCreated) {
