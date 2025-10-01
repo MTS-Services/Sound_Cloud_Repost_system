@@ -9,34 +9,33 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Throwable; // Import Throwable for more general exception catching in failed()
+use Throwable;
 
 class SyncUserJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The user instance.
-     *
-     * @var User
+     * The number of times the job may be attempted.
      */
-    protected User $user;
+    public $tries = 3;
 
     /**
-     * The SoundCloud user data (e.g., from Socialite).
-     *
-     * @var object
+     * The number of seconds to wait before retrying the job.
      */
+    public $backoff = [60, 300, 900]; // 1 min, 5 min, 15 min
+
+    /**
+     * The maximum number of seconds the job can run.
+     */
+    public $timeout = 300; // 5 minutes
+
+    protected User $user;
     protected object $soundCloudUser;
 
     /**
      * Create a new job instance.
-     *
-     * @param User $user The user model to sync.
-     * @param object $soundCloudUser The SoundCloud user data from Socialite.
-     * @return void
      */
     public function __construct(User $user, object $soundCloudUser)
     {
@@ -47,42 +46,64 @@ class SyncUserJob implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param SoundCloudService $soundCloudService Automatically resolved by Laravel's service container.
-     * @return void
+     * Laravel automatically resolves dependencies via dependency injection.
      */
     public function handle(SoundCloudService $soundCloudService): void
     {
-        Log::info('SyncUserJob started for user ID: ' . $this->user->id . ', URN: ' . $this->user->urn . ', on login: ' . now());
-        DB::transaction(function () use ($soundCloudService) {
-            Log::info('Start User Information Sync');
+        Log::info('Starting SyncUserJob', [
+            'user_id' => $this->user->id,
+            'user_urn' => $this->user->urn,
+        ]);
+
+        try {
+            // Sync user information (lightweight operation)
             $soundCloudService->syncUserInformation($this->user, $this->soundCloudUser);
-            Log::info('Start User Tracks Sync');
+
+            // Sync tracks (can be heavy, wrapped individually)
             $soundCloudService->syncUserTracks($this->user, []);
-            Log::info('Start User Playlists Sync');
+
+            // Sync playlists (can be heavy, wrapped individually)
             $soundCloudService->syncUserPlaylists($this->user);
-            Log::info('Start User Products and Subscriptions Sync');
+
+            // Sync products and subscriptions
             $soundCloudService->syncUserProductsAndSubscriptions($this->user, $this->soundCloudUser);
-            // You might want to update a 'last_synced_at' timestamp on the User model here
-            $this->user->update(['last_synced_at' => now()]);
-        });
+
+            // Sync followers
+            $soundCloudService->syncUserRealFollowers($this->user);
+
+            Log::info('SyncUserJob completed successfully', [
+                'user_id' => $this->user->id,
+                'user_urn' => $this->user->urn,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('SyncUserJob encountered an error', [
+                'user_id' => $this->user->id,
+                'user_urn' => $this->user->urn,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Re-throw to trigger job failure
+            throw $e;
+        }
     }
 
     /**
      * Handle a job failure.
-     *
-     * @param Throwable $exception
-     * @return void
      */
     public function failed(Throwable $exception): void
     {
-        Log::error('SyncUserJob failed', [
+        Log::error('SyncUserJob failed permanently', [
             'user_id' => $this->user->id,
-            'user_urn' => $this->user->urn, // Assuming 'urn' is a unique identifier
+            'user_urn' => $this->user->urn,
+            'soundcloud_user_id' => $this->soundCloudUser->id ?? null,
             'exception' => $exception->getMessage(),
             'trace' => $exception->getTraceAsString(),
+            'attempts' => $this->attempts(),
         ]);
 
-        // Optionally, notify admin or user
-        // Mail::to('admin@example.com')->send(new JobFailedNotification($this->user, $exception));
+        // Optional: Send notification to admin or update user status
+        // $this->user->update(['sync_status' => 'failed']);
     }
 }
