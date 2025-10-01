@@ -375,7 +375,7 @@
                                                     {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
                                                         class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
                                                     <x-gbutton variant="primary" size="sm"
-                                                        wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
+                                                        wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancel</x-gbutton>
                                                 @endif
                                             </div>
                                         </div>
