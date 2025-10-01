@@ -206,6 +206,15 @@ class UserAnalytics extends BaseModel
             ->groupBy([DB::raw('DATE(created_at)'), 'type', 'track_urn']);
     }
 
+    public function scopeFollowed($query)
+    {
+        return $query->where('type', self::TYPE_FOLLOW);
+    }
+    public function scopeLiked($query)
+    {
+        return $query->where('type', self::TYPE_LIKE);
+    }
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of SCOPES
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */

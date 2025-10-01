@@ -1007,12 +1007,11 @@ class Campaign extends Component
         // }
 
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->campaign?->music?->user?->urn)
-            ->where('act_user_urn', user()->urn)
-            ->where('source_type', get_class($this->campaign?->music))
-            ->where('source_id', $this->campaign?->music?->id);
+            ->where('act_user_urn', user()->urn);
 
-        $followAble = (clone $baseQuery)->where('type', UserAnalytics::TYPE_FOLLOW)->first();
-        $likeAble = (clone $baseQuery)->where('type', UserAnalytics::TYPE_LIKE)->first();
+        $followAble = (clone $baseQuery)->followed()->first();
+        $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->campaign?->music))
+            ->where('source_id', $this->campaign?->music?->id)->first();
 
         if ($likeAble !== null) {
             $this->liked = false;
