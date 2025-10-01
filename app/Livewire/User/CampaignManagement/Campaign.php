@@ -1078,6 +1078,7 @@ class Campaign extends Component
             $like_response = null;
             $comment_response = null;
             $follow_response = null;
+            $increse_likes = false;
 
             switch ($campaign->music_type) {
                 case Track::class:
@@ -1090,7 +1091,14 @@ class Campaign extends Component
                         }
                     }
                     if ($this->liked) {
+                        $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                        $previous_likes = $checkLiked['playback_count'];
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
+                        $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                        $newLikes = $checkLiked['playback_count'];
+                        if ($newLikes > $previous_likes) {
+                            $increse_likes = true;
+                        }
                         Log::info('like_response for track urn:' . $musicUrn . 'response: ' . json_encode($like_response));
                     }
                     if ($this->followed) {
@@ -1119,12 +1127,12 @@ class Campaign extends Component
                     return;
             }
             $data = [
-                'likeable' => $like_response->successful() ? true : false,
+                'likeable' => $like_response->successful() && $increse_likes ? true : false,
                 'comment' => $comment_response->successful() ? true : false,
                 'follow' => $follow_response->successful() ? true : false
             ];
+            dd('response', $response, 'response json', $response->json(), 'like_response', $like_response, 'like response json', $like_response->json(), 'comment_response', $comment_response, 'comment response json', $comment_response->json(), 'follow_response', $follow_response, 'follow response json', $follow_response->json(), 'data', $data);
             if ($response->successful()) {
-                dd($response->json(), $like_response->json(), $comment_response->json(), $follow_response->json(), $data);
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
                     $datas = [

@@ -80,13 +80,13 @@ class CampaignService
 
                 if ($likeCommentAbleData['comment'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
-                    if ($response != false || $response != null) {
+                    if ($response != false || $response != null) {                        
                         $campaign->increment('comment_count');
                     }
                 }
                 if ($likeCommentAbleData['likeable'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
-                    if ($response != false || $response != null) {
+                    if ($response != false || $response != null) {                        
                         $campaign->increment('like_count');
                     }
                 }
