@@ -57,7 +57,7 @@ class Member extends Component
 
     public string $description = '';
     public bool $commentable = false;
-    public bool $likeable = false;
+    public bool $likeable = true;
     public bool $following = true;
     public bool $alreadyFollowing = false;
 

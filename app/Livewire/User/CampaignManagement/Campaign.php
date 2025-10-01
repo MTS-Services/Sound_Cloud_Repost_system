@@ -1006,6 +1006,7 @@ class Campaign extends Component
         //     }
         // }
 
+        $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->campaign?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 

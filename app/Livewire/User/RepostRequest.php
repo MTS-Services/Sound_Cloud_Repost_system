@@ -319,6 +319,8 @@ class RepostRequest extends Component
         }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
+
+        $this->reset(['liked', 'alreadyLiked', 'commented', 'following', 'alreadyFollowing']);
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 

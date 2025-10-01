@@ -22,6 +22,7 @@ use Livewire\Component;
 use Throwable;
 use App\Models\Feature;
 use App\Models\Repost;
+use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
 use Illuminate\Validation\ValidationException;
@@ -245,8 +246,6 @@ class Dashboard extends Component
         $activities_change_rate = ($following_rate_analytics + $repost_rate_analytics + $like_rate_activity + $comment_rate_activity) / 4;
         $this->activities_score = number_format($activities_score >= 0 ? $activities_score : 0, 2);
         $this->activities_change_rate = number_format($activities_change_rate, 2);
-
-
     }
 
 
@@ -870,8 +869,7 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -1148,32 +1146,22 @@ class Dashboard extends Component
     {
         $this->showRepostConfirmationModal = true;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
-        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Repost request Page:- Already following');
-                $this->followed = false;
-                $this->alreadyFollowing = true;
-            }
-        }
 
-        if ($this->request->music) {
-            if ($this->request->music_type == Track::class) {
-                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
-                $searchUrn = user()->urn;
-            } elseif ($this->request->music_type == Playlist::class) {
-                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
-                $searchUrn = $this->request->music->soundcloud_urn;
-            }
-            $collection = collect($favoriteData['collection']);
-            $found = $collection->first(function ($item) use ($searchUrn) {
-                return isset($item['urn']) && $item['urn'] === $searchUrn;
-            });
-            if ($found) {
-                $this->liked = false;
-                $this->alreadyLiked = true;
-            }
+        $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+        $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
+            ->where('act_user_urn', user()->urn);
+
+        $followAble = (clone $baseQuery)->followed()->first();
+        $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->request?->music))
+            ->where('source_id', $this->request?->music?->id)->first();
+
+        if ($likeAble !== null) {
+            $this->liked = false;
+            $this->alreadyLiked = true;
+        }
+        if ($followAble !== null) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
         }
     }
     public function repost($requestId)
