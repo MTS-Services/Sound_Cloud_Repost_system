@@ -1009,11 +1009,11 @@ class Campaign extends Component
         $followAble = $query->where('type', UserAnalytics::TYPE_FOLLOW)->first();
         $likeAble = $query->where('type', UserAnalytics::TYPE_LIKE)->first();
 
-        if ($likeAble->isNotEmpty()) {
+        if ($likeAble !== null) {
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        if ($followAble->isNotEmpty()) {
+        if ($followAble !== null) {
             $this->followed = false;
             $this->alreadyFollowing = true;
         }
