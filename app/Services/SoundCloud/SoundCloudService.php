@@ -53,10 +53,11 @@ class SoundCloudService
      * @return array The JSON response from the API.
      * @throws Exception
      */
-    public function makeGetApiRequest(string $endpoint, string $errorMessage, ?array $options = null): array
+    public function makeGetApiRequest(string $endpoint, string $errorMessage, ?array $options = null, ?User $authUser = null): array
     {
         $options['linked_partitioning'] = true;
-        return $this->makeApiRequestWithPagination(user: user(), method: 'get', endpoint: $endpoint, errorMessage: $errorMessage, options: $options);
+        $authUser = $authUser ?? user();
+        return $this->makeApiRequestWithPagination(user: $authUser, method: 'get', endpoint: $endpoint, errorMessage: $errorMessage, options: $options);
     }
 
     /**
@@ -317,14 +318,15 @@ class SoundCloudService
      * @return array The JSON response from the API.
      * @throws Exception
      */
-    public function fetchUserTracks(User $user): array
+    public function fetchUserTracks(User $user, ?User $authUser = null): array
     {
         return $this->makeGetApiRequest(
             endpoint: '/users/' . $user->urn . '/tracks',
             errorMessage: 'Failed to fetch user tracks',
             options: [
                 'access' => 'playable,preview,blocked'
-            ]
+            ],
+            authUser: $authUser
         );
     }
 
@@ -335,7 +337,7 @@ class SoundCloudService
      * @return array The JSON response from the API.
      * @throws Exception
      */
-    public function fetchUserPlaylists(User $user): array
+    public function fetchUserPlaylists(User $user, ?User $authUser = null): array
     {
         return $this->makeGetApiRequest(
             endpoint: '/users/' . $user->urn . '/playlists',
@@ -343,7 +345,8 @@ class SoundCloudService
             options: [
                 'access' => 'playable,preview,blocked',
                 'show_tracks' => false,
-            ]
+            ],
+            authUser: $authUser
         );
     }
 
@@ -660,12 +663,12 @@ class SoundCloudService
     //     }
     // }
 
-    public function syncUserTracks(User $user, array $tracksData, ?string $playlist_urn = null): int
+    public function syncUserTracks(User $user, array $tracksData, ?string $playlist_urn = null, ?User $authUser = null): int
     {
         try {
             // Fetch data outside transaction (API call)
             if (empty($tracksData)) {
-                $response = $this->fetchUserTracks($user);
+                $response = $this->fetchUserTracks(user: $user, authUser: $authUser);
                 $tracksData = $response['collection'];
             }
 
@@ -907,12 +910,12 @@ class SoundCloudService
     //     }
     // }
 
-    public function syncUserPlaylists(User $user, ?array $playlistsData = null): int
+    public function syncUserPlaylists(User $user, ?array $playlistsData = null, ?User $authUser = null): int
     {
         try {
             // Fetch data outside transaction (API call)
             if (is_null($playlistsData)) {
-                $response = $this->fetchUserPlaylists($user);
+                $response = $this->fetchUserPlaylists(user: $user, authUser: $authUser);
                 $playlistsData = $response['collection'];
             }
 
@@ -1008,9 +1011,14 @@ class SoundCloudService
     {
         try {
             $user = $user ?? user();
-            $repsonse = $this->getAuthUserFollowers($user);
-            $this->followerAnalyzer->syncUserRealFollowers($repsonse, $user);
-            Log::info("Successfully synced real followers for user {$user->urn}.");
+            if ($user) {
+                $repsonse = $this->getAuthUserFollowers(user: $user);
+                $this->followerAnalyzer->syncUserRealFollowers(followers: $repsonse, user: $user);
+                Log::info("Successfully synced real followers for user {$user->urn}.");
+            } else {
+                Log::info("User not found in syncUserRealFollowers.");
+            }
+
         } catch (Exception $e) {
             Log::error('Error syncing user real followers in syncUserRealFollowers', [
                 'user_urn' => $user->urn,
@@ -1163,14 +1171,14 @@ class SoundCloudService
      * Retrieves the followers of a user from SoundCloud API.
      *
      * @param User|null $user The user to fetch followers for. If null, the current user is used.
-     * @return Collection An array of followers.
      */
     public function getAuthUserFollowers(?User $user = null)
     {
         $user = $user ?: user();
         $response = $this->makeGetApiRequest(
             endpoint: "/users/" . $user->urn . "/followers",
-            errorMessage: 'Failed to fetch urn:' . $user->urn . ' followers from SoundCloud API.'
+            errorMessage: 'Failed to fetch urn:' . $user->urn . ' followers from SoundCloud API.',
+            authUser: $user
         );
         if (empty($response['collection'])) {
             return collect([]);
