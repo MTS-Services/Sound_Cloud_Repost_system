@@ -438,7 +438,7 @@ class Member extends Component
         $followAble = UserAnalytics::where('owner_user_urn', user()->urn)
             ->where('act_user_urn', $this->user->urn)
             ->where('type', UserAnalytics::TYPE_FOLLOW)
-            ->where('sourse_type', Track::class)
+            ->where('source_type', Track::class)
             ->first();
         dd($followAble, $this->following, $this->alreadyFollowing);
         if ($followAble) {
