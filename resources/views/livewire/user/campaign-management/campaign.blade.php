@@ -9,7 +9,7 @@
             <div class="w-full mt-2 lg:mt-6 relative">
                 <!-- Header Tabs & Button -->
                 <div x-data="{ activeMainTab: @entangle('activeMainTab').live }"
-                    class="flex flex-col-reverse 4xl:flex-row justify-between border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
+                    class="flex flex-col-reverse 3xl:flex-row justify-between border-b border-b-gray-200 dark:border-b-gray-700 gap-2 sm:gap-0">
 
                     <div>
                         <nav class="-mb-px flex space-x-8">
@@ -77,7 +77,7 @@
                                     {{ __('Start a new campaign') }}
                                 </span>
                             </x-gbutton>
-                            <div class="4xl:hidden">
+                            <div class="3xl:hidden">
                                 <button @click="dashboardSummary = !dashboardSummary"
                                     class="flex items-center gap-1 text-sm text-orange-500" aria-expanded="false"
                                     :aria-expanded="dashboardSummary.toString()">
@@ -97,7 +97,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div x-show="dashboardSummary" class="4xl:hidden mb-8" x-cloak x-transition>
+                        <div x-show="dashboardSummary" class="3xl:hidden my-4" x-cloak x-transition>
                             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="user()->responseRate()"
                                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']"
                                 :campaignLimit="proUser() ? 10 : 2" />
@@ -401,7 +401,7 @@
             @endif
         </div>
         {{-- Right Side --}}
-        <div class="max-w-[400px] hidden 4xl:block" x-cloak x-transition>
+        <div class="max-w-[400px] hidden 3xl:block" x-cloak x-transition>
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="user()->responseRate()"
                 :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
