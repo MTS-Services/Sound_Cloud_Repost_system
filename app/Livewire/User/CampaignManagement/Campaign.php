@@ -1079,9 +1079,15 @@ class Campaign extends Component
             $comment_response = null;
             $follow_response = null;
             $increse_likes = false;
+            $increse_reposts = false;
 
             switch ($campaign->music_type) {
                 case Track::class:
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                    $previous_likes = $checkLiked['collection']['playback_count'];
+                    $previous_reposts = $checkLiked['collection']['reposts_count'];
+
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
                     Log::info('repost response for track urn:' . $musicUrn . 'response: ' . json_encode($response));
                     if ($this->commented) {
@@ -1091,19 +1097,24 @@ class Campaign extends Component
                         }
                     }
                     if ($this->liked) {
-                        $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
-                        $previous_likes = $checkLiked['collection']['playback_count'];
+
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
-                        $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
-                        $newLikes = $checkLiked['collection']['playback_count'];
-                        if ($newLikes > $previous_likes) {
-                            $increse_likes = true;
-                        }
+
                         Log::info('like_response for track urn:' . $musicUrn . 'response: ' . json_encode($like_response));
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
                         Log::info('follow_response for track urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
+                    }
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch favorites tracks');
+                    $newLikes = $checkLiked['collection']['playback_count'];
+                    $newReposts = $checkLiked['collection']['reposts_count'];
+                    if ($newLikes > $previous_likes) {
+                        $increse_likes = true;
+                    }
+                    if ($newReposts > $previous_reposts) {
+                        $increse_reposts = true;
                     }
                     break;
                 case Playlist::class:
@@ -1126,12 +1137,17 @@ class Campaign extends Component
                     $this->dispatch('alert', type: 'error', message: 'Invalid music type specified for the campaign.');
                     return;
             }
+
+            if ($increse_reposts == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already repost this track from your soundcloud');
+                return;
+            }
+
             $data = [
                 'likeable' => $like_response->successful() && $increse_likes ? true : false,
                 'comment' => $comment_response->successful() ? true : false,
                 'follow' => $follow_response->successful() ? true : false
             ];
-            // dd('response', $response, 'response json', $response->json(), 'like_response', $like_response, 'like response json', $like_response->json(), 'comment_response', $comment_response, 'comment response json', $comment_response->json(), 'follow_response', $follow_response, 'follow response json', $follow_response->json(), 'data', $data);
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
@@ -1147,7 +1163,7 @@ class Campaign extends Component
                 }
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
-                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
+                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
                 $this->reset([
                     'liked',
                     'followed',
