@@ -108,6 +108,7 @@ class SyncUserJob implements ShouldQueue
 
             // Sync playlists (can be heavy, wrapped individually)
             Log::info('Syncing user playlists Step 3');
+            Log::info('Auth User: ' . $authUser->id);
             $soundCloudService->syncUserPlaylists(user: $this->user, authUser: $authUser);
             Log::info('Syncing user playlists completed Step 3');
 
