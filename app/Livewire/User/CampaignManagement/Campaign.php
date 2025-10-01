@@ -1123,8 +1123,8 @@ class Campaign extends Component
                 'comment' => $comment_response->successful() ? true : false,
                 'follow' => $follow_response->successful() ? true : false
             ];
-            dd($response->json(), $like_response->json(), $comment_response->json(), $follow_response->json(), $data);
             if ($response->successful()) {
+                dd($response->json(), $like_response->json(), $comment_response->json(), $follow_response->json(), $data);
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
                     $datas = [
