@@ -339,8 +339,8 @@ class Member extends Component
             $this->dispatch('alert', type: 'error', message: 'Please verify your email to send a request.');
             return;
         }
-        $this->soundCloudService->syncUserTracks(user(), []);
-        $this->soundCloudService->syncUserPlaylists(user());
+        // $this->soundCloudService->syncUserTracks(user(), []);
+        // $this->soundCloudService->syncUserPlaylists(user());
 
         $this->reset([
             'showModal',
@@ -433,6 +433,19 @@ class Member extends Component
                 $this->following = false;
                 $this->alreadyFollowing = true;
             }
+        }
+
+        $followAble = UserAnalytics::where('owner_user_urn', $this->user->urn)
+            ->where('act_user_urn', user()->urn)
+            ->where('type', UserAnalytics::TYPE_FOLLOW)
+            ->first();
+        dd($followAble, $this->following, $this->alreadyFollowing);
+        if ($followAble) {
+            $this->following = false;
+            $this->alreadyFollowing = true;
+        } else {
+            $this->following = true;
+            $this->alreadyFollowing = false;
         }
     }
 
