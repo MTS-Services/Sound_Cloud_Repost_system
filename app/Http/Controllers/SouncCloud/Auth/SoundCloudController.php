@@ -107,6 +107,9 @@ class SoundCloudController extends Controller
     public function syncUser(User $user, $soundCloudUser)
     {
         try {
+            Log::info('SoundCloud sync started for syncUserInformation');
+            $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+            Log::info('SoundCloud sync completed for syncUserInformation');
             Log::info('SoundCloud sync started for syncUserJob');
             dispatch(new SyncUserJob(user: $user, soundCloudUser: $soundCloudUser, authUserId: user()->id));
             Log::info('SoundCloud sync completed for syncUserJob');
