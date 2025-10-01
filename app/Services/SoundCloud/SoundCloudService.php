@@ -915,7 +915,7 @@ class SoundCloudService
     public function syncUserPlaylists(User $user, ?array $playlistsData = null, ?User $authUser = null): int
     {
         try {
-            Log::info("Auth user urn: {$authUser->urn} step 1");
+            Log::info("Auth user urn: {$authUser?->urn} step 1");
             // Fetch data outside transaction (API call)
             if (is_null($playlistsData)) {
 
