@@ -976,6 +976,8 @@ class Campaign extends Component
         $this->showRepostConfirmationModal = true;
         $this->campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
 
+        // #### Don't Remove This comment Code It is needed for future use ####
+
         // if ($this->campaign->music) {
         //     if ($this->campaign->music_type == Track::class) {
         //         $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->campaign->music);
@@ -1004,10 +1006,13 @@ class Campaign extends Component
         //     }
         // }
 
-        $query = UserAnalytics::where('owner_user_urn', $this->campaign->music->user->urn)
-            ->where('act_user_urn', user()->urn)->where('source_type', get_class($this->campaign->music));
-        $followAble = $query->where('type', UserAnalytics::TYPE_FOLLOW)->first();
-        $likeAble = $query->where('type', UserAnalytics::TYPE_LIKE)->first();
+        $baseQuery = UserAnalytics::where('owner_user_urn', $this->campaign?->music?->user?->urn)
+            ->where('act_user_urn', user()->urn)
+            ->where('source_type', get_class($this->campaign?->music))
+            ->where('source_id', $this->campaign?->music?->id);
+
+        $followAble = (clone $baseQuery)->where('type', UserAnalytics::TYPE_FOLLOW)->first();
+        $likeAble = (clone $baseQuery)->where('type', UserAnalytics::TYPE_LIKE)->first();
 
         if ($likeAble !== null) {
             $this->liked = false;
