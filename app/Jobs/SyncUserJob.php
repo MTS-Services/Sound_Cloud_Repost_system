@@ -57,19 +57,29 @@ class SyncUserJob implements ShouldQueue
 
         try {
             // Sync user information (lightweight operation)
+            Log::info('Syncing user information Step 1');
             $soundCloudService->syncUserInformation($this->user, $this->soundCloudUser);
+            Log::info('Syncing user information completed Step 1');
 
             // Sync tracks (can be heavy, wrapped individually)
+            Log::info('Syncing user tracks Step 2');
             $soundCloudService->syncUserTracks($this->user, []);
+            Log::info('Syncing user tracks completed Step 2');
 
             // Sync playlists (can be heavy, wrapped individually)
+            Log::info('Syncing user playlists Step 3');
             $soundCloudService->syncUserPlaylists($this->user);
+            Log::info('Syncing user playlists completed Step 3');
 
             // Sync products and subscriptions
+            Log::info('Syncing user products and subscriptions Step 4');
             $soundCloudService->syncUserProductsAndSubscriptions($this->user, $this->soundCloudUser);
+            Log::info('Syncing user products and subscriptions completed Step 4');
 
             // Sync followers
+            Log::info('Syncing user followers Step 5');
             $soundCloudService->syncUserRealFollowers($this->user);
+            Log::info('Syncing user followers completed Step 5');
 
             Log::info('SyncUserJob completed successfully', [
                 'user_id' => $this->user->id,
