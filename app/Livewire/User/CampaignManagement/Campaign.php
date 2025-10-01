@@ -1084,24 +1084,30 @@ class Campaign extends Component
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
                     if ($this->commented) {
                         $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
+                        Log::info('comment_response for track urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
                     }
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
+                        Log::info('like_response for track urn:' . $musicUrn . 'response: ' . json_encode($like_response));
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+                        Log::info('follow_response for track urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
                     }
                     break;
                 case Playlist::class:
                     $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                     if ($this->liked) {
                         $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
+                        Log::info('like_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($like_response));
                     }
                     if ($this->commented) {
                         $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
+                        Log::info('comment_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
                     }
                     if ($this->followed) {
                         $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
+                        Log::info('follow_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
                     }
                     break;
                 default:
