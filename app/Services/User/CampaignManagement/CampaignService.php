@@ -84,20 +84,17 @@ class CampaignService
                         $campaign->increment('comment_count');
                     }
                 }
-                if ($likeCommentAbleData['addLikeRecord'] == true || $likeCommentAbleData['likeable'] == true) {
+                if ($likeCommentAbleData['likeable'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
-                    if ($likeCommentAbleData['likeable'] == true) {
-                        if ($response != false || $response != null) {
-                            $campaign->increment('like_count');
-                        }
+                    if ($response != false || $response != null) {
+                        $campaign->increment('like_count');
                     }
                 }
-                if ($likeCommentAbleData['follow'] == true || $likeCommentAbleData['addFollowRecord'] == true) {
+                if ($likeCommentAbleData['follow'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
-                    if ($likeCommentAbleData['follow'] == true) {
-                        if ($response != false || $response != null) {
-                            $campaign->increment('followowers_count');
-                        }
+
+                    if ($response != false || $response != null) {
+                        $campaign->increment('followowers_count');
                     }
                 }
                 if ($campaign->budget_credits == $campaign->credits_spent) {
@@ -169,10 +166,10 @@ class CampaignService
         }
     }
 
-    public function likeCampaign($campaign, $reposter = null, $likeIncreased = false)
+    public function likeCampaign($campaign, $reposter = null)
     {
         try {
-            $response = DB::transaction(function () use ($campaign, $reposter, $likeIncreased) {
+            DB::transaction(function () use ($campaign, $reposter) {
 
                 if ($reposter == null) {
                     $reposter = user();
@@ -180,32 +177,29 @@ class CampaignService
                 $trackOwnerName = $campaign->music->user?->name;
 
                 $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
-                if ($likeIncreased == true) {
-                    if ($response != false || $response != null) {
-                        $campaign->increment('like_count');
-                    }
 
-                    $ownerNotificaion = CustomNotification::create([
-                        'receiver_id' => $campaign?->user?->id,
-                        'receiver_type' => get_class($campaign?->user),
-                        'type' => CustomNotification::TYPE_USER,
-                        'message_data' => [
-                            'title' => "New Like on your campaign",
-                            'message' => "Your campaign has been liked",
-                            'description' => "Your campaign has been liked by {$reposter->name}.",
-                            'icon' => 'music',
-                            'additional_data' => [
-                                'Track Title' => $campaign->music->title,
-                                'Track Artist' => $trackOwnerName,
-                            ]
-                        ]
-                    ]);
-                } else {
-                    return false;
+                if ($response != false || $response != null) {
+                    $campaign->increment('like_count');
                 }
+
+                $ownerNotificaion = CustomNotification::create([
+                    'receiver_id' => $campaign?->user?->id,
+                    'receiver_type' => get_class($campaign?->user),
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => "New Like on your campaign",
+                        'message' => "Your campaign has been liked",
+                        'description' => "Your campaign has been liked by {$reposter->name}.",
+                        'icon' => 'music',
+                        'additional_data' => [
+                            'Track Title' => $campaign->music->title,
+                            'Track Artist' => $trackOwnerName,
+                        ]
+                    ]
+                ]);
                 broadcast(new UserNotificationSent($ownerNotificaion));
             });
-            return $response == false ? throw new Exception('You have already liked this campaign') : true;
+            return true;
         } catch (Throwable $e) {
             throw $e;
         }
@@ -213,7 +207,7 @@ class CampaignService
     public function repostSource($campaign, $soundcloudRepostId, $reposter = null, $repostIncreased = false)
     {
         try {
-            $response = DB::transaction(function () use ($campaign, $soundcloudRepostId, $reposter, $repostIncreased) {
+            DB::transaction(function () use ($campaign, $soundcloudRepostId, $reposter, $repostIncreased) {
 
                 if ($reposter == null) {
                     $reposter = user();
@@ -231,51 +225,49 @@ class CampaignService
                 ]);
 
                 $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
-                if ($repostIncreased == true) {
-                    if ($response != false || $response != null) {
-                        $campaign->increment('completed_reposts');
-                    }
 
-                    $reposterNotification = CustomNotification::create([
-                        'receiver_id' => $reposter->id,
-                        'receiver_type' => get_class($reposter),
-                        'type' => CustomNotification::TYPE_USER,
-                        'url' => route('user.my-account') . '?tab=reposts',
-                        'message_data' => [
-                            'title' => "Repost successful",
-                            'message' => "You've been reposted on a campaign",
-                            'description' => "You've been reposted on a campaign by {$sourceOwnerName}.",
-                            'icon' => 'music',
-                            'additional_data' => [
-                                $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Title' => $campaign->music->title,
-                                $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Artist' => $sourceOwnerName,
-                            ]
-                        ]
-                    ]);
-
-                    $ownerNotificaion = CustomNotification::create([
-                        'receiver_id' => $campaign?->user?->id,
-                        'receiver_type' => get_class($campaign?->user),
-                        'type' => CustomNotification::TYPE_USER,
-                        'message_data' => [
-                            'title' => "Repost successful",
-                            'message' => "Your campaign has been reposted",
-                            'description' => "Your campaign has been reposted by {$reposter->name}.",
-                            'icon' => 'music',
-                            'additional_data' => [
-                                $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Title' => $campaign->music->title,
-                                $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Artist' => $sourceOwnerName,
-                            ]
-                        ]
-                    ]);
-                } else {
-                    return false;
+                if ($response != false || $response != null) {
+                    $campaign->increment('completed_reposts');
                 }
+
+                $reposterNotification = CustomNotification::create([
+                    'receiver_id' => $reposter->id,
+                    'receiver_type' => get_class($reposter),
+                    'type' => CustomNotification::TYPE_USER,
+                    'url' => route('user.my-account') . '?tab=reposts',
+                    'message_data' => [
+                        'title' => "Repost successful",
+                        'message' => "You've been reposted on a campaign",
+                        'description' => "You've been reposted on a campaign by {$sourceOwnerName}.",
+                        'icon' => 'music',
+                        'additional_data' => [
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Title' => $campaign->music->title,
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Artist' => $sourceOwnerName,
+                        ]
+                    ]
+                ]);
+
+                $ownerNotificaion = CustomNotification::create([
+                    'receiver_id' => $campaign?->user?->id,
+                    'receiver_type' => get_class($campaign?->user),
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => "Repost successful",
+                        'message' => "Your campaign has been reposted",
+                        'description' => "Your campaign has been reposted by {$reposter->name}.",
+                        'icon' => 'music',
+                        'additional_data' => [
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Title' => $campaign->music->title,
+                            $campaign->music_type == Track::class ? 'Track' : 'Playlist' . ' Artist' => $sourceOwnerName,
+                        ]
+                    ]
+                ]);
+
 
                 broadcast(new UserNotificationSent($reposterNotification));
                 broadcast(new UserNotificationSent($ownerNotificaion));
             });
-            return $response == false ? throw new Exception('You have already reposted this campaign') : true;
+            return true;
         } catch (Throwable $e) {
             throw $e;
         }

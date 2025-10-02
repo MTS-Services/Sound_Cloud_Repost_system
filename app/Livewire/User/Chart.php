@@ -134,8 +134,12 @@ class Chart extends Component
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
+            if ($like_increased == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already liked this ' . $campaign->music_type == Track::class ? 'track' : 'playlist' . ' from soundcloud.');
+                return;
+            }
             if ($response->successful()) {
-                $this->campaignService->likeCampaign($campaign, user(), $like_increased);
+                $this->campaignService->likeCampaign($campaign, user());
                 $this->dispatch('alert', type: 'success', message: 'Like successful.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body());
@@ -202,6 +206,12 @@ class Chart extends Component
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
+
+            if ($repost_increased == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already reposted this ' . $campaign->music_type == Track::class ? 'track' : 'playlist' . ' from soundcloud.');
+                return;
+            }
+
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->music_type == Track::class ? $campaign->user->urn : $campaign->music->user->soundcloud_urn);
                 if ($repostEmailPermission) {
@@ -216,7 +226,7 @@ class Chart extends Component
                     NotificationMailSent::dispatch($datas);
                 }
                 $soundcloudRepostId = $campaign->music_type == Track::class ? $campaign->music->soundcloud_track_id : $campaign->music->soundcloud_id;
-                $this->campaignService->repostSource($campaign, $soundcloudRepostId, user(), $repost_increased);
+                $this->campaignService->repostSource($campaign, $soundcloudRepostId, user());
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.');
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body());
