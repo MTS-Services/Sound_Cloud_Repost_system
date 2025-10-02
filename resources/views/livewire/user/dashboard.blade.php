@@ -414,7 +414,7 @@
 
                 <!-- Show recent tracks if exist -->
                 <div class="space-y-4">
-                    @forelse ($recentTracks as $recentTrack)
+                    @forelse (isset($recentTracks) && $recentTracks->count() > 0 ? $recentTracks as $recentTrack : [])
                         <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
                     @empty
                         <div class="text-center py-8">
@@ -453,7 +453,8 @@
                             <div class="flex justify-between text-sm mb-3">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
+                                    <span
+                                        class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
                                 </div>
                                 <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
                             </div>
