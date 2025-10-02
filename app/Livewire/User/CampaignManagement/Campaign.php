@@ -1110,7 +1110,7 @@ class Campaign extends Component
                     $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
                     $newLikes = $checkLiked['collection']['favoritings_count'];
                     $newReposts = $checkLiked['collection']['reposts_count'];
-                    if ($newLikes > $previous_likes) {
+                    if ($newLikes > $previous_likes && $like_response != null) {
                         $increse_likes = true;
                     }
                     if ($newReposts > $previous_reposts) {
@@ -1141,7 +1141,7 @@ class Campaign extends Component
                     $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
                     $newLikes = $checkLiked['collection']['likes_count'];
                     $newReposts = $checkLiked['collection']['repost_count'];
-                    if ($newLikes > $previous_likes) {
+                    if ($newLikes > $previous_likes && $like_response != null) {
                         $increse_likes = true;
                     }
                     if ($newReposts > $previous_reposts) {
