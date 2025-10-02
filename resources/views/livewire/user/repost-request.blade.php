@@ -407,7 +407,6 @@
     </section>
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.direct-repost-confirmation-modal')
-
     <!--Previously Reposted Requests-->
 
 

@@ -80,20 +80,24 @@ class CampaignService
 
                 if ($likeCommentAbleData['comment'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
-                    if ($response != false || $response != null) {                        
+                    if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
                     }
                 }
-                if ($likeCommentAbleData['likeable'] == true) {
+                if ($likeCommentAbleData['addLikeRecord'] == true || $likeCommentAbleData['likeable'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
-                    if ($response != false || $response != null) {                        
-                        $campaign->increment('like_count');
+                    if ($likeCommentAbleData['likeable'] == true) {
+                        if ($response != false || $response != null) {
+                            $campaign->increment('like_count');
+                        }
                     }
                 }
-                if ($likeCommentAbleData['follow'] == true) {
+                if ($likeCommentAbleData['follow'] == true || $likeCommentAbleData['addFollowRecord'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
-                    if ($response != false || $response != null) {
-                        $campaign->increment('followowers_count');
+                    if ($likeCommentAbleData['follow'] == true) {
+                        if ($response != false || $response != null) {
+                            $campaign->increment('followowers_count');
+                        }
                     }
                 }
                 if ($campaign->budget_credits == $campaign->credits_spent) {

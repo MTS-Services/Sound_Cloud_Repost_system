@@ -1080,6 +1080,7 @@ class Campaign extends Component
             $follow_response = null;
             $increse_likes = false;
             $increse_reposts = false;
+            $increse_follows = false;
 
             switch ($campaign->music_type) {
                 case Track::class:
@@ -1158,11 +1159,27 @@ class Campaign extends Component
                 return;
             }
 
+            if ($this->followed) {
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                $previous_followers = $checkLiked['collection']['followers_count'];
+
+                $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                $newFollowers = $checkLiked['collection']['followers_count'];
+                if ($newFollowers > $previous_followers && $follow_response != null) {
+                    $increse_follows = true;
+                }
+            }
+
             $data = [
                 'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
+                'addLikeRecord' => $like_response != null ? ($like_response->successful() && $increse_likes == false ? true : false) : false,
                 'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
-                'follow' => $follow_response != null ? ($follow_response->successful() ? true : false) : false,
+                'follow' => $follow_response != null ? ($follow_response->successful() && $increse_follows ? true : false) : false,
+                'addFollowRecord' => $follow_response != null ? ($follow_response->successful() && $increse_follows == false ? true : false) : false,
             ];
+            
             if ($response->successful()) {
                 $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
                 if ($repostEmailPermission) {
