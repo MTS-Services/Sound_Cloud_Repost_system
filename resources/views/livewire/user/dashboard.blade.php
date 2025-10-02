@@ -406,7 +406,7 @@
                         <h3 class="text-lg font-semibold">Recent Tracks</h3>
                         <p class="text-slate-400 text-sm">Your latest submissions</p>
                     </div>
-                    @if ($recentTracks->count() > 0)
+                    @if (isset($recentTracks) && count($recentTracks) > 0)
                         <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
                             href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
                     @endif
@@ -414,9 +414,28 @@
 
                 <!-- Show recent tracks if exist -->
                 <div class="space-y-4">
-                    @forelse ($recentTracks as $recentTrack)
-                        <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
-                    @empty
+
+                    @if (isset($recentTracks) && count($recentTracks) > 0)
+                        @forelse ($recentTracks as $recentTrack)
+                            <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
+                        @empty
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path d="M5 12h14M12 5v14" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
+                                <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
+                                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
+                                    <span><x-lucide-plus
+                                            class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
+                                    Create Campaign
+                                </x-gbutton>
+                            </div>
+                        @endforelse
+                    @else
                         <div class="text-center py-8">
                             <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
@@ -431,7 +450,7 @@
                                 Create Campaign
                             </x-gbutton>
                         </div>
-                    @endforelse
+                    @endif
                 </div>
             </div>
 
@@ -442,7 +461,7 @@
                     <div>
                         <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
                     </div>
-                    @if ($repostRequests->count() > 0)
+                    @if (isset($repostRequests) && $repostRequests->count() > 0)
                         <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
                             href="{{ route('user.reposts-request') }}">View all →</a>
                     @endif
@@ -453,7 +472,8 @@
                             <div class="flex justify-between text-sm mb-3">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
+                                    <span
+                                        class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
                                 </div>
                                 <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
                             </div>
