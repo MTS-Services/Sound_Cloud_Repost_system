@@ -416,6 +416,7 @@
                 <div class="space-y-4">
 
                     @if (isset($recentTracks) && count($recentTracks) > 0)
+                        @dd($recentTracks)
                         @forelse ($recentTracks as $recentTrack)
                             <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
                         @empty
