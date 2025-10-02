@@ -270,11 +270,11 @@ class Chart extends Component
             $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
-            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews) * 100) : 0;
+            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews)  * 100) : 0;
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
-            $source['getMusicSrc'] = $this->soundCloudService->getMusicSrc($source['source_details']['id']);
+            // $source['getMusicSrc'] = $this->soundCloudService->getMusicSrc($source['source_details']['id']);
 
             // Add score and rate to source array
             $source['engagement_score'] = $engagementScore;
