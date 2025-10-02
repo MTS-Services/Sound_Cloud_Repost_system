@@ -72,7 +72,7 @@ class TrackViewCount implements ShouldQueue
                     $this->source = $data->music;
                     break;
                 case 'request':
-                    $data->load('track');
+                    $data->load('music');
                     $this->genre = $data->track->genre;
                     $this->actionable = $data;
                     $this->source = $data->track;
