@@ -163,7 +163,7 @@ class RepostRequestService
                     'user_urn' => $currentUserUrn,
                     'status' => $response->status(),
                 ]);
-                return ['status' => 'error', 'message' => 'Failed to repost to SoundCloud. Please try again.'];
+                return ['status' => 'error', 'message' => ''];
             }
 
             if (!$response->successful()) {
@@ -172,7 +172,7 @@ class RepostRequestService
                     'user_urn' => $currentUserUrn,
                     'status' => $response->status(),
                 ]);
-                return ['status' => 'error', 'message' => 'Failed to repost to SoundCloud. Please try again.'];
+                return ['status' => 'error', 'message' => 'You have already repost this ' . ($request->music_type == Track::class ? 'track' : 'playlist') .  ' from your soundcloud'];
             }
 
             // Optional: Handle non-fatal comment/like/follow failures
