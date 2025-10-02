@@ -406,7 +406,7 @@
                         <h3 class="text-lg font-semibold">Recent Tracks</h3>
                         <p class="text-slate-400 text-sm">Your latest submissions</p>
                     </div>
-                    @if ($recentTracks->count() > 0)
+                    @if (isset($recentTracks) && $recentTracks->count() > 0)
                         <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
                             href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
                     @endif
