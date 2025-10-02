@@ -211,6 +211,7 @@ class SoundCloudService
             Log::error('SoundCloud Resolve API Error', [
                 'status' => $response->status(),
                 'response_body' => $response->body(),
+                'errorMessage' => $errorMessage ?? 'Failed to resolve URL',
             ]);
 
             throw new Exception("{$errorMessage} Status: " . $response->status());
