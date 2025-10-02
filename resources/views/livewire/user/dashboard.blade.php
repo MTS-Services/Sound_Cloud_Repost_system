@@ -406,17 +406,18 @@
                         <h3 class="text-lg font-semibold">Recent Tracks</h3>
                         <p class="text-slate-400 text-sm">Your latest submissions</p>
                     </div>
-                    @if (isset($recentTracks) && count($recentTracks) > 0)
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
-                            href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
-                    @endif
+                    {{-- @if (isset($recentTracks)) --}}
+                        @if ($recentTracks->count() > 0)
+                            <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
+                                href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
+                        @endif
+                    {{-- @endif --}}
                 </div>
 
                 <!-- Show recent tracks if exist -->
                 <div class="space-y-4">
 
-                    @if (isset($recentTracks) && count($recentTracks) > 0)
-                        @dd($recentTracks)
+                    @if (isset($recentTracks))
                         @forelse ($recentTracks as $recentTrack)
                             <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
                         @empty
@@ -462,7 +463,7 @@
                     <div>
                         <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
                     </div>
-                    @if (isset($repostRequests) && $repostRequests->count() > 0)
+                    @if ($repostRequests->count() > 0)
                         <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
                             href="{{ route('user.reposts-request') }}">View all →</a>
                     @endif
