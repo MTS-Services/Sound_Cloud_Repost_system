@@ -414,9 +414,28 @@
 
                 <!-- Show recent tracks if exist -->
                 <div class="space-y-4">
-                    @forelse (isset($recentTracks) && $recentTracks->count() > 0 ? $recentTracks as $recentTrack : [])
-                        <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
-                    @empty
+
+                    @if (isset($recentTracks) && $recentTracks->count() > 0)
+                        @forelse ($recentTracks as $recentTrack)
+                            <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
+                        @empty
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path d="M5 12h14M12 5v14" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
+                                <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
+                                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
+                                    <span><x-lucide-plus
+                                            class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
+                                    Create Campaign
+                                </x-gbutton>
+                            </div>
+                        @endforelse
+                    @else
                         <div class="text-center py-8">
                             <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
@@ -431,7 +450,7 @@
                                 Create Campaign
                             </x-gbutton>
                         </div>
-                    @endforelse
+                    @endif
                 </div>
             </div>
 
