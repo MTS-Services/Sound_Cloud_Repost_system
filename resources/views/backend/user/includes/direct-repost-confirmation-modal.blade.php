@@ -56,7 +56,7 @@
                     <label class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
                             @if (!$alreadyFollowing)
-                                <input type="checkbox" wire:model.live="following"
+                                <input type="checkbox" wire:model.live="followed"
                                     class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
                             @endif
                             <label class="text-sm text-gray-800 dark:text-gray-200">
