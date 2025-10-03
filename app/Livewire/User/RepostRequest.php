@@ -46,7 +46,7 @@ class RepostRequest extends Component
     // Confirmation Repost
     public $totalRepostPrice = 0;
     public $request = null;
-    public $liked = false;
+    public $liked = true;
     public $alreadyLiked = false;
     public string $commented = '';
     public $following = true;

@@ -132,7 +132,7 @@ class Dashboard extends Component
 
     // Confirmation Repost
     public $request = null;
-    public bool $liked = false;
+    public bool $liked = true;
     public bool $alreadyLiked = false;
     public string $commented = '';
     public bool $followed = true;
@@ -869,7 +869,8 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
+            ;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
