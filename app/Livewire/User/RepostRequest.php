@@ -49,7 +49,7 @@ class RepostRequest extends Component
     public $liked = true;
     public $alreadyLiked = false;
     public string $commented = '';
-    public $following = true;
+    public $followed = true;
     public $alreadyFollowing = false;
 
 
@@ -320,7 +320,7 @@ class RepostRequest extends Component
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
 
-        $this->reset(['liked', 'alreadyLiked', 'commented', 'following', 'alreadyFollowing']);
+        $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
@@ -333,7 +333,7 @@ class RepostRequest extends Component
             $this->alreadyLiked = true;
         }
         if ($followAble !== null) {
-            $this->following = false;
+            $this->followed = false;
             $this->alreadyFollowing = true;
         }
     }
@@ -344,7 +344,7 @@ class RepostRequest extends Component
             return;
         }
 
-        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->following);
+        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
 
         if ($result['status'] === 'success') {
             $this->repostedRequests[] = $requestId;
