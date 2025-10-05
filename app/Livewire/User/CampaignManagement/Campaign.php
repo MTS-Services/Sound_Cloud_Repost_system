@@ -66,6 +66,8 @@ class Campaign extends Component
     #[Url(as: 'type', except: '')]
     public $searchMusicType = 'all';
 
+    public int $todayRepost = 0;
+
     public $selectedTags = [];
     public $selecteTags = [];
     public $selectedGenre = [];
@@ -972,6 +974,11 @@ class Campaign extends Component
     }
     public function confirmRepost($campaignId)
     {
+        if ($this->todayRepost > 20) {
+            $againRepostTime = Carbon::now()->addHours(24)->diffInHours(Carbon::now());
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$againRepostTime} hours later.");
+        }
+
         if (!$this->canRepost($campaignId)) {
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
             return;
@@ -1623,7 +1630,9 @@ class Campaign extends Component
                 },
             ])->find(user()->id);
 
-            $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
+            $this->todayRepost = $user->reposts_count_today ?? 0;
+
+            $data['dailyRepostCurrent'] = $this->todayRepost;
             $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
             $data['pendingRequests'] = $user->requests_count ?? 0;
 
