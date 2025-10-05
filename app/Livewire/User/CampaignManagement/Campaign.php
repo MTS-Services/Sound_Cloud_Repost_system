@@ -974,7 +974,7 @@ class Campaign extends Component
     }
     public function confirmRepost($campaignId)
     {
-        if ($this->todayRepost > 20) {
+        if ($this->todayRepost < 20) {
             $againRepostTime = Carbon::now()->addHours(24)->diffInHours(Carbon::now());
             $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$againRepostTime} hours later.");
         }
