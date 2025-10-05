@@ -130,7 +130,9 @@ class Member extends Component
     {
         $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->costFilter = request()->get('cost', 'low_to_high');
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+
     }
     public function updatedSearch()
     {
@@ -173,8 +175,9 @@ class Member extends Component
     public function filterByCost($filterBy)
     {
         $this->costFilter = $filterBy;
-        $this->resetPage();
+        // $this->resetPage();
         $this->navigatingAway();
+        // return $this->redirectIntended(route() . '?cost=' . $filterBy, navigate: true);
     }
 
     public function updatedSearchQuery()
@@ -634,9 +637,9 @@ class Member extends Component
         if ($this->costFilter) {
             $collection = $users->getCollection();
             if ($this->costFilter === 'low_to_high') {
-                $sortedCollection = $collection->sortBy('real_followers');
+                $sortedCollection = $collection->sortBy('repost_price');
             } else {
-                $sortedCollection = $collection->sortByDesc('real_followers');
+                $sortedCollection = $collection->sortByDesc('repost_price');
             }
 
             $users->setCollection($sortedCollection->values());
