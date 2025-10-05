@@ -174,7 +174,7 @@ class Member extends Component
     {
         $this->costFilter = $filterBy;
         $this->resetPage();
-        // $this->navigatingAway();
+        $this->navigatingAway();
     }
 
     public function updatedSearchQuery()
@@ -632,14 +632,11 @@ class Member extends Component
         $users = $query->paginate($this->perPage);
 
         if ($this->costFilter) {
-            $collection = $users->getCollection()->each(function ($user) {
-                $user->repost_cost = $user->repost_price;
-            });
-
+            $collection = $users->getCollection();
             if ($this->costFilter === 'low_to_high') {
-                $sortedCollection = $collection->sortBy('repost_cost');
+                $sortedCollection = $collection->sortBy('repost_price');
             } else {
-                $sortedCollection = $collection->sortByDesc('repost_cost');
+                $sortedCollection = $collection->sortByDesc('repost_price');
             }
 
             $users->setCollection($sortedCollection->values());

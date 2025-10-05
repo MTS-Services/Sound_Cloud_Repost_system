@@ -76,16 +76,16 @@
                             class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
                             <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                                 <div class="py-1">
-                                    <a href="{{ route('user.members') }}" wire:navigate
-                                        wire:click="filterByCost('low_to_high')"
+                                    <button
+                                        wire:click="filterByCost('high_to_low')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('High to Low') }}
-                                    </a>
-                                    <a href="{{ route('user.members') }}" wire:navigate
-                                        wire:click="filterByCost('high_to_low')"
+                                    </button>
+                                    <button
+                                        wire:click="filterByCost('low_to_high')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('Low to High') }}
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
