@@ -25,6 +25,7 @@ use App\Models\Repost;
 use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
+use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 
 use function PHPSTORM_META\type;
@@ -1145,6 +1146,13 @@ class Dashboard extends Component
     }
     public function confirmRepost($requestId)
     {
+        if ($this->todayRepost >= 20) {
+            $endOfDay = Carbon::today()->addDay();
+            $hoursLeft = round(now()->diffInHours($endOfDay));
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
+            return;
+        }
+
         $this->showRepostConfirmationModal = true;
         $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
 
