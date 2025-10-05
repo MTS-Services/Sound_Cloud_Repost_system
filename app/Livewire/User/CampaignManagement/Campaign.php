@@ -241,7 +241,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -975,8 +975,10 @@ class Campaign extends Component
     public function confirmRepost($campaignId)
     {
         if ($this->todayRepost < 20) {
-            $againRepostTime = Carbon::now()->addHours(24)->diffInHours(Carbon::now());
-            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$againRepostTime} hours later.");
+            $endOfDay = Carbon::today()->addDay();
+            $hoursLeft = round(now()->diffInHours($endOfDay));
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
+            return;
         }
 
         if (!$this->canRepost($campaignId)) {
