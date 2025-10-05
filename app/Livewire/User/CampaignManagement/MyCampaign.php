@@ -83,7 +83,7 @@ class MyCampaign extends Component
     public bool $commentable = true;
     public bool $likeable = true;
     public bool $proFeatureEnabled = false;
-    public $maxFollower = 100;
+    public $maxFollower = 1000;
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
