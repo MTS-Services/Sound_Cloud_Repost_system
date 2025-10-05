@@ -268,7 +268,7 @@ class Dashboard extends Component
     {
         $this->total_credits = $this->creditTransactionService->getUserTotalCredits();
 
-        $this->totalCount = Repost::where('reposter_urn', user()->urn)->count();
+        $this->totalCount = Repost::where('track_owner_urn', user()->urn)->count();
 
         $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
             ->where('expired_at', '>', now())
