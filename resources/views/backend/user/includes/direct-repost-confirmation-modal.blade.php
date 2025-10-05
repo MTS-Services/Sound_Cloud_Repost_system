@@ -93,7 +93,8 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
                                 track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+2 credits</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                    class="font-medium text-orange-500">2</span> Credits</span>
                         </div>
                         <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>

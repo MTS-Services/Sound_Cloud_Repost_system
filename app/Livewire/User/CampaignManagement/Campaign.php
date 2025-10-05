@@ -194,7 +194,7 @@ class Campaign extends Component
     // Confirmation Repost
     public $totalRepostPrice = 0;
     public $campaign = null;
-    public $liked = false;
+    public $liked = true;
     public $alreadyLiked = false;
     public $commented = null;
     public $followed = true;
