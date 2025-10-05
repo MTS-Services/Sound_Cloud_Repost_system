@@ -42,6 +42,7 @@ class RepostRequest extends Component
     public $requestReceiveable = false;
     public bool $showRepostRequestModal = false;
     public bool $showRepostConfirmationModal = false;
+    public int $todayRepost = 0;
 
     // Confirmation Repost
     public $totalRepostPrice = 0;

@@ -144,6 +144,7 @@ class Dashboard extends Component
 
     public $activities_score = 0.0;
     public $activities_change_rate = 0.0;
+    public int $todayRepost = 0;
 
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
