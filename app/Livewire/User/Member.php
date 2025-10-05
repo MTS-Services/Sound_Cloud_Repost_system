@@ -144,6 +144,10 @@ class Member extends Component
             $params['genre'] = $this->selectedGenres;
         }
 
+        if (!empty($this->costFilter)) {
+            $params['cost'] = $this->costFilter;
+        }
+
         // if (!empty($this->search)) {
         //     $params['q'] = $this->search;
         // }
@@ -170,7 +174,7 @@ class Member extends Component
     {
         $this->costFilter = $filterBy;
         $this->resetPage();
-        $this->navigatingAway();
+        // $this->navigatingAway();
     }
 
     public function updatedSearchQuery()
@@ -627,10 +631,8 @@ class Member extends Component
         }
         $users = $query->paginate($this->perPage);
 
-
         if ($this->costFilter) {
             $collection = $users->getCollection()->each(function ($user) {
-                // $user->repost_cost = repostPrice($user);
                 $user->repost_cost = $user->repost_price;
             });
 
