@@ -191,7 +191,7 @@
 
                 <!-- Search box (always below on mobile) -->
                 <div x-data="{ showInput: false }"
-                    class="w-full sm:w-64 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded mt-3 sm:mt-0 order-2">
+                    class="w-full flex-1 relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded mt-3 sm:mt-0 order-2">
                     <svg class="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-slate-300 pointer-events-none"
                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"

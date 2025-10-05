@@ -97,7 +97,7 @@
                         <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}
                         </div>
                     </div>
-                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Campaign Limit</div>
+                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Active Campaign Limit</div>
                 </div>
             </div>
 
