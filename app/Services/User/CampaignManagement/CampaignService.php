@@ -94,7 +94,7 @@ class CampaignService
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
 
                     if ($response != false || $response != null) {
-                        $campaign->increment('followowers_count');
+                        $campaign->increment('followers_count');
                     }
                 }
                 if ($campaign->budget_credits == $campaign->credits_spent) {

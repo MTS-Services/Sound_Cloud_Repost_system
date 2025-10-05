@@ -7,8 +7,7 @@ use App\Http\Traits\AuditColumnsTrait;
 use App\Models\Campaign;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-return new class extends Migration
-{
+return new class extends Migration {
     use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
@@ -31,7 +30,7 @@ return new class extends Migration
             $table->integer('like_count')->default(0);
             $table->integer('comment_count')->default(0);
             $table->integer('favorite_count')->default(0);
-            $table->integer('followowers_count')->default(0);
+            $table->integer('followers_count')->default(0);
 
             $table->string('title');
             $table->text('description')->nullable();

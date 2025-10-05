@@ -42,7 +42,7 @@ class Campaign extends BaseModel
         'target_genre',
         'like_count',
         'comment_count',
-        'followowers_count',
+        'followers_count',
         'favorite_count',
 
         'creater_id',
@@ -65,7 +65,7 @@ class Campaign extends BaseModel
         'is_featured' => 'boolean',
         'status' => 'integer',
         'playback_count' => 'integer',
-        'followowers_count' => 'integer',
+        'followers_count' => 'integer',
         'like_count' => 'integer',
         'comment_count' => 'integer',
         'favorite_count' => 'integer',
@@ -188,7 +188,7 @@ class Campaign extends BaseModel
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_PAUSED);
     }
 
     public const BOOSTED = 1;

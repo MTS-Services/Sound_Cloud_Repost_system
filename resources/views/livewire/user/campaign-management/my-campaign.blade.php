@@ -134,7 +134,7 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-user-plus class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
                                                 <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followowers_count ?? 0 }}</span>
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followers_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
@@ -1161,7 +1161,7 @@
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Followers</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
-                                {{ number_format($campaign->followowers_count) }}</p>
+                                {{ number_format($campaign->followers_count) }}</p>
                         </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Likes</h4>
