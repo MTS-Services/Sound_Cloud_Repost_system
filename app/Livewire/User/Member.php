@@ -634,9 +634,9 @@ class Member extends Component
         if ($this->costFilter) {
             $collection = $users->getCollection();
             if ($this->costFilter === 'low_to_high') {
-                $sortedCollection = $collection->sortBy('repost_price');
+                $sortedCollection = $collection->sortBy('real_followers');
             } else {
-                $sortedCollection = $collection->sortByDesc('repost_price');
+                $sortedCollection = $collection->sortByDesc('real_followers');
             }
 
             $users->setCollection($sortedCollection->values());
