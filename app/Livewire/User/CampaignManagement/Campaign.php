@@ -730,8 +730,7 @@ class Campaign extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 2) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -1170,23 +1169,37 @@ class Campaign extends Component
             }
 
             if ($this->followed) {
-                $currentFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                $previous_followers = $currentFollowers['collection']['followers_count'];
+                // $currentFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                // $previous_followers = $currentFollowers['collection']['followers_count'];
 
-                $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
-                sleep(5);
-                $updatedFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                $newFollowers = $updatedFollowers['collection']['followers_count'];
-                dd($newFollowers, $previous_followers);
-                if ($newFollowers > $previous_followers && $follow_response != null) {
-                    $increse_follows = true;
+                // $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+                // sleep(5);
+                // $updatedFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                // $newFollowers = $updatedFollowers['collection']['followers_count'];
+                // dd($newFollowers, $previous_followers);
+                // if ($newFollowers > $previous_followers && $follow_response != null) {
+                //     $increse_follows = true;
+                // }
+                // Get target user ID
+                $userId = $campaign->user?->urn;
+                $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+
+                if ($checkResponse->getStatusCode() === 200) {
+                    $alreadyFollowing = true;
+                } else {
+                    $alreadyFollowing = false;
+                }
+
+                // 2️⃣ If not following, then follow now
+                if (!$alreadyFollowing) {
+                    $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$userId}");
                 }
             }
 
             $data = [
                 'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
                 'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
-                'follow' => $follow_response != null ? ($follow_response->successful() && $increse_follows ? true : false) : false,
+                'follow' => $follow_response != null ? $follow_response->successful() : true ,
             ];
 
             if ($response->successful()) {
