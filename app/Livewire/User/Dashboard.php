@@ -1177,7 +1177,7 @@ class Dashboard extends Component
         ]);
         $userUrn = $this->request->user?->urn;
         $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userUrn}");
-        dd($checkResponse);
+        dd($checkResponse->json());
 
         if ($checkResponse->getStatusCode() === 200) {
             $this->followed = false;
