@@ -1177,6 +1177,7 @@ class Campaign extends Component
 
                 $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
                 $newFollowers = $checkLiked['collection']['followers_count'];
+                dd($newFollowers);
                 if ($newFollowers > $previous_followers && $follow_response != null) {
                     $increse_follows = true;
                 }
