@@ -1044,9 +1044,6 @@ class Campaign extends Component
         if ($checkResponse->getStatusCode() === 200) {
             $this->followed = false;
             $this->alreadyFollowing = true;
-        } elseif ($checkResponse->getStatusCode() === 404) {
-            $this->followed = false;
-            $this->alreadyFollowing = true;
         }
     }
 

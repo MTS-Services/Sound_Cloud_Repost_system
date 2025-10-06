@@ -467,9 +467,6 @@ class Member extends Component
         if ($checkResponse->getStatusCode() === 200) {
             $this->following = false;
             $this->alreadyFollowing = true;
-        } elseif ($checkResponse->getStatusCode() === 404) {
-            $this->following = false;
-            $this->alreadyFollowing = true;
         }
     }
 
