@@ -1175,9 +1175,9 @@ class Dashboard extends Component
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
-        $userId = $this->request->user?->urn;
-        $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userId}");
-        dd($checkResponse->getStatusCode());
+        $userUrn = $this->request->user?->urn;
+        $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userUrn}");
+        dd($checkResponse);
 
         if ($checkResponse->getStatusCode() === 200) {
             $this->followed = false;
