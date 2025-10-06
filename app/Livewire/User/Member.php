@@ -461,8 +461,8 @@ class Member extends Component
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
-        $userId = $this->user->urn;
-        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+        $userUrn = $this->user->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
         if ($checkResponse->getStatusCode() === 200) {
             $this->following = false;

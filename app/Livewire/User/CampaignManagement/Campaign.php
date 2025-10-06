@@ -1038,8 +1038,8 @@ class Campaign extends Component
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
-        $userId = $this->campaign->user?->urn;
-        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+        $userUrn = $this->campaign->user?->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
         if ($checkResponse->getStatusCode() === 200) {
             $this->followed = false;
@@ -1192,8 +1192,8 @@ class Campaign extends Component
                 //     $increse_follows = true;
                 // }
                 // Get target user ID
-                $userId = $campaign->user?->urn;
-                $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+                $userUrn = $campaign->user?->urn;
+                $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
                 if ($checkResponse->getStatusCode() === 200) {
                     $alreadyFollowing = true;
@@ -1203,7 +1203,7 @@ class Campaign extends Component
 
                 // 2️⃣ If not following, then follow now
                 if (!$alreadyFollowing) {
-                    $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$userId}");
+                    $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$userUrn}");
                 }
             }
 
