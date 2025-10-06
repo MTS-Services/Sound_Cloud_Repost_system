@@ -1170,13 +1170,13 @@ class Campaign extends Component
             // }
 
             if ($this->followed) {
-                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                $previous_followers = $checkLiked['collection']['followers_count'];
+                $prevCheckLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                $previous_followers = $prevCheckLiked['collection']['followers_count'];
 
                 $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
 
-                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                $newFollowers = $checkLiked['collection']['followers_count'];
+                $newCheckLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                $newFollowers = $newCheckLiked['collection']['followers_count'];
                 dd($newFollowers, $previous_followers);
                 if ($newFollowers > $previous_followers && $follow_response != null) {
                     $increse_follows = true;
