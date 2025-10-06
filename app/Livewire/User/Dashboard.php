@@ -1175,7 +1175,7 @@ class Dashboard extends Component
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
         ]);
-        $userUrn = $this->request->user?->urn;
+        $userUrn = $this->request->requester?->urn;
         dd($userUrn);
         $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userUrn}");
         dd($checkResponse->json());
