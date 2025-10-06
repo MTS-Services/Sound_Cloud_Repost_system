@@ -1164,10 +1164,10 @@ class Campaign extends Component
                     return;
             }
 
-            if ($increse_reposts == false) {
-                $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
-                return;
-            }
+            // if ($increse_reposts == false) {
+            //     $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
+            //     return;
+            // }
 
             if ($this->followed) {
                 $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
