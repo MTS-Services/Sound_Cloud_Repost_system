@@ -19,6 +19,7 @@ use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -320,7 +321,7 @@ class RepostRequest extends Component
             $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
             return;
         }
-        
+
         if (!$this->canRepost($requestId)) {
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
             return;
@@ -332,7 +333,7 @@ class RepostRequest extends Component
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
-        $followAble = (clone $baseQuery)->followed()->first();
+        // $followAble = (clone $baseQuery)->followed()->first();
         $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->request?->music))
             ->where('source_id', $this->request?->music?->id)->first();
 
@@ -340,7 +341,21 @@ class RepostRequest extends Component
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        if ($followAble !== null) {
+        // if ($followAble !== null) {
+        //     $this->followed = false;
+        //     $this->alreadyFollowing = true;
+        // }
+
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userId = $this->request->user?->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
+        } elseif ($checkResponse->getStatusCode() === 404) {
             $this->followed = false;
             $this->alreadyFollowing = true;
         }

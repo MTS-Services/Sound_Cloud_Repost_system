@@ -871,8 +871,7 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -1161,7 +1160,7 @@ class Dashboard extends Component
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
-        $followAble = (clone $baseQuery)->followed()->first();
+        // $followAble = (clone $baseQuery)->followed()->first();
         $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->request?->music))
             ->where('source_id', $this->request?->music?->id)->first();
 
@@ -1169,7 +1168,20 @@ class Dashboard extends Component
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        if ($followAble !== null) {
+        // if ($followAble !== null) {
+        //     $this->followed = false;
+        //     $this->alreadyFollowing = true;
+        // }
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userId = $this->request->user?->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
+        } elseif ($checkResponse->getStatusCode() === 404) {
             $this->followed = false;
             $this->alreadyFollowing = true;
         }

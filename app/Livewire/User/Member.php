@@ -132,7 +132,6 @@ class Member extends Component
         $this->userinfo = user()->userInfo;
         $this->costFilter = request()->get('cost', 'low_to_high');
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
-
     }
     public function updatedSearch()
     {
@@ -435,15 +434,15 @@ class Member extends Component
 
         $this->showRepostsModal = true;
 
-        $response = $this->soundCloudService->getAuthUserFollowers($this->user);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Member Page:- Already following');
-                $this->following = false;
-                $this->alreadyFollowing = true;
-            }
-        }
+        // $response = $this->soundCloudService->getAuthUserFollowers($this->user);
+        // if ($response->isNotEmpty()) {
+        //     $already_following = $response->where('urn', user()->urn)->first();
+        //     if ($already_following !== null) {
+        //         Log::info('Member Page:- Already following');
+        //         $this->following = false;
+        //         $this->alreadyFollowing = true;
+        //     }
+        // }
 
         // $followAble = UserAnalytics::where('owner_user_urn', user()->urn)
         //     ->where('act_user_urn', $this->user->urn)
@@ -458,6 +457,20 @@ class Member extends Component
         //     $this->following = true;
         //     $this->alreadyFollowing = false;
         // }
+
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userId = $this->music->user?->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->following = false;
+            $this->alreadyFollowing = true;
+        } elseif ($checkResponse->getStatusCode() === 404) {
+            $this->following = false;
+            $this->alreadyFollowing = true;
+        }
     }
 
     public function closeRepostModal()

@@ -1022,7 +1022,7 @@ class Campaign extends Component
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->campaign?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
-        $followAble = (clone $baseQuery)->followed()->first();
+        // $followAble = (clone $baseQuery)->followed()->first();
         $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->campaign?->music))
             ->where('source_id', $this->campaign?->music?->id)->first();
 
@@ -1030,7 +1030,21 @@ class Campaign extends Component
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        if ($followAble !== null) {
+        // if ($followAble !== null) {
+        //     $this->followed = false;
+        //     $this->alreadyFollowing = true;
+        // }
+
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userId = $this->campaign->user?->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
+        } elseif ($checkResponse->getStatusCode() === 404) {
             $this->followed = false;
             $this->alreadyFollowing = true;
         }
@@ -1199,7 +1213,7 @@ class Campaign extends Component
             $data = [
                 'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
                 'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
-                'follow' => $follow_response != null ? $follow_response->successful() : true ,
+                'follow' => $follow_response != null ? $follow_response->successful() : true,
             ];
 
             if ($response->successful()) {
