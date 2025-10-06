@@ -1176,8 +1176,9 @@ class Dashboard extends Component
             'Authorization' => 'OAuth ' . user()->token,
         ]);
         $userUrn = $this->request->user?->urn;
+        dd($userUrn);
         $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userUrn}");
-        dd($checkResponse->json()['status']);
+        dd($checkResponse->json());
 
         if ($checkResponse->getStatusCode() === 200) {
             $this->followed = false;
