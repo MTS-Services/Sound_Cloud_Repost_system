@@ -26,13 +26,13 @@ use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
 use Carbon\Carbon;
-use Illuminate\Validation\ValidationException;
 
 use function PHPSTORM_META\type;
 
 class Dashboard extends Component
 {
     protected $soundcloudApiUrl = 'https://api.soundcloud.com';
+
 
     public $total_credits;
     public $totalCount;
@@ -1176,7 +1176,8 @@ class Dashboard extends Component
             'Authorization' => 'OAuth ' . user()->token,
         ]);
         $userId = $this->request->user?->urn;
-        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userId}");
+        $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userId}");
+        dd($checkResponse->getBody());
 
         if ($checkResponse->getStatusCode() === 200) {
             $this->followed = false;
