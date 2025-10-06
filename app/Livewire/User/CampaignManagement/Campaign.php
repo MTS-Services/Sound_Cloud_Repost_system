@@ -1164,21 +1164,20 @@ class Campaign extends Component
                     return;
             }
 
-            // if ($increse_reposts == false) {
-            //     $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
-            //     return;
-            // }
+            if ($increse_reposts == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
+                return;
+            }
 
             if ($this->followed) {
-                $prevCheckLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                $previous_followers = $prevCheckLiked['collection']['followers_count'];
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                $previous_followers = $checkLiked['collection']['followers_count'];
 
                 $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
 
-                $newCheckLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                $newFollowers = $newCheckLiked['collection']['followers_count'];
-                dd($newFollowers, $previous_followers);
-                if ($newFollowers > $previous_followers && $follow_response != null) {
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+                $newFollowers = $checkLiked['collection']['followers_count'];
+                if ($follow_response != null) {
                     $increse_follows = true;
                 }
             }
