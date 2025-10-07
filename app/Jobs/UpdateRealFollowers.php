@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Jobs;
 
 use App\Models\User;
@@ -12,31 +11,24 @@ class UpdateRealFollowers implements ShouldQueue
 {
     use Queueable;
 
+    protected $users;
+
     /**
      * Create a new job instance.
      */
-
-    protected FollowerAnalyzer $followerAnalyzer;
-    protected SoundCloudService $soundCloudService;
-    protected $users;
-
-
-    public function __construct($users, FollowerAnalyzer $followerAnalyzer = new FollowerAnalyzer(), SoundCloudService $soundCloudService = new SoundCloudService())
+    public function __construct($users)
     {
-        $this->followerAnalyzer = $followerAnalyzer;
-        $this->soundCloudService = $soundCloudService;
         $this->users = $users;
     }
-
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService): void
     {
         foreach ($this->users as $user) {
-            $followers = $this->soundCloudService->getAuthUserFollowers($user);
-            $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
+            $followers = $soundCloudService->getAuthUserFollowers($user);
+            $followerAnalyzer->syncUserRealFollowers($followers, $user);
             sleep(5);
         }
     }
