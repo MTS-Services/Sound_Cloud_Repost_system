@@ -60,6 +60,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
+            dd($soundCloudUser);
 
             $this->notArtistRedirect(soundCloudUser: $soundCloudUser);
 
