@@ -164,8 +164,7 @@ class SoundCloudController extends Controller
     private function notArtistRedirect($soundCloudUser)
     {
         $soundCloudUser = (array) $soundCloudUser;
-        dd($soundCloudUser['user']['track_count']);
-        if ($soundCloudUser['track_count'] < 0) {
+        if (isset($soundCloudUser['user']) && $soundCloudUser['user']['track_count'] <= 0) {
             return redirect()->route('f.landing')
                 ->with('error', 'This platform is for artists only! Your account is not an artist account. Please try to login with a real artist account.');
         }
