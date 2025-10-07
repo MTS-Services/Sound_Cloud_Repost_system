@@ -201,7 +201,7 @@
                                                         target="_blank"
                                                         class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                         SoundCloud Profile</a>
-                                                    <a href="{{ route('user.my-account', $repostRequest->requester?->name) }}"
+                                                    <a href="{{ route('user.my-account.user', $repostRequest->requester?->name) }}"
                                                         wire:navigate
                                                         class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                         RepostChain Profile</a>
@@ -322,7 +322,7 @@
                                             @if ($activeMainTab == 'outgoing_request')
                                                 <div class="flex flex-col sm:flex-row justify-end gap-3">
                                                     <a class="cursor-pointer" wire:navigate
-                                                        href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
+                                                        href="{{ route('user.my-account.user', $repostRequest->targetUser->name) }}">
                                                         <img class="w-10 h-10 rounded-full object-cover"
                                                             src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                             alt="{{ $repostRequest->targetUser->name }} avatar">
@@ -331,7 +331,7 @@
                                                         <div class="flex items-center gap-1 cursor-pointer">
                                                             <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
                                                                 wire:navigate
-                                                                href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
+                                                                href="{{ route('user.my-account.user', $repostRequest->targetUser->name) }}">
                                                                 {{ $repostRequest->targetUser->name }}
                                                             </a>
                                                         </div>

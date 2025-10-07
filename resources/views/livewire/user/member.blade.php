@@ -76,13 +76,11 @@
                             class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
                             <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                                 <div class="py-1">
-                                    <button
-                                        wire:click="filterByCost('high_to_low')"
+                                    <button wire:click="filterByCost('high_to_low')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('High to Low') }}
                                     </button>
-                                    <button
-                                        wire:click="filterByCost('low_to_high')"
+                                    <button wire:click="filterByCost('low_to_high')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('Low to High') }}
                                     </button>
@@ -119,7 +117,7 @@
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
                                 <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account', $user_->name) }}">
+                                    href="{{ route('user.my-account.user', $user_->name) }}">
                                     <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                         class="w-12 h-12 rounded-full">
                                     @if ($user_->isOnline())
@@ -137,7 +135,7 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <a class="cursor-pointer" wire:navigate
-                                        href="{{ route('user.my-account', $user_->name) }}">
+                                        href="{{ route('user.my-account.user', $user_->name) }}">
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
