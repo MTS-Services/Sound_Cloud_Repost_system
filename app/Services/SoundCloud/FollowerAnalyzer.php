@@ -692,7 +692,7 @@ class FollowerAnalyzer
         // Analyze and separate followers
         $followers = $this->separateFollowers($followers);
 
-        Log::info('Follower analysis for user ' . $user->nickname, $followers);
+        // Log::info('Follower analysis for user ' . $user->nickname, $followers);
 
         // Update user with real follower count
         $user->real_followers = $followers['counts']['real'];
