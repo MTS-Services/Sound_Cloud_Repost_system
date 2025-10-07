@@ -120,24 +120,24 @@ class CampaignService
                         'soundcloud_repost_id' => $soundcloudRepostId,
                     ]
                 ]);
-                $reposterNotification = CustomNotification::create([
-                    'receiver_id' => $reposter->id,
-                    'receiver_type' => get_class($reposter),
-                    'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.my-account') . '?tab=reposts',
-                    'message_data' => [
-                        'title' => "Repost successful",
-                        'message' => "You've been reposted on a campaign",
-                        'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
-                        'icon' => 'music',
-                        'additional_data' => [
-                            'Track Title' => $campaign->music->title,
-                            'Track Artist' => $trackOwnerName,
-                            // 'Earned Credits' => (float) repostPrice($reposter),
-                            'Earned Credits' => (float) $reposter->repost_price,
-                        ]
-                    ]
-                ]);
+                // $reposterNotification = CustomNotification::create([
+                //     'receiver_id' => $reposter->id,
+                //     'receiver_type' => get_class($reposter),
+                //     'type' => CustomNotification::TYPE_USER,
+                //     'url' => route('user.my-account') . '?tab=reposts',
+                //     'message_data' => [
+                //         'title' => "Repost successful",
+                //         'message' => "You've been reposted on a campaign",
+                //         'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
+                //         'icon' => 'music',
+                //         'additional_data' => [
+                //             'Track Title' => $campaign->music->title,
+                //             'Track Artist' => $trackOwnerName,
+                //             // 'Earned Credits' => (float) repostPrice($reposter),
+                //             'Earned Credits' => (float) $reposter->repost_price,
+                //         ]
+                //     ]
+                // ]);
 
                 $ownerNotificaion = CustomNotification::create([
                     'receiver_id' => $campaign?->user?->id,
@@ -157,7 +157,7 @@ class CampaignService
                     ]
                 ]);
 
-                broadcast(new UserNotificationSent($reposterNotification));
+                // broadcast(new UserNotificationSent($reposterNotification));
                 broadcast(new UserNotificationSent($ownerNotificaion));
             });
             return true;
