@@ -117,7 +117,7 @@
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
                                 <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account.user', $user_->name ?? $user_->urn) }}">
+                                    href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
                                     <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                         class="w-12 h-12 rounded-full">
                                     @if ($user_->isOnline())
@@ -135,7 +135,7 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <a class="cursor-pointer" wire:navigate
-                                        href="{{ route('user.my-account.user', $user_->name ?? $user_->urn) }}">
+                                        href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
