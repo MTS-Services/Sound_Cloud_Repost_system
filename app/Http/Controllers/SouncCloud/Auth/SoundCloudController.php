@@ -61,7 +61,12 @@ class SoundCloudController extends Controller
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
 
-            $this->notArtistRedirect(soundCloudUser: $soundCloudUser);
+            if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
+                return redirect()->route('f.landing')
+                    ->with('error', 'This platform is for artists only! Your account is not an artist account. Please try to login with a real artist account.');
+            }
+
+
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
@@ -161,12 +166,12 @@ class SoundCloudController extends Controller
         }
     }
 
-    private function notArtistRedirect($soundCloudUser)
+    private function notAnArtist($soundCloudUser)
     {
         $soundCloudUser = (array) $soundCloudUser;
         if (isset($soundCloudUser['user']) && $soundCloudUser['user']['track_count'] <= 0) {
-            return redirect()->route('f.landing')
-                ->with('error', 'This platform is for artists only! Your account is not an artist account. Please try to login with a real artist account.');
+            return true;
         }
+        return false;
     }
 }
