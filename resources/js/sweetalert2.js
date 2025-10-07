@@ -5,8 +5,16 @@ window.showAlert = (type, message) => {
         icon: type,
         title: type.charAt(0).toUpperCase() + type.slice(1),
         text: message,
-        timer: 3000,
-        showConfirmButton: false
+        timer: 5000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        // confirmButtonColor: '#3085d6',
+        // confirmButtonText: 'Okay',
+        showCancelButton: true,
+        cancelButtonColor: '#f54a00',
+        cancelButtonText: 'Close',
+        allowOutsideClick: true
+
     });
 };
 
@@ -16,6 +24,7 @@ window.confirmDelete = (callback) => {
         text: "You can restore this item from Recycle Bin!",
         icon: 'warning',
         showCancelButton: true,
+        allowOutsideClick: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, move it!'
@@ -32,6 +41,7 @@ window.confirmPermanentDelete = (callback) => {
         text: "This item will be permanently removed and can't be recovered!",
         icon: 'danger',
         showCancelButton: true,
+        allowOutsideClick: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, delete forever!'
