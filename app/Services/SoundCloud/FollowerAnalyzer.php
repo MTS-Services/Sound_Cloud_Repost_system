@@ -692,6 +692,8 @@ class FollowerAnalyzer
         // Analyze and separate followers
         $followers = $this->separateFollowers($followers);
 
+        Log::info('Follower analysis for user ' . $user->nickname, $followers);
+
         // Update user with real follower count
         $user->real_followers = $followers['counts']['real'];
         $user->real_followers_percentage = $followers['counts']['realPercentage'];
@@ -699,6 +701,6 @@ class FollowerAnalyzer
 
         // Optionally, store detailed analysis in a related table or cache
         // For simplicity, we'll just log the summary here
-        Log::info('Follower analysis summary for user ' . $user->id, $followers['counts']);
+        Log::info('Follower analysis summary for user ' . $user->nickname, $followers['counts']);
     }
 }

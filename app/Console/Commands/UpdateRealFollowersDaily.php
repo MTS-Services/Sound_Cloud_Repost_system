@@ -7,34 +7,26 @@ use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-
 class UpdateRealFollowersDaily extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:update-real-followers-daily';
+    protected $description = 'Dispatch daily jobs to update real followers for all active users';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $users = User::active()->get();
-        Log::info('Updating real followers for ' . count($users) . ' users', ['users' => $users]);
+        Log::info('Starting daily real followers update...');
 
-        foreach ($users as $user) {
-            UpdateRealFollowers::dispatch($user)->delay(now()->addMinutes(2));
-            sleep(5);
-        }
+        $delayMinutes = 0;
 
+        User::active()->chunk(50, function ($users) use (&$delayMinutes) {
+            foreach ($users as $user) {
+                UpdateRealFollowers::dispatch($user)
+                    ->delay(now()->addMinutes($delayMinutes));
+
+                $delayMinutes += 1; // stagger each job by 1 minute
+            }
+        });
+
+        Log::info('All UpdateRealFollowers jobs have been dispatched successfully.');
     }
 }
