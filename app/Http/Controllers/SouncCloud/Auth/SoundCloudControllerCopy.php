@@ -12,6 +12,7 @@ use App\Models\Track;
 use App\Models\User;
 use App\Models\UserCredits;
 use App\Models\UserInformation;
+use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -25,9 +26,14 @@ use Laravel\Socialite\Facades\Socialite;
 
 use Throwable;
 
-class SoundCloudControllerCopy extends Controller
+class SoundCloudControllercopy extends Controller
 {
-    public function __construct(protected SoundCloudService $soundCloudService) {}
+    protected SoundCloudService $soundCloudService;
+
+    public function __construct(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
 
     public function redirect(): RedirectResponse
     {
@@ -59,9 +65,8 @@ class SoundCloudControllerCopy extends Controller
 
             // SyncUserJob::dispatch($user, $soundCloudUser);
 
-            $this->syncUser($user, $soundCloudUser);
-
             Auth::guard('web')->login($user, true);
+            $this->syncUser($user, $soundCloudUser);
 
             return redirect()->intended(route('user.my-account', absolute: false))
                 ->with('success', 'Successfully connected to SoundCloud!');
@@ -85,23 +90,7 @@ class SoundCloudControllerCopy extends Controller
         }
 
         try {
-            // Clear SoundCloud data
-            // $user->update([
-            //     // 'soundcloud_id' => null,
-            //     // 'nickname' => null,
-            //     // 'avatar' => null,
-            //     // 'soundcloud_permalink_url' => null,
-            //     // 'soundcloud_followings_count' => 0,
-            //     // 'soundcloud_followers_count' => 0,
-            //     'token' => null,
-            //     'refresh_token' => null,
-            //     'expires_in' => null,
-            // ]);
             Auth::guard('web')->logout();
-
-            // Optionally, deactivate all tracks
-            // $user->soundcloudTracks()->update(['is_active' => false]);
-
             return redirect()->route('profile')
                 ->with('success', 'Successfully disconnected from SoundCloud.');
         } catch (\Exception $e) {
@@ -118,16 +107,20 @@ class SoundCloudControllerCopy extends Controller
     public function syncUser(User $user, $soundCloudUser)
     {
         try {
-            DB::transaction(function () use ($user, $soundCloudUser) {
-                Log::info('SoundCloud sync started for syncUserTracks');
-                $this->soundCloudService->syncUserTracks($user, []);
-                Log::info('SoundCloud sync started for syncUserProductsAndSubscriptions');
-                $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-                Log::info('SoundCloud sync started for syncUserPlaylists');
-                $this->soundCloudService->syncUserPlaylists($user);
-                Log::info('SoundCloud sync started for syncUserInformation');
-                $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
-            });
+            Log::info('SoundCloud sync started for syncUserInformation');
+            $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+            Log::info('SoundCloud sync completed for syncUserInformation');
+            Log::info('SoundCloud sync started for syncUserJob');
+            SyncUserJob::dispatch($user, $soundCloudUser, user()->id)->delay(Carbon::now()->addSeconds(5));
+            // dispatch(new SyncUserJob(user: $user, soundCloudUser: $soundCloudUser, authUserId: user()->id));
+            Log::info('SoundCloud sync completed for syncUserJob');
+            // DB::transaction(function () use ($user, $soundCloudUser) {
+            //     $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+            //     $this->soundCloudService->syncUserTracks($user, []);
+            //     $this->soundCloudService->syncUserPlaylists($user);
+            //     $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+            //     $this->soundCloudService->syncUserRealFollowers($user);
+            // });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
                 'user_id' => $user->id,
@@ -141,39 +134,6 @@ class SoundCloudControllerCopy extends Controller
     {
 
         try {
-            // $user = User::where('soundcloud_id', $soundCloudUser->getId())->first();
-            // if ($user) {
-            //     $user->update([
-            //         'name' => $soundCloudUser->getName(),
-            //         'nickname' => $soundCloudUser->getNickname(),
-            //         'avatar' => $soundCloudUser->getAvatar(),
-            //         'token' => $soundCloudUser->token,
-            //         'refresh_token' => $soundCloudUser->refreshToken,
-            //         'last_synced_at' => now(),
-            //         'urn' => $soundCloudUser->user['urn']
-            //     ]);
-            // } else {
-            //     $user = User::create([
-            //         'soundcloud_id' => $soundCloudUser->getId(),
-            //         'name' => $soundCloudUser->getName(),
-            //         'nickname' => $soundCloudUser->getNickname(),
-            //         'avatar' => $soundCloudUser->getAvatar(),
-            //         'token' => $soundCloudUser->token,
-            //         'refresh_token' => $soundCloudUser->refreshToken,
-            //         'expires_in' => $soundCloudUser->expiresIn,
-            //         'last_synced_at' => now(),
-            //         'urn' => $soundCloudUser->user['urn']
-            //     ]);
-
-            //     UserCredits::create([
-            //         'user_urn' => $user->urn,
-            //         'amount' => 30,
-            //         'type' => 'bonus',
-            //         'source' => 'soundcloud_sync',
-            //     ]);
-            // }
-
-            // return $user;
             return User::updateOrCreate(
                 ['soundcloud_id' => $soundCloudUser->getId()],
                 [

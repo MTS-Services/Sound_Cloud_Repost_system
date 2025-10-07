@@ -60,6 +60,9 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
+
+            $this->notArtistRedirect(soundCloudUser: $soundCloudUser);
+
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
@@ -109,6 +112,7 @@ class SoundCloudController extends Controller
         try {
             Log::info('SoundCloud sync started for syncUserInformation');
             $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+
             Log::info('SoundCloud sync completed for syncUserInformation');
             Log::info('SoundCloud sync started for syncUserJob');
             SyncUserJob::dispatch($user, $soundCloudUser, user()->id)->delay(Carbon::now()->addSeconds(5));
@@ -154,6 +158,14 @@ class SoundCloudController extends Controller
                 'error' => $e->getMessage(),
             ]);
             throw $e;
+        }
+    }
+
+    private function notArtistRedirect($soundCloudUser)
+    {
+        if ($soundCloudUser['track_count'] < 0) {
+            return redirect()->route('f.landing')
+                ->with('error', 'This platform is for artists only! Your account is not an artist account. Please try to login with a real artist account.');
         }
     }
 }
