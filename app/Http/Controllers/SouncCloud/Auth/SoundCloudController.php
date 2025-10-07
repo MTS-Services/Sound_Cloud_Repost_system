@@ -60,7 +60,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
-            dd($soundCloudUser->track_count);
+
 
             $this->notArtistRedirect(soundCloudUser: $soundCloudUser);
 
@@ -164,7 +164,7 @@ class SoundCloudController extends Controller
 
     private function notArtistRedirect($soundCloudUser)
     {
-        if ($soundCloudUser['track_count'] < 0) {
+        if ((array) $soundCloudUser['track_count'] < 0) {
             return redirect()->route('f.landing')
                 ->with('error', 'This platform is for artists only! Your account is not an artist account. Please try to login with a real artist account.');
         }
