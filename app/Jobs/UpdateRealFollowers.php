@@ -6,19 +6,20 @@ use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class UpdateRealFollowers implements ShouldQueue
 {
     use Queueable;
 
-    protected $users;
+    protected $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($users)
+    public function __construct($user)
     {
-        $this->users = $users;
+        $this->user = $user;
     }
 
     /**
@@ -26,10 +27,12 @@ class UpdateRealFollowers implements ShouldQueue
      */
     public function handle(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService): void
     {
-        foreach ($this->users as $user) {
-            $followers = $soundCloudService->getAuthUserFollowers($user);
-            $followerAnalyzer->syncUserRealFollowers($followers, $user);
-            sleep(5);
-        }
+
+        $followers = $soundCloudService->getAuthUserFollowers($this->user);
+        Log::info("Successfully synced real followers for user {$this->user->urn}.");
+        sleep(5);
+        $followerAnalyzer->syncUserRealFollowers($followers, $this->user);
+        Log::info("Successfully synced real followers for user {$this->user->urn}.");
+
     }
 }
