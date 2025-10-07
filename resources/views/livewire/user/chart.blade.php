@@ -235,7 +235,7 @@
                                                         class="font-semibold text-gray-900 dark:text-white truncate hover:text-orange-400 block w-full">
                                                         {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
-                                                    <a href="{{ route('user.my-account.user', $source['source_details']?->user?->name ?? $source['source_details']?->user?->urn) }}"
+                                                    <a href="{{ route('user.my-account.user', !empty($source['source_details']?->user?->name) ? $source['source_details']?->user?->name : $source['source_details']?->user?->urn) }}"
                                                         class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 block">
                                                         {{ $source['source_details']?->user?->name ?? 'Unknown' }}
                                                     </a>
@@ -417,7 +417,7 @@
                                             target="_blank"
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
                                             {{ Str::limit($source['source_details']?->title ?? 'Unknown', 20, '...') }}</a>
-                                        <a href="{{ route('user.my-account.user', $source['source_details']?->user?->name ?? $source['source_details']?->user?->urn) }}"
+                                        <a href="{{ route('user.my-account.user', !empty($source['source_details']?->user?->name) ? $source['source_details']?->user?->name : $source['source_details']?->user?->urn) }}"
                                             class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
                                             {{ $source['source_details']?->user?->name ?? 'Unknown' }}</a>
                                         <span
@@ -590,7 +590,7 @@
                                                         class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer block w-full">
                                                         {{ Str::limit($source['source_details']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
-                                                    <a href="{{ route('user.my-account.user', $source['source_details']?->user?->name ?? $source['source_details']?->user?->urn) }}"
+                                                    <a href="{{ route('user.my-account.user', !empty($source['source_details']?->user?->name) ? $source['source_details']?->user?->name : $source['source_details']?->user?->urn) }}"
                                                         class="text-gray-600 dark:text-gray-300 truncate">
                                                         {{ $source['source_details']?->user?->name ?? 'Unknown' }}</a>
                                                     <span

@@ -141,7 +141,7 @@ class MyAccount extends Component
 
     public function updatedActiveTab()
     {
-        return $this->redirect(route('user.my-account.user', $this->user_name ?? $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
+        return $this->redirect(route('user.my-account.user', !empty($this->user_name) ? $this->user_name : $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
     }
 
     public function setActiveTab(string $tab): void

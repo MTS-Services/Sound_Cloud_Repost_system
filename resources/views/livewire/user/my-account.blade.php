@@ -268,29 +268,32 @@
                             {{-- Tab Navigation --}}
                             <div
                                 class="flex overflow-x-auto pb-1 sm:pb-0 space-x-4 sm:space-x-8 border-b border-gray-200 dark:border-slate-700">
-                                <a href="{{ route('user.my-account.user', $user->name ?? $user->urn) }}?tab=insights"
+                                <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=insights"
                                     wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'insights') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Insights
                                 </a>
 
-                                <a href="{{ route('user.my-account.user', $user->name ?? $user->urn) }}?tab=tracks" wire:navigate
+                                <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=tracks"
+                                    wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'tracks') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Tracks
                                 </a>
 
-                                <a href="{{ route('user.my-account.user', $user->name ?? $user->urn) }}?tab=playlists" wire:navigate
+                                <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=playlists"
+                                    wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'playlists') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Playlists
                                 </a>
 
-                                <a href="{{ route('user.my-account.user', $user->name ?? $user->urn) }}?tab=reposts" wire:navigate
+                                <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=reposts"
+                                    wire:navigate
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'reposts') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Recent reposts
                                 </a>
 
                                 @if (user()->urn == $user->urn)
-                                    <a href="{{ route('user.my-account.user', $user->name ?? $user->urn) }}?tab=transaction"
+                                    <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=transaction"
                                         wire:navigate
                                         class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'transaction') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                         Transaction
