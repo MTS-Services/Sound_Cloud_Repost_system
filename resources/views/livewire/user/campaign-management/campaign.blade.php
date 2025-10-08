@@ -310,7 +310,7 @@
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     SoundCloud
                                                     Profile</a>
-                                                <a href="{{ route('umy-account.user', $campaign_->user?->name) }}"
+                                                <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
                                                     wire:navigate
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     RepostChain Profile</a>
