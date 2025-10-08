@@ -57,8 +57,8 @@ Route::group(['middleware' => ['auth:web', 'auth'], 'as' => 'user.', 'prefix' =>
     Route::get('frequently-asked-questions', Faq::class)->name('faq');
     Route::get('plans', Plans::class)->name('plans');
     // Route::get('my-account/{user_name?}', MyAccount::class)->name('my-account');
-    Route::get('/{user_name}', MyAccount::class)
-        ->where('user_name', '^(?!my-account$).*') // avoid conflict with /my-account
+    Route::get('profile/{user_name}', MyAccount::class)
+        // ->where('user_name', '^(?!my-account$).*') // avoid conflict with /my-account
         ->name('my-account.user');
 
     // Route for default "My Account"
