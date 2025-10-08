@@ -790,13 +790,13 @@ class AnalyticsService
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
             ])
-            ->groupBy('source_id', 'source_type', 'owner_user_urn', 'act_user_urn')
+            ->groupBy('source_id', 'source_type', 'owner_user_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
             ->orderByDesc('total_likes')
             ->orderByDesc('total_reposts')
             ->orderByDesc('total_followers')
-            ->with(['source.user', 'ownerUser', 'actUser'])
+            ->with(['source.user', 'ownerUser'])
             ->limit($limit)
             ->get()
             ->map(function ($item) {
