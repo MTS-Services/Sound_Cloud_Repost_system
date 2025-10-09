@@ -125,8 +125,8 @@ class Campaign extends BaseModel
 
 
     public const STATUS_OPEN = 1;
-    public const STATUS_STOP = 2;
-    public const STATUS_COMPLETED = 3;
+    public const STATUS_COMPLETED = 2;
+    public const STATUS_STOP = 3;
     public const STATUS_CANCELLED = 4;
 
     public static function getStatusList(): array
