@@ -48,7 +48,6 @@
                         <p class="text-xs text-gray-500">{{ $campaign->music?->title }}</p>
                     </div>
                 </div>
-                @dd($campaign)
                 <div class="space-y-2">
                     <label class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -77,7 +76,7 @@
                                 {{ $campaign->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                         @endif
                     </label>
-                    @if (!$alreadyLiked)
+                    @if (!$alreadyLiked && $campaign->likeable == 1)
                         <span class="text-sm text-gray-700 dark:text-gray-300">+<span
                                 class="font-medium text-orange-500">2</span> Credits</span>
                     @endif
@@ -89,8 +88,10 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
                                 track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span
-                                    class="font-medium text-orange-500">2</span> Credits</span>
+                            @if ($campaign->commentable == 1)
+                                <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                        class="font-medium text-orange-500">2</span> Credits</span>
+                            @endif
                         </div>
                         <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>

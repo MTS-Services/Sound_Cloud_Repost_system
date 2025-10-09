@@ -1026,10 +1026,19 @@ class Campaign extends Component
         $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->campaign?->music))
             ->where('source_id', $this->campaign?->music?->id)->first();
 
+        if ($this->campaign->likeable == 1) {
+            $this->liked = true;
+            $this->alreadyLiked = false;
+        }
         if ($likeAble !== null) {
             $this->liked = false;
             $this->alreadyLiked = true;
         }
+
+        if ($this->campaign->commentable == 1) {
+            $this->commentable = true;
+        }
+
         // if ($followAble !== null) {
         //     $this->followed = false;
         //     $this->alreadyFollowing = true;
