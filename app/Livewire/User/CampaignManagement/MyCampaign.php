@@ -1023,7 +1023,7 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
-            Log::info('Found Campaign for stopped. id: ', $campaign->id);
+            Log::info('Found Campaign for stopped. id: '. $campaign->id);
             DB::transaction(function () use ($campaign) {
                 $campaign->status = Campaign::STATUS_STOP;
                 $campaign->save();
@@ -1066,7 +1066,7 @@ class MyCampaign extends Component
             });
  
         } catch (\Exception $e) {
-            Log::error('failed to stop campaign. error: ', $e->getMessage());
+            Log::error('failed to stop campaign. error: '. $e->getMessage());
             $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
             return;
         }
