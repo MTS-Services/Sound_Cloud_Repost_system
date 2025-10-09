@@ -100,9 +100,9 @@
                                             @endif
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
-                                        <div class="flex flex-wrap justify-end items-center mt-2">
-                                            @if ($campaign_->status == \App\Models\Campaign::STATUS_OPEN)
-                                                <button>
+                                        @if ($campaign_->status == \App\Models\Campaign::STATUS_OPEN)
+                                            <div class="flex flex-wrap justify-end items-center mt-2">
+                                                <button class="flex items-center cursor-pointer justify-start gap-5" wire:click="stopCampaign({{ $campaign_->id }})">
                                                     <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
                                                     <span class="text-slate-500">Stop</span>
                                                 </button>
@@ -113,8 +113,8 @@
                                                     <span
                                                         class="font-medium cursor-pointer text-gray-800 dark:text-gray-100">Edit</span>
                                                 </div>
-                                            @endif
-                                        </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 
