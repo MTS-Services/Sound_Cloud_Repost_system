@@ -758,7 +758,7 @@ class Campaign extends Component
                     'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
-                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : 100,
+                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : null,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
                     'commentable' => $commentable,
