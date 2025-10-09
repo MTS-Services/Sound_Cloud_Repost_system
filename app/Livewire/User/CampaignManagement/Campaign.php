@@ -1676,6 +1676,7 @@ class Campaign extends Component
 
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
+            $baseQuery = $baseQuery->open();
             // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
