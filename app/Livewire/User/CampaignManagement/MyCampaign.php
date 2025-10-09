@@ -1014,9 +1014,10 @@ class MyCampaign extends Component
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
+
     public function stopCampaign($id)
     {
-        // try {
+        try {
             $campaign = Campaign::find($id);
             if (!$campaign) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
@@ -1026,9 +1027,8 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Something went wrong! Please try again.');
                 return;
             }
-            dd($campaign);
-            Log::info("Stopped campaign :" . $campaign->id);
-            // DB::transaction(function () use ($campaign) {
+
+            DB::transaction(function () use ($campaign) {
                 $campaign->status = Campaign::STATUS_STOP;
                 $campaign->save();
                 $campaign->load('user');    
@@ -1066,14 +1066,14 @@ class MyCampaign extends Component
                 ]);
                 broadcast(new UserNotificationSent($notification));
                 $this->dispatch('alert', type: 'success', message: 'Campaign stopped successfully.');
-                return $this->redirectIntended(route('user.cm.my-campaigns') . '?tab=' . $this->activeMainTab, navigate: true);
-        //     });
+                $this->mount();
+            });
  
-        // } catch (\Exception $e) {
-        //     Log::error('failed to stop campaign. error: '. $e->getMessage());
-        //     $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
-        //     return;
-        // }
+        } catch (\Exception $e) {
+            Log::error('failed to stop campaign. error: '. $e->getMessage());
+            $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
+            return;
+        }
     }
 
     public function render()
