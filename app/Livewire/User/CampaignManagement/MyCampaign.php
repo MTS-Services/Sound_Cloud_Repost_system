@@ -1033,25 +1033,26 @@ class MyCampaign extends Component
                 $campaign->save();
                 $campaign->load('user');    
                 $remainingBudget = $campaign->budget_credits - $campaign->credits_spent;
-                if ($remainingBudget > 0) {
-                    CreditTransaction::create([
-                        'receiver_urn' => $campaign->user_urn,
-                        'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
-                        'source_id' => $campaign->id,
-                        'source_type' => Campaign::class,
-                        'transaction_type' => CreditTransaction::TYPE_REFUND,
-                        'status' => CreditTransaction::STATUS_REFUNDED,
-                        'amount'=> 0,
-                        'credits' => $remainingBudget,
-                        'description' => 'Refund for stopped campaign',
-                        'metadata' => [
-                            'campaign_id' => $campaign->id,
-                            'music_id' => $campaign->music_id,
-                            'music_type' => $campaign->music_type,
-                            'start_date' => $campaign->created_at,
-                        ],
-                    ]);
-                }
+
+                CreditTransaction::create([
+                    'receiver_urn' => $campaign->user_urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_REFUND,
+                    'status' => CreditTransaction::STATUS_REFUNDED,
+                    'amount'=> 0,
+                    'credits' => $remainingBudget,
+                    'description' => 'Refund for stopped campaign',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'music_id' => $campaign->music_id,
+                        'music_type' => $campaign->music_type,
+                        'start_date' => $campaign->created_at,
+                    ],
+                ]);
+
+                Log::info('Campaign stopped successfully. campaign_id: ' . $campaign->id);
 
                 $notification = CustomNotification::create([
                     'receiver_id' => $campaign->user->id,
