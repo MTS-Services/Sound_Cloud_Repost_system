@@ -1040,7 +1040,7 @@ class MyCampaign extends Component
                     'source_id' => $campaign->id,
                     'source_type' => Campaign::class,
                     'transaction_type' => CreditTransaction::TYPE_REFUND,
-                    'status' => CreditTransaction::STATUS_REFUNDED,
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'amount'=> 0,
                     'credits' => $remainingBudget,
                     'description' => 'Refund for stopped campaign',
