@@ -104,16 +104,16 @@
                                             @if ($campaign_->status == \App\Models\Campaign::STATUS_OPEN)
                                                 <button>
                                                     <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
+                                                    <span class="text-slate-500">Stop</span>
                                                 </button>
+                                                <div wire:click="editCampaign({{ $campaign_->id }})"
+                                                    class="flex items-center cursor-pointer">
+                                                    <x-lucide-square-pen
+                                                        class="w-5 h-5 m-2 dark:text-white text-gray-500" />
+                                                    <span
+                                                        class="font-medium cursor-pointer text-gray-800 dark:text-gray-100">Edit</span>
+                                                </div>
                                             @endif
-                                            <span class="text-slate-500">Stop</span>
-                                            <div wire:click="editCampaign({{ $campaign_->id }})"
-                                                class="flex items-center cursor-pointer">
-                                                <x-lucide-square-pen
-                                                    class="w-5 h-5 m-2 dark:text-white text-gray-500" />
-                                                <span
-                                                    class="font-medium cursor-pointer text-gray-800 dark:text-gray-100">Edit</span>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
