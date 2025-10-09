@@ -82,24 +82,18 @@ class AnalyticsService
         }
         Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()} and actuser urn: {$actUserUrn}.");
 
-        // Find or create the UserAnalytics record based on the unique combination.
-        $analytics = UserAnalytics::updateOrCreate(
-            [
-                'owner_user_urn' => $ownerUserUrn,
-                'act_user_urn' => $actUserUrn,
-                'source_id' => $source->id,
-                'source_type' => $source->getMorphClass(),
-                'actionable_id' => $actionable ? $actionable->id : null,
-                'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
-                'ip_address' => request()->ip(),
-                'type' => $type,
-
-            ],
-            [
-                'genre' => $genre == '' ? 'anyGenre' : $genre,
-            ]
-
-        );
+        // Find or create the UserAnalytics record based on the unique combination if created_at is today then update else create.
+        $analytics = UserAnalytics::create([
+            'owner_user_urn' => $ownerUserUrn,
+            'act_user_urn' => $actUserUrn,
+            'source_id' => $source->id,
+            'source_type' => $source->getMorphClass(),
+            'actionable_id' => $actionable ? $actionable->id : null,
+            'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
+            'ip_address' => request()->ip(),
+            'type' => $type,
+            'genre' => $genre == '' ? 'anyGenre' : $genre,
+        ]);
         Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
 
         return $analytics;
