@@ -1017,12 +1017,16 @@ class MyCampaign extends Component
     public function stopCampaign($id)
     {
         // try {
-            $campaign = Campaign::where('id', $id)->first();
-            dd($campaign);
+            $campaign = Campaign::find($id);
             if (!$campaign) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
+            if ($campaign->status != Campaign::STATUS_OPEN) {
+                $this->dispatch('alert', type: 'error', message: 'Something went wrong! Please try again.');
+                return;
+            }
+            dd($campaign);
             Log::info("Stopped campaign :" . $campaign->id);
             // DB::transaction(function () use ($campaign) {
                 $campaign->status = Campaign::STATUS_STOP;
