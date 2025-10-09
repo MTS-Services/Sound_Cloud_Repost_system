@@ -625,12 +625,18 @@ class Member extends Component
         $query = User::where('urn', '!=', user()->urn)
             ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
+        // if ($this->selectedGenres) {
+        //     $query->whereHas('tracks', function ($q) {
+        //         if (!empty($this->selectedGenres)) {
+        //             $q->whereIn('genre', $this->selectedGenres);
+        //         }
+        //         // $q->where('genre', 'like', '%' . $this->selectedGenres . '%');
+        //     });
+        // }
+
         if ($this->selectedGenres) {
-            $query->whereHas('tracks', function ($q) {
-                if (!empty($this->selectedGenres)) {
-                    $q->whereIn('genre', $this->selectedGenres);
-                }
-                // $q->where('genre', 'like', '%' . $this->selectedGenres . '%');
+            $query->whereHas('genres', function ($q) {
+                $q->whereIn('genre', $this->selectedGenres);
             });
         }
 

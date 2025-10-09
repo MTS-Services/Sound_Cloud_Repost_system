@@ -168,10 +168,23 @@ class User extends AuthBaseModel implements MustVerifyEmail
         return $this->creditTransactions();
     }
 
-
     public function analytics(): HasMany
     {
         return $this->hasMany(UserAnalytics::class, 'user_urn', 'urn');
+    }
+
+    public function genres(): HasMany
+    {
+        return $this->hasMany(UserGenre::class, 'user_urn', 'urn');
+    }
+    public function userPlans(): HasMany
+    {
+        return $this->hasMany(UserPlan::class, 'user_urn', 'urn');
+    }
+
+    public function userSettings(): HasOne
+    {
+        return $this->hasOne(UserSetting::class, 'user_urn', 'urn');
     }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
@@ -253,15 +266,6 @@ class User extends AuthBaseModel implements MustVerifyEmail
         return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    public function genres(): HasMany
-    {
-        return $this->hasMany(UserGenre::class, 'user_urn', 'urn');
-    }
-    public function userPlans(): HasMany
-    {
-        return $this->hasMany(UserPlan::class, 'user_urn', 'urn');
-    }
-
     public function activePlan()
     {
         return $this->userPlans()->where('status', UserPlan::STATUS_ACTIVE)->whereDate('end_date', '>=', now())->first();
@@ -313,16 +317,11 @@ class User extends AuthBaseModel implements MustVerifyEmail
         return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
     }
 
-
-
     public function getRepostPriceAttribute()
     {
         return $this->real_followers && ceil($this->real_followers / 100) > 0 ? ceil($this->real_followers / 100) : 1;
     }
-    public function userSettings(): HasOne
-    {
-        return $this->hasOne(UserSetting::class, 'user_urn', 'urn');
-    }
+
     public function canResetResponseRate(): bool
     {
         $resetAt = $this->userSettings?->response_rate_reset;
