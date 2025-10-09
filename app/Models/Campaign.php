@@ -260,6 +260,6 @@ class Campaign extends BaseModel
 
     public function scopeCancelled(Builder $query): Builder
     {
-        return $query->where('status', fn($query) => $query->where('status', self::STATUS_CANCELLED)->orWhere('status', self::STATUS_STOP));
+        return $query->where('status', self::STATUS_CANCELLED)->orWhere('status', self::STATUS_STOP);
     }
 }
