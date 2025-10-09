@@ -1658,6 +1658,7 @@ class Campaign extends Component
                     $query->pending();
                 },
             ])->find(user()->id);
+            dd($user);
 
             $this->todayRepost = $user->reposts_count_today ?? 0;
 
