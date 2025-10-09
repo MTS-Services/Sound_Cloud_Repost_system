@@ -85,8 +85,19 @@
                                     <!-- Right Stats Block -->
                                     <div class="text-right">
                                         <div class="flex items-center justify-center sm:justify-end">
-                                            <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
-                                            <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                            @if ($campaign_->status == \App\Models\Campaign::STATUS_OPEN)
+                                                <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
+                                                <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_COMPLETED)
+                                                <x-lucide-check-circle class="m-2 w-5 h-5  text-green-600" />
+                                                <span class=" text-green-600 dark:text-gray-100"> Completed</span>
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_CANCELLED)
+                                                <x-lucide-x-circle class="m-2 w-5 h-5  text-red-600" />
+                                                <span class=" text-red-600 dark:text-gray-100"> Cancelled</span>
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_STOPPED)
+                                                <x-lucide-x-circle class="m-2 w-5 h-5  text-red-600" />
+                                                <span class=" text-red-600 dark:text-gray-100"> Stopped</span>
+                                            @endif
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
                                         <div class="flex flex-wrap justify-end items-center mt-2">
