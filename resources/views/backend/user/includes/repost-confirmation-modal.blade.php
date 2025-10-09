@@ -48,6 +48,7 @@
                         <p class="text-xs text-gray-500">{{ $campaign->music?->title }}</p>
                     </div>
                 </div>
+                @dd($campaign)
                 <div class="space-y-2">
                     <label class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
