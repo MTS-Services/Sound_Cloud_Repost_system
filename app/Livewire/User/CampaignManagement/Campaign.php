@@ -1667,7 +1667,8 @@ class Campaign extends Component
 
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
-            $campaigns = collect();
+            dd($baseQuery);
+            $campaigns = collect();            
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
                     $baseQuery->whereHas('user', function ($query) {
