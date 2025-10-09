@@ -1673,10 +1673,15 @@ class Campaign extends Component
 
             // Apply the max_followers filter
             $baseQuery->where(function ($query) use ($userFollowersCount) {
-                $query->where(function ($q) use ($userFollowersCount) {
-                    $q->whereNotNull('max_followers')
-                        ->where('max_followers', '>=', $userFollowersCount);
-                });
+                // CONDITION 1: Include campaigns where max_followers is NULL (no limit)
+                $query->whereNull('max_followers')
+                    // OR
+                    // CONDITION 2: Include campaigns where max_followers is NOT NULL
+                    // AND the user's follower count is LESS THAN OR EQUAL TO the max limit
+                    ->orWhere(function ($q) use ($userFollowersCount) {
+                        $q->whereNotNull('max_followers')
+                            ->where('max_followers', '>=', $userFollowersCount);
+                    });
             });
 
             dd($baseQuery->get());
