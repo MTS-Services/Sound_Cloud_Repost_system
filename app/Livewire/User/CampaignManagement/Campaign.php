@@ -1659,7 +1659,6 @@ class Campaign extends Component
                 },
             ])->find(user()->id);
             $user->load('userInfo');
-            dd($user?->userInfo?->followers_count);
 
             $this->todayRepost = $user->reposts_count_today ?? 0;
 
@@ -1669,8 +1668,19 @@ class Campaign extends Component
 
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
+            // Get the logged-in user's follower count (which you already retrieved)
+            $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
+
+            // Apply the max_followers filter
+            $baseQuery->where(function ($query) use ($userFollowersCount) {
+                $query->where(function ($q) use ($userFollowersCount) {
+                    $q->whereNotNull('max_followers')
+                        ->where('max_followers', '>=', $userFollowersCount);
+                });
+            });
+
             dd($baseQuery->get());
-            $campaigns = collect();            
+            $campaigns = collect();
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
                     $baseQuery->whereHas('user', function ($query) {
