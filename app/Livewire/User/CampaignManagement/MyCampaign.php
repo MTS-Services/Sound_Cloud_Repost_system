@@ -1016,7 +1016,7 @@ class MyCampaign extends Component
 
     public function stopCampaign($id)
     {
-        try {
+        // try {
             $campaign = Campaign::where('id', $id)->orWhere('status', Campaign::STATUS_OPEN)->first();
 
             if (!$campaign) {
@@ -1024,7 +1024,7 @@ class MyCampaign extends Component
                 return;
             }
             Log::info("Stopped campaign :" . $campaign->id);
-            DB::transaction(function () use ($campaign) {
+            // DB::transaction(function () use ($campaign) {
                 $campaign->status = Campaign::STATUS_STOP;
                 $campaign->save();
                 $campaign->load('user');    
@@ -1062,14 +1062,14 @@ class MyCampaign extends Component
                 ]);
                 broadcast(new UserNotificationSent($notification));
                 $this->dispatch('alert', type: 'success', message: 'Campaign stopped successfully.');
-                $this->mount();
-            });
+                return $this->redirectIntended(route('user.cm.my-campaigns') . '?tab=' . $this->activeMainTab, navigate: true);
+        //     });
  
-        } catch (\Exception $e) {
-            Log::error('failed to stop campaign. error: '. $e->getMessage());
-            $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
-            return;
-        }
+        // } catch (\Exception $e) {
+        //     Log::error('failed to stop campaign. error: '. $e->getMessage());
+        //     $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
+        //     return;
+        // }
     }
 
     public function render()
