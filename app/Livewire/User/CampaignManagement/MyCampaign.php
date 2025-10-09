@@ -1023,7 +1023,7 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
             }
-            Log::info('Found Campaign for stopped. id: '. $campaign->id);
+            Log::info("Stopped campaign :" . $campaign->id);
             DB::transaction(function () use ($campaign) {
                 $campaign->status = Campaign::STATUS_STOP;
                 $campaign->save();
