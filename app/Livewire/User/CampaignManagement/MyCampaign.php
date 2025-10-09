@@ -1044,6 +1044,7 @@ class MyCampaign extends Component
             $data['campaigns'] = collect();
             $this->handleError('Failed to load campaigns', $e);
         }
+        dd($data);
 
         return view('livewire.user.campaign-management.my-campaign', $data);
     }
