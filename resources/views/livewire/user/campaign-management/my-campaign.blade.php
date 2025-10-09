@@ -94,7 +94,7 @@
                                             @elseif ($campaign_->status == \App\Models\Campaign::STATUS_CANCELLED)
                                                 <x-lucide-x-circle class="m-2 w-5 h-5  text-red-600" />
                                                 <span class=" text-red-600 dark:text-gray-100"> Cancelled</span>
-                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_STOPPED)
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_STOP)
                                                 <x-lucide-x-circle class="m-2 w-5 h-5  text-red-600" />
                                                 <span class=" text-red-600 dark:text-gray-100"> Stopped</span>
                                             @endif
