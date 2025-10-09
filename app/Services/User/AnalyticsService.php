@@ -100,7 +100,7 @@ class AnalyticsService
             ]
 
         );
-        Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}.");
+        Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}." . json_encode($analytics));
 
         return $analytics;
     }
