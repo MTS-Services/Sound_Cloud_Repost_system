@@ -1018,12 +1018,18 @@ class MyCampaign extends Component
         try {
             $data['campaigns'] = match ($this->activeMainTab) {
                 'active' => $this->getCampaignsQuery()
-                    ->Open()
+                    ->open()
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
-                    ->Completed()
+                    ->completed()
+                    ->latest()
+                    ->self()
+                    ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
+                    
+                'cancelled' => $this->getCampaignsQuery()
+                    ->cancelled()
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
