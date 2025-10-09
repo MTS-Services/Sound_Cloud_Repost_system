@@ -1659,7 +1659,7 @@ class Campaign extends Component
                 },
             ])->find(user()->id);
             $user->load('userInfo');
-            dd($user);
+            dd($user?->userInfo?->followers_count);
 
             $this->todayRepost = $user->reposts_count_today ?? 0;
 
