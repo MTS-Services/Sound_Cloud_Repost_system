@@ -240,6 +240,20 @@
                                     {{ __('It looks like there are no completed campaigns at the moment. Start a campaign today and track your progress!') }}
                                 </p>
                             </div>
+                        @elseif ($activeMainTab === 'cancelled')
+                            <div
+                                class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
+                                <div
+                                    class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
+                                    <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+                                    {{ __('Oops! No cancelled campaigns yet.') }}
+                                </h3>
+                                <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+                                    {{ __('It looks like there are no cancelled campaigns at the moment. Start a campaign today and track your progress!') }}
+                                </p>
+                            </div>
                         @endif
                     @endforelse
 
