@@ -29,7 +29,7 @@
                         class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Active</a>
                     <a href="{{ route('user.cm.my-campaigns') }}?tab=completed" wire:navigate
                         class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Completed</a>
-                    <a href="{{ route('user.cm.my-campaigns') }}?tab=completed" wire:navigate
+                    <a href="{{ route('user.cm.my-campaigns') }}?tab=cancelled" wire:navigate
                         class="tab-button @if ($activeMainTab === 'cancelled') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Cancelled
                         / Stop</a>
                 </nav>
