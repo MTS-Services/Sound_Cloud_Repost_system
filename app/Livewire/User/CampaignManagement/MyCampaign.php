@@ -1016,9 +1016,9 @@ class MyCampaign extends Component
 
     public function stopCampaign($id)
     {
+        dd($id);
         // try {
-            $campaign = Campaign::where('id', $id)->orWhere('status', Campaign::STATUS_OPEN)->first();
-
+            $campaign = Campaign::find($id);
             if (!$campaign) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
                 return;
