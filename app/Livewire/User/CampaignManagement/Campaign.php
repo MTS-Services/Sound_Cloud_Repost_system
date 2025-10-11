@@ -245,7 +245,7 @@ class Campaign extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
-        // $this->totalCampaigns();
+        $this->totalCampaigns();
         $this->calculateFollowersLimit();
         if ($this->activeMainTab === 'all') {
             $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'] ? $this->selectedGenres : [];
@@ -1302,7 +1302,7 @@ class Campaign extends Component
                 ]);
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
-            // $this->navigatingAway(request());
+            $this->navigatingAway(request());
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
