@@ -1628,13 +1628,12 @@ class Campaign extends Component
     public function totalCampaigns()
     {
         if ($this->activeMainTab === 'all') {
-            $this->totalCampaign = $this->getCampaignsQuery();
-            dd($this->totalCampaign);
-                // ->whereHas('music', function ($query) {
-                //     if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-                //         $query->whereIn('genre', $this->selectedGenres);
-                //     }
-                // })->count();
+            $this->totalCampaign = $this->getCampaignsQuery()
+                ->whereHas('music', function ($query) {
+                    if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                        $query->whereIn('genre', $this->selectedGenres);
+                    }
+                })->count();
         } else {
             $this->totalCampaign = $this->getCampaignsQuery()->count();
         }
@@ -1700,26 +1699,6 @@ class Campaign extends Component
      */
     public function render()
     {
-
-        // $data = $user->load([
-        //     'userPlans' => function ($query) {
-        //         $query->where('status', UserPlan::STATUS_ACTIVE)
-        //             ->whereDate('end_date', '>=', now());
-        //     },
-        //     'userPlans.plan',
-        //     'userPlans.plan.featureRelations',
-        //     'userPlans.plan.featureRelations.feature'
-        // ]);
-        // $activeUserPlan = $user->userPlans->first(); // Assuming you filtered for one active plan
-
-        // if ($activeUserPlan && $activeUserPlan->plan) {
-        //     foreach ($activeUserPlan->plan->featureRelations as $featureRelation) {
-        //         $featureName = $featureRelation->feature->key; // or 'name'
-        //         $featureValue = $featureRelation->value;
-
-        //         // echo "Feature: {$featureName}, Value: {$featureValue}\n";
-        //     }
-        // }
         try {
             $user = User::withCount([
                 'reposts as reposts_count_today' => function ($query) {
@@ -1744,14 +1723,14 @@ class Campaign extends Component
             // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
-            // Apply the max_followers filter
-            $baseQuery->where(function ($query) use ($userFollowersCount) {
-                $query->whereNull('max_followers')
-                    ->orWhere(function ($q) use ($userFollowersCount) {
-                        $q->whereNotNull('max_followers')
-                            ->where('max_followers', '>=', $userFollowersCount);
-                    });
-            });
+            // // Apply the max_followers filter
+            // $baseQuery->where(function ($query) use ($userFollowersCount) {
+            //     $query->whereNull('max_followers')
+            //         ->orWhere(function ($q) use ($userFollowersCount) {
+            //             $q->whereNotNull('max_followers')
+            //                 ->where('max_followers', '>=', $userFollowersCount);
+            //         });
+            // });
 
             $campaigns = collect();
             switch ($this->activeMainTab) {
@@ -1782,7 +1761,7 @@ class Campaign extends Component
                 case 'all':
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
-                            if (!empty($this->selectedGenres) && $this->selectedGenres != 'all') {
+                            if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
                                 $query->whereIn('genre', $this->selectedGenres);
                             }
                         })
