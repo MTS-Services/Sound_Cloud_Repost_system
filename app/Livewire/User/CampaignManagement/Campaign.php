@@ -400,9 +400,9 @@ class Campaign extends Component
         }
 
         if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
-            $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+            $this->selectedGenres = (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
-        if (!empty($this->selectedGenres) && $this->selectedGenres != ['all']) {
+        if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
             $query->whereHas('music', function ($q) {
                 $q->whereIn('genre', $this->selectedGenres);
             });
