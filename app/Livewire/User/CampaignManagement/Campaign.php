@@ -1017,11 +1017,6 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
             return;
         }
-
-        // if (!$this->canRepost12Hours(user()->urn)) {
-        //     $hoursLeft = $this->availableRepostTime ?? 12; // fallback to 12 if not set
-        //     return $this->dispatch('alert', type: 'error', message: "You have reached your 12 hour repost limit. You can repost again in {$hoursLeft} hour(s).");
-        // }
         if (!$this->canRepost12Hours(user()->urn)) {
             $now = Carbon::now();
             $availableTime = $this->availableRepostTime; // Store this in your canRepost12Hours function
