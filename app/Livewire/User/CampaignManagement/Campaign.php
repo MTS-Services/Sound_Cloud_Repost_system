@@ -1628,7 +1628,7 @@ class Campaign extends Component
     public function totalCampaigns()
     {
         if ($this->activeMainTab === 'all') {
-            $this->totalCampaign = $this->getCampaignsQuery()
+            $this->totalCampaign = $this->getCampaignsQuery()->open()
                 ->whereHas('music', function ($query) {
                     if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
                         $query->whereIn('genre', $this->selectedGenres);
@@ -1720,7 +1720,6 @@ class Campaign extends Component
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
             $baseQuery = $baseQuery->open();
-            dd($baseQuery->get(), $this->getCampaignsQuery()->get());
             // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
