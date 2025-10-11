@@ -196,6 +196,9 @@ class RepostRequestService
             DB::transaction(function () use ($requestId, $request, $currentUserUrn, $soundcloudRepostId, $commented, $liked, $followed) {
                 $trackOwnerUrn = $request->music->user?->urn ?? $request->user?->urn;
                 $trackOwnerName = $request->music->user?->name ?? $request->user?->name;
+                $likeable = $request->likeable && $liked ? true : false;
+                $commentable = $request->commentable && $commented ? true : false;
+                $totalCredits = (float) repostPrice(user()->repost_price, $commentable, $likeable);
 
                 $repost = Repost::create([
                     'reposter_urn' => $currentUserUrn,
@@ -239,7 +242,7 @@ class RepostRequestService
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
-                    'credits' => (float) repostPrice(user()->repost_price, $commented, $liked),
+                    'credits' => $totalCredits,
                     'description' => "Repost From Direct Request",
                     'metadata' => [
                         'repost_id' => $repost->id,

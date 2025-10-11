@@ -68,38 +68,36 @@
                 </div>
 
                 <!-- Like Plus -->
-                @if ($request->likeable)
-                    <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
-                        <label class="flex items-center space-x-2">
-                            @if (!$alreadyLiked)
-                                <input type="checkbox" wire:model.live="liked"
-                                    class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
-                                <span
-                                    class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
-                            @else
-                                <span class="text-sm text-orange-500">Already Liked this
-                                    {{ $request->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
-                            @endif
-                        </label>
+                <div class="flex items-center justify-between border-t pt-3 dark:border-gray-700">
+                    <label class="flex items-center space-x-2">
                         @if (!$alreadyLiked)
+                            <input type="checkbox" wire:model.live="liked"
+                                class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <span
+                                class="text-sm text-gray-800 dark:text-gray-200">{{ __('Activate HeartPush') }}</span>
+                        @else
+                            <span class="text-sm text-orange-500">Already Liked this
+                                {{ $request->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
+                        @endif
+                    </label>
+                    @if (!$alreadyLiked && $request->likeable == 1)
+                        <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                class="font-medium text-orange-500">2</span> Credits</span>
+                    @endif
+                </div>
+                <!-- Comment Plus -->
+                <div class="border-t pt-3 space-y-2 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
+                            track (optional)</span>
+                        @if ($request->commentable == 1)
                             <span class="text-sm text-gray-700 dark:text-gray-300">+<span
                                     class="font-medium text-orange-500">2</span> Credits</span>
                         @endif
                     </div>
-                @endif
-                <!-- Comment Plus -->
-                @if ($request->commentable)
-                    <div class="border-t pt-3 space-y-2 dark:border-gray-700">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
-                                track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span
-                                    class="font-medium text-orange-500">2</span> Credits</span>
-                        </div>
-                        <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
-                            class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
-                    </div>
-                @endif
+                    <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
+                        class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>
+                </div>
                 <div class="flex justify-center gap-4">
                     <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $request->id }}')"
                         class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200">
