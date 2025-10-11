@@ -1188,7 +1188,7 @@ class Dashboard extends Component
         }
 
         if($this->request->commentable === 0){
-            $this->commented = false;
+            $this->commented = '';
         }
     }
     public function repost($requestId)

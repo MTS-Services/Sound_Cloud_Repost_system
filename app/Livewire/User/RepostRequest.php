@@ -345,7 +345,7 @@ class RepostRequest extends Component
             $this->liked = false;
         }
         if($this->request->commentable === 0){
-            $this->commented = false;
+            $this->commented = '';
         }
 
         $httpClient = Http::withHeaders([
