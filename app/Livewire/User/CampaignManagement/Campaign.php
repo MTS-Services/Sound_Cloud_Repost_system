@@ -362,7 +362,7 @@ class Campaign extends Component
         // $allowedTargetCredits = repostPrice(user(), true);
         $allowedTargetCredits = user()->repost_price;
         return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
-            ->withoutSelf()
+            ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user'])
             ->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
@@ -1628,7 +1628,7 @@ class Campaign extends Component
     public function totalCampaigns()
     {
         if ($this->activeMainTab === 'all') {
-            $this->totalCampaign = $this->getCampaignsQuery()->open()
+            $this->totalCampaign = $this->getCampaignsQuery()
                 ->whereHas('music', function ($query) {
                     if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
                         $query->whereIn('genre', $this->selectedGenres);
@@ -1719,7 +1719,7 @@ class Campaign extends Component
 
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
-            $baseQuery = $baseQuery->open();
+            $baseQuery = $baseQuery;
             // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
