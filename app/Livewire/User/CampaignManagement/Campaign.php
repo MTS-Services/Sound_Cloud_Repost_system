@@ -1723,14 +1723,14 @@ class Campaign extends Component
             // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
-            // // Apply the max_followers filter
-            // $baseQuery->where(function ($query) use ($userFollowersCount) {
-            //     $query->whereNull('max_followers')
-            //         ->orWhere(function ($q) use ($userFollowersCount) {
-            //             $q->whereNotNull('max_followers')
-            //                 ->where('max_followers', '>=', $userFollowersCount);
-            //         });
-            // });
+            // Apply the max_followers filter
+            $baseQuery->where(function ($query) use ($userFollowersCount) {
+                $query->whereNull('max_followers')
+                    ->orWhere(function ($q) use ($userFollowersCount) {
+                        $q->whereNotNull('max_followers')
+                            ->where('max_followers', '>=', $userFollowersCount);
+                    });
+            });
 
             $campaigns = collect();
             switch ($this->activeMainTab) {
