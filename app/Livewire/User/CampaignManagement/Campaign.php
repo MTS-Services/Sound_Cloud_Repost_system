@@ -998,7 +998,7 @@ class Campaign extends Component
         }
 
         $oldestRepostTime = $reposts->first()->created_at;
-        
+
         $availableTime = $oldestRepostTime->addHours(12);
         $now = Carbon::now();
         $hoursLeft = $now->diffInHours($availableTime, false); // false = return negative if past
@@ -1019,10 +1019,35 @@ class Campaign extends Component
             return;
         }
 
+        // if (!$this->canRepost12Hours(user()->urn)) {
+        //     $hoursLeft = $this->hoursLeftToRepost ?? 12; // fallback to 12 if not set
+        //     return $this->dispatch('alert', type: 'error', message: "You have reached your 12 hour repost limit. You can repost again in {$hoursLeft} hour(s).");
+        // }
         if (!$this->canRepost12Hours(user()->urn)) {
-            $hoursLeft = $this->hoursLeftToRepost ?? 12; // fallback to 12 if not set
-            return $this->dispatch('alert', type: 'error', message: "You have reached your 12 hour repost limit. You can repost again in {$hoursLeft} hour(s).");
+            $now = Carbon::now();
+            $availableTime = $this->nextRepostTime; // Store this in your canRepost12Hours function
+            $diff = $now->diff($availableTime);
+
+            $hoursLeft = $diff->h;
+            $minutesLeft = $diff->i;
+
+            $message = "You have reached your 12 hour repost limit. You can repost again in ";
+
+            if ($hoursLeft > 0) {
+                $message .= "{$hoursLeft} hour" . ($hoursLeft > 1 ? "s" : "");
+            }
+
+            if ($hoursLeft > 0 && $minutesLeft > 0) {
+                $message .= " ";
+            }
+
+            if ($minutesLeft > 0) {
+                $message .= "{$minutesLeft} minute" . ($minutesLeft > 1 ? "s" : "");
+            }
+
+            return $this->dispatch('alert', type: 'error', message: $message);
         }
+
 
 
 
