@@ -245,7 +245,7 @@ class Campaign extends Component
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
-        $this->totalCampaigns();
+        // $this->totalCampaigns();
         $this->calculateFollowersLimit();
         if ($this->activeMainTab === 'all') {
             $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'] ? $this->selectedGenres : [];
