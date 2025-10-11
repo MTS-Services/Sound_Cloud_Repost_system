@@ -341,10 +341,12 @@ class RepostRequest extends Component
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        // if ($followAble !== null) {
-        //     $this->followed = false;
-        //     $this->alreadyFollowing = true;
-        // }
+        if($this->request->likeable === 0){
+            $this->liked = false;
+        }
+        if($this->request->commentable === 0){
+            $this->commented = false;
+        }
 
         $httpClient = Http::withHeaders([
             'Authorization' => 'OAuth ' . user()->token,
