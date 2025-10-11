@@ -992,7 +992,6 @@ class Campaign extends Component
             ->orderBy('created_at', 'asc')
             ->take(10)
             ->get();
-            dd($reposts);
 
         if ($reposts->count() < 10) {
             return true;
@@ -1003,6 +1002,7 @@ class Campaign extends Component
         // Store full time for later use
         $this->availableRepostTime = $oldestRepostTime->copy()->addHours(12);
 
+        dd(Carbon::now()->greaterThanOrEqualTo($this->availableRepostTime), $this->availableRepostTime, Carbon::now());
         if (Carbon::now()->greaterThanOrEqualTo($this->availableRepostTime)) {
             return true;
         }
