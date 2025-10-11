@@ -984,10 +984,10 @@ class Campaign extends Component
     // }
 
 
-    public function canRepost12Hours($userId)
+    public function canRepost12Hours($userUrn)
     {
         $twelveHoursAgo = Carbon::now()->subHours(12);
-        $reposts = Repost::where('user_id', $userId)
+        $reposts = Repost::where('reposter_urn', $userUrn)
             ->where('created_at', '>=', $twelveHoursAgo)
             ->orderBy('created_at', 'asc')
             ->take(10)
