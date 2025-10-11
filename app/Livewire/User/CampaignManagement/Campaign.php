@@ -1782,11 +1782,12 @@ class Campaign extends Component
                 case 'all':
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
-                            if (!empty($this->selectedGenres) && $this->selectedGenres != 'all') {
+                            if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
                                 $query->whereIn('genre', $this->selectedGenres);
                             }
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+                        dd($campaigns, $this->totalCampaign);
 
                     break;
                 default:
