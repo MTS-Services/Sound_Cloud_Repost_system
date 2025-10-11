@@ -201,6 +201,7 @@ class Campaign extends Component
     public $commented = null;
     public $followed = true;
     public $alreadyFollowing = false;
+    public $hoursLeftToRepost = null;
 
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
@@ -241,7 +242,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -972,6 +973,43 @@ class Campaign extends Component
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
     }
+    // public function canRepost12Hours($userUrn)
+    // {
+    //     $twelveHoursAgo = Carbon::now()->subHours(12);
+
+    //     $repostCount = Repost::where('reposter_urn', $userUrn)
+    //         ->where('created_at', '>=', $twelveHoursAgo)
+    //         ->count();
+    //     return $repostCount < 10;
+    // }
+
+
+    public function canRepost12Hours($userId)
+    {
+        $twelveHoursAgo = Carbon::now()->subHours(12);
+        $reposts = Repost::where('user_id', $userId)
+            ->where('created_at', '>=', $twelveHoursAgo)
+            ->orderBy('created_at', 'asc')
+            ->take(10)
+            ->get();
+
+        if ($reposts->count() < 10) {
+            return true;
+        }
+
+        $oldestRepostTime = $reposts->first()->created_at;
+        
+        $availableTime = $oldestRepostTime->addHours(12);
+        $now = Carbon::now();
+        $hoursLeft = $now->diffInHours($availableTime, false); // false = return negative if past
+        if ($hoursLeft <= 0) {
+            return true;
+        }
+        $this->hoursLeftToRepost = $hoursLeft;
+
+        return false;
+    }
+
     public function confirmRepost($campaignId)
     {
         if ($this->todayRepost >= 20) {
@@ -980,6 +1018,13 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
             return;
         }
+
+        if (!$this->canRepost12Hours(user()->urn)) {
+            $hoursLeft = $this->hoursLeftToRepost ?? 12; // fallback to 12 if not set
+            return $this->dispatch('alert', type: 'error', message: "You have reached your 12 hour repost limit. You can repost again in {$hoursLeft} hour(s).");
+        }
+
+
 
         if (!$this->canRepost($campaignId)) {
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
