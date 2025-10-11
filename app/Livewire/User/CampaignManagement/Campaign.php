@@ -1631,7 +1631,7 @@ class Campaign extends Component
         if ($this->activeMainTab === 'all') {
             $this->totalCampaign = $this->getCampaignsQuery()
                 ->whereHas('music', function ($query) {
-                    if (!empty($this->selectedGenres) && $this->selectedGenres == ['all']) {
+                    if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
                         $query->whereIn('genre', $this->selectedGenres);
                     }
                 })->count();
