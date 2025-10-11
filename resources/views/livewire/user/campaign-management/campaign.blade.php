@@ -325,7 +325,7 @@
                                         </div>
                                     </div>
                                     <!-- Stats and Repost Button -->
-                                    <div class="flex items-center gap-4 sm:gap-8">
+                                    <div class="flex items-center justify-between">
                                         <div
                                             class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
@@ -359,10 +359,7 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                {{-- <span>{{ repostPrice() }}
-                                            Repost</span> --}}
-                                                <span>{{ user()->repost_price }}
-                                                    Repost</span>
+                                                <span>{{ user()->repost_price }} Repost</span>
                                             </button>
                                             @if (in_array($campaign_->id, $this->repostedCampaigns))
                                                 <div
