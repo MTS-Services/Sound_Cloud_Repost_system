@@ -1800,7 +1800,6 @@ class Campaign extends Component
                             }
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
-                    dd($campaigns, $this->totalCampaigns());
 
                     break;
                 default:
