@@ -1,7 +1,17 @@
-<div wire:poll.1s="updatePlayingTimes">
+<div>
     <x-slot name="page_slug">campaign-feed</x-slot>
 
-    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6" x-data="{ dashboardSummary: false }">
+    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6" x-data="{ playingCampaigns: @entangle('playingCampaigns'), dashboardSummary: false }">
+        <script>
+            // Only update when audio actually plays
+            document.addEventListener('livewire:initialized', () => {
+                setInterval(() => {
+                    if (Object.keys(@this.playingCampaigns).length > 0) {
+                        @this.call('updatePlayingTimes');
+                    }
+                }, 1000);
+            });
+        </script>
 
         {{-- Left Side --}}
         <div class="w-full">

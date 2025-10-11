@@ -242,7 +242,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -972,17 +972,6 @@ class Campaign extends Component
         $playTime = $this->getPlayTime($campaignId);
         return max(0, 5 - $playTime);
     }
-    // public function canRepost12Hours($userUrn)
-    // {
-    //     $twelveHoursAgo = Carbon::now()->subHours(12);
-
-    //     $repostCount = Repost::where('reposter_urn', $userUrn)
-    //         ->where('created_at', '>=', $twelveHoursAgo)
-    //         ->count();
-    //     return $repostCount < 10;
-    // }
-
-
     public function canRepost12Hours($userUrn)
     {
         $twelveHoursAgo = Carbon::now()->subHours(12);
