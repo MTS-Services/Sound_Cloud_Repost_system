@@ -1182,6 +1182,14 @@ class Dashboard extends Component
             $this->followed = false;
             $this->alreadyFollowing = true;
         }
+
+        if($this->request->likeable === 0){
+            $this->liked = false;
+        }
+
+        if($this->request->commentable === 0){
+            $this->commented = false;
+        }
     }
     public function repost($requestId)
     {
