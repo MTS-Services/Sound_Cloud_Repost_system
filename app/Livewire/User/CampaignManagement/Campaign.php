@@ -201,7 +201,7 @@ class Campaign extends Component
     public $commented = null;
     public $followed = true;
     public $alreadyFollowing = false;
-    public $hoursLeftToRepost = null;
+    public $availableRepostTime = null;
 
     public $showSubmitModal = false;
     public $showCampaignsModal = false;
@@ -998,14 +998,13 @@ class Campaign extends Component
         }
 
         $oldestRepostTime = $reposts->first()->created_at;
+        
+        // Store full time for later use
+        $this->availableRepostTime = $oldestRepostTime->copy()->addHours(12);
 
-        $availableTime = $oldestRepostTime->addHours(12);
-        $now = Carbon::now();
-        $hoursLeft = $now->diffInHours($availableTime, false); // false = return negative if past
-        if ($hoursLeft <= 0) {
+        if (Carbon::now()->greaterThanOrEqualTo($this->availableRepostTime)) {
             return true;
         }
-        $this->hoursLeftToRepost = $hoursLeft;
 
         return false;
     }
@@ -1020,12 +1019,12 @@ class Campaign extends Component
         }
 
         // if (!$this->canRepost12Hours(user()->urn)) {
-        //     $hoursLeft = $this->hoursLeftToRepost ?? 12; // fallback to 12 if not set
+        //     $hoursLeft = $this->availableRepostTime ?? 12; // fallback to 12 if not set
         //     return $this->dispatch('alert', type: 'error', message: "You have reached your 12 hour repost limit. You can repost again in {$hoursLeft} hour(s).");
         // }
         if (!$this->canRepost12Hours(user()->urn)) {
             $now = Carbon::now();
-            $availableTime = $this->nextRepostTime; // Store this in your canRepost12Hours function
+            $availableTime = $this->availableRepostTime; // Store this in your canRepost12Hours function
             $diff = $now->diff($availableTime);
 
             $hoursLeft = $diff->h;
