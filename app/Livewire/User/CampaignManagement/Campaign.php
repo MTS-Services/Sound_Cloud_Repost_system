@@ -992,13 +992,14 @@ class Campaign extends Component
             ->orderBy('created_at', 'asc')
             ->take(10)
             ->get();
+            dd($reposts);
 
         if ($reposts->count() < 10) {
             return true;
         }
 
         $oldestRepostTime = $reposts->first()->created_at;
-        
+
         // Store full time for later use
         $this->availableRepostTime = $oldestRepostTime->copy()->addHours(12);
 
