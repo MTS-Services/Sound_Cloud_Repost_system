@@ -414,7 +414,6 @@ class Campaign extends Component
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
-
         return $query;
     }
 
@@ -1628,28 +1627,16 @@ class Campaign extends Component
     }
     public function totalCampaigns()
     {
-        // if ($this->activeMainTab === 'all') {
-        //     $this->totalCampaign = $this->getCampaignsQuery()
-        //         ->whereHas('music', function ($query) {
-        //             if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-        //                 $query->whereIn('genre', $this->selectedGenres);
-        //             }
-        //         })->count();
-        // } else {
-        //     $this->totalCampaign = $this->getCampaignsQuery()->count();
-        // }
         if ($this->activeMainTab === 'all') {
-            $query = $this->getCampaignsQuery();
-            $query = $this->applyFilters($query); // ✅ ADD THIS
-            $this->totalCampaign = $query->whereHas('music', function ($q) {
-                if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-                    $q->whereIn('genre', $this->selectedGenres);
-                }
-            })->count();
+            $this->totalCampaign = $this->getCampaignsQuery();
+            dd($this->totalCampaign);
+                // ->whereHas('music', function ($query) {
+                //     if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                //         $query->whereIn('genre', $this->selectedGenres);
+                //     }
+                // })->count();
         } else {
-            $query = $this->getCampaignsQuery();
-            $query = $this->applyFilters($query); // ✅ ADD THIS
-            $this->totalCampaign = $query->count();
+            $this->totalCampaign = $this->getCampaignsQuery()->count();
         }
 
         if ($this->activeMainTab === 'recommended_pro') {
@@ -1795,7 +1782,7 @@ class Campaign extends Component
                 case 'all':
                     $campaigns = $baseQuery
                         ->whereHas('music', function ($query) {
-                            if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                            if (!empty($this->selectedGenres) && $this->selectedGenres != 'all') {
                                 $query->whereIn('genre', $this->selectedGenres);
                             }
                         })
