@@ -1628,15 +1628,28 @@ class Campaign extends Component
     }
     public function totalCampaigns()
     {
+        // if ($this->activeMainTab === 'all') {
+        //     $this->totalCampaign = $this->getCampaignsQuery()
+        //         ->whereHas('music', function ($query) {
+        //             if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+        //                 $query->whereIn('genre', $this->selectedGenres);
+        //             }
+        //         })->count();
+        // } else {
+        //     $this->totalCampaign = $this->getCampaignsQuery()->count();
+        // }
         if ($this->activeMainTab === 'all') {
-            $this->totalCampaign = $this->getCampaignsQuery()
-                ->whereHas('music', function ($query) {
-                    if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-                        $query->whereIn('genre', $this->selectedGenres);
-                    }
-                })->count();
+            $query = $this->getCampaignsQuery();
+            $query = $this->applyFilters($query); // ✅ ADD THIS
+            $this->totalCampaign = $query->whereHas('music', function ($q) {
+                if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                    $q->whereIn('genre', $this->selectedGenres);
+                }
+            })->count();
         } else {
-            $this->totalCampaign = $this->getCampaignsQuery()->count();
+            $query = $this->getCampaignsQuery();
+            $query = $this->applyFilters($query); // ✅ ADD THIS
+            $this->totalCampaign = $query->count();
         }
 
         if ($this->activeMainTab === 'recommended_pro') {
@@ -1787,7 +1800,7 @@ class Campaign extends Component
                             }
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
-                        dd($campaigns, $this->totalCampaign);
+                    dd($campaigns, $this->totalCampaigns());
 
                     break;
                 default:
