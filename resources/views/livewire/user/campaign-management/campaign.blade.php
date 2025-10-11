@@ -325,7 +325,7 @@
                                         </div>
                                     </div>
                                     <!-- Stats and Repost Button -->
-                                    <div class="flex items-center justify-between">
+                                    <div class="flex items-center justify-between gap-4">
                                         <div
                                             class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
