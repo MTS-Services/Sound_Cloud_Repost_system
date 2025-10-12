@@ -1107,212 +1107,212 @@ class Campaign extends Component
         }
     }
 
-    public function repost($campaignId)
-    {
-        try {
-            if (!$this->canRepost($campaignId)) {
-                $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
-                return;
-            }
+    // public function repost($campaignId)
+    // {
+    //     try {
+    //         if (!$this->canRepost($campaignId)) {
+    //             $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+    //             return;
+    //         }
 
-            $currentUserUrn = user()->urn;
+    //         $currentUserUrn = user()->urn;
 
-            if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
-                $this->dispatch('alert', type: 'error', message: 'You cannot repost your own campaign.');
-                return;
-            }
+    //         if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
+    //             $this->dispatch('alert', type: 'error', message: 'You cannot repost your own campaign.');
+    //             return;
+    //         }
 
-            if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
-                $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
-                return;
-            }
+    //         if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
+    //             $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
+    //             return;
+    //         }
 
-            $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
-            switch ($campaign->music_type) {
-                case Track::class:
-                    $musicUrn = $campaign->music->urn;
-                    break;
-                case Playlist::class:
-                    $musicUrn = $campaign->music->soundcloud_urn;
-                    break;
-            }
+    //         $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+    //         switch ($campaign->music_type) {
+    //             case Track::class:
+    //                 $musicUrn = $campaign->music->urn;
+    //                 break;
+    //             case Playlist::class:
+    //                 $musicUrn = $campaign->music->soundcloud_urn;
+    //                 break;
+    //         }
 
-            if (!$campaign->music) {
-                $this->dispatch('alert', type: 'error', message: 'Track or Playlist not found for this campaign.');
-                return;
-            }
+    //         if (!$campaign->music) {
+    //             $this->dispatch('alert', type: 'error', message: 'Track or Playlist not found for this campaign.');
+    //             return;
+    //         }
 
-            $soundcloudRepostId = null;
+    //         $soundcloudRepostId = null;
 
-            $httpClient = Http::withHeaders([
-                'Authorization' => 'OAuth ' . user()->token,
-            ]);
-            $commentSoundcloud = [
-                'comment' => [
-                    'body' => $this->commented,
-                    'timestamp' => time()
-                ]
-            ];
+    //         $httpClient = Http::withHeaders([
+    //             'Authorization' => 'OAuth ' . user()->token,
+    //         ]);
+    //         $commentSoundcloud = [
+    //             'comment' => [
+    //                 'body' => $this->commented,
+    //                 'timestamp' => time()
+    //             ]
+    //         ];
 
-            $response = null;
-            $like_response = null;
-            $comment_response = null;
-            $follow_response = null;
-            $increse_likes = false;
-            $increse_reposts = false;
-            $increse_follows = false;
+    //         $response = null;
+    //         $like_response = null;
+    //         $comment_response = null;
+    //         $follow_response = null;
+    //         $increse_likes = false;
+    //         $increse_reposts = false;
+    //         $increse_follows = false;
 
-            switch ($campaign->music_type) {
-                case Track::class:
+    //         switch ($campaign->music_type) {
+    //             case Track::class:
 
-                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
-                    $previous_likes = $checkLiked['collection']['favoritings_count'];
-                    $previous_reposts = $checkLiked['collection']['reposts_count'];
+    //                 $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
+    //                 $previous_likes = $checkLiked['collection']['favoritings_count'];
+    //                 $previous_reposts = $checkLiked['collection']['reposts_count'];
 
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
-                    Log::info('repost response for track urn:' . $musicUrn . 'response: ' . json_encode($response));
-                    if ($this->commented) {
-                        if ($campaign?->music?->commentable == true) {
-                            $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
-                            Log::info('comment_response for track urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
-                        }
-                    }
-                    if ($this->liked) {
+    //                 $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
+    //                 Log::info('repost response for track urn:' . $musicUrn . 'response: ' . json_encode($response));
+    //                 if ($this->commented) {
+    //                     if ($campaign?->music?->commentable == true) {
+    //                         $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
+    //                         Log::info('comment_response for track urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
+    //                     }
+    //                 }
+    //                 if ($this->liked) {
 
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
+    //                     $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
 
-                        Log::info('like_response for track urn:' . $musicUrn . 'response: ' . json_encode($like_response));
-                    }
-                    if ($this->followed) {
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
-                        Log::info('follow_response for track urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
-                    }
+    //                     Log::info('like_response for track urn:' . $musicUrn . 'response: ' . json_encode($like_response));
+    //                 }
+    //                 if ($this->followed) {
+    //                     $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+    //                     Log::info('follow_response for track urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
+    //                 }
 
-                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
-                    $newLikes = $checkLiked['collection']['favoritings_count'];
-                    $newReposts = $checkLiked['collection']['reposts_count'];
-                    if ($newLikes > $previous_likes && $like_response != null) {
-                        $increse_likes = true;
-                    }
-                    if ($newReposts > $previous_reposts) {
-                        $increse_reposts = true;
-                    }
-                    break;
-                case Playlist::class:
+    //                 $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
+    //                 $newLikes = $checkLiked['collection']['favoritings_count'];
+    //                 $newReposts = $checkLiked['collection']['reposts_count'];
+    //                 if ($newLikes > $previous_likes && $like_response != null) {
+    //                     $increse_likes = true;
+    //                 }
+    //                 if ($newReposts > $previous_reposts) {
+    //                     $increse_reposts = true;
+    //                 }
+    //                 break;
+    //             case Playlist::class:
 
-                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
-                    $previous_likes = $checkLiked['collection']['likes_count'];
-                    $previous_reposts = $checkLiked['collection']['repost_count'];
+    //                 $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+    //                 $previous_likes = $checkLiked['collection']['likes_count'];
+    //                 $previous_reposts = $checkLiked['collection']['repost_count'];
 
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
-                    Log::info('repost response for playlist urn:' . $musicUrn . 'response: ' . json_encode($response));
-                    if ($this->liked) {
-                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
-                        Log::info('like_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($like_response));
-                    }
-                    if ($this->commented) {
-                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
-                        Log::info('comment_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
-                    }
-                    if ($this->followed) {
-                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
-                        Log::info('follow_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
-                    }
+    //                 $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
+    //                 Log::info('repost response for playlist urn:' . $musicUrn . 'response: ' . json_encode($response));
+    //                 if ($this->liked) {
+    //                     $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
+    //                     Log::info('like_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($like_response));
+    //                 }
+    //                 if ($this->commented) {
+    //                     $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
+    //                     Log::info('comment_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
+    //                 }
+    //                 if ($this->followed) {
+    //                     $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
+    //                     Log::info('follow_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
+    //                 }
 
-                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
-                    $newLikes = $checkLiked['collection']['likes_count'];
-                    $newReposts = $checkLiked['collection']['repost_count'];
-                    if ($newLikes > $previous_likes && $like_response != null) {
-                        $increse_likes = true;
-                    }
-                    if ($newReposts > $previous_reposts) {
-                        $increse_reposts = true;
-                    }
-                    break;
-                default:
-                    $this->dispatch('alert', type: 'error', message: 'Invalid music type specified for the campaign.');
-                    return;
-            }
+    //                 $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+    //                 $newLikes = $checkLiked['collection']['likes_count'];
+    //                 $newReposts = $checkLiked['collection']['repost_count'];
+    //                 if ($newLikes > $previous_likes && $like_response != null) {
+    //                     $increse_likes = true;
+    //                 }
+    //                 if ($newReposts > $previous_reposts) {
+    //                     $increse_reposts = true;
+    //                 }
+    //                 break;
+    //             default:
+    //                 $this->dispatch('alert', type: 'error', message: 'Invalid music type specified for the campaign.');
+    //                 return;
+    //         }
 
-            if ($increse_reposts == false) {
-                $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
-                return;
-            }
+    //         if ($increse_reposts == false) {
+    //             $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
+    //             return;
+    //         }
 
-            if ($this->followed) {
-                // $currentFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                // $previous_followers = $currentFollowers['collection']['followers_count'];
+    //         if ($this->followed) {
+    //             // $currentFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+    //             // $previous_followers = $currentFollowers['collection']['followers_count'];
 
-                // $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
-                // sleep(5);
-                // $updatedFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
-                // $newFollowers = $updatedFollowers['collection']['followers_count'];
-                // dd($newFollowers, $previous_followers);
-                // if ($newFollowers > $previous_followers && $follow_response != null) {
-                //     $increse_follows = true;
-                // }
-                // Get target user ID
-                $userUrn = $campaign->user?->urn;
-                $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
+    //             // $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+    //             // sleep(5);
+    //             // $updatedFollowers = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $campaign->user?->urn, errorMessage: 'Failed to fetch user details');
+    //             // $newFollowers = $updatedFollowers['collection']['followers_count'];
+    //             // dd($newFollowers, $previous_followers);
+    //             // if ($newFollowers > $previous_followers && $follow_response != null) {
+    //             //     $increse_follows = true;
+    //             // }
+    //             // Get target user ID
+    //             $userUrn = $campaign->user?->urn;
+    //             $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
-                if ($checkResponse->getStatusCode() === 200) {
-                    $alreadyFollowing = true;
-                } else {
-                    $alreadyFollowing = false;
-                }
+    //             if ($checkResponse->getStatusCode() === 200) {
+    //                 $alreadyFollowing = true;
+    //             } else {
+    //                 $alreadyFollowing = false;
+    //             }
 
-                // 2️⃣ If not following, then follow now
-                if (!$alreadyFollowing) {
-                    $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$userUrn}");
-                }
-            }
+    //             // 2️⃣ If not following, then follow now
+    //             if (!$alreadyFollowing) {
+    //                 $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$userUrn}");
+    //             }
+    //         }
 
-            $data = [
-                'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
-                'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
-                'follow' => $follow_response != null ? $follow_response->successful() : true,
-            ];
+    //         $data = [
+    //             'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
+    //             'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
+    //             'follow' => $follow_response != null ? $follow_response->successful() : true,
+    //         ];
 
-            if ($response->successful()) {
-                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
-                if ($repostEmailPermission) {
-                    $datas = [
-                        [
-                            'email' => $campaign->user->email,
-                            'subject' => 'Repost Notification',
-                            'title' => 'Dear ' . $campaign->user->name,
-                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
-                        ],
-                    ];
-                    NotificationMailSent::dispatch($datas);
-                }
-                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
-                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
-                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
-                $this->reset([
-                    'liked',
-                    'followed',
-                    'commented',
-                ]);
-            } else {
-                Log::error("SoundCloud Repost Failed: " . $response->body(), [
-                    'campaign_id' => $campaignId,
-                    'user_urn' => $currentUserUrn,
-                    'status' => $response->status(),
-                ]);
-                $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
-            }
-            $this->navigatingAway(request());
-        } catch (Throwable $e) {
-            Log::error("Error in repost method: " . $e->getMessage(), [
-                'exception' => $e,
-                'campaign_id_input' => $campaignId,
-                'user_urn' => user()->urn ?? 'N/A',
-            ]);
-            $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
-            return;
-        }
-    }
+    //         if ($response->successful()) {
+    //             $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+    //             if ($repostEmailPermission) {
+    //                 $datas = [
+    //                     [
+    //                         'email' => $campaign->user->email,
+    //                         'subject' => 'Repost Notification',
+    //                         'title' => 'Dear ' . $campaign->user->name,
+    //                         'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
+    //                     ],
+    //                 ];
+    //                 NotificationMailSent::dispatch($datas);
+    //             }
+    //             $soundcloudRepostId = $campaign->music->soundcloud_track_id;
+    //             $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+    //             $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
+    //             $this->reset([
+    //                 'liked',
+    //                 'followed',
+    //                 'commented',
+    //             ]);
+    //         } else {
+    //             Log::error("SoundCloud Repost Failed: " . $response->body(), [
+    //                 'campaign_id' => $campaignId,
+    //                 'user_urn' => $currentUserUrn,
+    //                 'status' => $response->status(),
+    //             ]);
+    //             $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
+    //         }
+    //         $this->navigatingAway(request());
+    //     } catch (Throwable $e) {
+    //         Log::error("Error in repost method: " . $e->getMessage(), [
+    //             'exception' => $e,
+    //             'campaign_id_input' => $campaignId,
+    //             'user_urn' => user()->urn ?? 'N/A',
+    //         ]);
+    //         $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
+    //         return;
+    //     }
+    // }
 
     public function updatedactiveTab($tab)
     {
@@ -1686,6 +1686,319 @@ class Campaign extends Component
     /**
      * Main render method with optimized data loading and pagination
      */
+    // public function render()
+    // {
+    //     try {
+    //         $user = User::withCount([
+    //             'reposts as reposts_count_today' => function ($query) {
+    //                 $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
+    //             },
+    //             'campaigns',
+    //             'requests' => function ($query) {
+    //                 $query->pending();
+    //             },
+    //         ])->find(user()->id);
+    //         $user->load('userInfo');
+
+    //         $this->todayRepost = $user->reposts_count_today ?? 0;
+
+    //         $data['dailyRepostCurrent'] = $this->todayRepost;
+    //         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+    //         $data['pendingRequests'] = $user->requests_count ?? 0;
+
+    //         $baseQuery = $this->getCampaignsQuery();
+    //         $baseQuery = $this->applyFilters($baseQuery);
+    //         $baseQuery = $baseQuery;
+    //         // Get the logged-in user's follower count (which you already retrieved)
+    //         $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
+
+    //         // Apply the max_followers filter
+    //         $baseQuery->where(function ($query) use ($userFollowersCount) {
+    //             $query->whereNull('max_followers')
+    //                 ->orWhere(function ($q) use ($userFollowersCount) {
+    //                     $q->whereNotNull('max_followers')
+    //                         ->where('max_followers', '>=', $userFollowersCount);
+    //                 });
+    //         });
+
+    //         $campaigns = collect();
+    //         switch ($this->activeMainTab) {
+    //             case 'recommended_pro':
+    //                 $baseQuery->whereHas('user', function ($query) {
+    //                     $query->isPro();
+    //                 });
+    //                 if ($this->selectedGenres !== ['all']) {
+    //                     $baseQuery->whereHas('music', function ($query) {
+    //                         $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+    //                         $query->whereIn('genre', $userGenres);
+    //                     });
+    //                 }
+    //                 $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
+
+    //                 break;
+
+    //             case 'recommended':
+    //                 if ($this->selectedGenres !== ['all']) {
+    //                     $baseQuery->whereHas('music', function ($query) {
+    //                         $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+    //                         $query->whereIn('genre', $userGenres);
+    //                     });
+    //                 }
+    //                 $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+    //                 break;
+
+    //             case 'all':
+    //                 $campaigns = $baseQuery
+    //                     ->whereHas('music', function ($query) {
+    //                         if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+    //                             $query->whereIn('genre', $this->selectedGenres);
+    //                         }
+    //                     })
+    //                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
+
+    //                 break;
+    //             default:
+    //                 $baseQuery->whereHas('user', function ($query) {
+    //                     $query->isPro();
+    //                 });
+    //                 if ($this->selectedGenres !== ['all']) {
+    //                     $baseQuery->whereHas('music', function ($query) {
+    //                         $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+    //                         $query->whereIn('genre', $userGenres);
+    //                     });
+    //                 }
+    //                 $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
+
+    //                 break;
+    //         }
+
+    //         // View Count Tracking
+    //         Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
+
+
+    //         return view('livewire.user.campaign-management.campaign', [
+    //             'campaigns' => $campaigns,
+    //             'data' => $data
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Failed to load campaigns: ' . $e->getMessage(), [
+    //             'user_urn' => user()->urn ?? 'unknown',
+    //             'active_tab' => $this->activeMainTab,
+    //             'exception' => $e
+    //         ]);
+    //         $campaigns = collect();
+    //         return view('livewire.user.campaign-management.campaign', [
+    //             'campaigns' => $campaigns
+    //         ]);
+    //     }
+    // }
+
+    // Livewire Component এ এই property যোগ করুন
+    public $locallyRepostedCampaigns = []; // Frontend এ hide করার জন্য
+
+    public function repost($campaignId)
+    {
+        try {
+            if (!$this->canRepost($campaignId)) {
+                $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
+                return;
+            }
+
+            $currentUserUrn = user()->urn;
+
+            if ($this->campaignService->getCampaigns()->where('id', $campaignId)->where('user_urn', $currentUserUrn)->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You cannot repost your own campaign.');
+                return;
+            }
+
+            if (Repost::where('reposter_urn', $currentUserUrn)->where('campaign_id', $campaignId)->exists()) {
+                $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
+                return;
+            }
+
+            $campaign = $this->campaignService->getCampaign(encrypt($campaignId))->load('music.user.userInfo');
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $musicUrn = $campaign->music->urn;
+                    break;
+                case Playlist::class:
+                    $musicUrn = $campaign->music->soundcloud_urn;
+                    break;
+            }
+
+            if (!$campaign->music) {
+                $this->dispatch('alert', type: 'error', message: 'Track or Playlist not found for this campaign.');
+                return;
+            }
+
+            $soundcloudRepostId = null;
+
+            $httpClient = Http::withHeaders([
+                'Authorization' => 'OAuth ' . user()->token,
+            ]);
+            $commentSoundcloud = [
+                'comment' => [
+                    'body' => $this->commented,
+                    'timestamp' => time()
+                ]
+            ];
+
+            $response = null;
+            $like_response = null;
+            $comment_response = null;
+            $follow_response = null;
+            $increse_likes = false;
+            $increse_reposts = false;
+
+            switch ($campaign->music_type) {
+                case Track::class:
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
+                    $previous_likes = $checkLiked['collection']['favoritings_count'];
+                    $previous_reposts = $checkLiked['collection']['reposts_count'];
+
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
+                    Log::info('repost response for track urn:' . $musicUrn . 'response: ' . json_encode($response));
+
+                    if ($this->commented) {
+                        if ($campaign?->music?->commentable == true) {
+                            $comment_response = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud);
+                            Log::info('comment_response for track urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
+                        }
+                    }
+                    if ($this->liked) {
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}");
+                        Log::info('like_response for track urn:' . $musicUrn . 'response: ' . json_encode($like_response));
+                    }
+                    if ($this->followed) {
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->user?->urn}");
+                        Log::info('follow_response for track urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
+                    }
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
+                    $newLikes = $checkLiked['collection']['favoritings_count'];
+                    $newReposts = $checkLiked['collection']['reposts_count'];
+                    if ($newLikes > $previous_likes && $like_response != null) {
+                        $increse_likes = true;
+                    }
+                    if ($newReposts > $previous_reposts) {
+                        $increse_reposts = true;
+                    }
+                    break;
+
+                case Playlist::class:
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+                    $previous_likes = $checkLiked['collection']['likes_count'];
+                    $previous_reposts = $checkLiked['collection']['repost_count'];
+
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
+                    Log::info('repost response for playlist urn:' . $musicUrn . 'response: ' . json_encode($response));
+
+                    if ($this->liked) {
+                        $like_response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}");
+                        Log::info('like_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($like_response));
+                    }
+                    if ($this->commented) {
+                        $comment_response = $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud);
+                        Log::info('comment_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($comment_response));
+                    }
+                    if ($this->followed) {
+                        $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$campaign->music?->user?->urn}");
+                        Log::info('follow_response for playlist urn:' . $musicUrn . 'response: ' . json_encode($follow_response));
+                    }
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+                    $newLikes = $checkLiked['collection']['likes_count'];
+                    $newReposts = $checkLiked['collection']['repost_count'];
+                    if ($newLikes > $previous_likes && $like_response != null) {
+                        $increse_likes = true;
+                    }
+                    if ($newReposts > $previous_reposts) {
+                        $increse_reposts = true;
+                    }
+                    break;
+
+                default:
+                    $this->dispatch('alert', type: 'error', message: 'Invalid music type specified for the campaign.');
+                    return;
+            }
+
+            if ($increse_reposts == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already repost this ' . ($campaign->music_type == Track::class ? 'track' : 'playlist') . ' from your soundcloud');
+                return;
+            }
+
+            if ($this->followed) {
+                $userUrn = $campaign->user?->urn;
+                $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
+
+                if ($checkResponse->getStatusCode() === 200) {
+                    $alreadyFollowing = true;
+                } else {
+                    $alreadyFollowing = false;
+                }
+
+                if (!$alreadyFollowing) {
+                    $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$userUrn}");
+                }
+            }
+
+            $data = [
+                'likeable' => $like_response != null ? ($like_response->successful() && $increse_likes ? true : false) : false,
+                'comment' => $comment_response != null ? ($comment_response->successful() ? true : false) : false,
+                'follow' => $follow_response != null ? $follow_response->successful() : true,
+            ];
+
+            if ($response->successful()) {
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                if ($repostEmailPermission) {
+                    $datas = [
+                        [
+                            'email' => $campaign->user->email,
+                            'subject' => 'Repost Notification',
+                            'title' => 'Dear ' . $campaign->user->name,
+                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
+                        ],
+                    ];
+                    NotificationMailSent::dispatch($datas);
+                }
+
+                $soundcloudRepostId = $campaign->music->soundcloud_track_id;
+                $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
+
+                // ✅ এই campaign টি locally hide করার জন্য যোগ করুন
+                $this->locallyRepostedCampaigns[] = $campaignId;
+
+                $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
+
+                $this->reset([
+                    'liked',
+                    'followed',
+                    'commented',
+                    'showRepostConfirmationModal',
+                ]);
+
+                // ❌ এই line টি comment out করুন - auto reload বন্ধ করতে
+                // $this->navigatingAway(request());
+
+            } else {
+                Log::error("SoundCloud Repost Failed: " . $response->body(), [
+                    'campaign_id' => $campaignId,
+                    'user_urn' => $currentUserUrn,
+                    'status' => $response->status(),
+                ]);
+                $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
+            }
+        } catch (Throwable $e) {
+            Log::error("Error in repost method: " . $e->getMessage(), [
+                'exception' => $e,
+                'campaign_id_input' => $campaignId,
+                'user_urn' => user()->urn ?? 'N/A',
+            ]);
+            $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
+            return;
+        }
+    }
+
     public function render()
     {
         try {
@@ -1708,11 +2021,9 @@ class Campaign extends Component
 
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
-            $baseQuery = $baseQuery;
-            // Get the logged-in user's follower count (which you already retrieved)
+
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
-            // Apply the max_followers filter
             $baseQuery->where(function ($query) use ($userFollowersCount) {
                 $query->whereNull('max_followers')
                     ->orWhere(function ($q) use ($userFollowersCount) {
@@ -1734,7 +2045,6 @@ class Campaign extends Component
                         });
                     }
                     $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
-
                     break;
 
                 case 'recommended':
@@ -1755,8 +2065,8 @@ class Campaign extends Component
                             }
                         })
                         ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
-
                     break;
+
                 default:
                     $baseQuery->whereHas('user', function ($query) {
                         $query->isPro();
@@ -1768,13 +2078,18 @@ class Campaign extends Component
                         });
                     }
                     $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
-
                     break;
             }
 
-            // View Count Tracking
-            Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
+            // ✅ Locally reposted campaigns filter করুন
+            $campaigns->getCollection()->transform(function ($campaign) {
+                if (in_array($campaign->id, $this->locallyRepostedCampaigns)) {
+                    return null; // Hide this campaign
+                }
+                return $campaign;
+            })->filter(); // Remove null values
 
+            Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
 
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
