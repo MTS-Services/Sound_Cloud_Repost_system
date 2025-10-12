@@ -1106,7 +1106,7 @@ class Campaign extends Component
             $this->alreadyFollowing = true;
         }
     }
-
+    public $datLoaded = false;
     public function repost($campaignId)
     {
         try {
@@ -1303,6 +1303,7 @@ class Campaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
             $this->navigatingAway(request());
+            $this->datLoaded = true;
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
@@ -1688,6 +1689,7 @@ class Campaign extends Component
      */
     public function render()
     {
+        if ($this->datLoaded) return;
         try {
             $user = User::withCount([
                 'reposts as reposts_count_today' => function ($query) {
@@ -1775,6 +1777,7 @@ class Campaign extends Component
             // View Count Tracking
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
 
+            $this->datLoaded = true;
 
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
