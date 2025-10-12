@@ -33,6 +33,11 @@ class ApplicationSettingController extends Controller implements HasMiddleware
             //add more permissions if needed
         ];
     }
+    public function userSettings(): View
+    {
+        $data['user_settings'] = ApplicationSetting::whereIn('key', ['login_bonus'])->pluck('value', 'key')->all();
+        return view('backend.admin.application-settings.user_settings', $data);
+    }
 
     /**
      * Display a listing of the resource.

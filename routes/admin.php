@@ -233,5 +233,6 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::get('/smtp', 'smtp')->name('smtp');
         Route::get('/payment-setup', 'payment_setup')->name('payment_setup');
         Route::get('/push-notification', 'push_notification')->name('push_notification');
+        Route::get('/user-settings', 'userSettings')->name('user-settings');
     });
 });

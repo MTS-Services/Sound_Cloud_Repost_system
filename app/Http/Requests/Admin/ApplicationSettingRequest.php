@@ -75,6 +75,7 @@ class ApplicationSettingRequest extends FormRequest
             Rule::in([App::PAYMENT_GATEWAY_LIVE, App::PAYMENT_GATEWAY_SANDBOX]),
             'stripe_key' => 'sometimes|required|string',
             'stripe_secret' => 'sometimes|required|string',
+            'login_bonus' => 'sometimes|required|numeric|min:0|max:100',
         ];
     }
 

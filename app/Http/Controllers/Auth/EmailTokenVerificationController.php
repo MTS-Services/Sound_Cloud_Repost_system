@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
+use App\Models\ApplicationSetting;
+use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\User;
 use App\Services\User\UserSettingsService;
@@ -103,6 +105,21 @@ class EmailTokenVerificationController extends Controller
             );
 
             $this->userSettingsService->createOrUpdate($user->urn, $data);
+            $loging_bonus = ApplicationSetting::where('key', 'login_bonus')->value('value');
+            if($loging_bonus > 0){
+                CreditTransaction::create([
+                    'receiver_urn' => $user->urn,
+                    'credits' => $loging_bonus,
+                    'type' => CreditTransaction::TYPE_BONUS,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
+                    'transaction_type' => CreditTransaction::TYPE_BONUS,
+                    'source_id' => admin()->id,
+                    'source_type' => get_class(admin()),
+                    'description' => 'First login bonus',
+                ]);
+            }
+
         });
 
 
