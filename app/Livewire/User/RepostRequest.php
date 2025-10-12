@@ -462,7 +462,7 @@ class RepostRequest extends Component
                 $query->incoming()->pending()->notExpired();
                 break;
             case 'outgoing_request':
-                $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
+                $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
                 break;
             case 'previously_reposted':
                 $query->incoming()->where('campaign_id', null)->approved();
