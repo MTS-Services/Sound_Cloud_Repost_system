@@ -128,7 +128,7 @@ class RepostRequest extends BaseModel
         return [
             self::STATUS_PENDING => 'badge-warning',
             self::STATUS_APPROVED => 'badge-success',
-            self::STATUS_DECLINE => 'badge-error',
+            self::STATUS_DECLINE => 'badge-danger',
             self::STATUS_EXPIRED => 'badge-error',
         ][$this->status] ?? 'badge-warning';
     }

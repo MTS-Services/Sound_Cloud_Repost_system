@@ -538,24 +538,24 @@ class Member extends Component
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
 
-                $requesterNotification = CustomNotification::create([
-                    'receiver_id' => $requester->id,
-                    'receiver_type' => get_class($requester),
-                    'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.reposts-request'),
-                    'message_data' => [
-                        'title' => 'Repost Request Sent',
-                        'message' => 'You have sent a repost request to ' . $this->user->name,
-                        'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->music->title . '".',
-                        'icon' => 'music',
-                        'additional_data' => [
-                            'Request Sent To' => $this->user->name,
-                            'Track Title' => $this->music->title,
-                            'Track Artist' => $this->music?->user?->name ?? $requester->name,
-                            'Credits Spent' => $credit_spent,
-                        ],
-                    ],
-                ]);
+                // $requesterNotification = CustomNotification::create([
+                //     'receiver_id' => $requester->id,
+                //     'receiver_type' => get_class($requester),
+                //     'type' => CustomNotification::TYPE_USER,
+                //     'url' => route('user.reposts-request'),
+                //     'message_data' => [
+                //         'title' => 'Repost Request Sent',
+                //         'message' => 'You have sent a repost request to ' . $this->user->name,
+                //         'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->music->title . '".',
+                //         'icon' => 'music',
+                //         'additional_data' => [
+                //             'Request Sent To' => $this->user->name,
+                //             'Track Title' => $this->music->title,
+                //             'Track Artist' => $this->music?->user?->name ?? $requester->name,
+                //             'Credits Spent' => $credit_spent,
+                //         ],
+                //     ],
+                // ]);
                 $targetUserNotification = CustomNotification::create([
                     'sender_id' => $requester->id,
                     'sender_type' => get_class($requester),
@@ -577,7 +577,7 @@ class Member extends Component
                     ]
                 ]);
 
-                broadcast(new UserNotificationSent($requesterNotification));
+                // broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
                 $repostEmailPermission = hasEmailSentPermission('em_new_repost', $this->user->urn);
                 if ($repostRequest && $creditTransaction && $repostEmailPermission) {
