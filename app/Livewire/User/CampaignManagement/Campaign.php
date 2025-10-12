@@ -1689,7 +1689,7 @@ class Campaign extends Component
      */
     public function render()
     {
-        if ($this->datLoaded) return;
+        // if ($this->datLoaded) return;
         try {
             $user = User::withCount([
                 'reposts as reposts_count_today' => function ($query) {
