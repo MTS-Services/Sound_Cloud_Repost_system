@@ -114,8 +114,8 @@ class EmailTokenVerificationController extends Controller
                     'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'transaction_type' => CreditTransaction::TYPE_BONUS,
-                    'source_id' => admin()->id,
-                    'source_type' => get_class(admin()),
+                    'source_id' => user()->id,
+                    'source_type' => get_class(user()),
                     'description' => 'First login bonus',
                 ]);
             }
