@@ -443,10 +443,10 @@
                             <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
                         </div>
                         <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                            {{ __('You need a minimum of 50 credits to create a campaign.') }}
+                            {{ __('You need a minimum of 50 credits to send a direct request.') }}
                         </p>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                            {{ __('Please add more credits to your account to proceed with campaign creation.') }}
+                            {{ __('Please add more credits to your account to proceed with direct request.') }}
                         </p>
                         {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
