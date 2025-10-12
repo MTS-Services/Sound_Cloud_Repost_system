@@ -378,44 +378,44 @@ class Campaign extends Component
     /**
      * Apply search and filter conditions to the query
      */
-    // private function applyFilters(Builder $query): Builder
-    // {
-    //     // Apply search filter
-    //     if (!empty($this->search)) {
-    //         $query->whereHas('music', function ($q) {
-    //             $q->where('title', 'like', '%' . $this->search . '%')
-    //                 ->orWhere('description', 'like', '%' . $this->search . '%');
-    //         });
-    //     }
+    private function applyFilters(Builder $query): Builder
+    {
+        // Apply search filter
+        if (!empty($this->search)) {
+            $query->whereHas('music', function ($q) {
+                $q->where('title', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
+            });
+        }
 
-    //     // Apply tag filters
-    //     if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
-    //         $query->whereHas('music', function ($q) {
-    //             $q->where(function ($tagQuery) {
-    //                 foreach ($this->selectedTags as $tag) {
-    //                     $tagQuery->orWhere('tag_list', 'LIKE', "%$tag%");
-    //                 }
-    //             });
-    //         });
-    //     }
+        // Apply tag filters
+        if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
+            $query->whereHas('music', function ($q) {
+                $q->where(function ($tagQuery) {
+                    foreach ($this->selectedTags as $tag) {
+                        $tagQuery->orWhere('tag_list', 'LIKE', "%$tag%");
+                    }
+                });
+            });
+        }
 
-    //     if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
-    //         $this->selectedGenres = (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-    //     }
-    //     if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-    //         $query->whereHas('music', function ($q) {
-    //             $q->whereIn('genre', $this->selectedGenres);
-    //         });
-    //     }
+        if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
+            $this->selectedGenres = (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+        }
+        if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+            $query->whereHas('music', function ($q) {
+                $q->whereIn('genre', $this->selectedGenres);
+            });
+        }
 
 
 
-    //     if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
-    //         $query->where('music_type', 'like', "%{$this->searchMusicType}%");
-    //     }
+        if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
+            $query->where('music_type', 'like', "%{$this->searchMusicType}%");
+        }
 
-    //     return $query;
-    // }
+        return $query;
+    }
 
     public function updatedSearch()
     {
@@ -1302,7 +1302,7 @@ class Campaign extends Component
                 ]);
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
-            // $this->navigatingAway(request());
+            $this->navigatingAway(request());
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
@@ -1491,6 +1491,26 @@ class Campaign extends Component
             }
         }
     }
+
+    // public function showPlaylistTracks($playlistId)
+    // {
+    //     $this->selectedPlaylistId = $playlistId;
+    //     $playlist = Playlist::with('tracks')->find($playlistId);
+    //     if ($playlist) {
+    //         $this->allTracks = $playlist->tracks;
+    //         $this->tracks = $this->allTracks->take($this->trackLimit);
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+    //     } else {
+    //         $this->tracks = collect();
+    //         $this->hasMoreTracks = $this->tracks->count() === $this->trackLimit;
+    //     }
+    //     $this->activeTab = 'tracks';
+    //     $this->playListTrackShow = true;
+
+    //     $this->reset([
+    //         'searchQuery',
+    //     ]);
+    // }
     public function showPlaylistTracks($playlistId)
     {
         $this->selectedPlaylistId = $playlistId;
@@ -1687,40 +1707,7 @@ class Campaign extends Component
             $data['pendingRequests'] = $user->requests_count ?? 0;
 
             $baseQuery = $this->getCampaignsQuery();
-            // $baseQuery = $this->applyFilters($baseQuery);
-            // Apply search filter
-            if (!empty($this->search)) {
-                $baseQuery->whereHas('music', function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%');
-                });
-            }
-
-            // Apply tag filters
-            if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
-                $baseQuery->whereHas('music', function ($q) {
-                    $q->where(function ($tagQuery) {
-                        foreach ($this->selectedTags as $tag) {
-                            $tagQuery->orWhere('tag_list', 'LIKE', "%$tag%");
-                        }
-                    });
-                });
-            }
-
-            if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
-                $this->selectedGenres = (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-            }
-            if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-                $baseQuery->whereHas('music', function ($q) {
-                    $q->whereIn('genre', $this->selectedGenres);
-                });
-            }
-
-
-
-            if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
-                $baseQuery->where('music_type', 'like', "%{$this->searchMusicType}%");
-            }
+            $baseQuery = $this->applyFilters($baseQuery);
             $baseQuery = $baseQuery;
             // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
