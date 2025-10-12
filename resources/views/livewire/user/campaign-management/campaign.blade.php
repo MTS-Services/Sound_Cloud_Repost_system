@@ -251,8 +251,6 @@
                     @continue;
                 @endif
                 @if (!in_array($campaign_->id, $locallyRepostedCampaigns))
-                    x-data="{ isReposted: false }"
-                    :class="{ 'opacity-50 pointer-events-none': isReposted }">
                     <div x-data="{ isReposted: false }" :class="{ 'opacity-50 pointer-events-none': isReposted }"
                         class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
                         data-permalink="{{ $campaign_->music->permalink_url }}">
