@@ -250,162 +250,172 @@
                 @if (!$campaign_->music && !isset($campaign_->music->permalink_url))
                     @continue;
                 @endif
-                {{-- 📢 NEW: Add a class and data attributes to collect playlist info --}}
-                <div class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
-                    data-permalink="{{ $campaign_->music->permalink_url }}">
-                    <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
-                        <!-- Left Column - Track Info -->
-                        <div
-                            class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-                            <div class="flex flex-col md:flex-row gap-4">
-                                <!-- Track Details -->
-                                <div class="flex-1 flex flex-col justify-between relative">
-                                    {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
-                                    <div id="soundcloud-player-{{ $campaign_->id }}"
-                                        data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
-                                            :visual="false" />
-                                    </div>
-                                    <div class="absolute top-2 left-2 flex items-center space-x-2">
-                                        @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
-                                            <div
-                                                class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
-                                                FEATURED
+                @forelse ($campaigns as $campaign_)
+                    @if (!in_array($campaign_->id, $locallyRepostedCampaigns))
+                        x-data="{ isReposted: false }"
+                        :class="{ 'opacity-50 pointer-events-none': isReposted }">
+                        <div x-data="{ isReposted: false }" :class="{ 'opacity-50 pointer-events-none': isReposted }"
+                            class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+                            data-permalink="{{ $campaign_->music->permalink_url }}">
+                            <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
+                                <!-- Left Column - Track Info -->
+                                <div
+                                    class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                                    <div class="flex flex-col md:flex-row gap-4">
+                                        <!-- Track Details -->
+                                        <div class="flex-1 flex flex-col justify-between relative">
+                                            {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
+                                            <div id="soundcloud-player-{{ $campaign_->id }}"
+                                                data-campaign-id="{{ $campaign_->id }}" wire:ignore>
+                                                <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
+                                                    :visual="false" />
                                             </div>
-                                        @endif
-                                        @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
-                                            <div
-                                                class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
-                                                {{ __('Boosted') }}
+                                            <div class="absolute top-2 left-2 flex items-center space-x-2">
+                                                @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
+                                                    <div
+                                                        class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                                        FEATURED
+                                                    </div>
+                                                @endif
+                                                @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
+                                                    <div
+                                                        class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                                        {{ __('Boosted') }}
+                                                    </div>
+                                                @endif
                                             </div>
-                                        @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Right Column - Campaign Info -->
-                        <div class="w-full lg:w-1/2 p-4">
-                            <div class="flex flex-col h-full justify-between">
-                                <!-- Avatar + Title + Icon -->
-                                <div
-                                    class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <img class="w-14 h-14 rounded-full object-cover"
-                                            src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
-                                            alt="Audio Cure avatar">
-                                        <div x-data="{ open: false }" class="inline-block text-left">
-                                            <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                                <span
-                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
-                                                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                                </svg>
-                                            </div>
-                                            <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    stroke-width="1.5"
-                                                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
-                                                </path>
-                                            </svg>
+                                <!-- Right Column - Campaign Info -->
+                                <div class="w-full lg:w-1/2 p-4">
+                                    <div class="flex flex-col h-full justify-between">
+                                        <!-- Avatar + Title + Icon -->
+                                        <div
+                                            class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
+                                            <div class="flex items-center gap-3">
+                                                <img class="w-14 h-14 rounded-full object-cover"
+                                                    src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
+                                                    alt="Audio Cure avatar">
+                                                <div x-data="{ open: false }" class="inline-block text-left">
+                                                    <div @click="open = !open"
+                                                        class="flex items-center gap-1 cursor-pointer">
+                                                        <span
+                                                            class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
+                                                        <svg class="w-4 h-4 text-gray-600 dark:text-gray-400"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="1.5"
+                                                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
+                                                        </path>
+                                                    </svg>
 
-                                            <div x-show="open" x-transition.opacity
-                                                class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
-                                                x-cloak>
-                                                <a href="{{ $campaign_?->music?->user?->soundcloud_permalink_url }}"
-                                                    target="_blank"
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    SoundCloud
-                                                    Profile</a>
-                                                <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
-                                                    wire:navigate
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    RepostChain Profile</a>
-                                                {{-- <button
+                                                    <div x-show="open" x-transition.opacity
+                                                        class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
+                                                        x-cloak>
+                                                        <a href="{{ $campaign_?->music?->user?->soundcloud_permalink_url }}"
+                                                            target="_blank"
+                                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                            SoundCloud
+                                                            Profile</a>
+                                                        <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
+                                                            wire:navigate
+                                                            class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                            RepostChain Profile</a>
+                                                        {{-- <button
                                                 class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                 all content from this
                                                 member</button>
                                             <button
                                                 class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                 this track</button> --}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Stats and Repost Button -->
-                                    <div class="flex items-center justify-between gap-4">
-                                        <div
-                                            class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
-                                            <div class="flex items-center gap-1.5">
-                                                <svg width="26" height="18" viewBox="0 0 26 18"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="1" y="1" width="24" height="16" rx="3"
-                                                        fill="none" stroke="currentColor" stroke-width="2" />
-                                                    <circle cx="8" cy="9" r="3" fill="none"
-                                                        stroke="currentColor" stroke-width="2" />
-                                                </svg>
-                                                <span
-                                                    class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
-                                            </div>
-                                            <span
-                                                class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
-                                        </div>
-                                        <div class="relative">
-                                            <!-- Repost Button -->
-                                            <button wire:click="confirmRepost('{{ $campaign_->id }}')"
-                                                @class([
-                                                    'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
-                                                    'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
-                                                        $campaign_->id),
-                                                    'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
-                                                        $campaign_->id),
-                                                ]) @disabled(!$this->canRepost($campaign_->id))>
-                                                <svg width="26" height="18" viewBox="0 0 26 18"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="1" y="1" width="24" height="16" rx="3"
-                                                        fill="none" stroke="currentColor" stroke-width="2" />
-                                                    <circle cx="8" cy="9" r="3" fill="none"
-                                                        stroke="currentColor" stroke-width="2" />
-                                                </svg>
-                                                <span>{{ user()->repost_price }} Repost</span>
-                                            </button>
-                                            @if (in_array($campaign_->id, $this->repostedCampaigns))
-                                                <div
-                                                    class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                    Reposted! ✓
+                                                    </div>
                                                 </div>
-                                            @endif
+                                            </div>
+                                            <!-- Stats and Repost Button -->
+                                            <div class="flex items-center justify-between gap-4">
+                                                <div
+                                                    class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <svg width="26" height="18" viewBox="0 0 26 18"
+                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <rect x="1" y="1" width="24" height="16"
+                                                                rx="3" fill="none" stroke="currentColor"
+                                                                stroke-width="2" />
+                                                            <circle cx="8" cy="9" r="3"
+                                                                fill="none" stroke="currentColor"
+                                                                stroke-width="2" />
+                                                        </svg>
+                                                        <span
+                                                            class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
+                                                    </div>
+                                                    <span
+                                                        class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                                </div>
+                                                <div class="relative">
+                                                    <!-- Repost Button -->
+                                                    <button wire:click="confirmRepost('{{ $campaign_->id }}')"
+                                                        @class([
+                                                            'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
+                                                            'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
+                                                                $campaign_->id),
+                                                            'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
+                                                                $campaign_->id),
+                                                        ]) @disabled(!$this->canRepost($campaign_->id))>
+                                                        <svg width="26" height="18" viewBox="0 0 26 18"
+                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <rect x="1" y="1" width="24" height="16"
+                                                                rx="3" fill="none" stroke="currentColor"
+                                                                stroke-width="2" />
+                                                            <circle cx="8" cy="9" r="3"
+                                                                fill="none" stroke="currentColor"
+                                                                stroke-width="2" />
+                                                        </svg>
+                                                        <span>{{ user()->repost_price }} Repost</span>
+                                                    </button>
+                                                    @if (in_array($campaign_->id, $this->repostedCampaigns))
+                                                        <div
+                                                            class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                                            Reposted! ✓
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Genre Badge -->
+                                        <div class="mt-auto">
+                                            <span
+                                                class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
+                                                {{ !empty($campaign_->music?->genre) ? $campaign_->music?->genre : 'Unknown Genre' }}
+                                            </span>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Genre Badge -->
-                                <div class="mt-auto">
-                                    <span
-                                        class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        {{ !empty($campaign_->music?->genre) ? $campaign_->music?->genre : 'Unknown Genre' }}
-                                    </span>
                                 </div>
                             </div>
                         </div>
+                    @endif
+                @empty
+                    <div class="text-center text-gray-500 dark:text-gray-400 mt-6">
+                        <p>No campaigns available at the moment.</p>
                     </div>
-                </div>
-            @empty
-                <div class="text-center text-gray-500 dark:text-gray-400 mt-6">
-                    <p>No campaigns available at the moment.</p>
-                </div>
-            @endforelse
+                @endforelse
 
-            @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
-                <div class="mt-6">
-                    {{ $campaigns->links('components.pagination.wire-navigate', [
-                        'pageName' => $activeMainTab . 'Page',
-                        'keep' => ['tab' => $activeMainTab, 'selectedGenres' => $selectedGenres],
-                    ]) }}
-                </div>
-            @endif
+                @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
+                    <div class="mt-6">
+                        {{ $campaigns->links('components.pagination.wire-navigate', [
+                            'pageName' => $activeMainTab . 'Page',
+                            'keep' => ['tab' => $activeMainTab, 'selectedGenres' => $selectedGenres],
+                        ]) }}
+                    </div>
+                @endif
         </div>
         {{-- Right Side --}}
         <div class="max-w-[400px] hidden 3xl:block" x-cloak x-transition>
