@@ -1302,7 +1302,7 @@ class Campaign extends Component
                 ]);
                 $this->dispatch('alert', type: 'error', message: 'Failed to repost campaign music to SoundCloud. Please try again.');
             }
-            // $this->navigatingAway(request());
+            $this->navigatingAway(request());
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
@@ -1666,120 +1666,8 @@ class Campaign extends Component
     /**
      * Main render method with optimized data loading and pagination
      */
-    // public function render()
-    // {
-    //     try {
-    //         $user = User::withCount([
-    //             'reposts as reposts_count_today' => function ($query) {
-    //                 $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
-    //             },
-    //             'campaigns',
-    //             'requests' => function ($query) {
-    //                 $query->pending();
-    //             },
-    //         ])->find(user()->id);
-    //         $user->load('userInfo');
-
-    //         $this->todayRepost = $user->reposts_count_today ?? 0;
-
-    //         $data['dailyRepostCurrent'] = $this->todayRepost;
-    //         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-    //         $data['pendingRequests'] = $user->requests_count ?? 0;
-
-    //         $baseQuery = $this->getCampaignsQuery();
-    //         $baseQuery = $this->applyFilters($baseQuery);
-    //         $baseQuery = $baseQuery;
-    //         // Get the logged-in user's follower count (which you already retrieved)
-    //         $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
-
-    //         // Apply the max_followers filter
-    //         $baseQuery->where(function ($query) use ($userFollowersCount) {
-    //             $query->whereNull('max_followers')
-    //                 ->orWhere(function ($q) use ($userFollowersCount) {
-    //                     $q->whereNotNull('max_followers')
-    //                         ->where('max_followers', '>=', $userFollowersCount);
-    //                 });
-    //         });
-
-    //         $campaigns = collect();
-    //         switch ($this->activeMainTab) {
-    //             case 'recommended_pro':
-    //                 $baseQuery->whereHas('user', function ($query) {
-    //                     $query->isPro();
-    //                 });
-    //                 if ($this->selectedGenres !== ['all']) {
-    //                     $baseQuery->whereHas('music', function ($query) {
-    //                         $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-    //                         $query->whereIn('genre', $userGenres);
-    //                     });
-    //                 }
-    //                 $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
-
-    //                 break;
-
-    //             case 'recommended':
-    //                 if ($this->selectedGenres !== ['all']) {
-    //                     $baseQuery->whereHas('music', function ($query) {
-    //                         $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-    //                         $query->whereIn('genre', $userGenres);
-    //                     });
-    //                 }
-    //                 $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
-    //                 break;
-
-    //             case 'all':
-    //                 $campaigns = $baseQuery
-    //                     ->whereHas('music', function ($query) {
-    //                         if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
-    //                             $query->whereIn('genre', $this->selectedGenres);
-    //                         }
-    //                     })
-    //                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
-
-    //                 break;
-    //             default:
-    //                 $baseQuery->whereHas('user', function ($query) {
-    //                     $query->isPro();
-    //                 });
-    //                 if ($this->selectedGenres !== ['all']) {
-    //                     $baseQuery->whereHas('music', function ($query) {
-    //                         $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-    //                         $query->whereIn('genre', $userGenres);
-    //                     });
-    //                 }
-    //                 $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
-
-    //                 break;
-    //         }
-
-    //         // View Count Tracking
-    //         Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
-
-
-    //         return view('livewire.user.campaign-management.campaign', [
-    //             'campaigns' => $campaigns,
-    //             'data' => $data
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         Log::error('Failed to load campaigns: ' . $e->getMessage(), [
-    //             'user_urn' => user()->urn ?? 'unknown',
-    //             'active_tab' => $this->activeMainTab,
-    //             'exception' => $e
-    //         ]);
-    //         $campaigns = collect();
-    //         return view('livewire.user.campaign-management.campaign', [
-    //             'campaigns' => $campaigns
-    //         ]);
-    //     }
-    // }
-    public $dataLoaded = false;
-    public $data = [];
-    public $campaigns;
-
-    public function loadCampaignData()
+    public function render()
     {
-        if ($this->dataLoaded) return;
-
         try {
             $user = User::withCount([
                 'reposts as reposts_count_today' => function ($query) {
@@ -1794,15 +1682,17 @@ class Campaign extends Component
 
             $this->todayRepost = $user->reposts_count_today ?? 0;
 
-            $this->data['dailyRepostCurrent'] = $this->todayRepost;
-            $this->data['totalMyCampaign'] = $user->campaigns_count ?? 0;
-            $this->data['pendingRequests'] = $user->requests_count ?? 0;
+            $data['dailyRepostCurrent'] = $this->todayRepost;
+            $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
+            $data['pendingRequests'] = $user->requests_count ?? 0;
 
             $baseQuery = $this->getCampaignsQuery();
             $baseQuery = $this->applyFilters($baseQuery);
-
+            $baseQuery = $baseQuery;
+            // Get the logged-in user's follower count (which you already retrieved)
             $userFollowersCount = $user?->userInfo?->followers_count ?? 0;
 
+            // Apply the max_followers filter
             $baseQuery->where(function ($query) use ($userFollowersCount) {
                 $query->whereNull('max_followers')
                     ->orWhere(function ($q) use ($userFollowersCount) {
@@ -1811,80 +1701,75 @@ class Campaign extends Component
                     });
             });
 
+            $campaigns = collect();
             switch ($this->activeMainTab) {
                 case 'recommended_pro':
-                    $baseQuery->whereHas('user', fn($query) => $query->isPro());
-
+                    $baseQuery->whereHas('user', function ($query) {
+                        $query->isPro();
+                    });
                     if ($this->selectedGenres !== ['all']) {
-                        $baseQuery->whereHas(
-                            'music',
-                            fn($query) =>
-                            $query->whereIn('genre', $this->selectedGenres)
-                        );
+                        $baseQuery->whereHas('music', function ($query) {
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $query->whereIn('genre', $userGenres);
+                        });
                     }
+                    $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 
-                    $this->campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
                     break;
 
                 case 'recommended':
                     if ($this->selectedGenres !== ['all']) {
-                        $baseQuery->whereHas(
-                            'music',
-                            fn($query) =>
-                            $query->whereIn('genre', $this->selectedGenres)
-                        );
+                        $baseQuery->whereHas('music', function ($query) {
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $query->whereIn('genre', $userGenres);
+                        });
                     }
-
-                    $this->campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
+                    $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommendedPage', $this->recommendedPage);
                     break;
 
                 case 'all':
-                    $baseQuery->whereHas(
-                        'music',
-                        fn($query) => (!empty($this->selectedGenres) && $this->selectedGenres !== ['all'])
-                            ? $query->whereIn('genre', $this->selectedGenres)
-                            : null
-                    );
+                    $campaigns = $baseQuery
+                        ->whereHas('music', function ($query) {
+                            if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                                $query->whereIn('genre', $this->selectedGenres);
+                            }
+                        })
+                        ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
 
-                    $this->campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage);
                     break;
-
                 default:
-                    // Fallback same as recommended_pro
-                    $baseQuery->whereHas('user', fn($query) => $query->isPro());
+                    $baseQuery->whereHas('user', function ($query) {
+                        $query->isPro();
+                    });
                     if ($this->selectedGenres !== ['all']) {
-                        $baseQuery->whereHas(
-                            'music',
-                            fn($query) =>
-                            $query->whereIn('genre', $this->selectedGenres)
-                        );
+                        $baseQuery->whereHas('music', function ($query) {
+                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                            $query->whereIn('genre', $userGenres);
+                        });
                     }
+                    $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
 
-                    $this->campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
                     break;
             }
 
-            // Track view only once
-            Bus::dispatch(new TrackViewCount($this->campaigns, user()->urn, 'campaign'));
+            // View Count Tracking
+            Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
 
-            $this->dataLoaded = true;
+
+            return view('livewire.user.campaign-management.campaign', [
+                'campaigns' => $campaigns,
+                'data' => $data
+            ]);
         } catch (\Exception $e) {
             Log::error('Failed to load campaigns: ' . $e->getMessage(), [
                 'user_urn' => user()->urn ?? 'unknown',
                 'active_tab' => $this->activeMainTab,
                 'exception' => $e
             ]);
-            $this->campaigns = collect();
+            $campaigns = collect();
+            return view('livewire.user.campaign-management.campaign', [
+                'campaigns' => $campaigns
+            ]);
         }
-    }
-
-    public function render()
-    {
-        $this->loadCampaignData();
-
-        return view('livewire.user.campaign-management.campaign', [
-            'campaigns' => $this->campaigns,
-            'data' => $this->data
-        ]);
     }
 }
