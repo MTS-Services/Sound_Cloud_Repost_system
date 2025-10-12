@@ -370,7 +370,7 @@ class Member extends Component
         $this->selectedUserUrn = $userUrn;
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
         // if (userCredits() < repostPrice($this->user)) {
-        if (userCredits() < $this->user->repost_price && userCredits() < 50) {
+        if (userCredits() < $this->user->repost_price || userCredits() < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
