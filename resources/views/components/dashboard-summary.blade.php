@@ -123,6 +123,10 @@
                 can manually send a request to another user, playlist, or curator. This feature gives you full control
                 to choose who you want to network with, build relationships, and promote your tracks more strategically.
             </p>
+            <p class="text-sm text-[#718096] dark:text-gray-100 mt-2">
+                You can include a personal message with your Direct Request to explain why your music fits their
+                audience — making your outreach more authentic and effective.
+            </p>
         </div>
     </div>
 
