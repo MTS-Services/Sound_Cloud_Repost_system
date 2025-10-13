@@ -1973,9 +1973,7 @@ class Campaign extends Component
                     'commented',
                     'showRepostConfirmationModal',
                 ]);
-
-                // ❌ এই line টি comment out করুন - auto reload বন্ধ করতে
-                // $this->navigatingAway(request());
+                $this->navigatingAway(request());
 
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [

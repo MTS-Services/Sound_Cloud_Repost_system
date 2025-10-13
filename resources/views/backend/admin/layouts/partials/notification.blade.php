@@ -26,10 +26,15 @@
 
 
         <div class="flex items-center justify-between p-6 glass-card">
-            <x-button href="javascript:void(0)" type="secondary"
-                onclick="window.notificationManager?.sendMarkAllAsReadRequest()">
-                {{ __('Mark All As Read') }}
-            </x-button>
+            @if ($notifications->count() > 0)
+                <form method="POST" action="{{ route('admin.notifications.mark-all-read') }}" class="inline">
+                    @csrf
+                    <button type="submit"
+                        class="btn uppercase tracking-widest btn-secondary btn-sm rounded-md          text-white">
+                        Mark All Read
+                    </button>
+                </form>
+            @endif
             <x-button href="{{ route('admin.notifications.index') }}">
                 {{ __('See All') }}
             </x-button>
