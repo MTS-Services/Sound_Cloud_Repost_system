@@ -856,7 +856,7 @@ class MyCampaign extends Component
 
     private function getCampaignsQuery(): Builder
     {
-        return Campaign::with(['music']);
+        return Campaign::orderBy('created_at', 'desc')->with(['music']);
     }
 
     private function resetAllFormData(): void

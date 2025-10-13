@@ -4,6 +4,7 @@ namespace App\Livewire\User;
 
 use App\Jobs\NotificationMailSent;
 use App\Jobs\TrackViewCount;
+use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\RepostRequest as ModelsRepostRequest;
@@ -495,7 +496,9 @@ class RepostRequest extends Component
             'reposts as reposts_count_today' => function ($query) {
                 $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
             },
-            'campaigns',
+            'campaigns' => function ($query) {
+                $query->where('status', Campaign::STATUS_OPEN);
+            },
             'requests' => function ($query) {
                 $query->pending();
             },

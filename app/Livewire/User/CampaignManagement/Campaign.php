@@ -2004,7 +2004,9 @@ class Campaign extends Component
                 'reposts as reposts_count_today' => function ($query) {
                     $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
                 },
-                'campaigns',
+                'campaigns' => function ($query) {
+                    $query->where('status', ModelsCampaign::STATUS_OPEN);
+                },
                 'requests' => function ($query) {
                     $query->pending();
                 },
