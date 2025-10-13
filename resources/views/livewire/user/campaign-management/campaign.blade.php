@@ -371,7 +371,7 @@
                                                 </svg>
                                                 <span>{{ user()->repost_price }} Repost</span>
                                             </button>
-                                            @if (in_array($campaign_->id, $repostedCampaigns))
+                                            @if (in_array($campaign_->id, $this->repostedCampaigns))
                                                 <div
                                                     class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
                                                     Reposted! ✓
