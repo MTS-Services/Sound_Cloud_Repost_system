@@ -362,21 +362,21 @@ class Campaign extends Component
     {
         // $allowedTargetCredits = repostPrice(user(), true);
         $allowedTargetCredits = user()->repost_price;
-        $query = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
+        $baseQuery = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
-        if($this->dataLoaded){
-            $query->whereDoesntHave('reposts', function ($query) {
+            $baseQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             });
+        if($this->dataLoaded){
         }
-        $query->orderByRaw('CASE
+        $baseQuery->orderByRaw('CASE
             WHEN boosted_at >= ? THEN 0
             WHEN featured_at >= ? THEN 1
             ELSE 2
         END', [now()->subMinutes(15), now()->subHours(24)])
             ->orderBy('created_at', 'desc');
-        return $query;
+        return $baseQuery;
     }
 
     /**
