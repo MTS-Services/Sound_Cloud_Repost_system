@@ -182,29 +182,31 @@
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
                                     </div> --}}
                                 </div>
-                                <div class="flex justify-end items-center gap-4 mt-2">
-                                    @if (featuredAgain() && !$campaign_->is_featured)
-                                        <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                            @if (proUser())
-                                                <x-gbutton variant="secondary"
-                                                    wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
-                                            @else
-                                                <x-gabutton variant="primary" wire:navigate
-                                                    href="{{ route('user.plans') }}">Need to get featured?
-                                                    (Pro)
-                                                </x-gabutton>
-                                            @endif
-                                        </div>
-                                    @endif
-                                    @if (boostAgain() && !$campaign_->is_boost)
-                                        @if (proUser())
-                                            <div>
-                                                <x-gbutton variant="secondary"
-                                                    wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                @if ($campaign_->status !== \App\Models\Campaign::STATUS_STOP)
+                                    <div class="flex justify-end items-center gap-4 mt-2">
+                                        @if (featuredAgain() && !$campaign_->is_featured)
+                                            <div class="flex flex-wrap justify-center sm:justify-end gap-4">
+                                                @if (proUser())
+                                                    <x-gbutton variant="secondary"
+                                                        wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
+                                                @else
+                                                    <x-gabutton variant="primary" wire:navigate
+                                                        href="{{ route('user.plans') }}">Need to get featured?
+                                                        (Pro)
+                                                    </x-gabutton>
+                                                @endif
                                             </div>
                                         @endif
-                                    @endif
-                                </div>
+                                        @if (boostAgain() && !$campaign_->is_boost)
+                                            @if (proUser())
+                                                <div>
+                                                    <x-gbutton variant="secondary"
+                                                        wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @empty
