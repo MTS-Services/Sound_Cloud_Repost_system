@@ -2079,14 +2079,6 @@ class Campaign extends Component
                     break;
             }
 
-            // ✅ Locally reposted campaigns filter করুন
-            // $campaigns->getCollection()->transform(function ($campaign) {
-            //     if (in_array($campaign->id, $this->locallyRepostedCampaigns)) {
-            //         return null; // Hide this campaign
-            //     }
-            //     return $campaign;
-            // })->filter(); // Remove null values
-
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
 
             return view('livewire.user.campaign-management.campaign', [

@@ -57,7 +57,8 @@
                 </div>
                 <div class="flex justify-between items-center mt-3">
                     <div class="text-xl font-semibold dark:text-gray-100">{{ $responseRate }}%</div>
-                    <button wire:click="{{ $resetResponseRateAction }}" {{ $canResetResponseRate ? '' : 'disabled' }} class="text-sm font-semibold text-orange-500 {{ $canResetResponseRate ? 'hover:underline cursor-pointer' : '!cursor-not-allowed' }}">Reset</button>
+                    <button wire:click="{{ $resetResponseRateAction }}" {{ $canResetResponseRate ? '' : 'disabled' }}
+                        class="text-sm font-semibold text-orange-500 {{ $canResetResponseRate ? 'hover:underline cursor-pointer' : '!cursor-not-allowed' }}">Reset</button>
                 </div>
                 <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 dark:text-gray-700 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-orange-500 h-full" style="width: {{ $responseRate }}%"></div>
@@ -71,7 +72,8 @@
                     <span><x-lucide-bell class="w-6 h-6 text-orange-500" /></span>
                     <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Pending Direct Requests</span>
                 </div>
-                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} / {{ $requestLimit }}
+                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} /
+                    {{ $requestLimit }}
                 </div>
                 <a href="#" class="inline-block mt-2 text-sm font-semibold text-orange-500 hover:underline">Get
                     higher limit</a>
@@ -116,11 +118,10 @@
         </div>
         <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56 hidden 3xl:block">
             <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
-            <p class="text-sm text-[#718096] dark:text-gray-100">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum quibusdam, inventore, quidem numquam
-                voluptatibus rem quod beatae vitae repellendus totam odit nostrum velit, in perferendis ut harum minus
-                id molestias debitis! Minus architecto provident reprehenderit tempora, quas consequuntur, voluptas
-                aliquid earum tenetur autem sint. Maiores velit inventore exercitationem quam iure.
+            <p class="text-sm text-[#718096] dark:text-gray-100">Direct Requests allow artists to connect and
+                collaborate directly with other creators on RepostChain. Instead of waiting for repost campaigns, you
+                can manually send a request to another user, playlist, or curator. This feature gives you full control
+                to choose who you want to network with, build relationships, and promote your tracks more strategically.
             </p>
         </div>
     </div>
