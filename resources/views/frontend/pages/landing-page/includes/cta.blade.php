@@ -11,13 +11,13 @@
             </div>
 
             <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <x-gbutton size="lg" variant="primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                <x-gabutton href="{{ route('soundcloud.redirect') }}" size="lg" variant="primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
                         height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                         <path d="M9 18V5l12-2v13"></path>
                         <circle cx="6" cy="18" r="3"></circle>
                         <circle cx="18" cy="16" r="3"></circle>
-                    </svg> Join For Free</x-gbutton>
+                    </svg> Join For Free</x-gabutton>
                 <x-gbutton variant="text" size="lg"><svg xmlns="http://www.w3.org/2000/svg" width="20"
                         height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" class="mr-2">
