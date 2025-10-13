@@ -313,7 +313,7 @@
                     </div>
 
                     <!-- Reach More Section -->
-                    {{-- <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
+                    <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
                         <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more people</h2>
                         <hr class="text-red-500 mb-4">
                         @if (featuredAgain() && $latestCampaign)
@@ -363,7 +363,7 @@
                                     x-on:click="showUpgradeModal = true">Need to get featured?(Pro)</x-gabutton>
                             @endif
                         </div>
-                    </div> --}}
+                    </div>
                 </aside>
             </div>
         </div>
