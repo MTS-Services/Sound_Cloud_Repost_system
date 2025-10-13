@@ -2005,7 +2005,7 @@ class Campaign extends Component
                     $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
                 },
                 'campaigns' => function ($query) {
-                    $query->where('status', ModelsCampaign::STATUS_OPEN);
+                    $query->open();
                 },
                 'requests' => function ($query) {
                     $query->pending();
