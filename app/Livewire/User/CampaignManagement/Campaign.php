@@ -357,22 +357,26 @@ class Campaign extends Component
     /**
      * Get the base campaigns query with common filters
      */
+    public $dataLoaded = true;
     private function getCampaignsQuery(): Builder
     {
         // $allowedTargetCredits = repostPrice(user(), true);
         $allowedTargetCredits = user()->repost_price;
-        return ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
+        $query = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()->open()
-            ->with(['music.user.userInfo', 'reposts', 'user'])
-            ->whereDoesntHave('reposts', function ($query) {
+            ->with(['music.user.userInfo', 'reposts', 'user']);
+        if($this->dataLoaded){
+            $query->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
-            })
-            ->orderByRaw('CASE
+            });
+        }
+        $query->orderByRaw('CASE
             WHEN boosted_at >= ? THEN 0
             WHEN featured_at >= ? THEN 1
             ELSE 2
         END', [now()->subMinutes(15), now()->subHours(24)])
             ->orderBy('created_at', 'desc');
+        return $query;
     }
 
     /**
@@ -1964,7 +1968,7 @@ class Campaign extends Component
 
                 $soundcloudRepostId = $campaign->music->soundcloud_track_id;
                 $this->campaignService->syncReposts($campaign, user(), $soundcloudRepostId, $data);
-                
+
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
 
                 $this->reset([
@@ -1973,8 +1977,7 @@ class Campaign extends Component
                     'commented',
                     'showRepostConfirmationModal',
                 ]);
-                $this->navigatingAway(request());
-
+                // $this->navigatingAway(request());
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
@@ -2080,7 +2083,7 @@ class Campaign extends Component
             }
 
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
-
+            $this->dataLoaded = false;
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data
