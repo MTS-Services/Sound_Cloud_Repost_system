@@ -1979,7 +1979,6 @@ class Campaign extends Component
                 ]);
                 // $this->navigatingAway(request());
                 $this->dataLoaded = false;
-                $this->repostedCampaigns = $campaignId;
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
