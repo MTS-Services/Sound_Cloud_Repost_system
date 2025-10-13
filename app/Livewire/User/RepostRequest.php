@@ -454,7 +454,7 @@ class RepostRequest extends Component
 
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['music', 'targetUser']);
+        $query = ModelsRepostRequest::orderBy('created_at', 'desc')->with(['music', 'targetUser']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
 
