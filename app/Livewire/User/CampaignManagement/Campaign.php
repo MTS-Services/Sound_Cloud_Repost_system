@@ -365,10 +365,10 @@ class Campaign extends Component
         $baseQuery = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
+        if ($this->dataLoaded) {
             $baseQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             });
-        if($this->dataLoaded){
         }
         $baseQuery->orderByRaw('CASE
             WHEN boosted_at >= ? THEN 0
@@ -1978,6 +1978,7 @@ class Campaign extends Component
                     'showRepostConfirmationModal',
                 ]);
                 // $this->navigatingAway(request());
+                $this->dataLoaded = false;
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
@@ -2083,7 +2084,6 @@ class Campaign extends Component
             }
 
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
-            $this->dataLoaded = false;
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data
