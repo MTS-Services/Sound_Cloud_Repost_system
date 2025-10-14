@@ -243,6 +243,7 @@ class Campaign extends Component
     public function mount(Request $request)
     {
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        session()->put('removedSession', true);
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -400,8 +401,6 @@ class Campaign extends Component
             ELSE 2
         END', [now()->subMinutes(15), now()->subHours(24)])
             ->orderBy('created_at', 'desc');
-
-        session()->forget('repostedId');
         return $baseQuery;
     }
 
@@ -2008,6 +2007,7 @@ class Campaign extends Component
                 $this->repostedCampaigns[] = $campaignId;
 
                 session()->put('repostedId', $campaignId);
+                session()->put('removedSession', false);
 
                 // $reposted = session()->get('repostedIds', []);
                 // $reposted[] = $campaignId;
@@ -2120,6 +2120,10 @@ class Campaign extends Component
                     break;
             }
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
+
+            if (session()->get('removedSession')) {
+                session()->forget('repostedId');
+            }
 
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
