@@ -240,7 +240,6 @@ class Campaign extends Component
         $this->userSettingsService = $userSettingsService;
     }
 
-    public $sessionIds = [1];
 
     public function mount(Request $request)
     {
@@ -2008,7 +2007,6 @@ class Campaign extends Component
                 $this->repostedCampaigns[] = $campaignId;
 
                 session()->put('repostedId', $campaignId);
-                $this->sessionIds = [1,2];
 
                 // $reposted = session()->get('repostedIds', []);
                 // $reposted[] = $campaignId;
@@ -2030,11 +2028,6 @@ class Campaign extends Component
             $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
             return;
         }
-    }
-
-    public function forgetRepostedId()
-    {
-        session()->forget('repostedId');
     }
 
     public function render()
@@ -2121,9 +2114,6 @@ class Campaign extends Component
                     break;
             }
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
-            if (array_diff($this->sessionIds, [1]) == []) {
-                session()->forget('repostedId');
-            }
 
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
