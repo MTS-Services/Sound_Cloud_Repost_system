@@ -366,11 +366,26 @@ class Campaign extends Component
             ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
 
-        if (session()->has('repostedId') && session()->get('repostedId') != null) {
-            $baseQuery->where(function ($query) {
-                $query->whereDoesntHave('reposts', function ($q) {
+        // if (session()->has('repostedId') && session()->get('repostedId') != null) {
+        //     $baseQuery->where(function ($query) {
+        //         $query->whereDoesntHave('reposts', function ($q) {
+        //             $q->where('reposter_urn', user()->urn)
+        //                 ->where('campaign_id', '!=', session()->get('repostedId'));
+        //         });
+        //     });
+        // } else {
+        //     $baseQuery->whereDoesntHave('reposts', function ($query) {
+        //         $query->where('reposter_urn', user()->urn);
+        //     });
+        // }
+
+        if (session()->has('repostedIds') && !empty(session()->get('repostedIds'))) {
+            $repostedIds = session()->get('repostedIds');
+
+            $baseQuery->where(function ($query) use ($repostedIds) {
+                $query->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
                     $q->where('reposter_urn', user()->urn)
-                        ->where('campaign_id', '!=', session()->get('repostedId'));
+                        ->whereIn('campaign_id', $repostedIds);
                 });
             });
         } else {
@@ -378,6 +393,7 @@ class Campaign extends Component
                 $query->where('reposter_urn', user()->urn);
             });
         }
+
         $baseQuery->orderByRaw('CASE
             WHEN boosted_at >= ? THEN 0
             WHEN featured_at >= ? THEN 1
@@ -1991,7 +2007,6 @@ class Campaign extends Component
                 $reposted = session()->get('repostedIds', []);
                 $reposted[] = $campaignId;
                 session()->put('repostedIds', $reposted);
-
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
