@@ -362,7 +362,7 @@
                                                         $campaign_->id),
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign_->id),
-                                                    'bg-green-600 text-white cursor-not-allowed' => in_array(
+                                                    '!bg-green-600 !text-white cursor-not-allowed' => in_array(
                                                         $campaign_->id,
                                                         $this->repostedCampaigns),
                                                 ]) @disabled(!$this->canRepost($campaign_->id))>
