@@ -355,7 +355,7 @@
                                         <div class="relative">
                                             <!-- Repost Button -->
                                             <button
-                                                @if (session()->get('repostedId') != $campaign_->id) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
+                                                @if (!in_array($campaign_->id, session()->get('repostedIds', []))) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
                                                 @class([
                                                     'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
                                                     'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(

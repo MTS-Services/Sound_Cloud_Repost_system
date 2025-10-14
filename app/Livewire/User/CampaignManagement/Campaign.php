@@ -243,9 +243,6 @@ class Campaign extends Component
     public function mount(Request $request)
     {
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        if (session()->has('repostedId') && session()->get('repostedId') != null) {
-            session()->forget('repostedId');
-        }
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -1989,9 +1986,12 @@ class Campaign extends Component
                     'showRepostConfirmationModal',
                 ]);
                 $this->navigatingAway(request());
-                // $this->repostedId = $campaignId;
                 $this->repostedCampaigns[] = $campaignId;
-                session()->put('repostedId', $campaignId);
+
+                $reposted = session()->get('repostedIds', []);
+                $reposted[] = $campaignId;
+                session()->put('repostedIds', $reposted);
+
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
