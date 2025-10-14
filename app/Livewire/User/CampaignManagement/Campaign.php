@@ -1988,6 +1988,7 @@ class Campaign extends Component
                 // $this->navigatingAway(request());
                 $this->repostedId = $campaignId;
                 $this->repostedCampaigns[] = $campaignId;
+                $this->playedCampaigns = array_values(array_diff($this->playedCampaigns, [$campaignId]));
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
