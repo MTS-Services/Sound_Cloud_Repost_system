@@ -290,7 +290,7 @@
                                 <!-- Avatar + Title + Icon -->
                                 <div
                                     class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-3 w-full">
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
                                             alt="Audio Cure avatar">
@@ -335,7 +335,7 @@
                                         </div>
                                     </div>
                                     <!-- Stats and Repost Button -->
-                                    <div class="flex items-center justify-between gap-4">
+                                    <div class="flex items-center justify-between gap-4 w-full">
                                         <div
                                             class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
