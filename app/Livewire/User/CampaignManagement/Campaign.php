@@ -357,7 +357,7 @@ class Campaign extends Component
     /**
      * Get the base campaigns query with common filters
      */
-    public $repostedId = null;
+    // public $repostedId = null;
     private function getCampaignsQuery(): Builder
     {
         // $allowedTargetCredits = repostPrice(user(), true);
@@ -365,17 +365,17 @@ class Campaign extends Component
         $baseQuery = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
-        if ($this->repostedId == null) {
-            $baseQuery->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
-            });
-        } else {
+
+        if (session()->has('repostedId') && session()->get('repostedId') != null) {
             $baseQuery->where(function ($query) {
                 $query->whereDoesntHave('reposts', function ($q) {
-                        $q->where('reposter_urn', user()->urn)
+                    $q->where('reposter_urn', user()->urn)
                         ->where('campaign_id', '!=', $this->repostedId);
-                    
                 });
+            });
+        } else {
+            $baseQuery->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
             });
         }
         $baseQuery->orderByRaw('CASE
@@ -1986,9 +1986,9 @@ class Campaign extends Component
                     'showRepostConfirmationModal',
                 ]);
                 $this->navigatingAway(request());
-                $this->repostedId = $campaignId;
+                // $this->repostedId = $campaignId;
                 $this->repostedCampaigns[] = $campaignId;
-                
+                session()->put('repostedId', $campaignId);
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
@@ -2092,8 +2092,11 @@ class Campaign extends Component
                     $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
                     break;
             }
-
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
+
+            if (session()->has('repostedId') && session()->get('repostedId') != null) {
+                session()->forget('repostedId');
+            }
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data
