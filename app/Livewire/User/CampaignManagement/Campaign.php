@@ -366,26 +366,11 @@ class Campaign extends Component
             ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
 
-        // if (session()->has('repostedId') && session()->get('repostedId') != null) {
-        //     $baseQuery->where(function ($query) {
-        //         $query->whereDoesntHave('reposts', function ($q) {
-        //             $q->where('reposter_urn', user()->urn)
-        //                 ->where('campaign_id', '!=', session()->get('repostedId'));
-        //         });
-        //     });
-        // } else {
-        //     $baseQuery->whereDoesntHave('reposts', function ($query) {
-        //         $query->where('reposter_urn', user()->urn);
-        //     });
-        // }
-
-        if (session()->has('repostedIds') && !empty(session()->get('repostedIds'))) {
-            $repostedIds = session()->get('repostedIds');
-
-            $baseQuery->where(function ($query) use ($repostedIds) {
-                $query->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+        if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            $baseQuery->where(function ($query) {
+                $query->whereDoesntHave('reposts', function ($q) {
                     $q->where('reposter_urn', user()->urn)
-                        ->whereIn('campaign_id', $repostedIds);
+                        ->where('campaign_id', '!=', session()->get('repostedId'));
                 });
             });
         } else {
@@ -393,6 +378,21 @@ class Campaign extends Component
                 $query->where('reposter_urn', user()->urn);
             });
         }
+
+        // if (session()->has('repostedIds') && !empty(session()->get('repostedIds'))) {
+        //     $repostedIds = session()->get('repostedIds');
+
+        //     $baseQuery->where(function ($query) use ($repostedIds) {
+        //         $query->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+        //             $q->where('reposter_urn', user()->urn)
+        //                 ->whereIn('campaign_id', $repostedIds);
+        //         });
+        //     });
+        // } else {
+        //     $baseQuery->whereDoesntHave('reposts', function ($query) {
+        //         $query->where('reposter_urn', user()->urn);
+        //     });
+        // }
 
         $baseQuery->orderByRaw('CASE
             WHEN boosted_at >= ? THEN 0
@@ -1824,6 +1824,7 @@ class Campaign extends Component
     //     }
     // }
 
+
     public function repost($campaignId)
     {
         try {
@@ -2004,9 +2005,11 @@ class Campaign extends Component
                 $this->navigatingAway(request());
                 $this->repostedCampaigns[] = $campaignId;
 
-                $reposted = session()->get('repostedIds', []);
-                $reposted[] = $campaignId;
-                session()->put('repostedIds', $reposted);
+                session()->put('repostedId', $campaignId);
+
+                // $reposted = session()->get('repostedIds', []);
+                // $reposted[] = $campaignId;
+                // session()->put('repostedIds', $reposted);
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
@@ -2115,6 +2118,9 @@ class Campaign extends Component
             // if (session()->has('repostedId') && session()->get('repostedId') != null) {
             //     session()->forget('repostedId');
             // }
+            if($this->sessionCleared){
+                session()->forget('repostedId');
+            }
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data

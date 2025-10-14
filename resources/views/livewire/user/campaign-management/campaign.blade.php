@@ -355,18 +355,16 @@
                                         <div class="relative">
                                             <!-- Repost Button -->
                                             <button
-                                                @if (!in_array($campaign_->id, session()->get('repostedIds'))) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
+                                                @if (session()->get('repostedId') != $campaign_->id) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
                                                 @class([
                                                     'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
                                                     'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                         $campaign_->id),
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign_->id),
-                                                    '!bg-green-600 !text-white cursor-not-allowed' => in_array(
-                                                        $campaign_->id,
-                                                        session()->get('repostedIds')),
+                                                    '!bg-green-600 !text-white cursor-not-allowed' => session()->get('repostedId') == $campaign_->id,
                                                 ]) @disabled(!$this->canRepost($campaign_->id))>
-                                                @if (in_array($campaign_->id, session()->get('repostedIds')))
+                                                @if ( session()->has('repostedId') && session()->get('repostedId') == $campaign_->id)
                                                     <span>Reposted! ✓</span>
                                                 @else
                                                     <svg width="26" height="18" viewBox="0 0 26 18"
