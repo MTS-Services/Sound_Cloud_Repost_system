@@ -367,7 +367,6 @@ class Campaign extends Component
             ->with(['music.user.userInfo', 'reposts', 'user']);
 
         if (session()->has('repostedId') && session()->get('repostedId') != null) {
-            dd(session()->get('repostedId'));
             $baseQuery->where(function ($query) {
                 $query->whereDoesntHave('reposts', function ($q) {
                     $q->where('reposter_urn', user()->urn)
@@ -2095,9 +2094,9 @@ class Campaign extends Component
             }
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
 
-            if (session()->has('repostedId') && session()->get('repostedId') != null) {
-                session()->forget('repostedId');
-            }
+            // if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            //     session()->forget('repostedId');
+            // }
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data
