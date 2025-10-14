@@ -366,7 +366,7 @@
                                                         $campaign_->id,
                                                         $this->repostedCampaigns),
                                                 ]) @disabled(!$this->canRepost($campaign_->id))>
-                                                @if (in_array($campaign_->id, $this->repostedCampaigns))
+                                                @if (!in_array($campaign_->id, $this->repostedCampaigns))
                                                     <svg width="26" height="18" viewBox="0 0 26 18"
                                                         fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <rect x="1" y="1" width="24" height="16"
