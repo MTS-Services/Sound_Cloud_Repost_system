@@ -729,13 +729,13 @@
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
 
-    @if (session('repostedId'))
+    {{-- @if (session('repostedId'))
         <script>
             window.addEventListener('livewire:load', () => {
                 @this.call('forgetRepostedId');
             });
         </script>
-    @endif
+    @endif --}}
 
 
     <script>
@@ -807,6 +807,7 @@
         });
         document.addEventListener('livewire:navigated', function() {
             initializeSoundCloudWidgets();
+            @this.call('forgetRepostedId');
         });
         // document.addEventListener('livewire:load', function() {
         //     initializeSoundCloudWidgets();
