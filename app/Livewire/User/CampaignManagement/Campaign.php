@@ -245,6 +245,11 @@ class Campaign extends Component
     {
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
+        if(session()->has('repostedId')) {
+            session()->forget('repostedId');
+            
+        }
+
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
