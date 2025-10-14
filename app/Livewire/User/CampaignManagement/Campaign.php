@@ -240,10 +240,11 @@ class Campaign extends Component
         $this->userSettingsService = $userSettingsService;
     }
 
+    public $sessionIds = [1];
+
     public function mount(Request $request)
     {
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        session()->put('removedSession', [1]);
 
         $this->getAllTrackTypes();
         $this->totalCampaigns();
@@ -2007,7 +2008,7 @@ class Campaign extends Component
                 $this->repostedCampaigns[] = $campaignId;
 
                 session()->put('repostedId', $campaignId);
-                session()->put('removedSession', [1, 2]);
+                $this->sessionIds = [1,2];
 
                 // $reposted = session()->get('repostedIds', []);
                 // $reposted[] = $campaignId;
@@ -2120,9 +2121,7 @@ class Campaign extends Component
                     break;
             }
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
-
-            // dd(array_diff(session()->get('removedSession'), [1]));
-            if (array_diff(session()->get('removedSession'), [1]) == []) {
+            if (array_diff($this->sessionIds, [1]) == []) {
                 session()->forget('repostedId');
             }
 
