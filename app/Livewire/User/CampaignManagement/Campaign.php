@@ -2119,9 +2119,6 @@ class Campaign extends Component
             }
             Bus::dispatch(new TrackViewCount($campaigns, user()->urn, 'campaign'));
 
-            if (session()->has('repostedId') && session()->get('repostedId') != null) {
-                session()->forget('repostedId');
-            }
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data
