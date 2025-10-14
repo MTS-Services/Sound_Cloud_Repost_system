@@ -1088,6 +1088,8 @@ class MyCampaign extends Component
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
                     ->completed()
+                    ->cancelled()
+                    ->stop()
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
