@@ -2118,9 +2118,6 @@ class Campaign extends Component
             // if (session()->has('repostedId') && session()->get('repostedId') != null) {
             //     session()->forget('repostedId');
             // }
-            if($this->sessionCleared){
-                session()->forget('repostedId');
-            }
             return view('livewire.user.campaign-management.campaign', [
                 'campaigns' => $campaigns,
                 'data' => $data
