@@ -354,29 +354,38 @@
                                         </div>
                                         <div class="relative">
                                             <!-- Repost Button -->
-                                            <button wire:click="confirmRepost('{{ $campaign_->id }}')"
+                                            <button
+                                                @if (!in_array($campaign_->id, $this->repostedCampaigns)) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
                                                 @class([
                                                     'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
                                                     'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                         $campaign_->id),
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign_->id),
+                                                    'bg-green-600 text-white cursor-not-allowed' => in_array(
+                                                        $campaign_->id,
+                                                        $this->repostedCampaigns),
                                                 ]) @disabled(!$this->canRepost($campaign_->id))>
-                                                <svg width="26" height="18" viewBox="0 0 26 18"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="1" y="1" width="24" height="16" rx="3"
-                                                        fill="none" stroke="currentColor" stroke-width="2" />
-                                                    <circle cx="8" cy="9" r="3" fill="none"
-                                                        stroke="currentColor" stroke-width="2" />
-                                                </svg>
-                                                <span>{{ user()->repost_price }} Repost</span>
+                                                @if (in_array($campaign_->id, $this->repostedCampaigns))
+                                                    <svg width="26" height="18" viewBox="0 0 26 18"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="1" y="1" width="24" height="16"
+                                                            rx="3" fill="none" stroke="currentColor"
+                                                            stroke-width="2" />
+                                                        <circle cx="8" cy="9" r="3" fill="none"
+                                                            stroke="currentColor" stroke-width="2" />
+                                                    </svg>
+                                                    <span>{{ user()->repost_price }} Repost</span>
+                                                @else
+                                                    <span>Reposted! ✓</span>
+                                                @endif
                                             </button>
-                                            @if (in_array($campaign_->id, $this->repostedCampaigns))
+                                            {{-- @if (in_array($campaign_->id, $this->repostedCampaigns))
                                                 <div
                                                     class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
                                                     Reposted! ✓
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
                                 </div>
