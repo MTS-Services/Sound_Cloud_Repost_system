@@ -2029,7 +2029,11 @@ class Campaign extends Component
         }
     }
 
-    // render() method এ filter যোগ করুন
+    public function forgetRepostedId()
+    {
+        session()->forget('repostedId');
+    }
+
     public function render()
     {
         try {

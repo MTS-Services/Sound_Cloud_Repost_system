@@ -362,9 +362,10 @@
                                                         $campaign_->id),
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign_->id),
-                                                    '!bg-green-600 !text-white cursor-not-allowed' => session()->get('repostedId') == $campaign_->id,
+                                                    '!bg-green-600 !text-white cursor-not-allowed' =>
+                                                        session()->get('repostedId') == $campaign_->id,
                                                 ]) @disabled(!$this->canRepost($campaign_->id))>
-                                                @if ( session()->has('repostedId') && session()->get('repostedId') == $campaign_->id)
+                                                @if (session()->has('repostedId') && session()->get('repostedId') == $campaign_->id)
                                                     <span>Reposted! ✓</span>
                                                 @else
                                                     <svg width="26" height="18" viewBox="0 0 26 18"
@@ -727,6 +728,15 @@
     </div>
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
+
+    @if (session('repostedId'))
+        <script>
+            window.addEventListener('livewire:load', () => {
+                @this.call('forgetRepostedId');
+            });
+        </script>
+    @endif
+
 
     <script>
         function initializeSoundCloudWidgets() {
