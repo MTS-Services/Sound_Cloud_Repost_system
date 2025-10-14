@@ -367,6 +367,7 @@ class Campaign extends Component
             ->with(['music.user.userInfo', 'reposts', 'user']);
 
         if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            dd(session()->get('repostedId'));
             $baseQuery->where(function ($query) {
                 $query->whereDoesntHave('reposts', function ($q) {
                     $q->where('reposter_urn', user()->urn)
