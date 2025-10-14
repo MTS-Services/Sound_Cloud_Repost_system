@@ -1033,36 +1033,36 @@ class Campaign extends Component
 
     public function confirmRepost($campaignId)
     {
-        if ($this->todayRepost >= 20) {
-            $endOfDay = Carbon::today()->addDay();
-            $hoursLeft = round(now()->diffInHours($endOfDay));
-            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
-            return;
-        }
-        if (!$this->canRepost12Hours(user()->urn)) {
-            $now = Carbon::now();
-            $availableTime = $this->availableRepostTime; // Store this in your canRepost12Hours function
-            $diff = $now->diff($availableTime);
+        // if ($this->todayRepost >= 20) {
+        //     $endOfDay = Carbon::today()->addDay();
+        //     $hoursLeft = round(now()->diffInHours($endOfDay));
+        //     $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
+        //     return;
+        // }
+        // if (!$this->canRepost12Hours(user()->urn)) {
+        //     $now = Carbon::now();
+        //     $availableTime = $this->availableRepostTime; // Store this in your canRepost12Hours function
+        //     $diff = $now->diff($availableTime);
 
-            $hoursLeft = $diff->h;
-            $minutesLeft = $diff->i;
+        //     $hoursLeft = $diff->h;
+        //     $minutesLeft = $diff->i;
 
-            $message = "You have reached your 12 hour repost limit. You can repost again in ";
+        //     $message = "You have reached your 12 hour repost limit. You can repost again in ";
 
-            if ($hoursLeft > 0) {
-                $message .= "{$hoursLeft} hour" . ($hoursLeft > 1 ? "s" : "");
-            }
+        //     if ($hoursLeft > 0) {
+        //         $message .= "{$hoursLeft} hour" . ($hoursLeft > 1 ? "s" : "");
+        //     }
 
-            if ($hoursLeft > 0 && $minutesLeft > 0) {
-                $message .= " ";
-            }
+        //     if ($hoursLeft > 0 && $minutesLeft > 0) {
+        //         $message .= " ";
+        //     }
 
-            if ($minutesLeft > 0) {
-                $message .= "{$minutesLeft} minute" . ($minutesLeft > 1 ? "s" : "");
-            }
+        //     if ($minutesLeft > 0) {
+        //         $message .= "{$minutesLeft} minute" . ($minutesLeft > 1 ? "s" : "");
+        //     }
 
-            return $this->dispatch('alert', type: 'error', message: $message);
-        }
+        //     return $this->dispatch('alert', type: 'error', message: $message);
+        // }
 
 
 
