@@ -374,7 +374,7 @@ class Campaign extends Component
                 $query->whereDoesntHave('reposts', function ($q) {
                     $q->where(function ($subQ) {
                         $subQ->where('reposter_urn', user()->urn)
-                            ->where('id', '!=', $this->dataLoaded);
+                            ->where('id', '!=', $this->repostedId);
                     });
                 });
             });
