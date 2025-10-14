@@ -357,7 +357,7 @@ class Campaign extends Component
     /**
      * Get the base campaigns query with common filters
      */
-    public $dataLoaded = true;
+    public $repostedId = null;
     private function getCampaignsQuery(): Builder
     {
         // $allowedTargetCredits = repostPrice(user(), true);
@@ -365,9 +365,13 @@ class Campaign extends Component
         $baseQuery = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
             ->withoutSelf()->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
-        if ($this->dataLoaded) {
+        if ($this->repostedId == null) {
             $baseQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
+            });
+        } else {
+            $baseQuery->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn)->where('id', '!=', $this->repostedId);
             });
         }
         $baseQuery->orderByRaw('CASE
@@ -1978,7 +1982,8 @@ class Campaign extends Component
                     'showRepostConfirmationModal',
                 ]);
                 // $this->navigatingAway(request());
-                $this->dataLoaded = false;
+                $this->repostedId = $campaignId;
+                $this->repostedCampaigns[] = $campaignId;
             } else {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
                     'campaign_id' => $campaignId,
