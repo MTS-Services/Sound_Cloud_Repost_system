@@ -1087,13 +1087,11 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
-                    ->completed()
-                    ->cancelled()
-                    ->stop()
+                    ->where('status','!=', Campaign::STATUS_OPEN)
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
-                    
+
                 'cancelled' => $this->getCampaignsQuery()
                     ->cancelled()
                     ->latest()
@@ -1104,6 +1102,7 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
+            // dd($data['campaigns']);
             $data['latestCampaign'] = Campaign::with('music')->self()->where('featured_at', null)->latest()->first();
             $data['featuredCampaign'] = Campaign::with('music')->self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
         } catch (\Exception $e) {

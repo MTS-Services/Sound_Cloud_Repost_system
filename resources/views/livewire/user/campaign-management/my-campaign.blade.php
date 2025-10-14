@@ -182,7 +182,7 @@
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
                                     </div> --}}
                                 </div>
-                                @if ($campaign_->status !== \App\Models\Campaign::STATUS_STOP)
+                                @if ($campaign_->status === \App\Models\Campaign::STATUS_OPEN)
                                     <div class="flex justify-end items-center gap-4 mt-2">
                                         @if (featuredAgain() && !$campaign_->is_featured)
                                             <div class="flex flex-wrap justify-center sm:justify-end gap-4">
