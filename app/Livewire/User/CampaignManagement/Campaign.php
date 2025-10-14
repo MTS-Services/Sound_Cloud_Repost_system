@@ -400,6 +400,8 @@ class Campaign extends Component
             ELSE 2
         END', [now()->subMinutes(15), now()->subHours(24)])
             ->orderBy('created_at', 'desc');
+
+        session()->forget('repostedId');
         return $baseQuery;
     }
 
