@@ -247,34 +247,41 @@
                                                                         $repostRequest->id),
                                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                                         $repostRequest->id),
+                                                                    '!bg-green-600 !text-white cursor-not-allowed' => in_array(
+                                                                        $repostRequest->id,
+                                                                        $this->repostedRequests),
                                                                 ])
                                                                 @disabled(!$this->canRepost($repostRequest->id))>
+                                                                @if (in_array($repostRequest->id, $this->repostedRequests))
+                                                                    <span>Reposted! ✓</span>
+                                                                @else
+                                                                    <!-- Repost Icon -->
+                                                                    <svg width="26" height="18"
+                                                                        viewBox="0 0 26 18" fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg">
+                                                                        <rect x="1" y="1" width="24"
+                                                                            height="16" rx="3"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="2" />
+                                                                        <circle cx="8" cy="9" r="3"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="2" />
+                                                                    </svg>
 
-                                                                <!-- Repost Icon -->
-                                                                <svg width="26" height="18"
-                                                                    viewBox="0 0 26 18" fill="none"
-                                                                    xmlns="http://www.w3.org/2000/svg">
-                                                                    <rect x="1" y="1" width="24" height="16"
-                                                                        rx="3" fill="none"
-                                                                        stroke="currentColor" stroke-width="2" />
-                                                                    <circle cx="8" cy="9" r="3"
-                                                                        fill="none" stroke="currentColor"
-                                                                        stroke-width="2" />
-                                                                </svg>
-
-                                                                {{-- <span>{{ repostPrice($repostRequest->requester) }}
+                                                                    {{-- <span>{{ repostPrice($repostRequest->requester) }}
                                                                     Repost</span> --}}
-                                                                <span>{{ $repostRequest->requester?->repost_price }}
-                                                                    Repost</span>
+                                                                    <span>{{ $repostRequest->requester?->repost_price }}
+                                                                        Repost</span>
+                                                                @endif
                                                             </button>
 
                                                             <!-- Success Indicator -->
-                                                            @if (in_array($repostRequest->id, $this->repostedRequests))
+                                                            {{-- @if (in_array($repostRequest->id, $this->repostedRequests))
                                                                 <div
                                                                     class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
                                                                     Reposted! ✓
                                                                 </div>
-                                                            @endif
+                                                            @endif --}}
                                                         </div>
                                                     @endif
 

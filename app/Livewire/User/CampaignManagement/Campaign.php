@@ -1144,16 +1144,15 @@ class Campaign extends Component
     }
     public function closeConfirmModal(): void
     {
-        // $this->reset([
-        //     'campaign',
-        //     'liked',
-        //     'alreadyLiked',
-        //     'commented',
-        //     'followed',
-        //     'alreadyFollowing',
-        //     'availableRepostTime'
-        // ]);
-        $this->reset();
+        $this->reset([
+            'campaign',
+            'liked',
+            'alreadyLiked',
+            'commented',
+            'followed',
+            'alreadyFollowing',
+            'availableRepostTime'
+        ]);
         $this->showRepostConfirmationModal = false;
     }
 
