@@ -1035,7 +1035,6 @@ class Campaign extends Component
 
     public function confirmRepost(int $campaignId)
     {
-        $this->closeConfirmModal();
         if ($this->todayRepost >= 20) {
             $endOfDay = Carbon::today()->addDay();
             $hoursLeft = round(now()->diffInHours($endOfDay));
