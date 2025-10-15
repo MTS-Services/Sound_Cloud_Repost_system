@@ -432,7 +432,7 @@ class Campaign extends Component
             });
         }
 
-        if (($this->activeMainTab != 'all' || $this->activeMainTab != 'recommended_pro') && $this->selectedGenres !== ['all']) {
+        if ($this->activeMainTab != 'all' && $this->selectedGenres !== ['all']) {
             $this->selectedGenres = (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
         if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
