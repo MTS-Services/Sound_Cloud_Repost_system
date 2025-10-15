@@ -65,7 +65,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
 
     public function payment_setup(): View
     {
-        $data['payment_settings'] = ApplicationSetting::whereIn('key', ['paypal_mode', 'paypal_key', 'paypal_secret', 'stripe_mode', 'stripe_key', 'stripe_secret',])->pluck('value', 'key')->all();
+        $data['payment_settings'] = ApplicationSetting::whereIn('key', ['paypal_mode', 'paypal_key', 'paypal_secret', 'stripe_mode', 'stripe_key', 'stripe_secret', 'paypal_gateway_status', 'stripe_gateway_status'])->pluck('value', 'key')->all();
         return view('backend.admin.application-settings.payment_gateway', $data);
     }
 

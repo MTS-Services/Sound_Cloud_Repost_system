@@ -29,6 +29,15 @@ class ApplicationSetting extends BaseModel
         self::PAYMENT_GATEWAY_LIVE => 'Live',
     ];
 
+
+    public const PAYMENT_GATEWAY_STATUS_ACTIVE = '1';
+    public const PAYMENT_GATEWAY_STATUS_INACTIVE = '0';
+
+    public const PAYMENT_GATEWAY_STATUSES = [
+        self::PAYMENT_GATEWAY_STATUS_ACTIVE => 'Active',
+        self::PAYMENT_GATEWAY_STATUS_INACTIVE => 'Inactive',
+    ];
+
     // public function getPublicRegistrationLabelAttribute()
     // {
     //     return $this->key == 'public_registration' ? self::getPublicRegistrationInfos()[$this->value] : 'Unknown';
