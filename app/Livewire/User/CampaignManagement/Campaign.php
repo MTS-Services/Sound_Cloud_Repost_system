@@ -1139,6 +1139,20 @@ class Campaign extends Component
             $this->alreadyFollowing = true;
         }
     }
+    public function closeConfirmModal()
+    {
+        $this->reset([
+            'showRepostConfirmationModal',
+            'campaign',
+            'liked',
+            'alreadyLiked',
+            'commented',
+            'followed',
+            'alreadyFollowing',
+            'commentable',
+            'showCommentModal',
+        ]);
+    }
     public $datLoaded = false;
     // public function repost($campaignId)
     // {
@@ -1996,10 +2010,15 @@ class Campaign extends Component
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
 
                 $this->reset([
-                    'liked',
-                    'followed',
-                    'commented',
                     'showRepostConfirmationModal',
+                    'campaign',
+                    'liked',
+                    'alreadyLiked',
+                    'commented',
+                    'followed',
+                    'alreadyFollowing',
+                    'commentable',
+                    'showCommentModal',
                 ]);
                 $this->navigatingAway(request());
                 $this->repostedCampaigns[] = $campaignId;
