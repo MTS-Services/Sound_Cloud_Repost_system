@@ -1678,10 +1678,6 @@ class Campaign extends Component
             $this->totalRecommendedPro = $this->getCampaignsQuery()
                 ->whereHas('user', function ($query) {
                     $query->isPro();
-                })
-                ->whereHas('music', function ($query) {
-                    $userGenres = user()->genres->pluck('genre')->toArray() ?? [];
-                    $query->whereIn('genre', $userGenres);
                 })->count();
         }
 
