@@ -1145,15 +1145,16 @@ class Campaign extends Component
     }
     public function closeConfirmModal(): void
     {
-        $this->reset([
-            'campaign',
-            'liked',
-            'alreadyLiked',
-            'commented',
-            'followed',
-            'alreadyFollowing',
-            'availableRepostTime'
-        ]);
+        // $this->reset([
+        //     'campaign',
+        //     'liked',
+        //     'alreadyLiked',
+        //     'commented',
+        //     'followed',
+        //     'alreadyFollowing',
+        //     'availableRepostTime'
+        // ]);
+        $this->reset();
         $this->showRepostConfirmationModal = false;
     }
 
@@ -1672,16 +1673,17 @@ class Campaign extends Component
 
                 $this->dispatch('alert', type: 'success', message: 'Campaign music reposted successfully.' . ($increse_likes ? '' : 'Liked not done due you have already liked this track.'));
 
-                $this->reset([
-                    'showRepostConfirmationModal',
-                    'campaign',
-                    'liked',
-                    'alreadyLiked',
-                    'commented',
-                    'followed',
-                    'alreadyFollowing',
-                    'commentable',
-                ]);
+                // $this->reset([
+                //     'showRepostConfirmationModal',
+                //     'campaign',
+                //     'liked',
+                //     'alreadyLiked',
+                //     'commented',
+                //     'followed',
+                //     'alreadyFollowing',
+                //     'commentable',
+                // ]);
+                $this->reset();
                 $this->navigatingAway(request());
                 $this->repostedCampaigns[] = $campaignId;
 
