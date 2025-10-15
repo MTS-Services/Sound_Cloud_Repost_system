@@ -63,9 +63,7 @@ class SoundCloudController extends Controller
 
             if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
                 return redirect()->route('f.landing')
-                    ->with('warning', "🎟️ Artist Access Only!
-                        To maintain quality and fairness, only artists can create accounts.
-                        If youre a curator or label, please contact our support team for verification.");
+                    ->with('warning', 'This platform is for artists only! Your account is not an artist account. Please try to login with a real artist account.');
             }
 
 
