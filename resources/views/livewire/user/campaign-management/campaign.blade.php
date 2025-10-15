@@ -387,7 +387,7 @@
                                             @endphp
 
                                             <button type="button"
-                                                wire:click="openConfirmModal({{ $campaign_->id }})"
+                                                wire:click="confirmRepost({{ $campaign_->id }})"
                                                 x-data="{ isPlayed: @js($isPlayed) }"
                                                 :disabled="!isPlayed || {{ $isReposted ? 'true' : 'false' }}"
                                                 @campaign-played-5s.window="

@@ -870,7 +870,7 @@ class Campaign extends Component
             $this->playedCampaigns[] = $campaignId;
 
             // FIX: Dispatch an event that the button's Alpine.js block can listen to
-            // $this->dispatch('campaign-played-5s', id: $campaignId)->self();
+            $this->dispatch('campaign-played-5s', id: $campaignId)->self();
         }
     }
 
