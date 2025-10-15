@@ -245,9 +245,8 @@ class Campaign extends Component
     {
         // $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
-        if(session()->has('repostedId')) {
+        if (session()->has('repostedId')) {
             session()->forget('repostedId');
-            
         }
 
         $this->getAllTrackTypes();
@@ -2076,12 +2075,17 @@ class Campaign extends Component
                     $baseQuery->whereHas('user', function ($query) {
                         $query->isPro();
                     });
-                    if ($this->selectedGenres !== ['all']) {
-                        $baseQuery->whereHas('music', function ($query) {
-                            $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-                            $query->whereIn('genre', $userGenres);
-                        });
-                    }
+                    // if ($this->selectedGenres !== ['all']) {
+                    // $baseQuery->whereHas('music', function ($query) {
+                    //     $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
+                    //     $query->whereIn('genre', $userGenres);
+                    // });
+                    // }
+                    $baseQuery->whereHas('music', function ($query) {
+                        if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                            $query->whereIn('genre', $this->selectedGenres);
+                        }
+                    });
                     $campaigns = $baseQuery->paginate(self::ITEMS_PER_PAGE, ['*'], 'recommended_proPage', $this->recommended_proPage);
                     break;
 

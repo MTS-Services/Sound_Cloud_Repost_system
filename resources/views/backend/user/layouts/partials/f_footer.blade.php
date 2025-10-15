@@ -3,14 +3,17 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div class="md:col-span-1">
                 <div class="flex items-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="h-8 w-8 text-primary mr-2">
-                        <path d="M9 18V5l12-2v13"></path>
-                        <circle cx="6" cy="18" r="3"></circle>
-                        <circle cx="18" cy="16" r="3"></circle>
-                    </svg>
-                    <span class="text-xl font-bold">RepostChain</span>
+                    @if (app_setting('app_logo') && app_setting('app_logo_dark'))
+                        {{-- <img src="{{ storage_url(app_setting('app_logo')) }}" alt="{{ config('app.name') }}"
+                            class="w-36 lg:w-48 object-contain dark:hidden" /> --}}
+                        <img src="{{ storage_url(app_setting('app_logo_dark')) }}" alt="{{ config('app.name') }}"
+                            class="w-36 lg:w-48 object-contain" />
+                    @else
+                        {{-- <img src="{{ asset('assets/logos/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
+                            class="w-36 lg:w-48 object-contain dark:hidden" /> --}}
+                        <img src="{{ asset('assets/logos/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
+                            class="w-36 lg:w-48 object-contain" />
+                    @endif
                 </div>
                 <p class="text-gray-400 mb-6">The collaborative music promotion platform for SoundCloud artists.</p>
                 <div class="flex space-x-4">
