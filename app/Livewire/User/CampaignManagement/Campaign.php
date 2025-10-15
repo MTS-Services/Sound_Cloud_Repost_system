@@ -252,7 +252,7 @@ class Campaign extends Component
         $this->getAllTrackTypes();
         $this->totalCampaigns();
         $this->calculateFollowersLimit();
-        if ($this->activeMainTab === 'all') {
+        if ($this->activeMainTab === 'all' || $this->activeMainTab === 'recommended_pro') {
             $this->selectedGenres = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'] ? $this->selectedGenres : [];
         } else {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
@@ -334,7 +334,7 @@ class Campaign extends Component
             case 'recommended_pro':
                 $this->resetPage('recommended_proPage');
                 $this->{$tab . 'Page'} = 1;
-                $this->selectedGenres = user()->genres->pluck('genre')->toArray() ?? [];
+                $this->selectedGenres = [];
                 break;
 
             case 'recommended':
@@ -1667,13 +1667,11 @@ class Campaign extends Component
                     $query->isPro();
                 });
 
-            if ($this->selectedGenres !== ['all']) {
-                $userGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
-
-                $query->whereHas('music', function ($query) use ($userGenres) {
-                    $query->whereIn('genre', $userGenres);
-                });
-            }
+            $query->whereHas('music', function ($query) {
+                if (!empty($this->selectedGenres) && $this->selectedGenres !== ['all']) {
+                    $query->whereIn('genre', $this->selectedGenres);
+                }
+            });
 
             $this->totalRecommendedPro = $query->count();
         } else {
