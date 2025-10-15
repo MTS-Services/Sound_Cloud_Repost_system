@@ -1150,7 +1150,6 @@ class Campaign extends Component
             'followed',
             'alreadyFollowing',
             'commentable',
-            'showCommentModal',
         ]);
     }
     public $datLoaded = false;
@@ -2018,7 +2017,6 @@ class Campaign extends Component
                     'followed',
                     'alreadyFollowing',
                     'commentable',
-                    'showCommentModal',
                 ]);
                 $this->navigatingAway(request());
                 $this->repostedCampaigns[] = $campaignId;
