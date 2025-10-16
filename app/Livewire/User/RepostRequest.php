@@ -328,7 +328,7 @@ class RepostRequest extends Component
             return;
         }
         $this->showRepostConfirmationModal = true;
-        $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
+        $this->request = ModelsRepostRequest::findOrFail($requestId)->load(['music', 'requester', 'targetUser']);
 
         $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
@@ -454,7 +454,7 @@ class RepostRequest extends Component
 
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::orderBy('created_at', 'desc')->with(['music', 'targetUser']);
+        $query = ModelsRepostRequest::orderBy('created_at', 'desc')->with(['music', 'targetUser', 'requester']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
 

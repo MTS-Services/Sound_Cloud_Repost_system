@@ -36,7 +36,7 @@
                     <h3 class="text-lg font-medium uppercase text-gray-900 dark:text-white">Repost</h3>
                     {{-- <span class="text-sm text-gray-700 dark:text-gray-300">{{ repostPrice($request->requester) }}
                             Credits</span> --}}
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $request->requester?->repost_price }}
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $request->targetUser?->repost_price }}
                         Credits</span>
                 </div>
                 <div class="flex items-center space-x-3 p-2 border border-gray-200 dark:border-gray-600 rounded-md">

@@ -270,7 +270,7 @@
 
                                                                     {{-- <span>{{ repostPrice($repostRequest->requester) }}
                                                                     Repost</span> --}}
-                                                                    <span>{{ $repostRequest->requester?->repost_price }}
+                                                                    <span>{{ $repostRequest->targetUser?->repost_price }}
                                                                         Repost</span>
                                                                 @endif
                                                             </button>
