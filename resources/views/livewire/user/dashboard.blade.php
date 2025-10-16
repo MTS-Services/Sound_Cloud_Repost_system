@@ -488,7 +488,6 @@
                                         alt="">
                                     <div class="flex-1">
                                         <h4 class="text-sm font-medium">{{ $request_?->requester?->name }}</h4>
-                                        <p class="text-slate-400 text-xs">by {{ $request_?->requester?->email }}</p>
                                     </div>
                                     <span
                                         class="text-orange-500 font-semibold text-sm">+{{ $request_->credits_spent ?? '0' }}
