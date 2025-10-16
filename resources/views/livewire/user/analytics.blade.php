@@ -1036,54 +1036,73 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">{{ $this->getFilterText() }}</p>
                     </div>
                     <div class="space-y-3">
-                        @if (isset($data['detailed']) && !empty($data['detailed']))
+                        @if (isset($data['growth']) && !empty($data['growth']))
                             @php
                                 $anyAchievement =
-                                    $this->getChangeIcon(
-                                        $data['detailed']['overall_metrics']['total_views']['change_value'],
-                                    ) === 'trending-up' ||
-                                    $this->getChangeIcon(
-                                        $data['detailed']['overall_metrics']['total_plays']['change_value'],
-                                    ) === 'trending-up' ||
-                                    $this->getChangeIcon(
-                                        $data['detailed']['overall_metrics']['total_likes']['change_value'],
-                                    ) === 'trending-up' ||
-                                    $this->getChangeIcon(
-                                        $data['detailed']['overall_metrics']['total_comments']['change_value'],
-                                    ) === 'trending-up';
+                                    $this->getChangeIcon($data['growth']['streamsGrowth']) === 'trending-up' ||
+                                    $this->getChangeIcon($data['growth']['likesGrowth']) === 'trending-up' ||
+                                    $this->getChangeIcon($data['growth']['repostsGrowth']) === 'trending-up' ||
+                                    $this->getChangeIcon($data['growth']['followersGrowth']) === 'trending-up' ||
+                                    $this->getChangeIcon($data['growth']['commentsGrowth']) === 'trending-up' ||
+                                    $this->getChangeIcon($data['growth']['viewsGrowth']) === 'trending-up';
                             @endphp
                             @if ($anyAchievement)
-                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_views']['change_value']) === 'trending-up')
+                                @if ($this->getChangeIcon($data['growth']['viewsGrowth']) === 'trending-up')
                                     <div class="flex items-center">
                                         <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                         <span class="text-sm text-gray-600 dark:text-gray-400">Reached
                                             {{ number_shorten($data['detailed']['overall_metrics']['total_views']['current_total']) }}
                                             total
-                                            views!</span>
+                                            views</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Total views increased by
+                                            {{ number_format($data['growth']['viewsGrowth'], 1) }}%</span>
                                     </div>
                                 @endif
-                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_plays']['change_value']) === 'trending-up')
+                                @if ($this->getChangeIcon($data['growth']['streamsGrowth']) === 'trending-up')
                                     <div class="flex items-center">
                                         <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                         <span
-                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['detailed']['overall_metrics']['total_plays']['change_value'], 1) }}%
-                                            growth in streams this period</span>
+                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['growth']['streamsGrowth'], 1) }}%
+                                            growth in streams</span>
                                     </div>
                                 @endif
-                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_likes']['change_value']) === 'trending-up')
+
+                                @if ($this->getChangeIcon($data['growth']['likesGrowth']) === 'trending-up')
                                     <div class="flex items-center">
                                         <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                         <span class="text-sm text-gray-600 dark:text-gray-400">Great engagement with
-                                            {{ number_format($data['detailed']['overall_metrics']['total_likes']['change_value'], 1) }}%
+                                            {{ number_format($data['growth']['likesGrowth'], 1) }}%
                                             more likes</span>
                                     </div>
                                 @endif
-                                @if ($this->getChangeIcon($data['detailed']['overall_metrics']['total_comments']['change_value']) === 'trending-up')
+
+                                @if ($this->getChangeIcon($data['growth']['commentsGrowth']) === 'trending-up')
                                     <div class="flex items-center">
                                         <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
                                         <span
-                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['detailed']['overall_metrics']['total_comments']['change_value'], 1) }}%
+                                            class="text-sm text-gray-600 dark:text-gray-400">{{ number_format($data['growth']['commentsGrowth'], 1) }}%
                                             growth in comments</span>
+                                    </div>
+                                @endif
+
+                                @if ($this->getChangeIcon($data['growth']['followersGrowth']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                                            Growth of
+                                            {{ number_format($data['growth']['followersGrowth'], 1) }}%
+                                            followers</span>
+                                    </div>
+                                @endif
+
+                                @if ($this->getChangeIcon($data['growth']['repostsGrowth']) === 'trending-up')
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-[#ff6b35] rounded-full mr-3"></div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Reposts increased by
+                                            {{ number_format($data['growth']['repostsGrowth'], 1) }}%</span>
                                     </div>
                                 @endif
                             @else

@@ -5,39 +5,40 @@ namespace App\Jobs;
 use App\Models\User;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class UpdateRealFollowers implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
+    protected User $user;
 
-    protected FollowerAnalyzer $followerAnalyzer;
-    protected SoundCloudService $soundCloudService;
-    protected $users;
-
-
-    public function __construct($users, FollowerAnalyzer $followerAnalyzer = new FollowerAnalyzer(), SoundCloudService $soundCloudService = new SoundCloudService())
+    public function __construct(User $user)
     {
-        $this->followerAnalyzer = $followerAnalyzer;
-        $this->soundCloudService = $soundCloudService;
-        $this->users = $users;
+        $this->user = $user;
     }
 
-
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
+    public function handle(FollowerAnalyzer $followerAnalyzer, SoundCloudService $soundCloudService): void
     {
-        foreach ($this->users as $user) {
-            $followers = $this->soundCloudService->getAuthUserFollowers($user);
-            $this->followerAnalyzer->syncUserRealFollowers($followers, $user);
-            sleep(5);
+        Log::info("Starting real follower sync for user: {$this->user->urn}");
+
+        try {
+            $followers = $soundCloudService->getAuthUserFollowers($this->user);
+            $followerAnalyzer->syncUserRealFollowers($followers, $this->user);
+
+            Log::info("Successfully synced real followers for user: {$this->user->urn}");
+        } catch (\Throwable $e) {
+            Log::error("Failed to sync followers for user: {$this->user->urn}", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            $this->fail($e);
         }
     }
 }

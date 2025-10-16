@@ -104,16 +104,39 @@ class Chart extends Component
             ]);
             $response = null;
 
+            $like_increased = false;
             switch ($campaign->music_type) {
                 case Track::class:
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $campaign?->music?->urn, errorMessage: 'Failed to fetch track details');
+                    $previous_likes = $checkLiked['collection']['favoritings_count'];
                     $response = $httpClient->post("{$this->baseUrl}/likes/tracks/{$campaign->music->urn}");
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $campaign?->music?->urn, errorMessage: 'Failed to fetch track details');
+                    $new_likes = $checkLiked['collection']['favoritings_count'];
+
+                    if ($new_likes > $previous_likes) {
+                        $like_increased = true;
+                    }
                     break;
                 case Playlist::class:
-                    $response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign->music->urn}");
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $campaign?->music?->soundcloud_urn, errorMessage: 'Failed to fetch playlist details');
+                    $previous_likes = $checkLiked['collection']['likes_count'];
+
+                    $response = $httpClient->post("{$this->baseUrl}/likes/playlists/{$campaign?->music?->soundcloud_urn}");
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $campaign?->music?->soundcloud_urn, errorMessage: 'Failed to fetch playlist details');
+                    $new_likes = $checkLiked['collection']['likes_count'];
+
+                    if ($new_likes > $previous_likes) {
+                        $like_increased = true;
+                    }
                     break;
                 default:
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
+            }
+            if ($like_increased == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already liked this ' . $campaign->music_type == Track::class ? 'track' : 'playlist' . ' from soundcloud.');
+                return;
             }
             if ($response->successful()) {
                 $this->campaignService->likeCampaign($campaign, user());
@@ -153,19 +176,44 @@ class Chart extends Component
             ]);
             $response = null;
 
+            $repost_increased = false;
+
             switch ($campaign->music_type) {
                 case Track::class:
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $campaign?->music?->urn, errorMessage: 'Failed to fetch track details');
+                    $previous_reposts = $checkLiked['collection']['repost_count'];
                     $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$campaign->music->urn}");
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $campaign?->music?->urn, errorMessage: 'Failed to fetch track details');
+                    $new_reposts = $checkLiked['collection']['repost_count'];
+                    if ($new_reposts > $previous_reposts) {
+                        $repost_increased = true;
+                    }
                     break;
                 case Playlist::class:
-                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->urn}");
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $campaign?->music?->soundcloud_urn, errorMessage: 'Failed to fetch playlist details');
+                    $previous_reposts = $checkLiked['collection']['repost_count'];
+
+                    $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$campaign->music->soundcloud_urn}");
+
+                    $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $campaign?->music?->soundcloud_urn, errorMessage: 'Failed to fetch playlist details');
+                    $new_reposts = $checkLiked['collection']['repost_count'];
+
+                    if ($new_reposts > $previous_reposts) {
+                        $repost_increased = true;
+                    }
                     break;
                 default:
                     $this->dispatch('alert', type: 'error', message: 'Something went wrong. Please try again.');
                     return;
             }
+
+            if ($repost_increased == false) {
+                $this->dispatch('alert', type: 'error', message: 'You have already reposted this ' . $campaign->music_type == Track::class ? 'track' : 'playlist' . ' from soundcloud.');
+                return;
+            }
+
             if ($response->successful()) {
-                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->music_type == Track::class ? $campaign->user->urn : $campaign->music->user->soundcloud_urn);
                 if ($repostEmailPermission) {
                     $datas = [
                         [
@@ -232,11 +280,11 @@ class Chart extends Component
             $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
 
             // Engagement % (capped at 100)
-            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews) * 100) : 0;
+            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews)  * 100) : 0;
 
             // Engagement Score (0–10 scale)
             $engagementScore = round(($engagementRate / 100) * 10, 1);
-            $source['getMusicSrc'] = $this->soundCloudService->getMusicSrc($source['source_details']['id']);
+            // $source['getMusicSrc'] = $this->soundCloudService->getMusicSrc($source['source_details']['id']);
 
             // Add score and rate to source array
             $source['engagement_score'] = $engagementScore;

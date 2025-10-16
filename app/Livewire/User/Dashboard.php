@@ -22,15 +22,17 @@ use Livewire\Component;
 use Throwable;
 use App\Models\Feature;
 use App\Models\Repost;
+use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
-use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 
 use function PHPSTORM_META\type;
 
 class Dashboard extends Component
 {
     protected $soundcloudApiUrl = 'https://api.soundcloud.com';
+
 
     public $total_credits;
     public $totalCount;
@@ -65,7 +67,7 @@ class Dashboard extends Component
     public $likeable = true;
     public $proFeatureEnabled = false;
     public $proFeatureValue = 0;
-    public $maxFollower = 100;
+    public $maxFollower = 1000;
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
@@ -131,7 +133,7 @@ class Dashboard extends Component
 
     // Confirmation Repost
     public $request = null;
-    public bool $liked = false;
+    public bool $liked = true;
     public bool $alreadyLiked = false;
     public string $commented = '';
     public bool $followed = true;
@@ -142,6 +144,7 @@ class Dashboard extends Component
 
     public $activities_score = 0.0;
     public $activities_change_rate = 0.0;
+    public int $todayRepost = 0;
 
     // Search configuration
     private const MAX_SEARCH_LENGTH = 255;
@@ -245,8 +248,6 @@ class Dashboard extends Component
         $activities_change_rate = ($following_rate_analytics + $repost_rate_analytics + $like_rate_activity + $comment_rate_activity) / 4;
         $this->activities_score = number_format($activities_score >= 0 ? $activities_score : 0, 2);
         $this->activities_change_rate = number_format($activities_change_rate, 2);
-
-
     }
 
 
@@ -267,7 +268,7 @@ class Dashboard extends Component
     {
         $this->total_credits = $this->creditTransactionService->getUserTotalCredits();
 
-        $this->totalCount = Repost::where('reposter_urn', user()->urn)->count();
+        $this->totalCount = Repost::where('track_owner_urn', user()->urn)->count();
 
         $this->repostRequests = RepostRequest::where('target_user_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)
             ->where('expired_at', '>', now())
@@ -870,8 +871,7 @@ class Dashboard extends Component
     public function profeature($isChecked)
     {
         if (!proUser()) {
-            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');
-            ;
+            return $this->dispatch('alert', type: 'error', message: 'You need to be a pro user to use this feature');;
         } elseif (($this->credit * 1.5) > userCredits()) {
             $this->proFeatureEnabled = $isChecked ? true : false;
             $this->proFeatureValue = $isChecked ? 1 : 0;
@@ -899,7 +899,7 @@ class Dashboard extends Component
                     'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => ModelsCampaign::STATUS_OPEN,
-                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : 100,
+                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : null,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
                     'commentable' => $commentable,
@@ -1146,34 +1146,49 @@ class Dashboard extends Component
     }
     public function confirmRepost($requestId)
     {
-        $this->showRepostConfirmationModal = true;
-        $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
-        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Repost request Page:- Already following');
-                $this->followed = false;
-                $this->alreadyFollowing = true;
-            }
+        if ($this->todayRepost >= 20) {
+            $endOfDay = Carbon::today()->addDay();
+            $hoursLeft = round(now()->diffInHours($endOfDay));
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
+            return;
         }
 
-        if ($this->request->music) {
-            if ($this->request->music_type == Track::class) {
-                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
-                $searchUrn = user()->urn;
-            } elseif ($this->request->music_type == Playlist::class) {
-                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
-                $searchUrn = $this->request->music->soundcloud_urn;
-            }
-            $collection = collect($favoriteData['collection']);
-            $found = $collection->first(function ($item) use ($searchUrn) {
-                return isset($item['urn']) && $item['urn'] === $searchUrn;
-            });
-            if ($found) {
-                $this->liked = false;
-                $this->alreadyLiked = true;
-            }
+        $this->showRepostConfirmationModal = true;
+        $this->request = RepostRequest::findOrFail($requestId)->load('music', 'requester');
+
+        $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+        $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
+            ->where('act_user_urn', user()->urn);
+
+        // $followAble = (clone $baseQuery)->followed()->first();
+        $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->request?->music))
+            ->where('source_id', $this->request?->music?->id)->first();
+
+        if ($likeAble !== null) {
+            $this->liked = false;
+            $this->alreadyLiked = true;
+        }
+        // if ($followAble !== null) {
+        //     $this->followed = false;
+        //     $this->alreadyFollowing = true;
+        // }
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userUrn = $this->request->requester?->urn;
+        $checkResponse = $httpClient->get("{$this->soundcloudApiUrl}/me/followings/{$userUrn}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
+        }
+
+        if($this->request->likeable === 0){
+            $this->liked = false;
+        }
+
+        if($this->request->commentable === 0){
+            $this->commented = '';
         }
     }
     public function repost($requestId)

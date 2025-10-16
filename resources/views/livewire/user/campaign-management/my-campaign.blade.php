@@ -29,21 +29,9 @@
                         class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Active</a>
                     <a href="{{ route('user.cm.my-campaigns') }}?tab=completed" wire:navigate
                         class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Completed</a>
-                    {{-- <button
-                        class="tab-button @if ($activeMainTab === 'all') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        x-on:click="$activeMainTab = 'all'">
-                        {{ __('All Campaigns') }}
-                    </button> --}}
-                    {{-- <button
-                        class="tab-button @if ($activeMainTab === 'active') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        x-on:click="$activeMainTab = 'active'">
-                        {{ __('Active') }}
-                    </button>
-                    <button
-                        class="tab-button @if ($activeMainTab === 'completed') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200"
-                        x-on:click="$activeMainTab = 'completed'">
-                        {{ __('Completed') }}
-                    </button> --}}
+                    {{-- <a href="{{ route('user.cm.my-campaigns') }}?tab=cancelled" wire:navigate
+                        class="tab-button @if ($activeMainTab === 'cancelled') active border-b-2 border-orange-500 text-orange-600 @else border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 @endif py-3 px-2 text-sm font-semibold transition-all duration-200">Cancelled
+                        / Stop</a> --}}
                 </nav>
             </div>
         </div>
@@ -97,21 +85,37 @@
                                     <!-- Right Stats Block -->
                                     <div class="text-right">
                                         <div class="flex items-center justify-center sm:justify-end">
-                                            <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
-                                            <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                            @if ($campaign_->status == \App\Models\Campaign::STATUS_OPEN)
+                                                <x-lucide-trending-up class="m-2 w-5 h-5  text-green-600" />
+                                                <span class=" text-green-600 dark:text-gray-100"> Running</span>
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_COMPLETED)
+                                                <x-lucide-check-circle class="m-2 w-5 h-5  text-green-600" />
+                                                <span class=" text-green-600 dark:text-gray-100"> Completed</span>
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_CANCELLED)
+                                                <x-lucide-x-circle class="m-2 w-5 h-5  text-red-600" />
+                                                <span class=" text-red-600 dark:text-gray-100"> Cancelled</span>
+                                            @elseif ($campaign_->status == \App\Models\Campaign::STATUS_STOP)
+                                                <x-lucide-x-circle class="m-2 w-5 h-5  text-red-600" />
+                                                <span class=" text-red-600 dark:text-gray-100"> Stopped</span>
+                                            @endif
                                         </div>
                                         <p class="text-slate-400 text-sm">{{ $campaign_->created_at_formatted }}</p>
-                                        <div class="flex flex-wrap justify-end items-center mt-2">
-                                            {{-- <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
-                                            <span class="text-slate-500">Stop</span> --}}
-                                            <div wire:click="editCampaign({{ $campaign_->id }})"
-                                                class="flex items-center cursor-pointer">
-                                                <x-lucide-square-pen
-                                                    class="w-5 h-5 m-2 dark:text-white text-gray-500" />
-                                                <span
-                                                    class="font-medium cursor-pointer text-gray-800 dark:text-gray-100">Edit</span>
+                                        @if ($campaign_->status == \App\Models\Campaign::STATUS_OPEN)
+                                            <div class="flex flex-wrap justify-end items-center mt-2">
+                                                <button class="flex items-center cursor-pointer justify-start"
+                                                    wire:click="stopCampaign({{ $campaign_->id }})">
+                                                    <x-lucide-ban class="w-5 h-5 m-2 dark:text-white text-gray-500" />
+                                                    <span class="text-slate-500">Stop</span>
+                                                </button>
+                                                <div wire:click="editCampaign({{ $campaign_->id }})"
+                                                    class="flex items-center cursor-pointer">
+                                                    <x-lucide-square-pen
+                                                        class="w-5 h-5 m-2 dark:text-white text-gray-500" />
+                                                    <span
+                                                        class="font-medium cursor-pointer text-gray-800 dark:text-gray-100">Edit</span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -134,7 +138,7 @@
                                             <div class="flex items-center justify-center ">
                                                 <x-lucide-user-plus class="text-gray-500 w-5 h-5 m-2 dark:text-white" />
                                                 <span
-                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followowers_count ?? 0 }}</span>
+                                                    class=" text-black dark:text-gray-100">{{ $campaign_->followers_count ?? 0 }}</span>
                                             </div>
 
                                         </div>
@@ -178,29 +182,31 @@
                                         <p class="text-slate-400 text-sm">-.- avg. rating</p>
                                     </div> --}}
                                 </div>
-                                <div class="flex justify-end items-center gap-4 mt-2">
-                                    @if (featuredAgain() && !$campaign_->is_featured)
-                                        <div class="flex flex-wrap justify-center sm:justify-end gap-4">
-                                            @if (proUser())
-                                                <x-gbutton variant="secondary"
-                                                    wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
-                                            @else
-                                                <x-gabutton variant="primary" wire:navigate
-                                                    href="{{ route('user.plans') }}">Need to get featured?
-                                                    (Pro)
-                                                </x-gabutton>
-                                            @endif
-                                        </div>
-                                    @endif
-                                    @if (boostAgain() && !$campaign_->is_boost)
-                                        @if (proUser())
-                                            <div>
-                                                <x-gbutton variant="secondary"
-                                                    wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                @if ($campaign_->status === \App\Models\Campaign::STATUS_OPEN)
+                                    <div class="flex justify-end items-center gap-4 mt-2">
+                                        @if (featuredAgain() && !$campaign_->is_featured)
+                                            <div class="flex flex-wrap justify-center sm:justify-end gap-4">
+                                                @if (proUser())
+                                                    <x-gbutton variant="secondary"
+                                                        wire:click="setFeatured({{ $campaign_->id }})">{{ __('Set Featured') }}</x-gbutton>
+                                                @else
+                                                    <x-gabutton variant="primary" wire:navigate
+                                                        href="{{ route('user.plans') }}">Need to get featured?
+                                                        (Pro)
+                                                    </x-gabutton>
+                                                @endif
                                             </div>
                                         @endif
-                                    @endif
-                                </div>
+                                        @if (boostAgain() && !$campaign_->is_boost)
+                                            @if (proUser())
+                                                <div>
+                                                    <x-gbutton variant="secondary"
+                                                        wire:click="freeBoost({{ $campaign_->id }})">{{ __('Free Boost') }}</x-gbutton>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @empty
@@ -252,15 +258,32 @@
                                     {{ __('It looks like there are no completed campaigns at the moment. Start a campaign today and track your progress!') }}
                                 </p>
                             </div>
+                        @elseif ($activeMainTab === 'cancelled')
+                            <div
+                                class="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
+                                <div
+                                    class="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/20 dark:to-orange-800/20 rounded-full flex items-center justify-center mb-6">
+                                    <x-lucide-megaphone class="w-10 h-10 text-orange-600 dark:text-orange-400" />
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+                                    {{ __('Oops! No cancelled campaigns yet.') }}
+                                </h3>
+                                <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+                                    {{ __('It looks like there are no cancelled campaigns at the moment. Start a campaign today and track your progress!') }}
+                                </p>
+                            </div>
                         @endif
                     @endforelse
-                    @if ($campaigns->hasPages())
-                        <div class="mt-6">
-                            {{ $campaigns->links('components.pagination.wire-navigate', [
-                                'pageName' => $activeMainTab . 'Page',
-                                'keep' => ['tab' => $activeMainTab],
-                            ]) }}
-                        </div>
+
+                    @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
+                        @if ($campaigns->hasPages())
+                            <div class="mt-6">
+                                {{ $campaigns->links('components.pagination.wire-navigate', [
+                                    'pageName' => $activeMainTab . 'Page',
+                                    'keep' => ['tab' => $activeMainTab],
+                                ]) }}
+                            </div>
+                        @endif
                     @endif
                 </div>
 
@@ -290,7 +313,7 @@
                     </div>
 
                     <!-- Reach More Section -->
-                    {{-- <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
+                    <div class="dark:bg-slate-800 rounded-sm p-6 text-black dark:text-gray-100">
                         <h2 class="text-lg font-bold text-gray-800 mb-4 dark:text-gray-100">Reach more people</h2>
                         <hr class="text-red-500 mb-4">
                         @if (featuredAgain() && $latestCampaign)
@@ -340,7 +363,7 @@
                                     x-on:click="showUpgradeModal = true">Need to get featured?(Pro)</x-gabutton>
                             @endif
                         </div>
-                    </div> --}}
+                    </div>
                 </aside>
             </div>
         </div>
@@ -1161,7 +1184,7 @@
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Followers</h4>
                             <p class="text-xl font-bold text-black dark:text-white">
-                                {{ number_format($campaign->followowers_count) }}</p>
+                                {{ number_format($campaign->followers_count) }}</p>
                         </div>
                         <div class="bg-gray-100 dark:bg-slate-700 p-5 rounded-lg shadow">
                             <h4 class="text-gray-600 dark:text-gray-400 text-sm">Likes</h4>

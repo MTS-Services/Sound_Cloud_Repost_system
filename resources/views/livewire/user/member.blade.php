@@ -76,16 +76,14 @@
                             class="absolute right-0 mt-2 w-56 rounded-md shadow-lg z-100">
                             <div class="rounded-md shadow-xs bg-white dark:bg-slate-800 ">
                                 <div class="py-1">
-                                    <a href="{{ route('user.members') }}" wire:navigate
-                                        wire:click="filterByCost('low_to_high')"
+                                    <button wire:click="filterByCost('high_to_low')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('High to Low') }}
-                                    </a>
-                                    <a href="{{ route('user.members') }}" wire:navigate
-                                        wire:click="filterByCost('high_to_low')"
+                                    </button>
+                                    <button wire:click="filterByCost('low_to_high')"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                                         {{ __('Low to High') }}
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +117,7 @@
                         <div class="flex items-center gap-3 mb-6">
                             <div class="relative">
                                 <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account', $user_->name) }}">
+                                    href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
                                     <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
                                         class="w-12 h-12 rounded-full">
                                     @if ($user_->isOnline())
@@ -137,7 +135,7 @@
                             <div>
                                 <div class="flex items-center gap-2">
                                     <a class="cursor-pointer" wire:navigate
-                                        href="{{ route('user.my-account', $user_->name) }}">
+                                        href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
                                         <h3 class="font-semibold text-lg dark:text-white hover:underline">
                                             {{ $user_->name }}</h3>
                                     </a>
@@ -301,7 +299,7 @@
                                         Paste a SoundCloud playlist link
                                     @endif
                                 </label>
-                                <div class="flex w-full mt-2">
+                                {{-- <div class="flex w-full mt-2">
                                     <input wire:model="searchQuery" type="text" id="track-link-search"
                                         placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud profile or track link' : 'Paste a SoundCloud playlist link' }}"
                                         class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 border border-gray-300 dark:border-gray-600 ">
@@ -313,7 +311,41 @@
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </button>
-                                </div>
+                                </div> --}}
+                                <form wire:submit.prevent="searchSoundcloud">
+                                    <div class="flex w-full mt-2">
+                                        <input wire:model="searchQuery" type="text" id="track-link-search"
+                                            placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
+                                            class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400  dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-r-0 border-gray-300 dark:border-gray-600">
+
+                                        <!-- Button content changes during loading -->
+                                        <button type="submit"
+                                            class="bg-orange-500 text-white p-3 w-14 flex items-center justify-center hover:bg-orange-600 transition-colors duration-200">
+
+                                            <span wire:loading.remove wire:target="searchSoundcloud">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                    stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
+                                            </span>
+
+                                            <span wire:loading wire:target="searchSoundcloud">
+                                                <!-- Loading Spinner -->
+                                                <svg class="animate-spin h-5 w-5 text-white"
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z">
+                                                    </path>
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                             {{-- @endif --}}
 
@@ -445,10 +477,10 @@
                             <x-lucide-wallet class="w-10 h-10 text-red-600 dark:text-red-400" />
                         </div>
                         <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
-                            {{ __('You need a minimum of 50 credits to create a campaign.') }}
+                            {{ __('You need a minimum of 50 credits to send a direct request.') }}
                         </p>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                            {{ __('Please add more credits to your account to proceed with campaign creation.') }}
+                            {{ __('Please add more credits to your account to proceed with direct request.') }}
                         </p>
                         {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="inline-flex items-center justify-center w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">

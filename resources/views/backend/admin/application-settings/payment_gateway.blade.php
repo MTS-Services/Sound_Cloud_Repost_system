@@ -43,6 +43,12 @@
                                 placeholder="Enter stripe secret"
                                 value="{{ $payment_settings['stripe_secret'] ?? '' }}" :messages="$errors->get('stripe_secret')" />
                         </div>
+                        <div class="space-y-2 sm:col-span-1">
+                            <x-inputs.select name="stripe_gateway_status" label="{{ __('Active') }}"
+                                :options="App\Models\ApplicationSetting::PAYMENT_GATEWAY_STATUSES"
+                                selected="{{ $payment_settings['stripe_gateway_status'] ?? 'active' }}"
+                                :messages="$errors->get('stripe_gateway_status')" />
+                        </div>
                     </div>
                     <div class="flex justify-end mt-5">
                         <x-button type="accent" :button="true" icon="save">{{ __('Save') }}</x-button>
@@ -87,6 +93,13 @@
                             <x-inputs.input name="paypal_secret" label="{{ __('Paypal Secret') }}"
                                 placeholder="Enter paypal secret"
                                 value="{{ $payment_settings['paypal_secret'] ?? '' }}" :messages="$errors->get('paypal_secret')" />
+                        </div>
+                        {{-- @dd($payment_settings); --}}
+                        <div class="space-y-2 sm:col-span-1">
+                            <x-inputs.select name="paypal_gateway_status" label="{{ __('Active') }}"
+                                :options="App\Models\ApplicationSetting::PAYMENT_GATEWAY_STATUSES"
+                                selected="{{ $payment_settings['paypal_gateway_status'] ?? 'active' }}"
+                                :messages="$errors->get('paypal_gateway_status')" />
                         </div>
 
                     </div>

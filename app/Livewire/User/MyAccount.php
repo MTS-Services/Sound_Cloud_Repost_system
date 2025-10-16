@@ -70,6 +70,7 @@ class MyAccount extends Component
     public $repost_effieciency;
     public $activities_score;
     public $chart_data;
+    public $user_name;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
     public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer, AnalyticsService $analyticsService): void
@@ -85,7 +86,9 @@ class MyAccount extends Component
 
     public function mount($user_name = null): void
     {
-        $user = $user_name ? User::where('name', $user_name)->first() : user();
+        $user = $user_name ? User::where('name', $user_name)->orWhere('urn', $user_name)->first() : user();
+
+        $this->user_name = $user->name;
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->getAnalyticsData($user);
 
@@ -138,7 +141,7 @@ class MyAccount extends Component
 
     public function updatedActiveTab()
     {
-        return $this->redirect(route('user.my-account', $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
+        return $this->redirect(route('user.my-account.user', !empty($this->user_name) ? $this->user_name : $this->user_urn) . '?tab=' . $this->activeTab, navigate: true);
     }
 
     public function setActiveTab(string $tab): void

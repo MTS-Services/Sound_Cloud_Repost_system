@@ -28,6 +28,7 @@ class RepostRequestExpire implements ShouldQueue
      */
     public function handle(): void
     {
+        $delaySeconds = 0;
         foreach ($this->repostRequests as $repostRequest) {
             $repostRequest->update(['status' => RepostRequest::STATUS_EXPIRED]);
             $transaction_credits = $repostRequest->credits_spent + ($repostRequest->likeable ? 2 : 0) + ($repostRequest->commentable ? 2 : 0);
@@ -103,7 +104,8 @@ class RepostRequestExpire implements ShouldQueue
                         'url' => route('user.reposts-request'),
                     ],
                 ];
-                NotificationMailSent::dispatch($datas);
+                NotificationMailSent::dispatch($datas)->delay(now()->addSeconds($delaySeconds));
+                $delaySeconds += 10;
             }
             if ($repostRequest && $targetUserEmailPermission) {
                 $datas = [
@@ -115,7 +117,8 @@ class RepostRequestExpire implements ShouldQueue
                         'url' => route('user.reposts-request'),
                     ],
                 ];
-                NotificationMailSent::dispatch($datas);
+                NotificationMailSent::dispatch($datas)->delay(now()->addSeconds($delaySeconds));
+                $delaySeconds += 10;
             }
         }
     }

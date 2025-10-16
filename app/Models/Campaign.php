@@ -42,7 +42,7 @@ class Campaign extends BaseModel
         'target_genre',
         'like_count',
         'comment_count',
-        'followowers_count',
+        'followers_count',
         'favorite_count',
 
         'creater_id',
@@ -65,7 +65,7 @@ class Campaign extends BaseModel
         'is_featured' => 'boolean',
         'status' => 'integer',
         'playback_count' => 'integer',
-        'followowers_count' => 'integer',
+        'followers_count' => 'integer',
         'like_count' => 'integer',
         'comment_count' => 'integer',
         'favorite_count' => 'integer',
@@ -125,15 +125,15 @@ class Campaign extends BaseModel
 
 
     public const STATUS_OPEN = 1;
-    public const STATUS_PAUSED = 2;
-    public const STATUS_COMPLETED = 3;
+    public const STATUS_COMPLETED = 2;
+    public const STATUS_STOP = 3;
     public const STATUS_CANCELLED = 4;
 
     public static function getStatusList(): array
     {
         return [
             self::STATUS_OPEN => 'Open',
-            self::STATUS_PAUSED => 'Paused',
+            self::STATUS_STOP => 'Stop',
             self::STATUS_COMPLETED => 'Completed',
             self::STATUS_CANCELLED => 'Cancelled',
         ];
@@ -145,35 +145,28 @@ class Campaign extends BaseModel
     }
     public function getStatusBtnLabelAttribute()
     {
-        $status = self::getStatusList()[$this->status];
+        return self::getStatusList()[$this->status];
 
-        if ($status === 'Open') {
-            return 'Pause';
-        } elseif ($status === 'Paused') {
-            return 'Open';
-        } else {
-            return $status;
-        }
     }
 
     public function getStatusColorAttribute()
     {
         return [
             self::STATUS_OPEN => 'badge-success',
-            self::STATUS_PAUSED => 'badge-warning',
+            self::STATUS_STOP => 'badge-secondary',
             self::STATUS_COMPLETED => 'badge-info',
             self::STATUS_CANCELLED => 'badge-error',
-        ][$this->status] ?? 'badge-secondary';
+        ][$this->status] ?? 'badge-neutral';
     }
 
     public function getStatusBtnColorAttribute()
     {
         return [
             self::STATUS_OPEN => 'btn-success',
-            self::STATUS_PAUSED => 'btn-warning',
+            self::STATUS_STOP => 'btn-secondary',
             self::STATUS_COMPLETED => 'btn-info',
             self::STATUS_CANCELLED => 'btn-error',
-        ][$this->status] ?? 'btn-secondary';
+        ][$this->status] ?? 'btn-neutral';
     }
 
     public function getStartDateFormattedAttribute()
@@ -188,7 +181,7 @@ class Campaign extends BaseModel
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_PAUSED);
+        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_STOP);
     }
 
     public const BOOSTED = 1;
@@ -255,10 +248,11 @@ class Campaign extends BaseModel
         return $query->where('status', self::STATUS_OPEN);
     }
 
-    public function scopePaused(Builder $query): Builder
+    public function scopeStop(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_PAUSED);
+        return $query->where('status', self::STATUS_STOP);
     }
+
     public function scopeCompleted(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_COMPLETED);
@@ -266,6 +260,6 @@ class Campaign extends BaseModel
 
     public function scopeCancelled(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_CANCELLED);
+        return $query->where('status', self::STATUS_CANCELLED)->orWhere('status', self::STATUS_STOP);
     }
 }

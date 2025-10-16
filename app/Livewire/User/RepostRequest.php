@@ -4,6 +4,7 @@ namespace App\Livewire\User;
 
 use App\Jobs\NotificationMailSent;
 use App\Jobs\TrackViewCount;
+use App\Models\Campaign;
 use App\Models\CreditTransaction;
 use App\Models\Playlist;
 use App\Models\RepostRequest as ModelsRepostRequest;
@@ -19,6 +20,7 @@ use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -42,14 +44,15 @@ class RepostRequest extends Component
     public $requestReceiveable = false;
     public bool $showRepostRequestModal = false;
     public bool $showRepostConfirmationModal = false;
+    public int $todayRepost = 0;
 
     // Confirmation Repost
     public $totalRepostPrice = 0;
     public $request = null;
-    public $liked = false;
+    public $liked = true;
     public $alreadyLiked = false;
     public string $commented = '';
-    public $following = true;
+    public $followed = true;
     public $alreadyFollowing = false;
 
 
@@ -313,38 +316,48 @@ class RepostRequest extends Component
 
     public function confirmRepost($requestId)
     {
+        if ($this->todayRepost >= 20) {
+            $endOfDay = Carbon::today()->addDay();
+            $hoursLeft = round(now()->diffInHours($endOfDay));
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again {$hoursLeft} hours later.");
+            return;
+        }
+
         if (!$this->canRepost($requestId)) {
             $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
             return;
         }
         $this->showRepostConfirmationModal = true;
-        $this->request = ModelsRepostRequest::findOrFail($requestId)->load('music', 'requester');
-        $response = $this->soundCloudService->getAuthUserFollowers($this->request->requester);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Repost request Page:- Already following');
-                $this->following = false;
-                $this->alreadyFollowing = true;
-            }
+        $this->request = ModelsRepostRequest::findOrFail($requestId)->load(['music', 'requester', 'targetUser']);
+
+        $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+        $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
+            ->where('act_user_urn', user()->urn);
+
+        // $followAble = (clone $baseQuery)->followed()->first();
+        $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->request?->music))
+            ->where('source_id', $this->request?->music?->id)->first();
+
+        if ($likeAble !== null) {
+            $this->liked = false;
+            $this->alreadyLiked = true;
+        }
+        if($this->request->likeable === 0){
+            $this->liked = false;
+        }
+        if($this->request->commentable === 0){
+            $this->commented = '';
         }
 
-        if ($this->request->music) {
-            if ($this->request->music_type == Track::class) {
-                $favoriteData = $this->soundCloudService->fetchTracksFavorites($this->request->music);
-                $searchUrn = user()->urn;
-            } elseif ($this->request->music_type == Playlist::class) {
-                $favoriteData = $this->soundCloudService->fetchPlaylistFavorites(user()->urn);
-                $searchUrn = $this->request->music->soundcloud_urn;
-            }
-            $collection = collect($favoriteData['collection']);
-            $found = $collection->first(function ($item) use ($searchUrn) {
-                return isset($item['urn']) && $item['urn'] === $searchUrn;
-            });
-            if ($found) {
-                $this->liked = false;
-                $this->alreadyLiked = true;
-            }
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userUrn = $this->request->requester?->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->followed = false;
+            $this->alreadyFollowing = true;
         }
     }
     public function repost($requestId)
@@ -354,7 +367,7 @@ class RepostRequest extends Component
             return;
         }
 
-        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->following);
+        $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
 
         if ($result['status'] === 'success') {
             $this->repostedRequests[] = $requestId;
@@ -441,7 +454,7 @@ class RepostRequest extends Component
 
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::with(['music', 'targetUser']);
+        $query = ModelsRepostRequest::orderBy('created_at', 'desc')->with(['music', 'targetUser', 'requester']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
 
@@ -450,7 +463,7 @@ class RepostRequest extends Component
                 $query->incoming()->pending()->notExpired();
                 break;
             case 'outgoing_request':
-                $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED)->where('status', '!=', ModelsRepostRequest::STATUS_DECLINE);
+                $query->outgoing()->where('status', '!=', ModelsRepostRequest::STATUS_CANCELLED);
                 break;
             case 'previously_reposted':
                 $query->incoming()->where('campaign_id', null)->approved();
@@ -483,7 +496,9 @@ class RepostRequest extends Component
             'reposts as reposts_count_today' => function ($query) {
                 $query->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()]);
             },
-            'campaigns',
+            'campaigns' => function ($query) {
+                $query->where('status', Campaign::STATUS_OPEN);
+            },
             'requests' => function ($query) {
                 $query->pending();
             },

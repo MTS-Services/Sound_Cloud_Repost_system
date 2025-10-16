@@ -199,6 +199,13 @@
                 ]" />
             <x-admin.navlink icon="settings" name="Settings" :page_slug="$active" :items="[
                 [
+                    'name' => 'User Settings',
+                    'route' => route('app-settings.user-settings'), 
+                    'icon' => 'user',
+                    'active' => 'user-settings',
+                    'permission' => 'user-setting',
+                ],
+                [
                     'name' => 'General Settings',
                     'route' => route('app-settings.general'),
                     'icon' => 'sliders',

@@ -60,6 +60,14 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
+
+            if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
+                return redirect()->route('f.landing')
+                    ->with('warning', '🎟️ Artist Access Only! To maintain quality and fairness, only artists can create accounts. If youre a curator or label, please contact our support team for verification.');
+            }
+
+
+
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
@@ -107,13 +115,21 @@ class SoundCloudController extends Controller
     public function syncUser(User $user, $soundCloudUser)
     {
         try {
-            DB::transaction(function () use ($user, $soundCloudUser) {
-                $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
-                $this->soundCloudService->syncUserTracks($user, []);
-                $this->soundCloudService->syncUserPlaylists($user);
-                $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
-                $this->soundCloudService->syncUserRealFollowers($user);
-            });
+            Log::info('SoundCloud sync started for syncUserInformation');
+            $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+
+            Log::info('SoundCloud sync completed for syncUserInformation');
+            Log::info('SoundCloud sync started for syncUserJob');
+            SyncUserJob::dispatch($user, $soundCloudUser, user()->id)->delay(Carbon::now()->addSeconds(5));
+            // dispatch(new SyncUserJob(user: $user, soundCloudUser: $soundCloudUser, authUserId: user()->id));
+            Log::info('SoundCloud sync completed for syncUserJob');
+            // DB::transaction(function () use ($user, $soundCloudUser) {
+            //     $this->soundCloudService->syncUserInformation($user, $soundCloudUser);
+            //     $this->soundCloudService->syncUserTracks($user, []);
+            //     $this->soundCloudService->syncUserPlaylists($user);
+            //     $this->soundCloudService->syncUserProductsAndSubscriptions($user, $soundCloudUser);
+            //     $this->soundCloudService->syncUserRealFollowers($user);
+            // });
         } catch (Throwable $e) {
             Log::error('SoundCloud sync error', [
                 'user_id' => $user->id,
@@ -148,5 +164,14 @@ class SoundCloudController extends Controller
             ]);
             throw $e;
         }
+    }
+
+    private function notAnArtist($soundCloudUser)
+    {
+        $soundCloudUser = (array) $soundCloudUser;
+        if (isset($soundCloudUser['user']) && $soundCloudUser['user']['track_count'] <= 0) {
+            return true;
+        }
+        return false;
     }
 }

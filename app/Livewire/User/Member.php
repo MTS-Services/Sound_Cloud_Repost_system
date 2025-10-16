@@ -28,6 +28,7 @@ use App\Models\Feature;
 use App\Models\UserAnalytics;
 use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
+use App\Services\User\AnalyticsService;
 use Illuminate\Http\Client\Request;
 use Livewire\Attributes\Url;
 
@@ -56,7 +57,7 @@ class Member extends Component
 
     public string $description = '';
     public bool $commentable = false;
-    public bool $likeable = false;
+    public bool $likeable = true;
     public bool $following = true;
     public bool $alreadyFollowing = false;
 
@@ -90,7 +91,8 @@ class Member extends Component
     protected RepostRequestService $repostRequestService;
     protected SoundCloudService $soundCloudService;
     protected FollowerAnalyzer $followerAnalyzer;
-    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer)
+    protected AnalyticsService $analyticsService;
+    public function boot(TrackService $trackService, PlaylistService $playlistService, RepostRequestService $repostRequestService, SoundCloudService $soundCloudService, FollowerAnalyzer $followerAnalyzer, AnalyticsService $analyticsService)
     {
         $this->trackService = $trackService;
         $this->playlistService = $playlistService;
@@ -98,6 +100,7 @@ class Member extends Component
         $this->soundCloudService = $soundCloudService;
         $this->soundcloudClientId = config('services.soundcloud.client_id');
         $this->followerAnalyzer = $followerAnalyzer;
+        $this->analyticsService = $analyticsService;
     }
 
     public function rules()
@@ -127,7 +130,8 @@ class Member extends Component
     {
         $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->costFilter = request()->get('cost', 'low_to_high');
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
     public function updatedSearch()
     {
@@ -139,6 +143,10 @@ class Member extends Component
         $params = [];
         if (!empty($this->selectedGenres)) {
             $params['genre'] = $this->selectedGenres;
+        }
+
+        if (!empty($this->costFilter)) {
+            $params['cost'] = $this->costFilter;
         }
 
         // if (!empty($this->search)) {
@@ -166,8 +174,9 @@ class Member extends Component
     public function filterByCost($filterBy)
     {
         $this->costFilter = $filterBy;
-        $this->resetPage();
+        // $this->resetPage();
         $this->navigatingAway();
+        // return $this->redirectIntended(route() . '?cost=' . $filterBy, navigate: true);
     }
 
     public function updatedSearchQuery()
@@ -361,7 +370,7 @@ class Member extends Component
         $this->selectedUserUrn = $userUrn;
         $this->user = User::with('userInfo')->where('urn', $this->selectedUserUrn)->first();
         // if (userCredits() < repostPrice($this->user)) {
-        if (userCredits() < $this->user->repost_price) {
+        if (userCredits() < $this->user->repost_price || userCredits() < 50) {
             $this->showLowCreditWarningModal = true;
             $this->showModal = false;
             return;
@@ -425,14 +434,39 @@ class Member extends Component
 
         $this->showRepostsModal = true;
 
-        $response = $this->soundCloudService->getAuthUserFollowers($this->user);
-        if ($response->isNotEmpty()) {
-            $already_following = $response->where('urn', user()->urn)->first();
-            if ($already_following !== null) {
-                Log::info('Member Page:- Already following');
-                $this->following = false;
-                $this->alreadyFollowing = true;
-            }
+        // $response = $this->soundCloudService->getAuthUserFollowers($this->user);
+        // if ($response->isNotEmpty()) {
+        //     $already_following = $response->where('urn', user()->urn)->first();
+        //     if ($already_following !== null) {
+        //         Log::info('Member Page:- Already following');
+        //         $this->following = false;
+        //         $this->alreadyFollowing = true;
+        //     }
+        // }
+
+        // $followAble = UserAnalytics::where('owner_user_urn', user()->urn)
+        //     ->where('act_user_urn', $this->user->urn)
+        //     ->where('type', UserAnalytics::TYPE_FOLLOW)
+        //     ->where('source_type', Track::class)
+        //     ->first();
+        // dd($followAble, $this->following, $already_following);
+        // if ($followAble) {
+        //     $this->following = false;
+        //     $this->alreadyFollowing = true;
+        // } else {
+        //     $this->following = true;
+        //     $this->alreadyFollowing = false;
+        // }
+
+        $httpClient = Http::withHeaders([
+            'Authorization' => 'OAuth ' . user()->token,
+        ]);
+        $userUrn = $this->user->urn;
+        $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
+
+        if ($checkResponse->getStatusCode() === 200) {
+            $this->following = false;
+            $this->alreadyFollowing = true;
         }
     }
 
@@ -504,24 +538,24 @@ class Member extends Component
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                 ]);
 
-                $requesterNotification = CustomNotification::create([
-                    'receiver_id' => $requester->id,
-                    'receiver_type' => get_class($requester),
-                    'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.reposts-request'),
-                    'message_data' => [
-                        'title' => 'Repost Request Sent',
-                        'message' => 'You have sent a repost request to ' . $this->user->name,
-                        'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->music->title . '".',
-                        'icon' => 'music',
-                        'additional_data' => [
-                            'Request Sent To' => $this->user->name,
-                            'Track Title' => $this->music->title,
-                            'Track Artist' => $this->music?->user?->name ?? $requester->name,
-                            'Credits Spent' => $credit_spent,
-                        ],
-                    ],
-                ]);
+                // $requesterNotification = CustomNotification::create([
+                //     'receiver_id' => $requester->id,
+                //     'receiver_type' => get_class($requester),
+                //     'type' => CustomNotification::TYPE_USER,
+                //     'url' => route('user.reposts-request'),
+                //     'message_data' => [
+                //         'title' => 'Repost Request Sent',
+                //         'message' => 'You have sent a repost request to ' . $this->user->name,
+                //         'description' => 'You have sent a repost request to ' . $this->user->name . ' for the track "' . $this->music->title . '".',
+                //         'icon' => 'music',
+                //         'additional_data' => [
+                //             'Request Sent To' => $this->user->name,
+                //             'Track Title' => $this->music->title,
+                //             'Track Artist' => $this->music?->user?->name ?? $requester->name,
+                //             'Credits Spent' => $credit_spent,
+                //         ],
+                //     ],
+                // ]);
                 $targetUserNotification = CustomNotification::create([
                     'sender_id' => $requester->id,
                     'sender_type' => get_class($requester),
@@ -543,7 +577,7 @@ class Member extends Component
                     ]
                 ]);
 
-                broadcast(new UserNotificationSent($requesterNotification));
+                // broadcast(new UserNotificationSent($requesterNotification));
                 broadcast(new UserNotificationSent($targetUserNotification));
                 $repostEmailPermission = hasEmailSentPermission('em_new_repost', $this->user->urn);
                 if ($repostRequest && $creditTransaction && $repostEmailPermission) {
@@ -591,12 +625,18 @@ class Member extends Component
         $query = User::where('urn', '!=', user()->urn)
             ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
+        // if ($this->selectedGenres) {
+        //     $query->whereHas('tracks', function ($q) {
+        //         if (!empty($this->selectedGenres)) {
+        //             $q->whereIn('genre', $this->selectedGenres);
+        //         }
+        //         // $q->where('genre', 'like', '%' . $this->selectedGenres . '%');
+        //     });
+        // }
+
         if ($this->selectedGenres) {
-            $query->whereHas('tracks', function ($q) {
-                if (!empty($this->selectedGenres)) {
-                    $q->whereIn('genre', $this->selectedGenres);
-                }
-                // $q->where('genre', 'like', '%' . $this->selectedGenres . '%');
+            $query->whereHas('genres', function ($q) {
+                $q->whereIn('genre', $this->selectedGenres);
             });
         }
 
@@ -610,17 +650,12 @@ class Member extends Component
         }
         $users = $query->paginate($this->perPage);
 
-
         if ($this->costFilter) {
-            $collection = $users->getCollection()->each(function ($user) {
-                // $user->repost_cost = repostPrice($user);
-                $user->repost_cost = $user->repost_price;
-            });
-
+            $collection = $users->getCollection();
             if ($this->costFilter === 'low_to_high') {
-                $sortedCollection = $collection->sortBy('repost_cost');
+                $sortedCollection = $collection->sortBy('repost_price');
             } else {
-                $sortedCollection = $collection->sortByDesc('repost_cost');
+                $sortedCollection = $collection->sortByDesc('repost_price');
             }
 
             $users->setCollection($sortedCollection->values());

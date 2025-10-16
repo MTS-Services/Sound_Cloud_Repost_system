@@ -53,7 +53,7 @@
                 {{-- if (this.userCreditLimit > 25000) this.userCreditLimit = 25000; --}}
                 if (!this.localCredit) this.localCredit = 50;
                 if (!this.localTotalCredit) this.localTotalCredit = this.localCredit;
-                this.localMaxFollower = 100;
+                this.localMaxFollower = 1000;
                 $wire.set('credit', this.localCredit);
                 $wire.set('maxFollower', this.localMaxFollower);
         
@@ -70,7 +70,7 @@
                         this.localTotalCredit = value;
                     }
                     if (this.localMaxFollower > (value * 100)) {
-                        this.localMaxFollower = value * 100;
+                        this.localMaxFollower = value * 100 >= 100000 ? 100000 : value * 100;
                         $wire.set('maxFollower', this.localMaxFollower);
                     }
                 });
@@ -135,8 +135,7 @@
                             <span class="text-white text-xs">i</span>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-700 dark:text-gray-400 mb-4">A potential 10,000 people reached per
-                        campaign</p>
+                    <p class="text-xs text-gray-700 dark:text-gray-400 mb-4" x-text="`A potential ${localCredit * 100} people reached per campaign`"></p>
 
                     <div class="flex items-center justify-center space-x-2 mb-4">
                         <svg class="w-8 h-8 text-orange-500" width="26" height="18" viewBox="0 0 26 18"
@@ -198,8 +197,8 @@
                     <div x-show="showOptions" x-transition class="p-3">
                         <div class="flex justify-between items-center gap-4">
                             <div class="w-full relative">
-                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 100" x-model="localMaxFollower"
-                                    min="100" :max="localCredit * 100" class="w-full h-2 cursor-pointer">
+                                <input type="range" x-init="localMaxFollower = @entangle('maxFollower').defer || 1000" x-model="localMaxFollower"
+                                    min="1000" step="1000" :max="localCredit * 100 >= 100000 ? 100000 : localCredit * 100" class="w-full h-2 cursor-pointer">
                             </div>
                             <div
                                 class="min-w-[90px] px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md flex items-center justify-center">

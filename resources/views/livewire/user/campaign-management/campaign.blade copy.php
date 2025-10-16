@@ -1,17 +1,7 @@
-<div>
+<div wire:poll.1s="updatePlayingTimes">
     <x-slot name="page_slug">campaign-feed</x-slot>
 
-    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6" x-data="{ playingCampaigns: @entangle('playingCampaigns'), dashboardSummary: false }">
-        <script>
-            // Only update when audio actually plays
-            document.addEventListener('livewire:initialized', () => {
-                setInterval(() => {
-                    if (Object.keys(@this.playingCampaigns).length > 0) {
-                        @this.call('updatePlayingTimes');
-                    }
-                }, 1000);
-            });
-        </script>
+    <section class="flex flex-col lg:flex-row gap-4 lg:gap-6" x-data="{ dashboardSummary: false }">
 
         {{-- Left Side --}}
         <div class="w-full">
@@ -290,7 +280,7 @@
                                 <!-- Avatar + Title + Icon -->
                                 <div
                                     class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
-                                    <div class="flex items-center gap-3 w-full">
+                                    <div class="flex items-center gap-3">
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
                                             alt="Audio Cure avatar">
@@ -335,7 +325,7 @@
                                         </div>
                                     </div>
                                     <!-- Stats and Repost Button -->
-                                    <div class="flex items-center justify-between gap-4 w-full">
+                                    <div class="flex items-center justify-between gap-4">
                                         <div
                                             class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
@@ -354,37 +344,29 @@
                                         </div>
                                         <div class="relative">
                                             <!-- Repost Button -->
-                                            <button
-                                                @if (session()->get('repostedId') != $campaign_->id) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
+                                            <button wire:click="confirmRepost('{{ $campaign_->id }}')"
                                                 @class([
                                                     'flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors',
                                                     'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer' => $this->canRepost(
                                                         $campaign_->id),
                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                         $campaign_->id),
-                                                    '!bg-green-600 !text-white cursor-not-allowed' =>
-                                                        session()->get('repostedId') == $campaign_->id,
                                                 ]) @disabled(!$this->canRepost($campaign_->id))>
-                                                @if (session()->has('repostedId') && session()->get('repostedId') == $campaign_->id)
-                                                    <span>Reposted! ✓</span>
-                                                @else
-                                                    <svg width="26" height="18" viewBox="0 0 26 18"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <rect x="1" y="1" width="24" height="16"
-                                                            rx="3" fill="none" stroke="currentColor"
-                                                            stroke-width="2" />
-                                                        <circle cx="8" cy="9" r="3" fill="none"
-                                                            stroke="currentColor" stroke-width="2" />
-                                                    </svg>
-                                                    <span>{{ user()->repost_price }} Repost</span>
-                                                @endif
+                                                <svg width="26" height="18" viewBox="0 0 26 18"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="1" y="1" width="24" height="16" rx="3"
+                                                        fill="none" stroke="currentColor" stroke-width="2" />
+                                                    <circle cx="8" cy="9" r="3" fill="none"
+                                                        stroke="currentColor" stroke-width="2" />
+                                                </svg>
+                                                <span>{{ user()->repost_price }} Repost</span>
                                             </button>
-                                            {{-- @if (in_array($campaign_->id, $this->repostedCampaigns))
+                                            @if (in_array($campaign_->id, $this->repostedCampaigns))
                                                 <div
                                                     class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
                                                     Reposted! ✓
                                                 </div>
-                                            @endif --}}
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -491,7 +473,7 @@
                             <div class="flex w-full mt-2">
                                 <input wire:model="searchQuery" type="text" id="track-link-search"
                                     placeholder="{{ $activeTab === 'tracks' ? 'Paste a SoundCloud track link' : 'Paste a SoundCloud playlist link' }}"
-                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400  dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-r-0 border-gray-300 dark:border-gray-600">
+                                    class="flex-grow p-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-slate-700 placeholder-gray-400  dark:placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors duration-200 border-2 border-gray-300 dark:border-gray-600">
 
                                 <!-- Button content changes during loading -->
                                 <button type="submit"
@@ -729,15 +711,6 @@
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.repost-confirmation-modal')
 
-    {{-- @if (session('repostedId'))
-        <script>
-            window.addEventListener('livewire:load', () => {
-                @this.call('forgetRepostedId');
-            });
-        </script>
-    @endif --}}
-
-
     <script>
         function initializeSoundCloudWidgets() {
             if (typeof SC === 'undefined') {
@@ -807,7 +780,6 @@
         });
         document.addEventListener('livewire:navigated', function() {
             initializeSoundCloudWidgets();
-            // @this.call('forgetRepostedId');
         });
         // document.addEventListener('livewire:load', function() {
         //     initializeSoundCloudWidgets();

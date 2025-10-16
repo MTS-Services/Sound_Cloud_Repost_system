@@ -21,7 +21,7 @@
 
     <div class="max-w-screen-xl h-full mx-auto flex flex-col gap-y-4">
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:col-span-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 3xl:grid-cols-2 gap-4 lg:col-span-2">
 
             <!-- Stat Card -->
             <div
@@ -57,7 +57,8 @@
                 </div>
                 <div class="flex justify-between items-center mt-3">
                     <div class="text-xl font-semibold dark:text-gray-100">{{ $responseRate }}%</div>
-                    <button wire:click="{{ $resetResponseRateAction }}" {{ $canResetResponseRate ? '' : 'disabled' }} class="text-sm font-semibold text-orange-500 {{ $canResetResponseRate ? 'hover:underline cursor-pointer' : '!cursor-not-allowed' }}">Reset</button>
+                    <button wire:click="{{ $resetResponseRateAction }}" {{ $canResetResponseRate ? '' : 'disabled' }}
+                        class="text-sm font-semibold text-orange-500 {{ $canResetResponseRate ? 'hover:underline cursor-pointer' : '!cursor-not-allowed' }}">Reset</button>
                 </div>
                 <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 dark:text-gray-700 h-1.5 rounded-full overflow-hidden">
                     <div class="bg-orange-500 h-full" style="width: {{ $responseRate }}%"></div>
@@ -71,7 +72,8 @@
                     <span><x-lucide-bell class="w-6 h-6 text-orange-500" /></span>
                     <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Pending Direct Requests</span>
                 </div>
-                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} / {{ $requestLimit }}
+                <div class="text-xl font-semibold mt-3 dark:text-gray-100">{{ $pendingRequests }} /
+                    {{ $requestLimit }}
                 </div>
                 <a href="#" class="inline-block mt-2 text-sm font-semibold text-orange-500 hover:underline">Get
                     higher limit</a>
@@ -97,16 +99,16 @@
                         <div class="text-xl font-semibold dark:text-gray-100">{{ $campaigns }}/{{ $campaignLimit }}
                         </div>
                     </div>
-                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Campaign Limit</div>
+                    <div class="text-sm font-medium text-[#718096] dark:text-gray-100">Active Campaign Limit</div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <a href="{{ route('user.add-credits') }}" wire:navigate
+            <div class="grid grid-cols-1">
+                {{-- <a href="{{ route('user.add-credits') }}" wire:navigate
                     class="flex items-center justify-center gap-2 text-sm font-semibold py-2 border border-[#e2e8f0] dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-50 transition">
                     <span><x-lucide-shopping-cart class="w-6 h-6 text-orange-500" /></span>
                     Buy more credits
-                 </a>
+                 </a> --}}
                 <a href="{{ route('user.plans') }}" wire:navigate
                     class="flex items-center justify-center gap-2 text-sm font-semibold py-2 bg-orange-500 text-white rounded-lg hover:opacity-90 transition">
                     <span><x-lucide-rocket class="w-6 h-6 text-white" /></span>
@@ -114,13 +116,16 @@
                 </a>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56 hidden 2xl:block">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56 hidden 3xl:block">
             <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
-            <p class="text-sm text-[#718096] dark:text-gray-100">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum quibusdam, inventore, quidem numquam
-                voluptatibus rem quod beatae vitae repellendus totam odit nostrum velit, in perferendis ut harum minus
-                id molestias debitis! Minus architecto provident reprehenderit tempora, quas consequuntur, voluptas
-                aliquid earum tenetur autem sint. Maiores velit inventore exercitationem quam iure.
+            <p class="text-sm text-[#718096] dark:text-gray-100">Direct Requests allow artists to connect and
+                collaborate directly with other creators on RepostChain. Instead of waiting for repost campaigns, you
+                can manually send a request to another user, playlist, or curator. This feature gives you full control
+                to choose who you want to network with, build relationships, and promote your tracks more strategically.
+            </p>
+            <p class="text-sm text-[#718096] dark:text-gray-100 mt-2">
+                You can include a personal message with your Direct Request to explain why your music fits their
+                audience — making your outreach more authentic and effective.
             </p>
         </div>
     </div>

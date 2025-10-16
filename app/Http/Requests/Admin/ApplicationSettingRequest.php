@@ -75,6 +75,11 @@ class ApplicationSettingRequest extends FormRequest
             Rule::in([App::PAYMENT_GATEWAY_LIVE, App::PAYMENT_GATEWAY_SANDBOX]),
             'stripe_key' => 'sometimes|required|string',
             'stripe_secret' => 'sometimes|required|string',
+            'stripe_gateway_status' => 'sometimes|required|integer',
+            Rule::in([App::PAYMENT_GATEWAY_STATUS_ACTIVE, App::PAYMENT_GATEWAY_STATUS_INACTIVE]),
+            'paypal_gateway_status' => 'sometimes|required|integer',
+            Rule::in([App::PAYMENT_GATEWAY_STATUS_ACTIVE, App::PAYMENT_GATEWAY_STATUS_INACTIVE]),
+            'login_bonus' => 'sometimes|required|numeric|min:0|max:100',
         ];
     }
 

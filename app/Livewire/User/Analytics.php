@@ -277,6 +277,7 @@ class Analytics extends Component
             'repostsGrowth' => $repostsGrowth,
             'followersGrowth' => $followersGrowth,
             'commentsGrowth' => $commentsGrowth,
+            'viewsGrowth' => $viewsGrowth,
             'avgGrowth' => $avgGrowth,
         ];
     }

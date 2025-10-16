@@ -82,24 +82,18 @@ class AnalyticsService
         }
         Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()} and actuser urn: {$actUserUrn}.");
 
-        // Find or create the UserAnalytics record based on the unique combination.
-        $analytics = UserAnalytics::updateOrCreate(
-            [
-                'owner_user_urn' => $ownerUserUrn,
-                'act_user_urn' => $actUserUrn,
-                'source_id' => $source->id,
-                'source_type' => $source->getMorphClass(),
-                'actionable_id' => $actionable ? $actionable->id : null,
-                'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
-                'ip_address' => request()->ip(),
-                'type' => $type,
-
-            ],
-            [
-                'genre' => $genre == '' ? 'anyGenre' : $genre,
-            ]
-
-        );
+        // Find or create the UserAnalytics record based on the unique combination if created_at is today then update else create.
+        $analytics = UserAnalytics::create([
+            'owner_user_urn' => $ownerUserUrn,
+            'act_user_urn' => $actUserUrn,
+            'source_id' => $source->id,
+            'source_type' => $source->getMorphClass(),
+            'actionable_id' => $actionable ? $actionable->id : null,
+            'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
+            'ip_address' => request()->ip(),
+            'type' => $type,
+            'genre' => $genre == '' ? 'anyGenre' : $genre,
+        ]);
         Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
 
         return $analytics;
@@ -782,7 +776,6 @@ class AnalyticsService
                 'source_id',
                 'source_type',
                 'owner_user_urn',
-                'act_user_urn',
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
@@ -790,13 +783,13 @@ class AnalyticsService
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
                 DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
             ])
-            ->groupBy('source_id', 'source_type', 'owner_user_urn', 'act_user_urn')
+            ->groupBy('source_id', 'source_type', 'owner_user_urn')
             ->orderByDesc('total_views')
             ->orderByDesc('total_streams')
             ->orderByDesc('total_likes')
             ->orderByDesc('total_reposts')
             ->orderByDesc('total_followers')
-            ->with(['source.user', 'ownerUser', 'actUser'])
+            ->with(['source.user', 'ownerUser'])
             ->limit($limit)
             ->get()
             ->map(function ($item) {

@@ -72,10 +72,10 @@ class TrackViewCount implements ShouldQueue
                     $this->source = $data->music;
                     break;
                 case 'request':
-                    $data->load('track');
-                    $this->genre = $data->track->genre;
+                    $data->load('music');
+                    $this->genre = $data?->music?->genre;
                     $this->actionable = $data;
-                    $this->source = $data->track;
+                    $this->source = $data?->music;
                     break;
                 case 'playlist':
                     $this->genre = $data->genre;
@@ -86,6 +86,5 @@ class TrackViewCount implements ShouldQueue
             Log::info('TrackViewCount Job processing track urn: ' . $this->source->urn . ', genre: ' . $this->genre . ', actionable type: ' . ($this->actionable ? get_class($this->actionable) : 'null'));
             $this->analyticsService->recordAnalytics($this->source, $this->actionable, UserAnalytics::TYPE_VIEW, $this->genre, $this->actUserUrn);
         }
-
     }
 }

@@ -1,8 +1,13 @@
-<div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="(typeof showRepostConfirmationModal !== 'undefined' && showRepostConfirmationModal)"
+<div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal') }" 
+    x-show="showRepostConfirmationModal"
     x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
     x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+{{-- <div x-data="{ showRepostConfirmationModal: @entangle('showRepostConfirmationModal').live }" x-show="(typeof showRepostConfirmationModal !== 'undefined' && showRepostConfirmationModal)"
+    x-cloak x-transition:enter="..." x-transition:leave="..."
+    @click.away="$wire.closeConfirmModal()" @keydown.escape.window="$wire.closeConfirmModal()"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"> --}}
     @if ($campaign)
         <div
             class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
@@ -26,7 +31,7 @@
                         {{ __('Repost Confirmation') }}
                     </h2>
                 </div>
-                <button x-on:click="showRepostConfirmationModal = false"
+                <button x-on:click="$wire.closeConfirmModal()"
                     class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600">
                     <x-lucide-x class="w-5 h-5" />
                 </button>
@@ -76,7 +81,7 @@
                                 {{ $campaign->music_type == App\Models\Track::class ? 'Track' : 'Playlist' }}</span>
                         @endif
                     </label>
-                    @if (!$alreadyLiked)
+                    @if (!$alreadyLiked && $campaign->likeable == 1)
                         <span class="text-sm text-gray-700 dark:text-gray-300">+<span
                                 class="font-medium text-orange-500">2</span> Credits</span>
                     @endif
@@ -88,8 +93,10 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Comment on this
                                 track (optional)</span>
-                            <span class="text-sm text-gray-700 dark:text-gray-300">+<span
-                                    class="font-medium text-orange-500">2</span> Credits</span>
+                            @if ($campaign->commentable == 1)
+                                <span class="text-sm text-gray-700 dark:text-gray-300">+<span
+                                        class="font-medium text-orange-500">2</span> Credits</span>
+                            @endif
                         </div>
                         <textarea rows="3" placeholder="What did you like about the track?" wire:model.live="commented"
                             class="w-full border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"></textarea>

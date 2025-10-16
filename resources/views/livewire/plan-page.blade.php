@@ -36,12 +36,10 @@
                             <div class="mb-6">
                                 <div class="flex items-baseline justify-center">
                                     <span class="text-6xl font-bold text-white">
-                                        $<span
-                                            x-text="isYearly ? {{ number_format($plan->yearly_price, 2) }} : {{ number_format($plan->monthly_price, 2) }}"></span>
+                                        ${{ $plan->monthly_price }}
                                     </span>
                                     <span class="text-slate-400 ml-2">
-                                        /<span
-                                            x-text="{{ $plan->monthly_price > 0 ? 'isYearly ? \'year\' : \'month\'' : '\'Forever\'' }}"></span>
+                                        /<span>{{ $plan->monthly_price > 0 ?  'month' : 'Forever' }}</span>
                                     </span>
                                 </div>
                             </div>

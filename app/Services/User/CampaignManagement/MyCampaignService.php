@@ -39,6 +39,6 @@ class MyCampaignService
 
     public function thisMonthCampaignsCount()
     {
-        return Campaign::self()->whereMonth('created_at', now()->month)->count();
+        return Campaign::self()->open()->whereMonth('created_at', now()->month)->count();
     }
 }

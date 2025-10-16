@@ -4,6 +4,7 @@ namespace App\Services\Admin\CreditManagement;
 
 use App\Models\Campaign;
 use App\Models\CreditTransaction;
+use App\Models\Repost;
 use App\Models\Track;
 use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
@@ -16,7 +17,7 @@ class CreditTransactionService
     {
         return CreditTransaction::orderBy($orderBy, $order)->latest();
     }
-    public function getTransaction(string $encryptedValue, string $field = 'id'): CreditTransaction | Collection
+    public function getTransaction(string $encryptedValue, string $field = 'id'): CreditTransaction|Collection
     {
         return CreditTransaction::where($field, decrypt($encryptedValue))->first();
     }
@@ -126,8 +127,7 @@ class CreditTransactionService
         $currentDayEnd = Carbon::now()->endOfDay();
 
         // Count of approved and declined requests this week up to the current day
-        $currentCount = RepostRequest::where('requester_urn', $userUrn)
-            ->whereIn('status', [RepostRequest::STATUS_APPROVED, RepostRequest::STATUS_DECLINE, RepostRequest::STATUS_PENDING])
+        $currentCount = Repost::where('track_owner_urn', $userUrn)
             ->whereBetween('created_at', [$startOfWeek, $currentDayEnd])
             ->count();
 
@@ -136,8 +136,7 @@ class CreditTransactionService
         $lastWeekEnd = Carbon::now()->subWeek()->endOfDay();
 
         // Count of approved and declined requests for the same period last week
-        $lastWeekCount = RepostRequest::where('requester_urn', $userUrn)
-            ->whereIn('status', [RepostRequest::STATUS_APPROVED, RepostRequest::STATUS_DECLINE, RepostRequest::STATUS_PENDING])
+        $lastWeekCount = Repost::where('track_owner_urn', $userUrn)
             ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
             ->count();
 

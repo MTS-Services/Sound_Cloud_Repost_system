@@ -11,7 +11,7 @@ use App\Models\Repost;
 use App\Models\Track;
 use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
-
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -42,7 +42,9 @@ class CampaignService
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name ?? $campaign->user?->name;
                 // $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
-                $totalCredits = repostPrice(user()->repost_price, $likeCommentAbleData['comment'], $likeCommentAbleData['likeable']);
+                $likeable = $campaign->likeable && $likeCommentAbleData['likeable'] ? true : false;
+                $commentable = $campaign->commentable && $likeCommentAbleData['comment'] ? true : false;
+                $totalCredits = repostPrice(user()->repost_price, $commentable, $likeable);
 
                 // Create the Repost record
                 $repost = Repost::updateOrCreate(
@@ -74,36 +76,27 @@ class CampaignService
                     NotificationMailSent::dispatch($datas);
                 }
 
-                // ######################################
-                $campaign->increment('comment_count');
-                $campaign->increment('like_count');
-                $campaign->increment('followowers_count');
-
-                // ######################################
-
                 if ($repost != null) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
                 }
 
-                if ($likeCommentAbleData['comment']) {
-                    // Log::info("likeCommentAbleData", $likeCommentAbleData);
+                if ($likeCommentAbleData['comment'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
-                        // $repost->increment('comment_count');
                     }
                 }
-                if ($likeCommentAbleData['likeable']) {
+                if ($likeCommentAbleData['likeable'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('like_count');
-                        // $repost->increment('like_count');
                     }
                 }
-                if ($likeCommentAbleData['follow']) {
+                if ($likeCommentAbleData['follow'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
+
                     if ($response != false || $response != null) {
-                        $campaign->increment('followowers_count');
+                        $campaign->increment('followers_count');
                     }
                 }
                 if ($campaign->budget_credits == $campaign->credits_spent) {
@@ -129,24 +122,24 @@ class CampaignService
                         'soundcloud_repost_id' => $soundcloudRepostId,
                     ]
                 ]);
-                $reposterNotification = CustomNotification::create([
-                    'receiver_id' => $reposter->id,
-                    'receiver_type' => get_class($reposter),
-                    'type' => CustomNotification::TYPE_USER,
-                    'url' => route('user.my-account') . '?tab=reposts',
-                    'message_data' => [
-                        'title' => "Repost successful",
-                        'message' => "You've been reposted on a campaign",
-                        'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
-                        'icon' => 'music',
-                        'additional_data' => [
-                            'Track Title' => $campaign->music->title,
-                            'Track Artist' => $trackOwnerName,
-                            // 'Earned Credits' => (float) repostPrice($reposter),
-                            'Earned Credits' => (float) $reposter->repost_price,
-                        ]
-                    ]
-                ]);
+                // $reposterNotification = CustomNotification::create([
+                //     'receiver_id' => $reposter->id,
+                //     'receiver_type' => get_class($reposter),
+                //     'type' => CustomNotification::TYPE_USER,
+                //     'url' => route('user.my-account') . '?tab=reposts',
+                //     'message_data' => [
+                //         'title' => "Repost successful",
+                //         'message' => "You've been reposted on a campaign",
+                //         'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
+                //         'icon' => 'music',
+                //         'additional_data' => [
+                //             'Track Title' => $campaign->music->title,
+                //             'Track Artist' => $trackOwnerName,
+                //             // 'Earned Credits' => (float) repostPrice($reposter),
+                //             'Earned Credits' => (float) $reposter->repost_price,
+                //         ]
+                //     ]
+                // ]);
 
                 $ownerNotificaion = CustomNotification::create([
                     'receiver_id' => $campaign?->user?->id,
@@ -166,7 +159,7 @@ class CampaignService
                     ]
                 ]);
 
-                broadcast(new UserNotificationSent($reposterNotification));
+                // broadcast(new UserNotificationSent($reposterNotification));
                 broadcast(new UserNotificationSent($ownerNotificaion));
             });
             return true;
@@ -186,6 +179,7 @@ class CampaignService
                 $trackOwnerName = $campaign->music->user?->name;
 
                 $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
+
                 if ($response != false || $response != null) {
                     $campaign->increment('like_count');
                 }
@@ -205,7 +199,6 @@ class CampaignService
                         ]
                     ]
                 ]);
-
                 broadcast(new UserNotificationSent($ownerNotificaion));
             });
             return true;
@@ -213,10 +206,10 @@ class CampaignService
             throw $e;
         }
     }
-    public function repostSource($campaign, $soundcloudRepostId, $reposter = null)
+    public function repostSource($campaign, $soundcloudRepostId, $reposter = null, $repostIncreased = false)
     {
         try {
-            DB::transaction(function () use ($campaign, $soundcloudRepostId, $reposter) {
+            DB::transaction(function () use ($campaign, $soundcloudRepostId, $reposter, $repostIncreased) {
 
                 if ($reposter == null) {
                     $reposter = user();
@@ -234,6 +227,7 @@ class CampaignService
                 ]);
 
                 $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
+
                 if ($response != false || $response != null) {
                     $campaign->increment('completed_reposts');
                 }
@@ -270,6 +264,7 @@ class CampaignService
                         ]
                     ]
                 ]);
+
 
                 broadcast(new UserNotificationSent($reposterNotification));
                 broadcast(new UserNotificationSent($ownerNotificaion));

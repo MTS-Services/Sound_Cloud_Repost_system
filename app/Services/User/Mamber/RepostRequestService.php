@@ -65,8 +65,8 @@ class RepostRequestService
 
             if (
                 Repost::where('reposter_urn', $currentUserUrn)
-                    ->where('repost_request_id', $requestId)
-                    ->exists()
+                ->where('repost_request_id', $requestId)
+                ->exists()
             ) {
                 return ['status' => 'error', 'message' => 'You have already reposted this request.'];
             }
@@ -93,18 +93,78 @@ class RepostRequestService
                 ]
             ];
 
+            $response = null;
+            $like_response = null;
+            $comment_response = null;
+            $follow_response = null;
+            $increse_likes = false;
+            $increse_reposts = false;
+            $increse_follows = false;
+
             // Send SoundCloud actions
             if ($request->music_type == Track::class) {
+
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
+                $previous_likes = $checkLiked['collection']['favoritings_count'];
+                $previous_reposts = $checkLiked['collection']['reposts_count'];
+
                 $response = $httpClient->post("{$this->baseUrl}/reposts/tracks/{$musicUrn}");
                 $comment_response = $commented ? $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentSoundcloud) : null;
                 $like_response = $liked ? $httpClient->post("{$this->baseUrl}/likes/tracks/{$musicUrn}") : null;
+
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/tracks/' . $musicUrn, errorMessage: 'Failed to fetch track details');
+                $newLikes = $checkLiked['collection']['favoritings_count'];
+                $newReposts = $checkLiked['collection']['reposts_count'];
+                if ($newLikes > $previous_likes && $liked) {
+                    $increse_likes = true;
+                }
+                if ($newReposts > $previous_reposts) {
+                    $increse_reposts = true;
+                }
             } elseif ($request->music_type == Playlist::class) {
+
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+                $previous_likes = $checkLiked['collection']['likes_count'];
+                $previous_reposts = $checkLiked['collection']['repost_count'];
+
                 $response = $httpClient->post("{$this->baseUrl}/reposts/playlists/{$musicUrn}");
                 $comment_response = $commented ? $httpClient->post("{$this->baseUrl}/playlists/{$musicUrn}/comments", $commentSoundcloud) : null;
                 $like_response = $liked ? $httpClient->post("{$this->baseUrl}/likes/playlists/{$musicUrn}") : null;
+
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/playlists/' . $musicUrn, errorMessage: 'Failed to fetch playlist details');
+                $newLikes = $checkLiked['collection']['likes_count'];
+                $newReposts = $checkLiked['collection']['repost_count'];
+                if ($newLikes > $previous_likes && $liked) {
+                    $increse_likes = true;
+                }
+                if ($newReposts > $previous_reposts) {
+                    $increse_reposts = true;
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Invalid music type.'];
             }
 
-            $follow_response = $followed ? $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}") : null;
+            if ($followed) {
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $request->requester_urn, errorMessage: 'Failed to fetch user details');
+                $previous_followers = $checkLiked['collection']['followers_count'];
+
+                $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$request->requester_urn}");
+
+                $checkLiked = $this->soundCloudService->makeGetApiRequest(endpoint: '/users/' . $request->requester_urn, errorMessage: 'Failed to fetch user details');
+                $newFollowers = $checkLiked['collection']['followers_count'];
+                if ($newFollowers > $previous_followers && $commented) {
+                    $increse_follows = true;
+                }
+            }
+
+            if ($increse_reposts == false) {
+                Log::error("SoundCloud Repost Failed: " . $response->body(), [
+                    'request_id' => $requestId,
+                    'user_urn' => $currentUserUrn,
+                    'status' => $response->status(),
+                ]);
+                return ['status' => 'error', 'message' => 'You have already repost this ' . ($request->music_type == Track::class ? 'track' : 'playlist') .  ' from your soundcloud'];
+            }
 
             if (!$response->successful()) {
                 Log::error("SoundCloud Repost Failed: " . $response->body(), [
@@ -121,12 +181,12 @@ class RepostRequestService
                 Log::warning('Comment failed for repost request: ' . $requestId);
             }
 
-            if ($like_response && !$like_response->successful()) {
+            if ($like_response && !$like_response->successful() && $increse_likes == false) {
                 $liked = false;
                 Log::warning('Like failed for repost request: ' . $requestId);
             }
 
-            if ($follow_response && !$follow_response->successful()) {
+            if ($follow_response && !$follow_response->successful() && $increse_follows == false) {
                 $followed = false;
                 Log::warning('Follow failed for repost request: ' . $requestId);
             }
@@ -136,6 +196,9 @@ class RepostRequestService
             DB::transaction(function () use ($requestId, $request, $currentUserUrn, $soundcloudRepostId, $commented, $liked, $followed) {
                 $trackOwnerUrn = $request->music->user?->urn ?? $request->user?->urn;
                 $trackOwnerName = $request->music->user?->name ?? $request->user?->name;
+                $likeable = $request->likeable && $liked ? true : false;
+                $commentable = $request->commentable && $commented ? true : false;
+                $totalCredits = (float) repostPrice(user()->repost_price, $commentable, $likeable);
 
                 $repost = Repost::create([
                     'reposter_urn' => $currentUserUrn,
@@ -179,7 +242,7 @@ class RepostRequestService
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
                     'transaction_type' => CreditTransaction::TYPE_EARN,
                     'amount' => 0,
-                    'credits' => (float) repostPrice(user()->repost_price, $commented, $liked),
+                    'credits' => $totalCredits,
                     'description' => "Repost From Direct Request",
                     'metadata' => [
                         'repost_id' => $repost->id,

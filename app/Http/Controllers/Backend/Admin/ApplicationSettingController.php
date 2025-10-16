@@ -33,6 +33,11 @@ class ApplicationSettingController extends Controller implements HasMiddleware
             //add more permissions if needed
         ];
     }
+    public function userSettings(): View
+    {
+        $data['user_settings'] = ApplicationSetting::whereIn('key', ['login_bonus'])->pluck('value', 'key')->all();
+        return view('backend.admin.application-settings.user_settings', $data);
+    }
 
     /**
      * Display a listing of the resource.
@@ -60,7 +65,7 @@ class ApplicationSettingController extends Controller implements HasMiddleware
 
     public function payment_setup(): View
     {
-        $data['payment_settings'] = ApplicationSetting::whereIn('key', ['paypal_mode', 'paypal_key', 'paypal_secret', 'stripe_mode', 'stripe_key', 'stripe_secret',])->pluck('value', 'key')->all();
+        $data['payment_settings'] = ApplicationSetting::whereIn('key', ['paypal_mode', 'paypal_key', 'paypal_secret', 'stripe_mode', 'stripe_key', 'stripe_secret', 'paypal_gateway_status', 'stripe_gateway_status'])->pluck('value', 'key')->all();
         return view('backend.admin.application-settings.payment_gateway', $data);
     }
 

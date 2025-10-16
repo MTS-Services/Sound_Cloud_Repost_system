@@ -22,6 +22,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Feature;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
 class MyCampaign extends Component
@@ -83,7 +84,7 @@ class MyCampaign extends Component
     public bool $commentable = true;
     public bool $likeable = true;
     public bool $proFeatureEnabled = false;
-    public $maxFollower = 100;
+    public $maxFollower = 1000;
     public $followersLimit = 0;
     public $maxRepostLast24h = 0;
     public $maxRepostsPerDay = 0;
@@ -499,7 +500,7 @@ class MyCampaign extends Component
                     'budget_credits' => $this->credit,
                     'user_urn' => user()->urn,
                     'status' => Campaign::STATUS_OPEN,
-                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : 100,
+                    'max_followers' => $this->maxFollowerEnabled ? $this->maxFollower : null,
                     'creater_id' => user()->id,
                     'creater_type' => get_class(user()),
                     'commentable' => $commentable,
@@ -855,7 +856,7 @@ class MyCampaign extends Component
 
     private function getCampaignsQuery(): Builder
     {
-        return Campaign::with(['music']);
+        return Campaign::orderBy('created_at', 'desc')->with(['music']);
     }
 
     private function resetAllFormData(): void
@@ -1013,17 +1014,86 @@ class MyCampaign extends Component
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
+
+    public function stopCampaign($id)
+    {
+        try {
+            $campaign = Campaign::find($id);
+            if (!$campaign) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
+                return;
+            }
+            if ($campaign->status != Campaign::STATUS_OPEN) {
+                $this->dispatch('alert', type: 'error', message: 'Something went wrong! Please try again.');
+                return;
+            }
+
+            DB::transaction(function () use ($campaign) {
+                $campaign->status = Campaign::STATUS_STOP;
+                $campaign->save();
+                $campaign->load('user');    
+                $remainingBudget = $campaign->budget_credits - $campaign->credits_spent;
+
+                CreditTransaction::create([
+                    'receiver_urn' => $campaign->user_urn,
+                    'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                    'source_id' => $campaign->id,
+                    'source_type' => Campaign::class,
+                    'transaction_type' => CreditTransaction::TYPE_REFUND,
+                    'status' => CreditTransaction::STATUS_SUCCEEDED,
+                    'amount'=> 0,
+                    'credits' => $remainingBudget,
+                    'description' => 'Refund for stopped campaign',
+                    'metadata' => [
+                        'campaign_id' => $campaign->id,
+                        'music_id' => $campaign->music_id,
+                        'music_type' => $campaign->music_type,
+                        'start_date' => $campaign->created_at,
+                    ],
+                ]);
+
+                Log::info('Campaign stopped successfully. campaign_id: ' . $campaign->id);
+
+                $notification = CustomNotification::create([
+                    'receiver_id' => $campaign->user->id,
+                    'receiver_type' => User::class,
+                    'type' => CustomNotification::TYPE_USER,
+                    'message_data' => [
+                        'title' => 'Campaign stopped.',
+                        'message' => 'Your campaign has been stopped successfully.',
+                        'description' => 'Your campaign has been stopped successfully.',
+                        'icon' => 'audio-lines',
+                    ],
+                ]);
+                broadcast(new UserNotificationSent($notification));
+                $this->dispatch('alert', type: 'success', message: 'Campaign stopped successfully.');
+                $this->mount();
+            });
+ 
+        } catch (\Exception $e) {
+            Log::error('failed to stop campaign. error: '. $e->getMessage());
+            $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
+            return;
+        }
+    }
+
     public function render()
     {
         try {
             $data['campaigns'] = match ($this->activeMainTab) {
                 'active' => $this->getCampaignsQuery()
-                    ->Open()
+                    ->open()
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
-                    ->Completed()
+                    ->where('status','!=', Campaign::STATUS_OPEN)
+                    ->latest()
+                    ->self()
+                    ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
+
+                'cancelled' => $this->getCampaignsQuery()
+                    ->cancelled()
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),
@@ -1032,6 +1102,7 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'allPage', $this->allPage)
             };
+            // dd($data['campaigns']);
             $data['latestCampaign'] = Campaign::with('music')->self()->where('featured_at', null)->latest()->first();
             $data['featuredCampaign'] = Campaign::with('music')->self()->featured()->whereTime('featured_at', "<=", now()->subHours(24))->first();
         } catch (\Exception $e) {

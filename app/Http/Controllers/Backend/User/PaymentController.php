@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\User;
 use App\Events\AdminNotificationSent;
 use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
+use App\Models\ApplicationSetting;
 use App\Models\Credit;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
@@ -34,6 +35,10 @@ class PaymentController extends Controller
     public function paymentMethod(string $order_id)
     {
         $data['order'] = $this->orderService->getOrder($order_id);
+        $application_settings = ApplicationSetting::whereIn('key', ['stripe_gateway_status', 'paypal_gateway_status'])
+            ->pluck('value', 'key');
+        $data['stripeStatus'] = $application_settings['stripe_gateway_status'];
+        $data['paypalStatus'] = $application_settings['paypal_gateway_status'];
         return view('frontend.pages.payment_method', $data);
     }
 

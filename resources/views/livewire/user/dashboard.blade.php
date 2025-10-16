@@ -417,17 +417,38 @@
                         <h3 class="text-lg font-semibold">Recent Tracks</h3>
                         <p class="text-slate-400 text-sm">Your latest submissions</p>
                     </div>
-                    @if ($recentTracks->count() > 0)
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
-                            href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
+                    @if (isset($recentTracks))
+                        @if ($recentTracks->count() > 0)
+                            <a class="text-orange-500 hover:text-orange-400 text-sm font-medium" wire:navigate
+                                href="{{ route('user.my-account', ['tab' => 'tracks']) }}">View all →</a>
+                        @endif
                     @endif
                 </div>
 
                 <!-- Show recent tracks if exist -->
                 <div class="space-y-4">
-                    @forelse ($recentTracks as $recentTrack)
-                        <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
-                    @empty
+
+                    @if (isset($recentTracks))
+                        @forelse ($recentTracks as $recentTrack)
+                            <x-sound-cloud.sound-cloud-player :track="$recentTrack" :visual="false" />
+                        @empty
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path d="M5 12h14M12 5v14" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-medium mb-2">No upcoming campaigns scheduled</h4>
+                                <p class="text-slate-400 text-sm mb-4">Submit a track to start a new campaign</p>
+                                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
+                                    <span><x-lucide-plus
+                                            class="inline-block text-center h-4 w-4 text-white mr-1" /></span>
+                                    Create Campaign
+                                </x-gbutton>
+                            </div>
+                        @endforelse
+                    @else
                         <div class="text-center py-8">
                             <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none"
@@ -442,7 +463,7 @@
                                 Create Campaign
                             </x-gbutton>
                         </div>
-                    @endforelse
+                    @endif
                 </div>
             </div>
 
@@ -453,46 +474,58 @@
                     <div>
                         <h3 class="text-lg font-semibold">Latest Repost Requests</h3>
                     </div>
-                    @if ($repostRequests->count() > 0)
-                        <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
-                            href="{{ route('user.reposts-request') }}">View all →</a>
+                    @if (isset($repostRequests))
+
+                        @if ($repostRequests->count() > 0)
+                            <a class="text-orange-500 hover:text-orange-400 text-sm font-medium"
+                                href="{{ route('user.reposts-request') }}">View all →</a>
+                        @endif
                     @endif
                 </div>
-                @foreach ($repostRequests as $request_)
-                    <div class="space-y-4">
-                        <div class="shadow-sm rounded-lg p-4">
-                            <div class="flex justify-between text-sm mb-3">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
+                @if (isset($repostRequests))
+                    @forelse ($repostRequests as $request_)
+                        <div class="space-y-4">
+                            <div class="shadow-sm rounded-lg p-4">
+                                <div class="flex justify-between text-sm mb-3">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
+                                        <span
+                                            class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
+                                    </div>
+                                    <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
+                                </div>
+                                <div class="flex items-start space-x-3 mb-3">
+                                    <img src="{{ $request_?->requester?->avatar }}" class="w-8 h-8 rounded-full"
+                                        alt="">
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-medium">{{ $request_?->requester?->name }}</h4>
+                                    </div>
                                     <span
-                                        class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
+                                        class="text-orange-500 font-semibold text-sm">+{{ $request_->credits_spent ?? '0' }}
+                                        credits</span>
                                 </div>
-                                <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
-                            </div>
-                            <div class="flex items-start space-x-3 mb-3">
-                                <img src="{{ $request_?->requester?->avatar }}" class="w-8 h-8 rounded-full"
-                                    alt="">
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-medium">{{ $request_?->requester?->name }}</h4>
-                                    <p class="text-slate-400 text-xs">by {{ $request_?->requester?->email }}</p>
-                                </div>
-                                <span
-                                    class="text-orange-500 font-semibold text-sm">+{{ $request_->credits_spent ?? '0' }}
-                                    credits</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <div class="flex-1">
-                                    <x-gbutton variant="secondary" full-width="true"
-                                        wire:click="declineRepost('{{ encrypt($request_->id) }}')">Decline</x-gbutton>
-                                </div>
-                                <div class="flex-1">
-                                    <x-gbutton variant="primary" full-width="true"
-                                        wire:click="confirmRepost('{{ $request_->id }}')">Repost</x-gbutton>
+                                <div class="flex space-x-2">
+                                    <div class="flex-1">
+                                        <x-gbutton variant="secondary" full-width="true"
+                                            wire:click="declineRepost('{{ encrypt($request_->id) }}')">Decline</x-gbutton>
+                                    </div>
+                                    <div class="flex-1">
+                                        <x-gbutton variant="primary" full-width="true"
+                                            wire:click="confirmRepost('{{ $request_->id }}')">Repost</x-gbutton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    @empty
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                            <p>No repost requests available yet.</p>
+                        </div>
+                    @endforelse
+                @else
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-4">
+                        <p>No repost requests available yet.</p>
                     </div>
-                @endforeach
+                @endif
             </div>
         </div>
     </div>

@@ -7,8 +7,7 @@ use App\Http\Traits\AuditColumnsTrait;
 use App\Models\Campaign;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-return new class extends Migration
-{
+return new class extends Migration {
     use AuditColumnsTrait, SoftDeletes;
     /**
      * Run the migrations.
@@ -31,7 +30,7 @@ return new class extends Migration
             $table->integer('like_count')->default(0);
             $table->integer('comment_count')->default(0);
             $table->integer('favorite_count')->default(0);
-            $table->integer('followowers_count')->default(0);
+            $table->integer('followers_count')->default(0);
 
             $table->string('title');
             $table->text('description')->nullable();
@@ -41,7 +40,7 @@ return new class extends Migration
             $table->decimal('credits_spent', 15, 2)->default(0.00);
             $table->decimal('refund_credits', 15, 2)->default(0.00);
             $table->unsignedBigInteger('min_followers')->index()->default(0);
-            $table->unsignedBigInteger('max_followers')->index()->default(0);
+            $table->unsignedBigInteger('max_followers')->nullable()->index();
             $table->unsignedBigInteger('playback_count')->index()->default(0);
             $table->tinyInteger('status')->index()->default(Campaign::STATUS_OPEN);
             $table->timestamp('start_date')->index()->nullable();

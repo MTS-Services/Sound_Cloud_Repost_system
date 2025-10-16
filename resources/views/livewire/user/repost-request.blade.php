@@ -164,7 +164,7 @@
                         <!-- Right Column - Request Info -->
                         <div class="w-full lg:w-1/2 p-3">
                             <div class="flex justify-between h-full">
-                                <div class="w-1/2 relative">
+                                <div class="w-[40%] relative">
                                     <div class="flex flex-col items-start justify-between gap-0 h-full">
                                         <div class="flex items-center gap-2">
                                             <img class="w-12 h-12 rounded-full object-cover"
@@ -201,7 +201,7 @@
                                                         target="_blank"
                                                         class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                         SoundCloud Profile</a>
-                                                    <a href="{{ route('user.my-account', $repostRequest->requester?->name) }}"
+                                                    <a href="{{ route('user.my-account.user', !empty($repostRequest->requester?->name) ? $repostRequest->requester?->name : $repostRequest->requester?->urn) }}"
                                                         wire:navigate
                                                         class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                         RepostChain Profile</a>
@@ -225,10 +225,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="w-1/2 h-fit">
+                                <div class="w-[60%] h-fit">
                                     @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'previously_reposted')
                                         <div class="flex flex-col items-end gap-2 h-full">
-                                            <div class="flex flex-col justify-between h-full">
+                                            <div class="flex flex-col justify-between w-full h-full">
                                                 <div class="flex gap-3">
                                                     <div
                                                         class="text-sm font-semibold text-gray-500 dark:text-gray-400 text-right">
@@ -247,25 +247,32 @@
                                                                         $repostRequest->id),
                                                                     'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed' => !$this->canRepost(
                                                                         $repostRequest->id),
+                                                                    '!bg-green-600 !text-white cursor-not-allowed' => in_array(
+                                                                        $repostRequest->id,
+                                                                        $this->repostedRequests),
                                                                 ])
                                                                 @disabled(!$this->canRepost($repostRequest->id))>
+                                                                @if (in_array($repostRequest->id, $this->repostedRequests))
+                                                                    <span>Reposted! ✓</span>
+                                                                @else
+                                                                    <!-- Repost Icon -->
+                                                                    <svg width="26" height="18"
+                                                                        viewBox="0 0 26 18" fill="none"
+                                                                        xmlns="http://www.w3.org/2000/svg">
+                                                                        <rect x="1" y="1" width="24"
+                                                                            height="16" rx="3"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="2" />
+                                                                        <circle cx="8" cy="9" r="3"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="2" />
+                                                                    </svg>
 
-                                                                <!-- Repost Icon -->
-                                                                <svg width="26" height="18"
-                                                                    viewBox="0 0 26 18" fill="none"
-                                                                    xmlns="http://www.w3.org/2000/svg">
-                                                                    <rect x="1" y="1" width="24" height="16"
-                                                                        rx="3" fill="none"
-                                                                        stroke="currentColor" stroke-width="2" />
-                                                                    <circle cx="8" cy="9" r="3"
-                                                                        fill="none" stroke="currentColor"
-                                                                        stroke-width="2" />
-                                                                </svg>
-
-                                                                {{-- <span>{{ repostPrice($repostRequest->requester) }}
+                                                                    {{-- <span>{{ repostPrice($repostRequest->requester) }}
                                                                     Repost</span> --}}
-                                                                <span>{{ $repostRequest->requester?->repost_price }}
-                                                                    Repost</span>
+                                                                    <span>{{ $repostRequest->targetUser?->repost_price }}
+                                                                        Repost</span>
+                                                                @endif
                                                             </button>
 
                                                             <!-- Success Indicator -->
@@ -322,7 +329,7 @@
                                             @if ($activeMainTab == 'outgoing_request')
                                                 <div class="flex flex-col sm:flex-row justify-end gap-3">
                                                     <a class="cursor-pointer" wire:navigate
-                                                        href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
+                                                        href="{{ route('user.my-account.user', !empty($repostRequest->targetUser->name) ? $repostRequest->targetUser->name : $repostRequest->targetUser->urn) }}">
                                                         <img class="w-10 h-10 rounded-full object-cover"
                                                             src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
                                                             alt="{{ $repostRequest->targetUser->name }} avatar">
@@ -331,7 +338,7 @@
                                                         <div class="flex items-center gap-1 cursor-pointer">
                                                             <a class="text-slate-700 dark:text-gray-300 font-medium cursor-pointer hover:underline"
                                                                 wire:navigate
-                                                                href="{{ route('user.my-account', $repostRequest->targetUser->name) }}">
+                                                                href="{{ route('user.my-account.user', !empty($repostRequest->targetUser->name) ? $repostRequest->targetUser->name : $repostRequest->targetUser->urn) }}">
                                                                 {{ $repostRequest->targetUser->name }}
                                                             </a>
                                                         </div>
@@ -375,7 +382,7 @@
                                                     {{-- <button wire:click="cancleRepostRequest({{ $repostRequest->id }})"
                                                         class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">Cancle</button> --}}
                                                     <x-gbutton variant="primary" size="sm"
-                                                        wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancle</x-gbutton>
+                                                        wire:click="cancleRepostRequest({{ $repostRequest->id }})">Cancel</x-gbutton>
                                                 @endif
                                             </div>
                                         </div>
@@ -407,7 +414,6 @@
     </section>
     {{-- Repost Confirmation Modal --}}
     @include('backend.user.includes.direct-repost-confirmation-modal')
-
     <!--Previously Reposted Requests-->
 
 
