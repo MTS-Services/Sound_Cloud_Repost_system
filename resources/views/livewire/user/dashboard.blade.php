@@ -373,8 +373,19 @@
                 <h3 class="dark:text-white text-lg font-semibold">Genre Distribution</h3>
                 <p class="text-slate-400 text-sm mb-5">What your audience listens to</p>
 
-                <canvas id="genreChart" style="max-height: 300px !important; vertical-align: baseline !important;"
-                    height="300" width="683"></canvas>
+                <div style="position: relative; width: 100%; max-width: 700px; margin: 0 auto;">
+                <canvas
+                    id="genreChart"
+                    style="
+                    width: 100% !important;
+                    height: auto !important;
+                    max-height: 300px !important;
+                    vertical-align: baseline !important;
+                    display: block;
+                    "
+                ></canvas>
+                </div>
+
                 <div class="flex flex-wrap justify-center gap-2 text-xs mt-4">
 
                     @forelse($genreBreakdown as $index => $genre)
@@ -453,7 +464,8 @@
                             <div class="flex justify-between text-sm mb-3">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-orange-500 font-bold">#{{ $loop->iteration }}</span>
-                                    <span class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
+                                    <span
+                                        class="text-sm max-w-[200px] truncate">{{ $request_?->music?->title }}</span>
                                 </div>
                                 <span class="text-slate-400">{{ $request_?->music?->genre }}</span>
                             </div>
