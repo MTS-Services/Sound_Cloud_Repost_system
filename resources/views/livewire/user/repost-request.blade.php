@@ -164,7 +164,7 @@
                         <!-- Right Column - Request Info -->
                         <div class="w-full lg:w-1/2 p-3">
                             <div class="flex justify-between h-full">
-                                <div class="w-1/2 relative">
+                                <div class="w-[40%] relative">
                                     <div class="flex flex-col items-start justify-between gap-0 h-full">
                                         <div class="flex items-center gap-2">
                                             <img class="w-12 h-12 rounded-full object-cover"
@@ -225,7 +225,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="w-1/2 h-fit">
+                                <div class="w-[60%] h-fit">
                                     @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'previously_reposted')
                                         <div class="flex flex-col items-end gap-2 h-full">
                                             <div class="flex flex-col justify-between w-full h-full">
