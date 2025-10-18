@@ -25,6 +25,20 @@
 <body class="bg-[#f4f7fa] text-[#1a202c] p-8">
 
   <main class="max-w-screen-xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div wire:loading wire:target="searchSoundcloud" class="w-full flex justify-center items-center">
+      <div class="text-center py-16 text-orange-600">
+        <div
+          class="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+          <svg class="w-8 h-8 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+          </svg>
+        </div>
+        <p class="text-sm font-medium">Searching Playlist...</p>
+      </div>
+    </div>
+
     <!-- Stats Grid -->
     <section class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:col-span-2">
 
@@ -45,7 +59,8 @@
         </div>
         <div class="text-4xl font-bold mt-3" id="repost-limit-value">15/20</div>
         <div class="mt-2 bg-[#e2e8f0] h-1.5 rounded-full overflow-hidden">
-          <div id="repost-progress" class="bg-[#FF5722] h-full w-0 transition-all duration-500" data-value="15" data-max="20"></div>
+          <div id="repost-progress" class="bg-[#FF5722] h-full w-0 transition-all duration-500" data-value="15"
+            data-max="20"></div>
         </div>
       </div>
 
@@ -94,11 +109,13 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <button class="flex items-center justify-center gap-2 text-sm font-semibold py-3 border border-[#e2e8f0] rounded-lg hover:bg-gray-100 transition">
+        <button
+          class="flex items-center justify-center gap-2 text-sm font-semibold py-3 border border-[#e2e8f0] rounded-lg hover:bg-gray-100 transition">
           <i data-lucide="shopping-cart"></i>
           Buy more credits
         </button>
-        <button class="flex items-center justify-center gap-2 text-sm font-semibold py-3 bg-[#FF5722] text-white rounded-lg hover:opacity-90 transition">
+        <button
+          class="flex items-center justify-center gap-2 text-sm font-semibold py-3 bg-[#FF5722] text-white rounded-lg hover:opacity-90 transition">
           <i data-lucide="rocket"></i>
           Upgrade plan
         </button>
