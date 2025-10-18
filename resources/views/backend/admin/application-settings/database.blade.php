@@ -11,7 +11,8 @@
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 h-fit">
                         <div class="space-y-2">
                             <x-inputs.select name="database_driver" label="{{ __('Database Driver') }}"
-                                :options="App\Models\ApplicationSetting::getDatabaseDriverInfos()" value="{{ $database_settings['database_driver'] ?? '' }}"
+                                :options="App\Models\ApplicationSetting::getDatabaseDriverInfos()"
+                                selected="{{ $database_settings['database_driver'] ?? '' }}"
                                 :messages="$errors->get('database_driver')" />
                         </div>
                         <div class="space-y-2">

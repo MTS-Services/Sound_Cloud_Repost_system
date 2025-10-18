@@ -12,37 +12,43 @@
                         <div class="2xl:col-span-6 grid grid-cols-1 gap-5 sm:grid-cols-2 h-fit">
                             <div class="space-y-2">
                                 <x-inputs.input name="application_name" label="{{ __('Application Name') }}"
-                                    placeholder="Enter Your Name" value="{{ $general_settings['application_name'] ?? old('application_name') }}" :messages="$errors->get('application_name')" />
+                                    placeholder="Enter Your Name"
+                                    value="{{ $general_settings['application_name'] ?? old('application_name') }}"
+                                    :messages="$errors->get('application_name')" />
                             </div>
                             <div class="space-y-2">
                                 <x-inputs.input name="application_short_name" label="{{ __('Application Short Name') }}"
-                                    placeholder="Enter Application Short Name" value="{{ $general_settings['application_short_name'] ?? old('application_short_name') }}"
+                                    placeholder="Enter Application Short Name"
+                                    value="{{ $general_settings['application_short_name'] ?? old('application_short_name') }}"
                                     :messages="$errors->get('application_short_name')" />
                             </div>
                             <div class="space-y-2">
                                 <x-inputs.select name="timezone" label="{{ __('Timezone') }}" :options="$timezones"
-                                    value="{{ old('timezone') }}" :messages="$errors->get('timezone')" />
+                                    selected="{{ $general_settings['timezone'] ?? 'UTC' }}" :messages="$errors->get('timezone')" />
                             </div>
                             <div class="space-y-2">
                                 <x-inputs.select name="environment" label="{{ __('Environment') }}" :options="App\Models\ApplicationSetting::getEnvironmentInfos()"
-                                    value="{{ old('environment') }}" :messages="$errors->get('environment')" />
+                                    selected="{{ $general_settings['environment'] ?? 'local' }}" :messages="$errors->get('environment')" />
                             </div>
                             <div class="space-y-2">
                                 <x-inputs.select name="app_debug" label="{{ __('App Debug') }}" :options="App\Models\ApplicationSetting::getAppDebugInfos()"
-                                    value="{{ old('app_debug') }}" :messages="$errors->get('app_debug')" />
+                                    selected="{{ $general_settings['app_debug'] ?? 'false' }}" :messages="$errors->get('app_debug')" />
                             </div>
                             <div class="space-y-2 sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-5">
                                 <div class="space-y-2">
                                     <x-inputs.select name="date_format" label="{{ __('Date Format') }}"
-                                        :options="App\Models\ApplicationSetting::getDateFormatInfos()" value="{{ old('date_format') }}" :messages="$errors->get('date_format')" />
+                                        :options="App\Models\ApplicationSetting::getDateFormatInfos()" selected="{{ $general_settings['date_format'] ?? 'YYYY-MM-DD' }}"
+                                        :messages="$errors->get('date_format')" />
                                 </div>
                                 <div class="space-y-2">
                                     <x-inputs.select name="time_format" label="{{ __('Time Format') }}"
-                                        :options="App\Models\ApplicationSetting::getTimeFormatInfos()" value="{{ old('time_format') }}" :messages="$errors->get('time_format')" />
+                                        :options="App\Models\ApplicationSetting::getTimeFormatInfos()" selected="{{ $general_settings['time_format'] ?? 'HH:mm:ss' }}"
+                                        :messages="$errors->get('time_format')" />
                                 </div>
                                 <div class="space-y-2">
                                     <x-inputs.select name="theme_mode" label="{{ __('Default Theme Mode') }}"
-                                        :options="App\Models\ApplicationSetting::getThemeModeInfos()" value="{{ old('theme_mode') }}" :messages="$errors->get('theme_mode')" />
+                                        :options="App\Models\ApplicationSetting::getThemeModeInfos()" selected="{{ $general_settings['theme_mode'] ?? 'System' }}"
+                                        :messages="$errors->get('theme_mode')" />
                                 </div>
                             </div>
                         </div>
@@ -63,7 +69,8 @@
                     </div>
                     <div class="flex items-center justify-center gap-5 h-fit mt-4">
                         <div class="w-full space-y-2">
-                            <p class="label">{{ __('App Dark Mode Logo') }}<small>({{ __('Max: 400x400') }})</small></p>
+                            <p class="label">{{ __('App Dark Mode Logo') }}<small>({{ __('Max: 400x400') }})</small>
+                            </p>
                             <input type="file" name="app_logo_dark" class="filepond" id="app_logo_dark"
                                 accept="image/jpeg, image/png, image/jpg, image/webp, image/svg+xml">
                             <x-input-error class="mt-2" :messages="$errors->get('app_logo_dark')" />

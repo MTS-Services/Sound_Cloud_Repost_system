@@ -10,15 +10,13 @@
                     @csrf
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 h-fit">
                         <div class="space-y-2">
-                            <x-inputs.select name="smtp_driver" label="{{ __('Mail Driver') }}"
-                                :options="App\Models\ApplicationSetting::getSmtpDriverInfos()"
-                                value="{{ $smtp_settings['smtp_driver'] ?? '' }}" :messages="$errors->get('smtp_driver')" />
+                            <x-inputs.select name="smtp_driver" label="{{ __('Mail Driver') }}" :options="App\Models\ApplicationSetting::getSmtpDriverInfos()"
+                                selected="{{ $smtp_settings['smtp_driver'] ?? 'smtp' }}" :messages="$errors->get('smtp_driver')" />
                         </div>
 
                         <div class="space-y-2">
-                                <x-inputs.input name="smtp_host" label="{{ __('Mailer Host') }}"
-                                    placeholder="Mailer Host" value="{{ $smtp_settings['smtp_host'] ?? '' }}"
-                                    :messages="$errors->get('smtp_host')" />
+                            <x-inputs.input name="smtp_host" label="{{ __('Mailer Host') }}" placeholder="Mailer Host"
+                                value="{{ $smtp_settings['smtp_host'] ?? '' }}" :messages="$errors->get('smtp_host')" />
                         </div>
                         <div class="space-y-2">
                             <p class="label">{{ __('Mailer Port') }}</p>
@@ -29,19 +27,18 @@
                             <x-input-error class="mt-2" :messages="$errors->get('smtp_port')" />
                         </div>
                         <div class="space-y-2">
-                                <x-inputs.input name="smtp_username" label="{{ __('Mail username') }}"
-                                    placeholder="Enter Username" value="{{ $smtp_settings['smtp_username'] ?? '' }}"
-                                    :messages="$errors->get('smtp_username')" />
+                            <x-inputs.input name="smtp_username" label="{{ __('Mail username') }}"
+                                placeholder="Enter Username" value="{{ $smtp_settings['smtp_username'] ?? '' }}"
+                                :messages="$errors->get('smtp_username')" />
                         </div>
                         <div class="space-y-2">
-                                <x-inputs.input name="smtp_password" label="{{ __('Mail password') }}" type="password"
-                                    placeholder="Enter Password" :messages="$errors->get('smtp_password')" />
+                            <x-inputs.input name="smtp_password" label="{{ __('Mail password') }}" type="password"
+                                placeholder="Enter Password" :messages="$errors->get('smtp_password')" />
                         </div>
 
                         <div class="space-y-2">
                             <x-inputs.select name="smtp_encryption" label="{{ __('Mail Encryption') }}"
-                                :options="App\Models\ApplicationSetting::getSmtpEncryptionInfos()"
-                                value="{{ old('smtp_encryption') ?? ($smtp_settings['smtp_encryption'] ?? '') }}"
+                                :options="App\Models\ApplicationSetting::getSmtpEncryptionInfos()" selected="{{ $smtp_settings['smtp_encryption'] ?? 'tls' }}"
                                 :messages="$errors->get('smtp_encryption')" />
                         </div>
 
