@@ -42,7 +42,7 @@
                                 :messages="$errors->get('smtp_encryption')" />
                         </div>
 
-                        <div class="space-y-2">f
+                        <div class="space-y-2">
                             <x-inputs.input name="smtp_from_address" label="{{ __('Mail from address') }}"
                                 placeholder="Mail from address" value="{{ $smtp_settings['smtp_from_address'] ?? '' }}"
                                 :messages="$errors->get('smtp_from_address')"></x-admin.inputs.input>
