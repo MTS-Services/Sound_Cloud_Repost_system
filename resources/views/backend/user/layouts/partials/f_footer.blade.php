@@ -11,8 +11,9 @@
                     @else
                         {{-- <img src="{{ asset('assets/logos/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
                             class="w-36 lg:w-48 object-contain dark:hidden" /> --}}
-                        <img src="{{ asset('assets/logos/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
-                            class="w-36 lg:w-48 object-contain" />
+                        <img src="{{ asset('frontend/images/Untitleddesign(20).png') }}" alt="{{ config('app.name') }}"
+                            class="w-8 h-8 object-contain" />
+                            <span class="text-lg font-bold text-white">REPOSTCHAIN</span>
                     @endif
                 </div>
                 <p class="text-gray-400 mb-6">The collaborative music promotion platform for SoundCloud artists.</p>
