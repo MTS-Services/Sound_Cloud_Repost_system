@@ -22,7 +22,7 @@
     </style>
 
     <div x-data="{ open: true, activeTab: @entangle('activeTab').live, isGenreDropdownOpen: false }" class="#">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-7xl mx-auto overflow-hidden ">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-8xl mx-auto overflow-hidden ">
             <div class="border-b border-gray-200 dark:border-gray-700 ">
                 <div
                     class="flex overflow-x-auto no-scrollbar text-gray-600 dark:text-gray-300 font-medium text-xs sm:text-sm">
@@ -163,6 +163,7 @@
                             <!-- Genres -->
                             <div class="space-y-4">
                                 <!-- Header -->
+
                                 {{-- <div class="border-b border-gray-200 dark:border-gray-700 pb-2">
                                     <h3 class="text-sm font-semibold text-gray-700 dark:text-white">Your Music Genres
                                     </h3>
@@ -245,149 +246,9 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                                 <!-- Selected Genres Tags -->
-
                             </div>
-                            <!-- Artist link -->
-                            {{-- <div class="font-sans text-gray-800 dark:text-gray-200">
-                                <label class="block text-sm font-bold text-gray-900 mb-0.5">Social Media
-                                    Accounts</label>
-                                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                                    Connect social accounts (will be promoted after someone reposts one of your tracks
-                                    if
-                                    you have a Pro Plan)
-                                </p>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <!-- Instagram -->
-                                    <div>
-                                        <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700  dark:border-gray-700">
-                                            <div
-                                                class="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                                                </svg>
-                                            </div>
-                                            <span class="text-gray-600 ms-3">@</span>
-                                            <input type="text" placeholder="username"
-                                                wire:model="instagram_username" value="{{ $instagram_username }}"
-                                                class="flex-grow bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-500 dark:placeholder-gray-400 ps-0" />
-                                        </div>
-                                        @error('instagram_username')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-
-                                    </div>
-                                    <!-- Twitter -->
-                                    <div>
-                                        <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
-                                            <div
-                                                class="w-6 h-6 bg-blue-400 rounded-md flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                                                </svg>
-                                            </div>
-                                            <span class="text-gray-600 ms-3">@</span>
-                                            <input type="text" placeholder="username"
-                                                wire:model="twitter_username" {{ $twitter_username }}
-                                                class="flex-grow bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-500 dark:placeholder-gray-400 ps-0" />
-                                        </div>
-                                        @error('twitter_username')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Facebook -->
-                                    <div>
-                                        <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
-                                            <div
-                                                class="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                                </svg>
-                                            </div>
-                                            <span class="text-gray-600 ms-3">/</span>
-                                            <input type="text" placeholder="pagelink"
-                                                wire:model="facebook_username" {{ $facebook_username }}
-                                                class="flex-grow bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-500 dark:placeholder-gray-400 ps-0" />
-                                        </div>
-                                        @error('facebook_username')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-
-                                    <!-- YouTube -->
-                                    <div>
-                                        <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
-                                            <div
-                                                class="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                                                </svg>
-                                            </div>
-                                            <input type="text" placeholder="Channel ID"
-                                                value="{{ $youtube_channel_id }}" wire:model="youtube_channel_id"
-                                                class="flex-grow bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-500 dark:placeholder-gray-400" />
-                                        </div>
-                                        @error('youtube_channel_id')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    <!-- TikTok -->
-                                    <div>
-                                        <div
-                                            class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700">
-                                            <div class="w-6 h-6 bg-black rounded-md flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
-                                                </svg>
-                                            </div>
-                                            <span class="text-gray-600 ms-3">@</span>
-                                            <input type="text" placeholder="username" wire:model="tiktok_username"
-                                                value="{{ $tiktok_username }}"
-                                                class="flex-grow bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-500 dark:placeholder-gray-400 ps-0" />
-                                        </div>
-                                        @error('tiktok_username')
-                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <!-- Spotify -->
-                                <div>
-                                    <div
-                                        class="flex items-center px-2 rounded-md shadow-sm border border-gray-200  dark:border-gray-700 mt-3">
-                                        <div class="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
-                                            </svg>
-                                        </div>
-                                        <input type="text" wire:model="spotify_artist_link"
-                                            value="{{ $spotify_artist_link }}"
-                                            placeholder="Artist link (https://open.spotify.com/artist/...)"
-                                            class="flex-grow bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-500 dark:placeholder-gray-400" />
-                                    </div>
-                                    @error('spotify_artist_link')
-                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div> --}}
 
                             <div
                                 class="bg-gradient-to-br from-gray-50 to-white p-4 m-4 rounded-xl border border-gray-100 shadow-sm">
@@ -581,63 +442,13 @@
                     </div>
                 </div>
             </div>
-            <!-- Notifications -->
-            {{-- <div x-show="activeTab === 'notifications'"
-                class="max-w-8xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Notifications & Alerts</h2>
-                <p class="mt-4 text-gray-600 dark:text-gray-300">Manage your email and notification preferences.
-                </p>
-                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mt-6">
-                    <div class="w-full">
-                        <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Alerts</h1>
-                    </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300">Email </div>
-                </div>
-
-                <form wire:submit.prevent="notificationUpdate">
-                    @foreach ($this->alerts as $key => $alert)
-                        <div
-                            class="flex items-center py-3 ps-2 {{ $key % 2 == 1 ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
-                            <div class="w-full text-sm text-gray-800 dark:text-white">{{ $alert['name'] }}</div>
-                            <div class="mr-4">
-                                <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
-                                    {{ !user()->email_verified_at ? 'disabled' : '' }}
-                                    class="w-4 h-4 text-orange-600 border-gray-200 rounded focus:ring-orange-600 {{ !user()->email_verified_at ? 'cursor-not-allowed' : '' }}">
-                            </div>
-                        </div>
-                    @endforeach
-
-                    <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                        <x-gbutton variant="secondary" type="button"
-                            onclick="window.history.back()">Cancel</x-gbutton>
-
-                        <x-gbutton type="submit" variant="primary">
-                            <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
-                            <span wire:loading wire:target="saveProfile" class="flex items-center">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
-                    0 5.373 0 12h4zm2 5.291A7.962
-                    7.962 0 014 12H0c0 3.042 1.135
-                    5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                                Saving...
-                            </span>
-                        </x-gbutton>
-                    </div>
-
-                </form>
-            </div> --}}
-            <div class="p-6">
-                <!-- Header -->
-                <div x-show="activeTab === 'notifications'" class="mb-8">
+            <!-- Header -->
+            <div x-show="activeTab === 'notifications'" class="mb-8">
+                <div class="p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">
                         Notifications &amp; Alerts
                     </h2>
-                    <p class="text-gray-600">
+                    <p class="text-gray-600 mb-8">
                         Manage your email and notification preferences.
                     </p>
                     <!-- Alerts Section -->
@@ -648,177 +459,214 @@
                             <h3 class="text-lg font-bold text-gray-900">Alerts</h3>
                             <span class="text-sm font-semibold text-gray-600">Email</span>
                         </div>
-
-                        <!-- Alerts List -->
-                        <div class="space-y-1">
-                            <!-- Alert 1 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-white">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    New Repost Requests
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
+                        <form wire:submit.prevent="notificationUpdate">
+                            @foreach ($this->alerts as $key => $alert)
+                                <div
+                                    class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                                     <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
+                                        class="text-sm font-medium text-gray-900 dark:text-white">{{ $alert['name'] }}</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" wire:model="{{ $alert['email_key'] }}"
+                                            {{ !user()->email_verified_at ? 'disabled' : '' }} class="sr-only peer">
+                                        <div
+                                            class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-orange-500 transition-all">
+                                        </div>
+                                        <div
+                                            class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform peer-checked:translate-x-5">
+                                        </div>
+                                    </label>
+                                </div>
+                            @endforeach
+
+                            <div
+                                class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                                <x-gbutton variant="secondary" type="button"
+                                    onclick="window.history.back()">Cancel</x-gbutton>
+
+                                <x-gbutton type="submit" variant="primary">
+                                    <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
+                                    <span wire:loading wire:target="saveProfile" class="flex items-center">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
+                    0 5.373 0 12h4zm2 5.291A7.962
+                    7.962 0 014 12H0c0 3.042 1.135
+                    5.824 3 7.938l3-2.647z">
+                                            </path>
+                                        </svg>
+                                        Saving...
+                                    </span>
+                                </x-gbutton>
                             </div>
 
-                            <!-- Alert 2 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-gray-50/30">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Repost Requests Accepted
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-                            <!-- Alert 3 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-white">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Repost Requests Declined
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
+            <div x-show="activeTab === 'settings'" x-cloak class="p-6">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
+                    <p class="text-gray-600">Manage your account preferences and features.</p>
+                </div>
 
-                            <!-- Alert 4 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-gray-50/30">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Repost Requests Expired
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
+                <form wire:submit.prevent="settingsUpdate" method="POST">
+                    @csrf
+                    <div class="space-y-8">
+                        <!-- My Requests -->
+                        <div
+                            class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6">My requests</h3>
 
-                            <!-- Alert 5 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-white">
-                                <span
+                            <div class="space-y-1">
+                                <!-- Accept Direct Repost Requests -->
+                                <div
+                                    class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
+                                    {{-- <span
                                     class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Campaign Summary &amp; Finished Alert
+                                    Accept Direct repost requests
                                 </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
+                                @if (!user()->email_verified_at)
+                                        <p class="text-sm text-red-500">You must confirm your email address to accept
+                                            direct repost requests</p>
+                                    @endif --}}
+                                    <div>
+                                        <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
+                                        @if (!user()->email_verified_at)
+                                            <p class="text-sm text-red-500">You must confirm your email address to
+                                                accept
+                                                direct repost requests</p>
+                                        @endif
+                                    </div>
 
-                            <!-- Alert 6 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-gray-50/30">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Free Boost Award
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
+                                    <div class="flex items-center gap-6">
+                                        <label class="flex items-center gap-1">
+                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
+                                                value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
+                                                class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                            <span class="text-gray-600 dark:text-white">Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-1">
+                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
+                                                value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
+                                                class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                            <span class="text-gray-600 dark:text-white">No</span>
+                                        </label>
+                                    </div>
+                                    {{-- <div class="flex items-center gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="acceptRequests"
+                                                wire:model="accept_repost"
+                                                {{ user()->email_verified_at ? '' : 'disabled' }}
+                                                class="w-5 h-5 text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }} border-gray-300 focus:ring-2 focus:ring-orange-500/20"
+                                                checked>
+                                            <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="acceptRequests"
+                                                wire:model="accept_repost"
+                                                {{ user()->email_verified_at ? '' : 'disabled' }}
+                                                class="w-5 h-5 text-orange-500  border-gray-300 focus:ring-2 focus:ring-orange-500/20 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                            <span class="text-sm font-medium text-gray-700">No</span>
+                                        </label>
+                                    </div> --}}
+                                </div>
 
-                            <!-- Alert 7 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-white">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Reputation Changes
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
+                                <!-- Block Non-Matching Genres -->
+                                <div
+                                    class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group">
                                     <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
+                                        class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                        Block direct repost requests for tracks which do not match my profile genres
+                                    </span>
+                                    <div class="flex items-center gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="blockNonMatchingGenres"
+                                                class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
+                                            <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="blockNonMatchingGenres"
+                                                class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
+                                                checked>
+                                            <span class="text-sm font-medium text-gray-700">No</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-                            <!-- Alert 8 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-gray-50/30">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Account Inactivity Warning
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
+                        <!-- Additional Features -->
+                        <div
+                            class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6">Additional features</h3>
+
+                            <div class="space-y-1">
+                                <!-- Auto Free Boost -->
+                                <div
+                                    class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
+                                    <div class="flex items-center gap-2">
+                                        <span
+                                            class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                            Auto Free Boost
+                                        </span>
+                                        <span class="text-xs text-gray-400">(i)</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="autoFreeBoost"
+                                                class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
+                                                checked>
+                                            <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="autoFreeBoost"
+                                                class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
+                                            <span class="text-sm font-medium text-gray-700">No</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Enable Reactions -->
+                                <div
+                                    class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group">
                                     <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
+                                        class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                        Enable Reactions
+                                    </span>
+                                    <div class="flex items-center gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="enableReactions"
+                                                class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
+                                                checked>
+                                            <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="enableReactions"
+                                                class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
+                                            <span class="text-sm font-medium text-gray-700">No</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-                            <!-- Alert 9 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-white">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Marketing Communications
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
-
-                            <!-- Alert 10 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-gray-50/30">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Discussions
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </div>
-
-                            <!-- Alert 11 -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50/50 transition-all group bg-white">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Competitions
-                                </span>
-                                <button
-                                    class="toggle-btn relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out bg-gray-300 shadow-md">
-                                    <span
-                                        class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out"></span>
-                                </button>
+                        <!-- Subscription -->
+                        <div
+                            class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <h1 class="text-lg font-bold text-gray-900 mb-4">Subscription</h1>
+                            <div class="mflex items-center gap-3">
+                                <p class="text-sm text-gray-600">{{ userPlanName() }} Plan <a wire:navigate
+                                        href="{{ route('user.plans') }}"
+                                        class="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">Change</a>
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Buttons -->
-                    {{-- <div class="flex items-center justify-end mt-10 pt-8 border-t border-gray-200">
-                        <div class="flex gap-3">
-                            <x-gbutton variant="secondary" type="button"
-                                onclick="window.history.back()">Cancel</x-gbutton>
-                            <button
-                                class="px-7 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-orange-700 shadow-sm hover:shadow-md transition-all">
-                                Save Profile
-                            </button>
-                        </div>
-                    </div> --}}
-
+                    <!-- Footer Buttons -->
                     <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                         <x-gbutton variant="secondary" type="button"
                             onclick="window.history.back()">Cancel</x-gbutton>
@@ -840,337 +688,7 @@
                             </span>
                         </x-gbutton>
                     </div>
-                </div>
-            </div>
-
-
-            <!-- Settings Section -->
-            {{-- <div x-show="activeTab === 'settings'" x-cloak>
-                <div class="w-full max-w-8xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ">
-                    <form wire:submit.prevent="settingsUpdate" method="POST">
-                        @csrf
-                        <!-- Section: My Requests -->
-                        <div class="border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
-                            <h1 class="text-xl font-semibold text-gray-800 dark:text-white">My requests</h1>
-                        </div>
-
-                        <div class="space-y-6">
-                            <!-- Accept Direct Requests -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <div>
-                                    <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
-                                    @if (!user()->email_verified_at)
-                                        <p class="text-sm text-red-500">You must confirm your email address to accept
-                                            direct repost requests</p>
-                                    @endif
-                                </div>
-                                <div class="flex items-center gap-6">
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                            value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600 dark:text-white">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                            value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600 dark:text-white">No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Block Requests -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <div>
-                                    <p class="text-gray-700 dark:text-white">Block direct repost requests for tracks
-                                        which do not match
-                                        my
-                                        profile genres</p>
-                                </div>
-                                <div class="flex items-center gap-6">
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="blockRequests" wire:model="block_mismatch_genre"
-                                            value="1" class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">Yes</span>
-                                    </label>
-
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="blockRequests" wire:model="block_mismatch_genre"
-                                            value="0" class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">No</span>
-                                    </label>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- Additional Features -->
-                        <div
-                            class="border-b border-gray-200 dark:border-gray-700 datak:border-gray-700 py-6 mb-6 mt-6">
-                            <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Additional features</h1>
-                        </div>
-
-                        <div class="space-y-6">
-                            <!-- Auto Boost -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <div>
-                                    <p class="text-gray-700 dark:text-white">Auto Free Boost <span
-                                            class="text-gray-400 text-sm">(i)</span>
-                                    </p>
-                                </div>
-                                <div class="flex items-center gap-6">
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
-                                            {{ proUser() ? '' : 'disabled' }} value="1"
-                                            class="text-orange-500 focus:ring-orange-500 {{ proUser() ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600 dark:text-white">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="autoBoost" wire:model="auto_boost"
-                                            {{ proUser() ? '' : 'disabled' }} value="0"
-                                            class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Reactions -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                                <p class="text-gray-700 dark:text-white">Enable Reactions</p>
-                                <div class="flex items-center gap-6">
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="reactions" wire:model="enable_react"
-                                            value="1" class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="reactions" wire:model="enable_react"
-                                            value="0" class="text-orange-500 focus:ring-orange-500">
-                                        <span class="text-gray-600 dark:text-white">No</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Subscription -->
-                        <div class="border-b border-gray-200 dark:border-gray-700 py-6 mb-6 mt-6">
-                            <h1 class="text-xl font-semibold text-gray-800">Subscription</h1>
-                            <div class="mt-2 text-sm text-gray-600 dark:text-white">
-                                <p class="text-gray-700 dark:text-white">{{ userPlanName() }} Plan <a wire:navigate
-                                        href="{{ route('user.plans') }}"
-                                        class="text-orange-500 cursor-pointer hover:underline">Change</a></p>
-                            </div>
-                        </div>
-
-                        <div
-                            class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                            <x-gbutton variant="secondary" type="button"
-                                onclick="window.history.back()">Cancel</x-gbutton>
-
-                            <x-gbutton type="submit" variant="primary">
-                                <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
-                                <span wire:loading wire:target="saveProfile" class="flex items-center">
-                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                            stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
-                    0 5.373 0 12h4zm2 5.291A7.962
-                    7.962 0 014 12H0c0 3.042 1.135
-                    5.824 3 7.938l3-2.647z">
-                                        </path>
-                                    </svg>
-                                    Saving...
-                                </span>
-                            </x-gbutton>
-                        </div>
-
-                    </form>
-                </div>
-            </div> --}}
-
-            <div x-show="activeTab === 'settings'" x-cloak class="p-6">
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
-                    <p class="text-gray-600">Manage your account preferences and features.</p>
-                </div>
-
-                <div class="space-y-8">
-                    <!-- My Requests -->
-                    <div
-                        class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                        <h3 class="text-lg font-bold text-gray-900 mb-6">My requests</h3>
-
-                        <div class="space-y-1">
-                            <!-- Accept Direct Repost Requests -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
-                                {{-- <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Accept Direct repost requests
-                                </span>
-                                @if (!user()->email_verified_at)
-                                        <p class="text-sm text-red-500">You must confirm your email address to accept
-                                            direct repost requests</p>
-                                    @endif --}}
-                                <div>
-                                    <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
-                                    @if (!user()->email_verified_at)
-                                        <p class="text-sm text-red-500">You must confirm your email address to accept
-                                            direct repost requests</p>
-                                    @endif
-                                </div>
-
-                                {{-- <div class="flex items-center gap-6">
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                            value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600 dark:text-white">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-1">
-                                        <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                            value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-gray-600 dark:text-white">No</span>
-                                    </label>
-                                </div> --}}
-
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="acceptDirectRepost" wire:model="accept_repost"
-                                            value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="w-5 h-5 text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }} border-gray-300 focus:ring-2 focus:ring-orange-500/20"
-                                            checked>
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="acceptDirectRepost" wire:model="accept_repost"
-                                            value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="w-5 h-5 text-orange-500  border-gray-300 focus:ring-2 focus:ring-orange-500/20 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                        <span class="text-sm font-medium text-gray-700">No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Block Non-Matching Genres -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Block direct repost requests for tracks which do not match my profile genres
-                                </span>
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="blockNonMatchingGenres"
-                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="blockNonMatchingGenres"
-                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
-                                            checked>
-                                        <span class="text-sm font-medium text-gray-700">No</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Additional Features -->
-                    <div
-                        class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                        <h3 class="text-lg font-bold text-gray-900 mb-6">Additional features</h3>
-
-                        <div class="space-y-1">
-                            <!-- Auto Free Boost -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                        Auto Free Boost
-                                    </span>
-                                    <span class="text-xs text-gray-400">(i)</span>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="autoFreeBoost"
-                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
-                                            checked>
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="autoFreeBoost"
-                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
-                                        <span class="text-sm font-medium text-gray-700">No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Enable Reactions -->
-                            <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group">
-                                <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Enable Reactions
-                                </span>
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="enableReactions"
-                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
-                                            checked>
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="enableReactions"
-                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
-                                        <span class="text-sm font-medium text-gray-700">No</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Subscription -->
-                    <div
-                        class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                        <h1 class="text-lg font-bold text-gray-900 mb-4">Subscription</h1>
-                        <div class="mflex items-center gap-3">
-                            <p class="text-sm text-gray-600">{{ userPlanName() }} Plan <a wire:navigate
-                                    href="{{ route('user.plans') }}"
-                                    class="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">Change</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <!-- Footer Buttons -->
-
-
-                <div class="mt-8 flex justify-end space-x-4 border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <x-gbutton variant="secondary" type="button" onclick="window.history.back()">Cancel</x-gbutton>
-
-                    <x-gbutton type="submit" variant="primary">
-                        <span wire:loading.remove wire:target="saveProfile">Save Profile</span>
-                        <span wire:loading wire:target="saveProfile" class="flex items-center">
-                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0
-                    0 5.373 0 12h4zm2 5.291A7.962
-                    7.962 0 014 12H0c0 3.042 1.135
-                    5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            Saving...
-                        </span>
-                    </x-gbutton>
-                </div>
+                </form>
             </div>
 
 
@@ -1392,7 +910,7 @@
                                                 for Premium Plan</span></td>
                                         {{-- <td class="px-8 py-5"><span class="text-sm text-gray-700">{{ $credit->amount }}</span></td>
                                                 <span class="text-sm text-gray-600">Credits</span> --}}
-                                                <td class="px-8 py-5">
+                                        <td class="px-8 py-5">
                                             <div class="flex items-center gap-2">
                                                 <div
                                                     class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
@@ -1522,26 +1040,5 @@
             @endif
         </div>
     </div>
-
-    <script>
-        document.querySelectorAll('.toggle-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const circle = button.querySelector('span');
-                button.classList.toggle('active');
-
-                if (button.classList.contains('active')) {
-                    // ON state
-                    button.classList.remove('bg-gray-300');
-                    button.classList.add('bg-gradient-to-r', 'from-orange-500', 'to-orange-600');
-                    circle.style.transform = 'translateX(24px)'; // moves right
-                } else {
-                    // OFF state
-                    button.classList.remove('bg-gradient-to-r', 'from-orange-500', 'to-orange-600');
-                    button.classList.add('bg-gray-300');
-                    circle.style.transform = 'translateX(0px)'; // moves left
-                }
-            });
-        });
-    </script>
 
 </section>
