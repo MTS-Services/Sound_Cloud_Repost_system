@@ -24,12 +24,12 @@
         <!-- Header -->
         <div class="text-center mb-16">
             <div
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/10 to-orange-400/10 border border-orange-500/20 mb-6">
-                <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#ff5500]/10 to-[#ff8833]/10 border border-[#ff5500]/20 mb-6">
+                <svg class="w-4 h-4 text-[rgb(255,85,0)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
-                <span class="text-sm font-medium text-orange-500">Platform Features</span>
+                <span class="text-sm font-medium text-[rgb(255,85,0)]">Platform Features</span>
             </div>
 
             <h1 class="text-6xl font-bold text-white mb-4">
@@ -47,8 +47,8 @@
             <div
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
-                    class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="w-16 h-16 rounded-xl bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                     </svg>
@@ -68,7 +68,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
@@ -87,7 +87,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -106,7 +106,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
@@ -125,7 +125,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
@@ -144,7 +144,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
@@ -163,7 +163,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
@@ -183,7 +183,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
@@ -202,7 +202,7 @@
                 class="group rounded-2xl bg-zinc-900/50 border border-zinc-800/50 p-6 hover:border-zinc-700/50 transition-all duration-300 hover:scale-105">
                 <div
                     class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -239,7 +239,7 @@
                 <div class="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                     <div class="flex items-center gap-3 p-4 rounded-xl bg-black/30 border border-orange-500/20">
                         <div
-                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -251,7 +251,7 @@
 
                     <div class="flex items-center gap-3 p-4 rounded-xl bg-black/30 border border-orange-500/20">
                         <div
-                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -263,7 +263,7 @@
 
                     <div class="flex items-center gap-3 p-4 rounded-xl bg-black/30 border border-orange-500/20">
                         <div
-                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -275,7 +275,7 @@
 
                     <div class="flex items-center gap-3 p-4 rounded-xl bg-black/30 border border-orange-500/20">
                         <div
-                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center flex-shrink-0">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -293,7 +293,7 @@
             <div
                 class="rounded-2xl bg-gradient-to-br from-zinc-900/80 to-zinc-800/50 border border-zinc-800/50 p-8 text-center">
                 <div
-                    class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mx-auto mb-4">
+                    class="w-16 h-16 rounded-full bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -306,7 +306,7 @@
             <div
                 class="rounded-2xl bg-gradient-to-br from-zinc-900/80 to-zinc-800/50 border border-zinc-800/50 p-8 text-center">
                 <div
-                    class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mx-auto mb-4">
+                    class="w-16 h-16 rounded-full bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
@@ -319,7 +319,7 @@
             <div
                 class="rounded-2xl bg-gradient-to-br from-zinc-900/80 to-zinc-800/50 border border-zinc-800/50 p-8 text-center">
                 <div
-                    class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-400 flex items-center justify-center mx-auto mb-4">
+                    class="w-16 h-16 rounded-full bg-gradient-to-br from-[#ff5500] to-[#ff8833] flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -331,7 +331,7 @@
         </div>
 
         <!-- CTA Section -->
-        <div class="rounded-3xl bg-gradient-to-r from-orange-500 to-orange-400 p-12 text-center">
+        <div class="rounded-3xl bg-gradient-to-r from-[#ff5500] to-[#ff8833] p-12 text-center">
             <h2 class="text-4xl font-bold text-white mb-4">
                 Ready to grow your music career?
             </h2>
@@ -340,7 +340,7 @@
                 fanbase organically
             </p>
             <button
-                class="px-8 py-4 rounded-xl text-white font-semibold hover:bg-zinc-900 transition-all duration-300 hover:scale-105">
+                class="px-8 py-4 rounded-xl bg-black text-white font-semibold hover:bg-zinc-900 transition-all duration-300 hover:scale-105">
                 Get Started Today
             </button>
         </div>
