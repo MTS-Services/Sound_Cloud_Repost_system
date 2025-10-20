@@ -56,7 +56,7 @@
             </div>
 
             <div>
-                <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                <h3 class="dark:text-white text-lg font-bold mb-4">Quick Links</h3>
                 <ul class="space-y-2">
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
                     <li><a wire:navigate href="{{ route('f.features') }}" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
@@ -66,7 +66,7 @@
             </div>
 
             <div>
-                <h3 class="text-lg font-bold mb-4">Legal</h3>
+                <h3 class="dark:text-white text-lg font-bold mb-4">Legal</h3>
                 <ul class="space-y-2">
                     <li><a wire:navigate href="{{ route('f.terms-and-conditions') }}" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
                     </li>
@@ -79,7 +79,7 @@
             </div>
 
             <div>
-                <h3 class="text-lg font-bold mb-4">Contact</h3>
+                <h3 class="dark:text-white text-lg font-bold mb-4">Contact</h3>
                 <ul class="space-y-2">
                     <li class="text-gray-400">support@repostchain.com</li>
                     <li><a wire:navigate href="{{ route('f.contact-us') }}" class="text-gray-400 hover:text-white transition-colors">Contact Form</a></li>
