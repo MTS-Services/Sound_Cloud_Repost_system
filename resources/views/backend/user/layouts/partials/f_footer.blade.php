@@ -59,18 +59,18 @@
                 <h3 class="text-lg font-bold mb-4">Quick Links</h3>
                 <ul class="space-y-2">
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                    <li><a wire:navigate href="{{ route('f.features') }}" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
                     {{-- <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li> --}}
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+                    <li><a wire:navigate href="{{ route('f.faq') }}" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
                 </ul>
             </div>
 
             <div>
                 <h3 class="text-lg font-bold mb-4">Legal</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
+                    <li><a wire:navigate href="{{ route('f.terms-and-conditions') }}" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
                     </li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
+                    <li><a wire:navigate href="{{ route('f.privacy-policy') }}" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
                     </li>
                     <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie Policy</a>
                     </li>
@@ -82,8 +82,8 @@
                 <h3 class="text-lg font-bold mb-4">Contact</h3>
                 <ul class="space-y-2">
                     <li class="text-gray-400">support@repostchain.com</li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Form</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                    <li><a wire:navigate href="{{ route('f.contact-us') }}" class="text-gray-400 hover:text-white transition-colors">Contact Form</a></li>
+                    <li><a wire:navigate href="{{ route('f.help') }}" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
                 </ul>
             </div>
         </div>

@@ -23,7 +23,7 @@
             <a href="{{ route('f.plan') }}" wire:navigate class="text-gray-300 hover:text-white transition-colors">Plan</a>
             <a href="{{ route('f.landing') }}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
             <a href="{{ route('f.landing') }}#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
-            <a href="{{ route('f.landing') }}#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
+            <a href="{{ route('f.features') }}" class="text-gray-300 hover:text-white transition-colors">Features</a>
             <a href="{{ route('f.landing') }}#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
 
 
