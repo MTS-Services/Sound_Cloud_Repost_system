@@ -1,3 +1,305 @@
  <section>
-         <section class="py-24 px-8 relative overflow-hidden bg-gradient-to-b from-black via-[#ff5500]/5 to-black"><div class="max-w-[1400px] mx-auto relative"><div class="grid lg:grid-cols-2 gap-12 items-center"><div class="text-left"><div class="inline-flex items-center gap-2 bg-[#ff5500]/10 border border-[#ff5500]/30 px-4 py-2 rounded-full mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles w-4 h-4 text-[#ff5500]"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg><span class="text-[#ff5500] text-sm font-semibold">Partner Spotlight</span></div><h2 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">Supercharge Your Music with<br><span class="text-[#ff5500]">SoundCloud Pro</span></h2><p class="text-lg text-zinc-300 mb-8 leading-relaxed">SoundCloud Pro gives you the tools to take your music career to the next level. Get advanced stats, unlimited uploads, and more control over your content.</p><div class="space-y-4 mb-8"><div class="flex items-start gap-3"><div class="bg-[#ff5500]/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart3 w-5 h-5 text-[#ff5500]"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg></div><div><h4 class="text-white font-semibold mb-1">Advanced Analytics</h4><p class="text-zinc-400 text-sm">Track your audience with detailed insights and performance metrics</p></div></div><div class="flex items-start gap-3"><div class="bg-[#ff5500]/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music2 w-5 h-5 text-[#ff5500]"><circle cx="8" cy="18" r="4"></circle><path d="M12 18V2l7 4"></path></svg></div><div><h4 class="text-white font-semibold mb-1">Unlimited Uploads</h4><p class="text-zinc-400 text-sm">Upload as much music as you want with no storage limits</p></div></div><div class="flex items-start gap-3"><div class="bg-[#ff5500]/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles w-5 h-5 text-[#ff5500]"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M19 17v4"></path><path d="M3 5h4"></path><path d="M17 19h4"></path></svg></div><div><h4 class="text-white font-semibold mb-1">Spotlight Features</h4><p class="text-zinc-400 text-sm">Pin your best tracks and get featured placement on your profile</p></div></div></div><a href="https://checkout.soundcloud.com/pro" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-[#ff5500]/30">Upgrade to SoundCloud Pro<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-5 h-5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a><p class="text-sm text-zinc-500 mt-4">Special offer for RepostChain users • Start your free trial today</p></div><div class="relative lg:flex hidden justify-end"><div class="relative w-full max-w-lg h-[420px] perspective-1000"><div class="relative w-full h-full cursor-pointer" style="transform-style: preserve-3d; transition: transform 0.8s ease-in-out; transform: rotateY(0deg);"><div class="absolute inset-0" style="backface-visibility: hidden;"><div class="bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-6 rounded-3xl border border-[#ff5500]/30 shadow-2xl shadow-[#ff5500]/20 h-full relative"><div class="absolute top-3 right-3 bg-[#ff5500] text-white px-3 py-1 rounded-full text-[10px] font-bold">MOST POPULAR</div><div class="bg-[#ff5500]/5 rounded-2xl p-5 mb-3 border border-[#ff5500]/10"><div class="flex items-center justify-between mb-4"><div><h3 class="text-2xl font-bold text-white mb-1">Artist Pro</h3><p class="text-zinc-400 text-xs">Unlimited access to all tools</p></div><div class="bg-[#ff5500] text-white px-3 py-1.5 rounded-lg font-bold text-xl">$8.25<span class="text-xs font-normal">/mo</span></div></div><div class="space-y-2"><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload w-2.5 h-2.5 text-[#ff5500]"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg></div><span class="text-xs">Unlimited uploads</span></div><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-2.5 h-2.5 text-[#ff5500]"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div><span class="text-xs">Boost tracks unlimited</span></div><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart3 w-2.5 h-2.5 text-[#ff5500]"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg></div><span class="text-xs">Distribute &amp; monetize tracks</span></div><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat w-2.5 h-2.5 text-[#ff5500]"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg></div><span class="text-xs">Replace tracks anytime</span></div></div></div><div class="text-center mb-2"><a href="https://checkout.soundcloud.com/pro" target="_blank" rel="noopener noreferrer" class="inline-block bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get Started</a></div><div class="text-center"><div class="inline-flex items-center gap-2 text-[#ff5500] text-[10px] font-semibold"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-3 h-3"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg>Click to see other plan</div></div></div></div><div class="absolute inset-0" style="backface-visibility: hidden; transform: rotateY(180deg);"><div class="bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-6 rounded-3xl border border-blue-500/30 shadow-2xl shadow-blue-500/20 h-full"><div class="bg-blue-500/5 rounded-2xl p-5 mb-3 border border-blue-500/10"><div class="flex items-center justify-between mb-4"><div><h3 class="text-2xl font-bold text-white mb-1">Artist</h3><p class="text-zinc-400 text-xs">Essential artist tools</p></div><div class="bg-blue-500 text-white px-3 py-1.5 rounded-lg font-bold text-xl">$3.25<span class="text-xs font-normal">/mo</span></div></div><div class="space-y-2"><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-upload w-2.5 h-2.5 text-blue-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg></div><span class="text-xs">3 hours of uploads</span></div><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-2.5 h-2.5 text-blue-500"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div><span class="text-xs">Boost tracks (2x per month)</span></div><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart3 w-2.5 h-2.5 text-blue-500"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg></div><span class="text-xs">Distribute &amp; monetize tracks</span></div><div class="flex items-center gap-2 text-zinc-300"><div class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat w-2.5 h-2.5 text-blue-500"><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg></div><span class="text-xs">Replace tracks (3x per month)</span></div></div></div><div class="text-center mb-2"><a href="https://checkout.soundcloud.com/artist" target="_blank" rel="noopener noreferrer" class="inline-block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get Started</a></div><div class="text-center"><div class="inline-flex items-center gap-2 text-blue-500 text-[10px] font-semibold"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-3 h-3"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg>Click to see other plan</div></div></div></div></div><div class="absolute -bottom-6 -right-6 w-64 h-64 bg-[#ff5500]/10 rounded-full blur-3xl pointer-events-none"></div><div class="absolute -top-6 -left-6 w-48 h-48 bg-orange-600/10 rounded-full blur-2xl pointer-events-none"></div></div></div></div></div></section>    
-</section>
+     <section class="py-24 px-8 relative overflow-hidden bg-gradient-to-b from-black via-[#ff5500]/5 to-black">
+         <div class="max-w-[1400px] mx-auto relative">
+             <div class="grid lg:grid-cols-2 gap-12 items-center">
+                 <div class="text-left">
+                     <div
+                         class="inline-flex items-center gap-2 bg-[#ff5500]/10 border border-[#ff5500]/30 px-4 py-2 rounded-full mb-6">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round" class="lucide lucide-sparkles w-4 h-4 text-[#ff5500]">
+                             <path
+                                 d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z">
+                             </path>
+                             <path d="M5 3v4"></path>
+                             <path d="M19 17v4"></path>
+                             <path d="M3 5h4"></path>
+                             <path d="M17 19h4"></path>
+                         </svg><span class="text-[#ff5500] text-sm font-semibold">Partner Spotlight</span>
+                     </div>
+                     <h2 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">Supercharge Your Music
+                         with<br><span class="text-[#ff5500]">SoundCloud Pro</span></h2>
+                     <p class="text-lg text-zinc-300 mb-8 leading-relaxed">SoundCloud Pro gives you the tools to take
+                         your music career to the next level. Get advanced stats, unlimited uploads, and more control
+                         over your content.</p>
+                     <div class="space-y-4 mb-8">
+                         <div class="flex items-start gap-3">
+                             <div
+                                 class="bg-[#ff5500]/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-bar-chart3 w-5 h-5 text-[#ff5500]">
+                                     <path d="M3 3v18h18"></path>
+                                     <path d="M18 17V9"></path>
+                                     <path d="M13 17V5"></path>
+                                     <path d="M8 17v-3"></path>
+                                 </svg>
+                             </div>
+                             <div>
+                                 <h4 class="text-white font-semibold mb-1">Advanced Analytics</h4>
+                                 <p class="text-zinc-400 text-sm">Track your audience with detailed insights and
+                                     performance metrics</p>
+                             </div>
+                         </div>
+                         <div class="flex items-start gap-3">
+                             <div
+                                 class="bg-[#ff5500]/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-music2 w-5 h-5 text-[#ff5500]">
+                                     <circle cx="8" cy="18" r="4"></circle>
+                                     <path d="M12 18V2l7 4"></path>
+                                 </svg>
+                             </div>
+                             <div>
+                                 <h4 class="text-white font-semibold mb-1">Unlimited Uploads</h4>
+                                 <p class="text-zinc-400 text-sm">Upload as much music as you want with no storage
+                                     limits</p>
+                             </div>
+                         </div>
+                         <div class="flex items-start gap-3">
+                             <div
+                                 class="bg-[#ff5500]/10 w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     class="lucide lucide-sparkles w-5 h-5 text-[#ff5500]">
+                                     <path
+                                         d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z">
+                                     </path>
+                                     <path d="M5 3v4"></path>
+                                     <path d="M19 17v4"></path>
+                                     <path d="M3 5h4"></path>
+                                     <path d="M17 19h4"></path>
+                                 </svg>
+                             </div>
+                             <div>
+                                 <h4 class="text-white font-semibold mb-1">Spotlight Features</h4>
+                                 <p class="text-zinc-400 text-sm">Pin your best tracks and get featured placement on
+                                     your profile</p>
+                             </div>
+                         </div>
+                     </div><a href="https://checkout.soundcloud.com/pro" target="_blank" rel="noopener noreferrer"
+                         class="inline-flex items-center gap-2 bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-[#ff5500]/30">Upgrade
+                         to SoundCloud Pro<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-5 h-5">
+                             <path d="M5 12h14"></path>
+                             <path d="m12 5 7 7-7 7"></path>
+                         </svg></a>
+                     <p class="text-sm text-zinc-500 mt-4">Special offer for RepostChain users • Start your free trial
+                         today</p>
+                 </div>
+                 <div class="relative lg:flex hidden justify-end">
+                     <div class="relative w-full max-w-lg h-[420px] perspective-1000">
+                         <div class="relative w-full h-full cursor-pointer"
+                             style="transform-style: preserve-3d; transition: transform 0.8s ease-in-out; transform: rotateY(0deg);">
+                             <div class="absolute inset-0" style="backface-visibility: hidden;">
+                                 <div
+                                     class="bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-6 rounded-3xl border border-[#ff5500]/30 shadow-2xl shadow-[#ff5500]/20 h-full relative">
+                                     <div
+                                         class="absolute top-3 right-3 bg-[#ff5500] text-white px-3 py-1 rounded-full text-[10px] font-bold">
+                                         MOST POPULAR</div>
+                                     <div class="bg-[#ff5500]/5 rounded-2xl p-5 mb-3 border border-[#ff5500]/10">
+                                         <div class="flex items-center justify-between mb-4">
+                                             <div>
+                                                 <h3 class="text-2xl font-bold text-white mb-1">Artist Pro</h3>
+                                                 <p class="text-zinc-400 text-xs">Unlimited access to all tools</p>
+                                             </div>
+                                             <div
+                                                 class="bg-[#ff5500] text-white px-3 py-1.5 rounded-lg font-bold text-xl">
+                                                 $8.25<span class="text-xs font-normal">/mo</span></div>
+                                         </div>
+                                         <div class="space-y-2">
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-upload w-2.5 h-2.5 text-[#ff5500]">
+                                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                         <polyline points="17 8 12 3 7 8"></polyline>
+                                                         <line x1="12" x2="12" y1="3"
+                                                             y2="15"></line>
+                                                     </svg>
+                                                 </div><span class="text-xs">Unlimited uploads</span>
+                                             </div>
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-zap w-2.5 h-2.5 text-[#ff5500]">
+                                                         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2">
+                                                         </polygon>
+                                                     </svg>
+                                                 </div><span class="text-xs">Boost tracks unlimited</span>
+                                             </div>
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-bar-chart3 w-2.5 h-2.5 text-[#ff5500]">
+                                                         <path d="M3 3v18h18"></path>
+                                                         <path d="M18 17V9"></path>
+                                                         <path d="M13 17V5"></path>
+                                                         <path d="M8 17v-3"></path>
+                                                     </svg>
+                                                 </div><span class="text-xs">Distribute &amp; monetize
+                                                     tracks</span>
+                                             </div>
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-[#ff5500]/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-repeat w-2.5 h-2.5 text-[#ff5500]">
+                                                         <path d="m17 2 4 4-4 4"></path>
+                                                         <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+                                                         <path d="m7 22-4-4 4-4"></path>
+                                                         <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+                                                     </svg>
+                                                 </div><span class="text-xs">Replace tracks anytime</span>
+                                             </div>
+                                         </div>
+                                     </div>
+                                     <div class="text-center mb-2"><a href="https://checkout.soundcloud.com/pro"
+                                             target="_blank" rel="noopener noreferrer"
+                                             class="inline-block bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get
+                                             Started</a></div>
+                                     <div class="text-center">
+                                         <div
+                                             class="inline-flex items-center gap-2 text-[#ff5500] text-[10px] font-semibold">
+                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-shield w-3 h-3">
+                                                 <path
+                                                     d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                                 </path>
+                                             </svg>Click to see other plan
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="absolute inset-0"
+                                 style="backface-visibility: hidden; transform: rotateY(180deg);">
+                                 <div
+                                     class="bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-6 rounded-3xl border border-blue-500/30 shadow-2xl shadow-blue-500/20 h-full">
+                                     <div class="bg-blue-500/5 rounded-2xl p-5 mb-3 border border-blue-500/10">
+                                         <div class="flex items-center justify-between mb-4">
+                                             <div>
+                                                 <h3 class="text-2xl font-bold text-white mb-1">Artist</h3>
+                                                 <p class="text-zinc-400 text-xs">Essential artist tools</p>
+                                             </div>
+                                             <div
+                                                 class="bg-blue-500 text-white px-3 py-1.5 rounded-lg font-bold text-xl">
+                                                 $3.25<span class="text-xs font-normal">/mo</span></div>
+                                         </div>
+                                         <div class="space-y-2">
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-upload w-2.5 h-2.5 text-blue-500">
+                                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                         <polyline points="17 8 12 3 7 8"></polyline>
+                                                         <line x1="12" x2="12" y1="3"
+                                                             y2="15"></line>
+                                                     </svg>
+                                                 </div><span class="text-xs">3 hours of uploads</span>
+                                             </div>
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-zap w-2.5 h-2.5 text-blue-500">
+                                                         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2">
+                                                         </polygon>
+                                                     </svg>
+                                                 </div><span class="text-xs">Boost tracks (2x per
+                                                     month)</span>
+                                             </div>
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-bar-chart3 w-2.5 h-2.5 text-blue-500">
+                                                         <path d="M3 3v18h18"></path>
+                                                         <path d="M18 17V9"></path>
+                                                         <path d="M13 17V5"></path>
+                                                         <path d="M8 17v-3"></path>
+                                                     </svg>
+                                                 </div><span class="text-xs">Distribute &amp; monetize
+                                                     tracks</span>
+                                             </div>
+                                             <div class="flex items-center gap-2 text-zinc-300">
+                                                 <div
+                                                     class="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                         height="24" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2"
+                                                         stroke-linecap="round" stroke-linejoin="round"
+                                                         class="lucide lucide-repeat w-2.5 h-2.5 text-blue-500">
+                                                         <path d="m17 2 4 4-4 4"></path>
+                                                         <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+                                                         <path d="m7 22-4-4 4-4"></path>
+                                                         <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+                                                     </svg>
+                                                 </div><span class="text-xs">Replace tracks (3x per
+                                                     month)</span>
+                                             </div>
+                                         </div>
+                                     </div>
+                                     <div class="text-center mb-2"><a href="https://checkout.soundcloud.com/artist"
+                                             target="_blank" rel="noopener noreferrer"
+                                             class="inline-block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get
+                                             Started</a></div>
+                                     <div class="text-center">
+                                         <div
+                                             class="inline-flex items-center gap-2 text-blue-500 text-[10px] font-semibold">
+                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                 class="lucide lucide-shield w-3 h-3">
+                                                 <path
+                                                     d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                                 </path>
+                                             </svg>Click to see other plan
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div
+                             class="absolute -bottom-6 -right-6 w-64 h-64 bg-[#ff5500]/10 rounded-full blur-3xl pointer-events-none">
+                         </div>
+                         <div
+                             class="absolute -top-6 -left-6 w-48 h-48 bg-orange-600/10 rounded-full blur-2xl pointer-events-none">
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </section>
+ </section>
