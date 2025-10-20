@@ -26,7 +26,7 @@
     </style>
 @endpush
 <div class="bg-dark-darker">
-    <div class="fixed inset-0 bg-gradient-to-br from-black via-zinc-900 to-black -z-10"></div>
+    {{-- <div class="fixed inset-0 bg-gradient-to-br from-black via-zinc-900 to-black -z-10"></div>
     <nav class="fixed top-0 w-full bg-black/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
         <div class="mx-auto px-6 py-4">
             <div class="flex items-center justify-center relative">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </nav> --}}
 
     <!-- Main Content -->
     <div class="container mx-auto px-6 pt-32 pb-20 max-w-5xl">

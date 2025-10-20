@@ -47,7 +47,7 @@
     </style>
 @endpush
 <div class="bg-black">
-    <div class="fixed inset-0 bg-gradient-to-br from-black via-zinc-900 to-black -z-10"></div>
+    {{-- <div class="fixed inset-0 bg-gradient-to-br from-black via-zinc-900 to-black -z-10"></div>
 
     <nav class="fixed top-0 w-full bg-zinc-900/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
         <div class="mx-auto px-6 py-4">
@@ -68,7 +68,7 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </nav> --}}
 
     <div class="pt-20">
         <div class="bg-gradient-to-br from-zinc-900/80 to-zinc-800/50 border-b border-zinc-800/50">

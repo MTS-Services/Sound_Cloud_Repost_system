@@ -25,7 +25,7 @@
 @endpush
 <div class="bg-black">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-black/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
+    {{-- <nav class="fixed top-0 w-full bg-black/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
         <div class="mx-auto px-6 py-4">
             <div class="flex items-center justify-center relative">
                 <a wire:navigate href="{{ route('f.landing') }}"
@@ -44,7 +44,7 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </nav> --}}
 
     <!-- Main Content -->
     <div class="container mx-auto px-6 pt-32 pb-20 max-w-6xl">

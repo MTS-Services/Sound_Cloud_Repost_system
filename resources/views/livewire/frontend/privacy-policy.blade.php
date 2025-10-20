@@ -1,6 +1,6 @@
 <div>
     <div class="min-h-screen bg-black">
-        <nav class="fixed top-0 w-full bg-black/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
+        {{-- <nav class="fixed top-0 w-full bg-black/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
             <div class="container mx-auto px-6 py-4">
                 <div class="flex items-center justify-center">
                     <a wire:navigate href="{{ route('f.landing') }}"
@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-        </nav>
+        </nav> --}}
 
         <div class="container mx-auto px-6 pt-32 pb-20 max-w-4xl">
             <h1 class="text-5xl font-bold text-white mb-4">Privacy Policy</h1>
