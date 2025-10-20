@@ -5,21 +5,18 @@ namespace App\Services\SoundCloud;
 use App\Models\Playlist;
 use App\Models\PlaylistTrack;
 use App\Models\Product;
-use App\Models\Repost;
-use App\Models\User;
-use App\Models\UserInformation;
 use App\Models\Subscription;
 use App\Models\Track;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
+use App\Models\UserInformation;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SoundCloudService
 {
-
     protected FollowerAnalyzer $followerAnalyzer;
 
     public function __construct(FollowerAnalyzer $followerAnalyzer)
@@ -27,36 +24,36 @@ class SoundCloudService
         $this->followerAnalyzer = $followerAnalyzer;
     }
 
-
     /* ============================================================================ *
      *** SOUNDCLOUD API REQUESTS AND CONFIGARATIONS ***
      * ============================================================================ */
 
     /**
      * The base URL for the SoundCloud API.
-     *
-     * @var string
      */
     protected string $baseUrl = 'https://api.soundcloud.com';
-    protected string $oauthUrl = 'https://api.soundcloud.com';
-    protected string $resolverUrl = 'https://api.soundcloud.com/resolve';
 
+    protected string $oauthUrl = 'https://api.soundcloud.com';
+
+    protected string $resolverUrl = 'https://api.soundcloud.com/resolve';
 
     /**
      * Makes an authenticated GET API request to SoundCloud, with pagination.
      *
      * This method can be used to make any type of GET API request to SoundCloud.
      *
-     * @param string $endpoint The API endpoint path (e.g., '/me/tracks').
-     * @param string $errorMessage A user-friendly error message.
-     * @param array $options Request options (e.g., 'query' for GET, 'json' for POST).
+     * @param  string  $endpoint  The API endpoint path (e.g., '/me/tracks').
+     * @param  string  $errorMessage  A user-friendly error message.
+     * @param  array  $options  Request options (e.g., 'query' for GET, 'json' for POST).
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function makeGetApiRequest(string $endpoint, string $errorMessage, ?array $options = null, ?User $authUser = null): array
     {
         $options['linked_partitioning'] = true;
         $authUser = $authUser ?? user();
+
         return $this->makeApiRequestWithPagination(user: $authUser, method: 'get', endpoint: $endpoint, errorMessage: $errorMessage, options: $options);
     }
 
@@ -65,11 +62,12 @@ class SoundCloudService
      *
      * This method can be used to make any type of API request to SoundCloud, such as GET, POST, PUT, etc.
      *
-     * @param string $method The HTTP method to use (e.g., 'get', 'post', 'put').
-     * @param string $endpoint The API endpoint path (e.g., '/me/tracks').
-     * @param array $options Request options (e.g., 'query' for GET, 'json' for POST).
-     * @param string $errorMessage A user-friendly error message to display if the request fails.
+     * @param  string  $method  The HTTP method to use (e.g., 'get', 'post', 'put').
+     * @param  string  $endpoint  The API endpoint path (e.g., '/me/tracks').
+     * @param  array  $options  Request options (e.g., 'query' for GET, 'json' for POST).
+     * @param  string  $errorMessage  A user-friendly error message to display if the request fails.
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function makeOtherApiRequest(string $method, string $endpoint, array $options, string $errorMessage): array
@@ -80,13 +78,14 @@ class SoundCloudService
     /**
      * Makes an authenticated API request to SoundCloud, with pagination.
      *
-     * @param User $user The user model instance.
-     * @param string $method The HTTP method (e.g., 'get', 'post', 'put').
-     * @param string $endpoint The API endpoint path (e.g., '/me/tracks').
-     * @param string $errorMessage A user-friendly error message.
-     * @param array $options Request options (e.g., 'query' for GET, 'json' for POST).
-     * @param int|null $maxPages The maximum number of pages to fetch (default is null, which means no limit).
+     * @param  User  $user  The user model instance.
+     * @param  string  $method  The HTTP method (e.g., 'get', 'post', 'put').
+     * @param  string  $endpoint  The API endpoint path (e.g., '/me/tracks').
+     * @param  string  $errorMessage  A user-friendly error message.
+     * @param  array  $options  Request options (e.g., 'query' for GET, 'json' for POST).
+     * @param  int|null  $maxPages  The maximum number of pages to fetch (default is null, which means no limit).
      * @return array The JSON response from the API, including pagination information.
+     *
      * @throws Exception
      */
     protected function makeApiRequestWithPagination(User $user, string $method, string $endpoint, string $errorMessage, array $options, ?int $maxPages = null): array
@@ -100,9 +99,9 @@ class SoundCloudService
         $pageCount = 0;
 
         // Add query parameters to the initial URL if options are provided
-        if (!empty($options) && $method === 'get') {
+        if (! empty($options) && $method === 'get') {
             $queryString = http_build_query($options);
-            $nextUrl .= (strpos($nextUrl, '?') === false ? '?' : '&') . $queryString;
+            $nextUrl .= (strpos($nextUrl, '?') === false ? '?' : '&').$queryString;
         }
 
         do {
@@ -116,7 +115,7 @@ class SoundCloudService
             try {
                 // Parse the URL to separate base URL from query parameters
                 $urlParts = parse_url($nextUrl);
-                $requestUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . $urlParts['path'];
+                $requestUrl = $urlParts['scheme'].'://'.$urlParts['host'].$urlParts['path'];
                 $queryParams = [];
 
                 if (isset($urlParts['query'])) {
@@ -167,7 +166,7 @@ class SoundCloudService
                         'page_count' => $pageCount,
                     ]);
 
-                    throw new Exception("{$errorMessage} Status: " . $response->status());
+                    throw new Exception("{$errorMessage} Status: ".$response->status());
                 }
             } catch (Exception $e) {
                 Log::error("SoundCloud API Error in {$endpoint}", [
@@ -185,17 +184,17 @@ class SoundCloudService
         return [
             'collection' => $allData,
             'total_count' => count($allData),
-            'pages_fetched' => $pageCount
+            'pages_fetched' => $pageCount,
         ];
     }
 
     /**
      * Makes a SoundCloud API request to resolve a URL.
      *
-     * @param string $endpoint The URL to resolve.
-     * @param string $errorMessage A user-friendly error message.
-     *
+     * @param  string  $endpoint  The URL to resolve.
+     * @param  string  $errorMessage  A user-friendly error message.
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function makeResolveApiRequest(string $endpoint, string $errorMessage)
@@ -203,7 +202,7 @@ class SoundCloudService
         $this->ensureSoundCloudConnection(user: user());
 
         try {
-            $response = Http::withToken(user()->token)->get($this->resolverUrl . '?url=' . $endpoint);
+            $response = Http::withToken(user()->token)->get($this->resolverUrl.'?url='.$endpoint);
             if ($response->successful()) {
                 return $response->json();
             }
@@ -214,7 +213,7 @@ class SoundCloudService
                 'errorMessage' => $errorMessage ?? 'Failed to resolve URL',
             ]);
 
-            throw new Exception("{$errorMessage} Status: " . $response->status());
+            throw new Exception("{$errorMessage} Status: ".$response->status());
         } catch (Exception $e) {
             Log::error("SoundCloud Resolve API Error in {$endpoint}", [
                 'error' => $e->getMessage(),
@@ -227,7 +226,8 @@ class SoundCloudService
      * Refreshes the user's access token if it has expired.
      * This method is called automatically before every API request.
      *
-     * @param User $user The user model instance.
+     * @param  User  $user  The user model instance.
+     *
      * @throws Exception
      */
     public function refreshUserTokenIfNeeded(User $user): void
@@ -240,7 +240,7 @@ class SoundCloudService
         // If the token is null, has no expiration time, or is past its expiration, we need to refresh.
         if (is_null($user->token) || is_null($expirationTime) || $expirationTime->isPast()) {
 
-            Log::info('SoundCloud token expired or missing. Attempting to refresh for user ' . $user->urn);
+            Log::info('SoundCloud token expired or missing. Attempting to refresh for user '.$user->urn);
 
             if (is_null($user->refresh_token)) {
                 Log::warning('Attempted to refresh token without a refresh token available', [
@@ -251,19 +251,20 @@ class SoundCloudService
 
             try {
                 $response = Http::asForm()->post("{$this->oauthUrl}/oauth2/token", [
+
                     'grant_type' => 'refresh_token',
                     'client_id' => config('services.soundcloud.client_id'),
                     'client_secret' => config('services.soundcloud.client_secret'),
                     'refresh_token' => $user->refresh_token,
                 ]);
 
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     Log::error('Failed to refresh token from SoundCloud API', [
                         'user_urn' => $user->urn,
                         'status' => $response->status(),
                         'response_body' => $response->body(),
                     ]);
-                    throw new Exception('Failed to refresh token: ' . $response->body());
+                    throw new Exception('Failed to refresh token: '.$response->body());
                 }
 
                 $data = $response->json();
@@ -276,9 +277,9 @@ class SoundCloudService
                     'last_synced_at' => now(), // Important: update the timestamp of the refresh
                 ]);
 
-                Log::info('SoundCloud access token refreshed successfully for user ' . $user->urn);
+                Log::info('SoundCloud access token refreshed successfully for user '.$user->urn);
             } catch (Exception $e) {
-                Log::error('Token refresh failed in SoundCloud Service for user ' . $user->urn, [
+                Log::error('Token refresh failed in SoundCloud Service for user '.$user->urn, [
                     'user_urn' => $user->urn,
                     'error' => $e->getMessage(),
                 ]);
@@ -290,12 +291,11 @@ class SoundCloudService
     /**
      * Throws an exception if the user is not connected to SoundCloud.
      *
-     * @param User $user
      * @throws Exception
      */
     public function ensureSoundCloudConnection(User $user): void
     {
-        if (!$user->isSoundCloudConnected()) {
+        if (! $user->isSoundCloudConnected()) {
             Log::error('SoundCloud connection required but missing.', [
                 'user_urn' => $user->urn,
             ]);
@@ -314,18 +314,18 @@ class SoundCloudService
     /**
      * Fetches the tracks of a user from SoundCloud.
      *
-     * @param User $user The user model instance.
-     *
+     * @param  User  $user  The user model instance.
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function fetchUserTracks(User $user, ?User $authUser = null): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/users/' . $user->urn . '/tracks',
+            endpoint: '/users/'.$user->urn.'/tracks',
             errorMessage: 'Failed to fetch user tracks',
             options: [
-                'access' => 'playable,preview,blocked'
+                'access' => 'playable,preview,blocked',
             ],
             authUser: $authUser
         );
@@ -334,14 +334,15 @@ class SoundCloudService
     /**
      * Fetches the user's playlists from SoundCloud.
      *
-     * @param User $user The user model instance.
+     * @param  User  $user  The user model instance.
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function fetchUserPlaylists(User $user, ?User $authUser = null): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/users/' . $user->urn . '/playlists',
+            endpoint: '/users/'.$user->urn.'/playlists',
             errorMessage: 'Failed to fetch user playlists',
             options: [
                 'access' => 'playable,preview,blocked',
@@ -354,14 +355,14 @@ class SoundCloudService
     /**
      * Fetches the tracks of a specific playlist from SoundCloud.
      *
-     * @param User $user The user model instance.
-     * @param string $playlistUrn The URN of the playlist to fetch tracks from.
+     * @param  User  $user  The user model instance.
+     * @param  string  $playlistUrn  The URN of the playlist to fetch tracks from.
      * @return array The JSON response from the API.
      */
     public function fetchUserPlaylistTracks(User $user, string $playlistUrn, ?User $authUser = null): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/playlists/' . $playlistUrn . '/tracks',
+            endpoint: '/playlists/'.$playlistUrn.'/tracks',
             errorMessage: 'Failed to fetch playlist tracks',
             options: [
                 'access' => 'playable,preview,blocked',
@@ -373,14 +374,15 @@ class SoundCloudService
     /**
      * Fetches the user's profile information from SoundCloud.
      *
-     * @param User $user The user model instance.
+     * @param  User  $user  The user model instance.
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function fetchUserProfile(User $user): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/users/' . $user->urn,
+            endpoint: '/users/'.$user->urn,
             errorMessage: 'Failed to fetch user profile',
             authUser: $user
         );
@@ -393,13 +395,9 @@ class SoundCloudService
      *** START OF THE SOUNDCLOUD SYNC METHODS ***
      ---------------------- ---------------------- ----------------------  */
 
-
     /**
      * Syncs user information from SoundCloud API into the database.
      *
-     * @param User $user
-     * @param object $soundCloudUser
-     * @return UserInformation
      * @throws Exception
      */
     // public function syncUserInformation(User $user, object $soundCloudUser): UserInformation
@@ -517,11 +515,6 @@ class SoundCloudService
 
     /**
      * Sync user tracks from SoundCloud.
-     *
-     * @param User $user
-     * @param array $tracksData
-     * @param ?string $playlist_urn
-     * @return int
      */
     // public function syncUserTracks(User $user, array $tracksData, ?string $playlist_urn = null): int
     // {
@@ -763,7 +756,7 @@ class SoundCloudService
                     $track = Track::updateOrCreate(
                         [
                             'soundcloud_track_id' => $trackData['id'],
-                            'urn' => $trackData['urn']
+                            'urn' => $trackData['urn'],
                         ],
                         $commonTrackData
                     );
@@ -788,7 +781,7 @@ class SoundCloudService
 
                     if ($tracksToDelete->isNotEmpty()) {
                         Track::destroy($tracksToDelete);
-                        Log::info("Successfully deleted " . count($tracksToDelete) . " tracks for user {$user->urn} that are no longer present on SoundCloud.");
+                        Log::info('Successfully deleted '.count($tracksToDelete)." tracks for user {$user->urn} that are no longer present on SoundCloud.");
                     }
                 } else {
                     $tracksToDelete = PlaylistTrack::where('playlist_urn', $playlist_urn)
@@ -798,12 +791,13 @@ class SoundCloudService
                         ->pluck('id');
                     if ($tracksToDelete->isNotEmpty()) {
                         PlaylistTrack::destroy($tracksToDelete);
-                        Log::info("Successfully deleted " . count($tracksToDelete) . " tracks from playlist {$playlist_urn} that are no longer present on SoundCloud.");
+                        Log::info('Successfully deleted '.count($tracksToDelete)." tracks from playlist {$playlist_urn} that are no longer present on SoundCloud.");
                     }
                 }
             });
 
             Log::info("Successfully synced {$syncedCount} tracks for user {$user->urn}.");
+
             return $syncedCount;
         } catch (Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
@@ -817,7 +811,6 @@ class SoundCloudService
     /**
      * Sync user playlists from SoundCloud.
      *
-     * @param User $user
      * @return int number of playlists synced
      *
      * @throws Exception
@@ -980,7 +973,7 @@ class SoundCloudService
                     Log::info("Auth user urn: {$authUser?->urn} step 2");
                     $trackResponse = $this->fetchUserPlaylistTracks(user: $user, playlistUrn: $playlist->soundcloud_urn, authUser: $authUser);
                     $playlistTrackData = $trackResponse['collection'];
-                    if (!empty($playlistTrackData)) {
+                    if (! empty($playlistTrackData)) {
                         Log::info("Auth user urn: {$authUser?->urn} step 3");
                         $this->syncUserTracks($user, tracksData: $playlistTrackData, playlist_urn: $playlist->soundcloud_urn, authUser: $authUser);
                     }
@@ -997,11 +990,12 @@ class SoundCloudService
 
                 if ($playlistsToDelete->isNotEmpty()) {
                     Playlist::destroy($playlistsToDelete);
-                    Log::info("Successfully deleted " . count($playlistsToDelete) . " playlists for user {$user->urn} that are no longer present on SoundCloud.");
+                    Log::info('Successfully deleted '.count($playlistsToDelete)." playlists for user {$user->urn} that are no longer present on SoundCloud.");
                 }
             });
 
             Log::info("Successfully synced {$syncedCount} playlists for user {$user->urn}.");
+
             return $syncedCount;
         } catch (Exception $e) {
             Log::error('Error syncing user playlists in syncUserPlaylists', [
@@ -1012,7 +1006,6 @@ class SoundCloudService
         }
     }
 
-
     public function syncUserRealFollowers(?User $user = null)
     {
         try {
@@ -1022,7 +1015,7 @@ class SoundCloudService
                 $this->followerAnalyzer->syncUserRealFollowers(followers: $repsonse, user: $user);
                 Log::info("Successfully synced real followers for user {$user->urn}.");
             } else {
-                Log::info("User not found in syncUserRealFollowers.");
+                Log::info('User not found in syncUserRealFollowers.');
             }
 
         } catch (Exception $e) {
@@ -1034,14 +1027,13 @@ class SoundCloudService
         }
     }
 
-
     /**
      * Sync user products and subscriptions.
      *
      * Deletes all user subscriptions and re-syncs all products and subscriptions from SoundCloud.
      *
-     * @param User $user The user to sync.
-     * @param object $soundCloudUser The SoundCloud user data.
+     * @param  User  $user  The user to sync.
+     * @param  object  $soundCloudUser  The SoundCloud user data.
      */
     // public function syncUserProductsAndSubscriptions(User $user, object $soundCloudUser): void
     // {
@@ -1115,13 +1107,12 @@ class SoundCloudService
     /**
      * Given a SoundCloud track URI, returns a direct playable mp3/opus link.
      *
-     * @param string $trackUri The SoundCloud track URI.
-     *
+     * @param  string  $trackUri  The SoundCloud track URI.
      * @return string|null The direct playable mp3/opus link, or null if the API call fails or the track does not exist.
      */
     public function getMusicSrc(string $trackUri): ?string
     {
-        if (!$trackUri) {
+        if (! $trackUri) {
             return null;
         }
 
@@ -1129,8 +1120,8 @@ class SoundCloudService
 
         try {
             if (str_starts_with($trackUri, 'soundcloud:tracks:')) {
-                $trackId = str_replace("soundcloud:tracks:", "", $trackUri);
-                $trackUrl = "https://api.soundcloud.com/tracks/" . $trackId;
+                $trackId = str_replace('soundcloud:tracks:', '', $trackUri);
+                $trackUrl = 'https://api.soundcloud.com/tracks/'.$trackId;
             } else {
                 // Otherwise assume it is a normal SoundCloud track URL
                 $trackUrl = $trackUri;
@@ -1139,11 +1130,11 @@ class SoundCloudService
             // 1. Resolve the track
             $response = $this->makeResolveApiRequest(endpoint: $trackUrl, errorMessage: 'Failed to resolve track');
 
-            if (!$response) {
+            if (! $response) {
                 return null;
             }
 
-            if (!isset($response['media']['transcodings'])) {
+            if (! isset($response['media']['transcodings'])) {
                 return null;
             }
 
@@ -1151,7 +1142,7 @@ class SoundCloudService
             $progressive = collect($response['media']['transcodings'])
                 ->firstWhere('format.protocol', 'progressive');
 
-            if (!$progressive) {
+            if (! $progressive) {
                 return null;
             }
 
@@ -1161,14 +1152,16 @@ class SoundCloudService
             ]);
 
             if ($stream->failed()) {
-                Log::error("SoundCloud stream fetch failed", ['url' => $progressive['url']]);
+                Log::error('SoundCloud stream fetch failed', ['url' => $progressive['url']]);
+
                 return null;
             }
 
             return $stream->json('url'); // ✅ direct playable mp3/opus link
 
         } catch (\Exception $e) {
-            Log::error("SoundCloud API exception: " . $e->getMessage());
+            Log::error('SoundCloud API exception: '.$e->getMessage());
+
             return null;
         }
     }
@@ -1176,26 +1169,27 @@ class SoundCloudService
     /**
      * Retrieves the followers of a user from SoundCloud API.
      *
-     * @param User|null $user The user to fetch followers for. If null, the current user is used.
+     * @param  User|null  $user  The user to fetch followers for. If null, the current user is used.
      */
     public function getAuthUserFollowers(?User $user = null)
     {
         $user = $user ?: user();
         $response = $this->makeGetApiRequest(
-            endpoint: "/users/" . $user->urn . "/followers",
-            errorMessage: 'Failed to fetch urn:' . $user->urn . ' followers from SoundCloud API.',
+            endpoint: '/users/'.$user->urn.'/followers',
+            errorMessage: 'Failed to fetch urn:'.$user->urn.' followers from SoundCloud API.',
             authUser: $user
         );
         if (empty($response['collection'])) {
             return collect([]);
         }
+
         return collect($response['collection']);
     }
 
     /**
      * Calculates the number of credits earned from the given number of followers.
      *
-     * @param int $followers The number of followers.
+     * @param  int  $followers  The number of followers.
      * @return int The number of credits earned.
      */
     public function calculateCreditsFromFollowers(int $followers): int
@@ -1209,16 +1203,17 @@ class SoundCloudService
         if ($followers < 10000) {
             return floor($followers / 100);
         }
+
         return min(floor($followers / 100), 100);
     }
-
 
     /**
      * Uploads a new track to SoundCloud.
      *
-     * @param User $user The user submitting the track.
-     * @param array $trackData The track data, including file uploads.
+     * @param  User  $user  The user submitting the track.
+     * @param  array  $trackData  The track data, including file uploads.
      * @return array The JSON response from the API.
+     *
      * @throws Exception
      */
     public function uploadTrack(User $user, array $trackData): array
@@ -1226,12 +1221,12 @@ class SoundCloudService
         $this->refreshUserTokenIfNeeded($user);
         $user->refresh();
         $httpClient = Http::withHeaders([
-            'Authorization' => 'OAuth ' . $user->token,
+            'Authorization' => 'OAuth '.$user->token,
         ])->attach(
-                'track[asset_data]',
-                file_get_contents($trackData['asset_data']->getRealPath()),
-                $trackData['asset_data']->getClientOriginalName()
-            );
+            'track[asset_data]',
+            file_get_contents($trackData['asset_data']->getRealPath()),
+            $trackData['asset_data']->getClientOriginalName()
+        );
 
         if ($trackData['artwork_data']) {
             $httpClient->attach(
@@ -1245,24 +1240,26 @@ class SoundCloudService
         $requestBody = [];
         foreach ($trackData as $key => $value) {
             // Only include non-file fields and those with a value
-            if (!in_array($key, ['asset_data', 'artwork_data']) && !empty($value)) {
+            if (! in_array($key, ['asset_data', 'artwork_data']) && ! empty($value)) {
                 $requestBody["track[{$key}]"] = $value;
             }
         }
 
-        $response = $httpClient->post($this->baseUrl . '/tracks', $requestBody);
+        $response = $httpClient->post($this->baseUrl.'/tracks', $requestBody);
 
         $responseData = $response->json();
-        if (!$response->successful() && isset($responseData['id'])) {
+        if (! $response->successful() && isset($responseData['id'])) {
             logger()->warning('SoundCloud API returned a non-2xx status code but successfully uploaded the track.', [
                 'status_code' => $response->status(),
                 'user_urn' => $user->urn,
-                'response_body' => $response->body()
+                'response_body' => $response->body(),
             ]);
+
             return $responseData;
         }
 
         $response->throw();
+
         return $responseData;
     }
 
@@ -1329,6 +1326,7 @@ class SoundCloudService
         // Skip private playlists
         if (($trackData['sharing'] ?? '') === 'private') {
             Log::info('Skipping private playlist');
+
             return false;
         }
         try {
@@ -1351,10 +1349,11 @@ class SoundCloudService
             Track::updateOrCreate(
                 [
                     'soundcloud_track_id' => $trackData['id'],
-                    'urn' => $trackData['urn']
+                    'urn' => $trackData['urn'],
                 ],
                 $commonTrackData
             );
+
             return true;
         } catch (Exception $e) {
             Log::error('Error syncing user tracks in syncUserTracks', [
@@ -1450,7 +1449,7 @@ class SoundCloudService
                     $track = Track::updateOrCreate(
                         [
                             'soundcloud_track_id' => $trackData['id'],
-                            'urn' => $trackData['urn']
+                            'urn' => $trackData['urn'],
                         ],
                         $commonTrackData
                     );
@@ -1472,23 +1471,25 @@ class SoundCloudService
             throw $e;
         }
     }
+
     public function fetchTracksFavorites(Track $track): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/tracks/' . $track->urn . '/favoriters',
+            endpoint: '/tracks/'.$track->urn.'/favoriters',
             errorMessage: 'Failed to fetch favorites tracks',
             options: [
-                'access' => 'playable,preview,blocked'
+                'access' => 'playable,preview,blocked',
             ]
         );
     }
+
     public function fetchPlaylistFavorites($user_urn): array
     {
         return $this->makeGetApiRequest(
-            endpoint: '/users/' . $user_urn . '/likes/playlists',
+            endpoint: '/users/'.$user_urn.'/likes/playlists',
             errorMessage: 'Failed to fetch favorites playlists',
             options: [
-                'access' => 'playable,preview,blocked'
+                'access' => 'playable,preview,blocked',
             ]
         );
     }
