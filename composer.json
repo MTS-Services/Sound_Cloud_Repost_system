@@ -21,6 +21,7 @@
         "league/csv": "9.23.0",
         "livewire/livewire": "^3.6",
         "mallardduck/blade-lucide-icons": "^1.23",
+        "phiki/phiki": "^2.0",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "^6.20",
         "srmklive/paypal": "^3.0",

@@ -60,36 +60,10 @@
             <div x-show="activeTab === 'profile'" x-cloak>
                 <!-- Edit Profile -->
                 <div class="p-6">
-                    {{-- <div x-data="{ open: true }" x-show="open"
-                        class="bg-blue-50 dark:bg-gray-700 border-l-4 border-l-orange-500 p-4 rounded-md mb-6 flex items-center gap-4">
-                        <!-- Icon + Quick Tip -->
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            <!-- Light bulb icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 2a7 7 0 00-7 7c0 3.866 3.134 7 7 7s7-3.134 7-7a7 7 0 00-7-7zM12 14v4m-4-4h8" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 18h0v1m0 2h0v1" />
-                            </svg>
-                            <span class="font-bold text-gray-800 dark:text-gray-200">Quick Tip</span>
-                        </div>
-
-                        <!-- Description -->
-                        <p class="text-sm text-gray-700 dark:text-gray-300 flex-1">
-                            Customise your genres to personalise your Repostchaine experience.
-                        </p>
-
-                        <!-- Close button -->
-                        <button
-                            class="transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-700 flex-shrink-0"
-                            @click="open = false">
-                            <x-lucide-x class="w-5 h-5" />
-                        </button>
-                    </div> --}}
+                     
 
                     <div x-data="{ open: true }" x-show="open"
-                        class="mb-4 m-4 relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-400 to-amber-400 p-3 rounded-xl shadow-lg">
+                        class="mb-4  relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-400 to-amber-400 p-3 rounded-xl shadow-lg">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12">
                         </div>
                         <div class="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-full -ml-10 -mb-10">
@@ -108,7 +82,7 @@
                                     <path d="M10 22h4"></path>
                                 </svg>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 ">
                                 <div class="flex items-center justify-between gap-4">
                                     <div>
                                         <h4 class="font-bold text-white mb-0.5 text-sm">Quick Tip</h4>
@@ -129,24 +103,9 @@
                     </div>
                     <form wire:submit.prevent="saveProfile">
                         <div class="w-full ">
-                            <!-- Email -->
-                            {{-- <div class="mb-6">
-                                <label for="email"
-                                    class="block text-sm font-semibold text-gray-700 dark:text-white mb-1">Email
-                                    Address</label>
-                                <input type="email" id="email" wire:model="email"
-                                    class="mt-1 block max-w-md w-full rounded-md bg-gray-50 dark:bg-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm outline-none">
-                                @if (!user()->email_verified_at)
-                                    <div class="flex items-center gap-1">
-                                        <p class="mt-1 text-xs text-red-500">
-                                            Email not verified, please verify your email.
-                                        </p>
-                                    </div>
-                                @endif
-                            </div> --}}
 
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 m-4 rounded-xl border border-gray-100 shadow-sm">
+                                class="bg-gradient-to-br from-gray-50 to-white p-4 mb-4  rounded-xl border border-gray-100 shadow-sm">
                                 <label class="block text-sm font-bold text-gray-900 mb-1.5">Email Address</label>
                                 <input type="email"
                                     class="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400"
@@ -170,7 +129,7 @@
                                 </div> --}}
 
                                 <div
-                                    class="bg-gradient-to-br from-gray-50 to-white m-4 p-4 rounded-xl border border-gray-100 shadow-sm">
+                                    class="bg-gradient-to-br from-gray-50 to-white mb-4 p-4 rounded-xl border border-gray-100 shadow-sm">
                                     <label class="block text-sm font-bold text-gray-900 mb-1.5">
                                         Your Music Genres
                                     </label>
@@ -251,7 +210,7 @@
 
 
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 m-4 rounded-xl border border-gray-100 shadow-sm">
+                                class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
                                 <!-- Section Header -->
                                 <div class="mb-3">
                                     <label class="block text-sm font-bold text-gray-900 mb-0.5">
@@ -442,9 +401,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Header -->
-            <div x-show="activeTab === 'notifications'" class="mb-8">
-                <div class="p-6">
+            <!-- Notifications -->
+             
+            <div class="p-6">
+                <!-- Header -->
+                <div x-show="activeTab === 'notifications'" class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">
                         Notifications &amp; Alerts
                     </h2>
@@ -459,6 +420,8 @@
                             <h3 class="text-lg font-bold text-gray-900">Alerts</h3>
                             <span class="text-sm font-semibold text-gray-600">Email</span>
                         </div>
+
+                       
                         <form wire:submit.prevent="notificationUpdate">
                             @foreach ($this->alerts as $key => $alert)
                                 <div
@@ -506,6 +469,8 @@
                 </div>
             </div>
 
+
+
             <div x-show="activeTab === 'settings'" x-cloak class="p-6">
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
@@ -525,10 +490,10 @@
                                 <div
                                     class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
                                     {{-- <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
-                                    Accept Direct repost requests
-                                </span>
-                                @if (!user()->email_verified_at)
+                                        class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                        Accept Direct repost requests
+                                    </span>
+                                    @if (!user()->email_verified_at)
                                         <p class="text-sm text-red-500">You must confirm your email address to accept
                                             direct repost requests</p>
                                     @endif --}}
@@ -540,38 +505,21 @@
                                                 direct repost requests</p>
                                         @endif
                                     </div>
-
-                                    <div class="flex items-center gap-6">
-                                        <label class="flex items-center gap-1">
-                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                                value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                                class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                            <span class="text-gray-600 dark:text-white">Yes</span>
-                                        </label>
-                                        <label class="flex items-center gap-1">
-                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                                value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                                class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                            <span class="text-gray-600 dark:text-white">No</span>
-                                        </label>
-                                    </div>
-                                    {{-- <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-4">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="radio" name="acceptRequests"
-                                                wire:model="accept_repost"
+                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
                                                 {{ user()->email_verified_at ? '' : 'disabled' }}
                                                 class="w-5 h-5 text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }} border-gray-300 focus:ring-2 focus:ring-orange-500/20"
                                                 checked>
                                             <span class="text-sm font-medium text-gray-700">Yes</span>
                                         </label>
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="radio" name="acceptRequests"
-                                                wire:model="accept_repost"
+                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
                                                 {{ user()->email_verified_at ? '' : 'disabled' }}
                                                 class="w-5 h-5 text-orange-500  border-gray-300 focus:ring-2 focus:ring-orange-500/20 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
                                             <span class="text-sm font-medium text-gray-700">No</span>
                                         </label>
-                                    </div> --}}
+                                    </div>
                                 </div>
 
                                 <!-- Block Non-Matching Genres -->
@@ -716,17 +664,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- @forelse ($credits as $credit)
+                                    @forelse ($credits as $credit)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-                                                {{ $credit->created_at_formatted }}
+
                                             </td>
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-                                                {{ $credit->description }}
+
                                             </td>
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-                                                <span class="badge badge-soft {{ $credit->calculation_type_color }}">
-                                                    {{ $credit->calculation_type_name }}
+                                                <span class="badge badge-soft ">
+
                                                 </span>
                                             </td>
                                             <td
@@ -743,21 +691,20 @@
                                             </td>
                                             <td
                                                 class="px-5 p-3 text-gray-800 dark:text-white font-medium whitespace-nowrap">
-                                                {{ number_format($credit->balance) }} credits
+                                                5454 credits
                                             </td>
                                         </tr>
                                     @empty
-                                    @endforelse --}}
+                                    @endforelse
 
 
                                     @forelse ($credits as $credit)
                                         <tr
                                             class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
                                             <td class="px-8 py-5"><span
-                                                    class="text-sm text-gray-700 font-medium">{{ $credit->created_at_formatted }}</span>
+                                                    class="text-sm text-gray-700 font-medium">4343</span>
                                             </td>
-                                            <td class="px-8 py-5"><span
-                                                    class="text-sm text-gray-700">{{ $credit->description }}</span>
+                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">4343</span>
                                             </td>
                                             <td class="px-8 py-5">
                                                 <div class="flex items-center justify-center"><span
@@ -772,13 +719,12 @@
                                                             class="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-red-500 to-red-600">
                                                             <div class="w-2.5 h-2.5 rounded-sm border-2 border-white">
                                                             </div>
-                                                        </div><span
-                                                            class="text-sm font-bold text-red-700">{{ number_format($credit->amount) }}</span>
+                                                        </div><span class="text-sm font-bold text-red-700">2321</span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-8 py-5 text-right"><span
-                                                    class="text-sm font-semibold text-gray-900">{{ number_format($credit->balance) }}</span>
+                                                    class="text-sm font-semibold text-gray-900">4324</span>
                                             </td>
                                         </tr>
                                         <tr
@@ -790,9 +736,9 @@
                                                     request
                                                     has expired.</span></td>
                                             <td class="px-8 py-5">
-                                                {{-- <div class="flex items-center justify-center"><span
+                                                <div class="flex items-center justify-center"><span
                                                         class="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-200">{{ $credit->transaction_type_name }}</span>
-                                                </div> --}}
+                                                </div>
                                                 <div class="flex items-center justify-center"><span
                                                         class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold border {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'bg-red-100 text-red-700 bg-gradient-to-br from-red-100 to-rose-100 border-red-200' : 'bg-green-100 text-green-700 border-emerald-200' }}">{{ $credit->transaction_type_name }}</span>
                                                 </div>
@@ -805,7 +751,8 @@
                                                             class="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-emerald-500 to-emerald-600">
                                                             <div class="w-2.5 h-2.5 rounded-sm border-2 border-white">
                                                             </div>
-                                                        </div><span
+                                                        </div>
+                                                        <span
                                                             class="text-sm font-bold text-emerald-700">{{ $credit->amount }}</span>
                                                     </div>
                                                 </div>
@@ -826,8 +773,6 @@
 
             <!--invoices Section -->
             <div x-show="activeTab === 'invoices'" class="overflow-x-auto w-full " x-transition>
-
-
                 <!-- Card Table -->
                 <div class="p-6">
                     <div class="mb-8">
@@ -908,23 +853,30 @@
                                                 2025 09:33 AM</span></td>
                                         <td class="px-8 py-5"><span class="text-sm text-gray-700">Plan subscription
                                                 for Premium Plan</span></td>
-                                        {{-- <td class="px-8 py-5"><span class="text-sm text-gray-700">{{ $credit->amount }}</span></td>
-                                                <span class="text-sm text-gray-600">Credits</span> --}}
+                                        {{-- <td class="px-8 py-5"><span class="text-sm text-gray-700">{{ $credit->amount }}</span></td> --}}
+                                        {{-- 
+                                        <td class="px-8 py-5"><span class="text-sm text-gray-700">666</span><span
+                                                class="text-sm text-gray-600">Credits</span></td> --}}
+
                                         <td class="px-8 py-5">
                                             <div class="flex items-center gap-2">
                                                 <div
                                                     class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
                                                     <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
                                                 </div>
-                                                <span
-                                                    class="text-sm font-semibold text-orange-600">{{ $credit->amount }}</span>
+                                                <span class="text-sm font-semibold text-orange-600">33333</span>
+
                                                 <span class="text-sm text-gray-600">Credits</span>
                                             </div>
                                         </td>
 
                                         <td class="px-8 py-5 text-right"><span
-                                                class="text-sm font-semibold text-gray-900">{{ number_format($payment->order->credits) }}</span>
+                                                class="text-sm font-semibold text-gray-900">23222</span>
                                         </td>
+
+
+
+
                                         <td class="px-8 py-5">
                                             <div class="flex items-center justify-center">
                                                 <button
@@ -939,7 +891,6 @@
                                                         <line x1="12" x2="12" y1="15"
                                                             y2="3"></line>
                                                     </svg>
-
                                                 </button>
                                             </div>
                                         </td>
@@ -956,13 +907,12 @@
                                                     class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
                                                     <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
                                                 </div>
-                                                <span
-                                                    class="text-sm font-semibold text-orange-600">{{ $credit->amount }}</span>
+                                                <span class="text-sm font-semibold text-orange-600">34543</span>
                                                 <span class="text-sm text-gray-600">Credits</span>
                                             </div>
                                         </td>
                                         <td class="px-8 py-5 text-right"><span
-                                                class="text-sm font-semibold text-gray-900">{{ number_format($payment->order->credits) }}</span>
+                                                class="text-sm font-semibold text-gray-900">33423</span>
                                         </td>
                                         <td class="px-8 py-5">
                                             <div class="flex items-center justify-center">
@@ -976,7 +926,8 @@
                                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                                         <polyline points="7 10 12 15 17 10"></polyline>
                                                         <line x1="12" x2="12" y1="15"
-                                                            y2="3"></line>
+                                                            y2="3">
+                                                        </line>
                                                     </svg>
                                                 </button>
                                             </div>
@@ -987,7 +938,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -1040,5 +990,26 @@
             @endif
         </div>
     </div>
+
+    {{-- <script>
+        document.querySelectorAll('.toggle-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const circle = button.querySelector('span');
+                button.classList.toggle('active');
+
+                if (button.classList.contains('active')) {
+                    // ON state
+                    button.classList.remove('bg-gray-300');
+                    button.classList.add('bg-gradient-to-r', 'from-orange-500', 'to-orange-600');
+                    circle.style.transform = 'translateX(24px)'; // moves right
+                } else {
+                    // OFF state
+                    button.classList.remove('bg-gradient-to-r', 'from-orange-500', 'to-orange-600');
+                    button.classList.add('bg-gray-300');
+                    circle.style.transform = 'translateX(0px)'; // moves left
+                }
+            });
+        });
+    </script> --}}
 
 </section>
