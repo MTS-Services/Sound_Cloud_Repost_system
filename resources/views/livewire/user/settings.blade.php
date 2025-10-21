@@ -60,10 +60,10 @@
             <div x-show="activeTab === 'profile'" x-cloak>
                 <!-- Edit Profile -->
                 <div class="p-6">
-                     
+
 
                     <div x-data="{ open: true }" x-show="open"
-                        class="mb-4  relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-400 to-amber-400 p-3 rounded-xl shadow-lg">
+                        class="dark:bg-gray-800 mb-4  relative overflow-hidden bg-gradient-to-br from-orange-500 via-orange-400 to-amber-400 p-3 rounded-xl shadow-lg">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12">
                         </div>
                         <div class="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-full -ml-10 -mb-10">
@@ -85,8 +85,9 @@
                             <div class="flex-1 ">
                                 <div class="flex items-center justify-between gap-4">
                                     <div>
-                                        <h4 class="font-bold text-white mb-0.5 text-sm">Quick Tip</h4>
-                                        <p class="text-white/95 text-xs leading-relaxed">Customise your genres to
+                                        <h4 class="font-bold text-white dark:text-black mb-0.5 text-sm">Quick Tip</h4>
+                                        <p class="text-white/95 text-xs leading-relaxed dark:text-gray-400">Customise
+                                            your genres to
                                             personalise your Repostchaine experience.</p>
                                     </div><button @click="open = false"
                                         class="flex-shrink-0 p-1 text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-all"><svg
@@ -105,8 +106,9 @@
                         <div class="w-full ">
 
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 mb-4  rounded-xl border border-gray-100 shadow-sm">
-                                <label class="block text-sm font-bold text-gray-900 mb-1.5">Email Address</label>
+                                class="dark:bg-gray-800   from-gray-50 to-white p-4 mb-4  rounded-xl border border-gray-100 shadow-sm">
+                                <label class="block text-sm font-bold text-gray-900 mb-1.5 dark:text-white">Email
+                                    Address</label>
                                 <input type="email"
                                     class="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400"
                                     placeholder="your.email@example.com" value="dilip.udaya1219@gmail.com">
@@ -129,8 +131,8 @@
                                 </div> --}}
 
                                 <div
-                                    class="bg-gradient-to-br from-gray-50 to-white mb-4 p-4 rounded-xl border border-gray-100 shadow-sm">
-                                    <label class="block text-sm font-bold text-gray-900 mb-1.5">
+                                    class="dark:bg-gray-800 from-gray-50 to-white mb-4 p-4 rounded-xl border border-gray-100 shadow-sm">
+                                    <label class="dark:text-white block text-sm font-bold text-gray-900 mb-1.5">
                                         Your Music Genres
                                     </label>
 
@@ -210,10 +212,10 @@
 
 
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                class="dark:bg-gray-900 from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
                                 <!-- Section Header -->
                                 <div class="mb-3">
-                                    <label class="block text-sm font-bold text-gray-900 mb-0.5">
+                                    <label class="dark:text-white block text-sm font-bold text-gray-900 mb-0.5">
                                         Social Media Accounts
                                     </label>
                                     <p class="text-xs text-gray-600 leading-relaxed">
@@ -402,26 +404,26 @@
                 </div>
             </div>
             <!-- Notifications -->
-             
+
             <div class="p-6">
                 <!-- Header -->
                 <div x-show="activeTab === 'notifications'" class="mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                    <h2 class="dark:text-white text-2xl font-bold text-gray-900 mb-2">
                         Notifications &amp; Alerts
                     </h2>
-                    <p class="text-gray-600 mb-8">
+                    <p class="text-gray-800 mb-8">
                         Manage your email and notification preferences.
                     </p>
                     <!-- Alerts Section -->
                     <div
-                        class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                        class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
                         <!-- Title Bar -->
                         <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
-                            <h3 class="text-lg font-bold text-gray-900">Alerts</h3>
+                            <h3 class="dark:text-white text-lg font-bold text-gray-900">Alerts</h3>
                             <span class="text-sm font-semibold text-gray-600">Email</span>
                         </div>
 
-                       
+
                         <form wire:submit.prevent="notificationUpdate">
                             @foreach ($this->alerts as $key => $alert)
                                 <div
@@ -469,21 +471,18 @@
                 </div>
             </div>
 
-
-
             <div x-show="activeTab === 'settings'" x-cloak class="p-6">
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
-                    <p class="text-gray-600">Manage your account preferences and features.</p>
+                    <h2 class="dark:text-white text-2xl font-bold text-gray-900 mb-2">Settings</h2>
+                    <p class="text-gray-800">Manage your account preferences and features.</p>
                 </div>
 
                 <form wire:submit.prevent="settingsUpdate" method="POST">
                     @csrf
                     <div class="space-y-8">
                         <!-- My Requests -->
-                        <div
-                            class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-900 mb-6">My requests</h3>
+                        <div class=" from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <h3 class="dark:text-white text-lg font-bold text-gray-900 mb-6">My requests</h3>
 
                             <div class="space-y-1">
                                 <!-- Accept Direct Repost Requests -->
@@ -498,7 +497,7 @@
                                             direct repost requests</p>
                                     @endif --}}
                                     <div>
-                                        <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
+                                        <p class="text-gray-700 dark:text-gray-900">Accept Direct repost requests</p>
                                         @if (!user()->email_verified_at)
                                             <p class="text-sm text-red-500">You must confirm your email address to
                                                 accept
@@ -548,8 +547,8 @@
 
                         <!-- Additional Features -->
                         <div
-                            class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                            <h3 class="text-lg font-bold text-gray-900 mb-6">Additional features</h3>
+                            class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <h3 class="text-lg font-bold text-gray-900 mb-6 dark:text-white">Additional features</h3>
 
                             <div class="space-y-1">
                                 <!-- Auto Free Boost -->
@@ -603,8 +602,8 @@
 
                         <!-- Subscription -->
                         <div
-                            class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                            <h1 class="text-lg font-bold text-gray-900 mb-4">Subscription</h1>
+                            class="dake:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                            <h1 class="text-lg font-bold text-gray-900 mb-4 dark:text-white">Subscription</h1>
                             <div class="mflex items-center gap-3">
                                 <p class="text-sm text-gray-600">{{ userPlanName() }} Plan <a wire:navigate
                                         href="{{ route('user.plans') }}"
@@ -639,14 +638,12 @@
                 </form>
             </div>
 
-
-
             <!-- Credit History Table -->
             <div x-show="activeTab === 'credit'" class="w-full p-6" x-transition>
                 <!-- Card Table -->
                 <div class="p-6">
                     <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Credit History</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-white">Credit History</h2>
                         <p class="text-gray-600">Track your credit transactions and balance changes.</p>
                     </div>
                     <div
@@ -664,17 +661,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     @forelse ($credits as $credit)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-
+                                                {{ $credit->created_at->format('M d, Y') }}
                                             </td>
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
-
+                                                {{ $credit->description }}
                                             </td>
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                                 <span class="badge badge-soft ">
-
+                                                    {{ $credit->transaction_type_name }}
                                                 </span>
                                             </td>
                                             <td
@@ -697,14 +695,14 @@
                                     @empty
                                     @endforelse
 
-
                                     @forelse ($credits as $credit)
                                         <tr
                                             class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
                                             <td class="px-8 py-5"><span
-                                                    class="text-sm text-gray-700 font-medium">4343</span>
+                                                    class="text-sm text-gray-700 font-medium">{{ $credit->created_at }}</span>
                                             </td>
-                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">4343</span>
+                                            <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700">{{ $credit->description }}</span>
                                             </td>
                                             <td class="px-8 py-5">
                                                 <div class="flex items-center justify-center"><span
@@ -719,12 +717,13 @@
                                                             class="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-red-500 to-red-600">
                                                             <div class="w-2.5 h-2.5 rounded-sm border-2 border-white">
                                                             </div>
-                                                        </div><span class="text-sm font-bold text-red-700">2321</span>
+                                                        </div><span
+                                                            class="text-sm font-bold text-red-700">{{ $credit->credits }}</span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-8 py-5 text-right"><span
-                                                    class="text-sm font-semibold text-gray-900">4324</span>
+                                                    class="text-sm font-semibold text-gray-900">{{ $credit->balance }}</span>
                                             </td>
                                         </tr>
                                         <tr
@@ -770,17 +769,16 @@
                 </div>
             </div>
 
-
             <!--invoices Section -->
             <div x-show="activeTab === 'invoices'" class="overflow-x-auto w-full " x-transition>
                 <!-- Card Table -->
                 <div class="p-6">
                     <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Invoices</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-white">Invoices</h2>
                         <p class="text-gray-600">View and download your transaction history.</p>
                     </div>
                     <div
-                        class="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        class="dark:bg-gray-800 from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full">
                                 <thead>
@@ -793,6 +791,7 @@
                                         <th class="px-8 py-5 text-center text-sm font-bold text-gray-900">Invoice</th>
                                     </tr>
                                 </thead>
+
                                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                                     @forelse ($payments as $payment)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
@@ -845,94 +844,64 @@
                                         </tr>
                                     @endforelse
                                 </tbody>
+
+                                {{-- Second Row --}}
                                 <tbody>
+                                    @forelse ($credits as $credit)
+                                        <tr
+                                            class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
+                                            <td class="px-8 py-5"><span class="text-sm text-gray-700 font-medium">04
+                                                    Oct,
+                                                    2025 09:33 AM</span></td>
+                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">Plan
+                                                    subscription
+                                                    for Premium Plan</span></td>
+                                            <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700">{{ $credit->amount }}</span></td>
 
-                                    <tr
-                                        class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
-                                        <td class="px-8 py-5"><span class="text-sm text-gray-700 font-medium">04 Oct,
-                                                2025 09:33 AM</span></td>
-                                        <td class="px-8 py-5"><span class="text-sm text-gray-700">Plan subscription
-                                                for Premium Plan</span></td>
-                                        {{-- <td class="px-8 py-5"><span class="text-sm text-gray-700">{{ $credit->amount }}</span></td> --}}
-                                        {{-- 
-                                        <td class="px-8 py-5"><span class="text-sm text-gray-700">666</span><span
-                                                class="text-sm text-gray-600">Credits</span></td> --}}
+                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">666</span><span
+                                                    class="text-sm text-gray-600">Credits</span></td>
 
-                                        <td class="px-8 py-5">
-                                            <div class="flex items-center gap-2">
-                                                <div
-                                                    class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
-                                                    <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
+                                            <td class="px-8 py-5">
+                                                <div class="flex items-center gap-2">
+                                                    <div
+                                                        class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                                                        <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
+                                                    </div>
+                                                    <span
+                                                        class="text-sm font-semibold text-orange-600">{{ $credit->amount }}</span>
+                                                    <span class="text-sm text-gray-600">Credits</span>
                                                 </div>
-                                                <span class="text-sm font-semibold text-orange-600">33333</span>
+                                            </td>
 
-                                                <span class="text-sm text-gray-600">Credits</span>
-                                            </div>
-                                        </td>
-
-                                        <td class="px-8 py-5 text-right"><span
-                                                class="text-sm font-semibold text-gray-900">23222</span>
-                                        </td>
-
-
-
-
-                                        <td class="px-8 py-5">
-                                            <div class="flex items-center justify-center">
-                                                <button
-                                                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all group-hover:scale-110">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        class="lucide lucide-download w-5 h-5">
-                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                                        <line x1="12" x2="12" y1="15"
-                                                            y2="3"></line>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr
-                                        class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-gray-50/30">
-                                        <td class="px-8 py-5"><span class="text-sm text-gray-700 font-medium">04 Oct,
-                                                2025 09:01 AM</span></td>
-                                        <td class="px-8 py-5"><span class="text-sm text-gray-700">Credit added by
-                                                system</span></td>
-                                        <td class="px-8 py-5">
-                                            <div class="flex items-center gap-2">
-                                                <div
-                                                    class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
-                                                    <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
+                                            <td class="px-8 py-5 text-right"><span
+                                                    class="text-sm font-semibold text-gray-900">{{ $credit->total }}</span>
+                                            </td>
+                                            <td class="px-8 py-5">
+                                                <div class="flex items-center justify-center">
+                                                    <button
+                                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all group-hover:scale-110">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                            height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-download w-5 h-5">
+                                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                                            <line x1="12" x2="12" y1="15"
+                                                                y2="3"></line>
+                                                        </svg>
+                                                    </button>
                                                 </div>
-                                                <span class="text-sm font-semibold text-orange-600">34543</span>
-                                                <span class="text-sm text-gray-600">Credits</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-8 py-5 text-right"><span
-                                                class="text-sm font-semibold text-gray-900">33423</span>
-                                        </td>
-                                        <td class="px-8 py-5">
-                                            <div class="flex items-center justify-center">
-                                                <button
-                                                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all group-hover:scale-110">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        class="lucide lucide-download w-5 h-5">
-                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                                        <line x1="12" x2="12" y1="15"
-                                                            y2="3">
-                                                        </line>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="">
+                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
+                                                No Credit found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -991,25 +960,6 @@
         </div>
     </div>
 
-    {{-- <script>
-        document.querySelectorAll('.toggle-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const circle = button.querySelector('span');
-                button.classList.toggle('active');
 
-                if (button.classList.contains('active')) {
-                    // ON state
-                    button.classList.remove('bg-gray-300');
-                    button.classList.add('bg-gradient-to-r', 'from-orange-500', 'to-orange-600');
-                    circle.style.transform = 'translateX(24px)'; // moves right
-                } else {
-                    // OFF state
-                    button.classList.remove('bg-gradient-to-r', 'from-orange-500', 'to-orange-600');
-                    button.classList.add('bg-gray-300');
-                    circle.style.transform = 'translateX(0px)'; // moves left
-                }
-            });
-        });
-    </script> --}}
 
 </section>
