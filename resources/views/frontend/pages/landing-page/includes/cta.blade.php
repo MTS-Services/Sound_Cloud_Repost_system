@@ -1,4 +1,13 @@
-<section class="py-20 bg-black relative overflow-hidden">
+ @push('cs')
+     <style>
+        @media(max-width: 575px){
+            #cta button{
+                padding: 6px 12px;
+            }
+        }
+     </style>
+ @endpush
+<section id="cta" class="py-20 bg-black relative overflow-hidden">
     <div class="max-w-5xl mx-auto">
         <div
             class="bg-gradient-to-br from-[#ff5500]/20 via-orange-600/10 to-transparent backdrop-blur-sm border border-[#ff5500]/30 rounded-3xl p-12 text-center relative overflow-hidden">

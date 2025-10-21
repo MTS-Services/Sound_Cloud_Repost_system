@@ -1,4 +1,4 @@
- <section id="testimonials" class="py-20 bg-black relative">
+<section id="testimonials" class="py-20 bg-black relative">
      <div class="max-w-[1400px] mx-auto relative">
          <div class="text-center mb-16">
              <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Success Stories</h2>

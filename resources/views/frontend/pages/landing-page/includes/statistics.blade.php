@@ -1,4 +1,13 @@
-<section class="py-20 bg-black relative">
+@push('cs')
+    <style>
+        @media (max-width: 575px) {
+            #statistics {
+                margin-top: 0px;
+            }
+        }
+    </style>
+@endpush
+<section id="statistics" class="py-20 bg-black relative">
     <div class="absolute inset-0 bg-gradient-to-b from-[#ff5500]/5 via-transparent to-[#ff5500]/5"></div>
     <div class="max-w-[1400px] mx-auto relative">
         <div class="text-center mb-16">

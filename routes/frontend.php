@@ -9,6 +9,7 @@ use App\Livewire\Frontend\ContactUs;
 use App\Livewire\Frontend\HelpCenter;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Frontend\PrivacyPolicy;
+use App\Livewire\Frontend\RefundPolicy;
 use App\Livewire\Frontend\TermsConditions;
 
 Route::group(['as' => 'f.'], function () {
@@ -19,7 +20,8 @@ Route::group(['as' => 'f.'], function () {
     Route::get('/features', Features::class)->name('features');
     Route::get('/faq', FAQ::class)->name('faq');
     Route::get('/terms-and-conditions',  TermsConditions::class)->name('terms-and-conditions');
-    Route::get('/privacy-policy',  PrivacyPolicy::class)->name('privacy-policy');
+    Route::get('/privacy-policy',  RefundPolicy::class)->name('refund-policy');
+    Route::get('/refund-policy',  PrivacyPolicy::class)->name('privacy-policy');
     Route::get('/contact-us', ContactUs::class)->name('contact-us');
     Route::get('/help', HelpCenter::class)->name('help');
 });

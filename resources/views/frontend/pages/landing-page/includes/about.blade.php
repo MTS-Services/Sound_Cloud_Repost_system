@@ -1,3 +1,12 @@
+   @push('cs')
+       <style>
+            @media (max-width: 575px) {
+                #about {
+                    padding-top: 0px;
+                }
+            }
+       </style>
+   @endpush
    <section id="about" class="py-20 bg-black">
        <div class="container mx-auto px-4">
            <div class="max-w-3xl mx-auto text-center mb-16">

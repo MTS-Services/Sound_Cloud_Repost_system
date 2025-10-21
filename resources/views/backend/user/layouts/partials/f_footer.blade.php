@@ -18,15 +18,13 @@
                 <p class="text-zinc-400 text-sm mb-6 leading-relaxed">The collaborative music promotion platform for
                     SoundCloud artists.</p>
                 <div class="flex items-center gap-4">
-                    <a href="#" class="text-zinc-400 hover:text-[#ff5500] transition-colors"
-                        aria-label="Twitter">
+                    <a href="#" class="text-zinc-400 hover:text-[#ff5500] transition-colors" aria-label="Twitter">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
                         </svg>
                     </a>
-                    <a href="#" class="text-zinc-400 hover:text-[#ff5500] transition-colors"
-                        aria-label="YouTube">
+                    <a href="#" class="text-zinc-400 hover:text-[#ff5500] transition-colors" aria-label="YouTube">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
@@ -57,7 +55,7 @@
                     <li><a wire:navigate href="{{ route('f.features') }}"
                             class="text-zinc-400 hover:text-zinc-200 transition-colors text-sm">Features</a>
                     </li>
-                    <li><a href="#"
+                    <li><a href="https://repostchain.com/blog"
                             class="text-zinc-400 hover:text-zinc-200 transition-colors text-sm">Blog</a>
                     </li>
                     <li><a wire:navigate href="{{ route('f.faq') }}"
@@ -73,7 +71,7 @@
                     <li><a wire:navigate href="{{ route('f.privacy-policy') }}"
                             class="text-zinc-400 hover:text-zinc-200 transition-colors text-sm">Privacy
                             Policy</a></li>
-                    <li><a href="#" class="text-zinc-400 hover:text-zinc-200 transition-colors text-sm">Refund
+                    <li><a wire:navigate href="{{ route('f.refund-policy') }}" class="text-zinc-400 hover:text-zinc-200 transition-colors text-sm">Refund
                             Policy</a></li>
                 </ul>
             </div>

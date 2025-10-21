@@ -1,3 +1,11 @@
+@push('cs')
+    <style>
+        .platform-features .title {
+            font-size: 48px;
+            line-height: 56px;
+        }
+    </style>
+@endpush
 <div class="bg-black">
     {{-- <nav class="top-0 w-full bg-black/95 backdrop-blur-md border-b border-zinc-800/50 z-50">
         <div class="container mx-auto px-6 py-4">
@@ -22,7 +30,7 @@
 
     <div class="container mx-auto px-6 pt-32 pb-20 max-w-7xl">
         <!-- Header -->
-        <div class="text-center mb-16">
+        <div class="text-center mb-16 platform-features">
             <div
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#ff5500]/10 to-[#ff8833]/10 border border-[#ff5500]/20 mb-6">
                 <svg class="w-4 h-4 text-[rgb(255,85,0)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,7 +40,7 @@
                 <span class="text-sm font-medium text-[rgb(255,85,0)]">Platform Features</span>
             </div>
 
-            <h1 class="text-6xl font-bold text-white mb-4">
+            <h1 class="text-6xl title font-bold text-white mb-4">
                 RepostChain Features
             </h1>
             <p class="text-xl text-zinc-400 max-w-3xl mx-auto">

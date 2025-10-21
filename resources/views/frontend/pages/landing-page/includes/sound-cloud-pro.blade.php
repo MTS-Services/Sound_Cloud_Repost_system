@@ -60,6 +60,17 @@
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
+
+        @media (max-width: 575px) {
+            #plan {
+                padding-top: 0px;
+            }
+
+            #plan .soundCloud-pro {
+                padding: 5px 8px;
+                font-size: 18px;
+            }
+        }
     </style>
 @endpush
 <section id="plan" class="py-24 px-8 relative overflow-hidden bg-gradient-to-b from-black via-[#ff5500]/5 to-black">
@@ -131,7 +142,7 @@
                     </div>
                 </div>
                 <a href="https://checkout.soundcloud.com/pro" target="_blank" rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-[#ff5500]/30">
+                    class="inline-flex items-center gap-2 bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-[#ff5500]/30 soundCloud-pro">
                     Upgrade to SoundCloud Pro
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
