@@ -1,76 +1,74 @@
- <section id="how-it-works" class="py-20 bg-dark-darker relative">
-            <div class="container mx-auto px-4">
-                <div class="text-center max-w-3xl mx-auto mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">How RepostChain Works</h2>
-                    <p class="text-gray-300 text-lg">Our platform makes it easy to grow your audience through a fair exchange system that benefits everyone involved.</p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-dark-card p-6 rounded-lg hover:shadow-lg transition-all duration-300 relative group overflow-hidden hover:-translate-y-1">
-                        <div class="absolute -top-10 -left-10 w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span class="text-lg font-bold translate-x-5 translate-y-5 text-primary">1</span>
-                        </div>
-                        <div class="flex justify-center mb-4 text-primary mt-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 18V5l12-2v13"></path>
-                                <circle cx="6" cy="18" r="3"></circle>
-                                <circle cx="18" cy="16" r="3"></circle>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2 text-center">Connect SoundCloud</h3>
-                        <p class="text-gray-400 text-center">Link your SoundCloud account to get started. It only takes a few seconds.</p>
-                        <div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-all duration-300"></div>
-                    </div>
-                    
-                    <div class="bg-dark-card p-6 rounded-lg hover:shadow-lg transition-all duration-300 relative group overflow-hidden hover:-translate-y-1">
-                        <div class="absolute -top-10 -left-10 w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span class="text-lg font-bold translate-x-5 translate-y-5 text-primary">2</span>
-                        </div>
-                        <div class="flex justify-center mb-4 text-primary mt-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                                <path d="M21 3v5h-5"></path>
-                                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                                <path d="M8 16H3v5"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2 text-center">Earn Points</h3>
-                        <p class="text-gray-400 text-center">Listen to and repost tracks from other artists to earn promotion points.</p>
-                        <div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-all duration-300"></div>
-                    </div>
-                    
-                    <div class="bg-dark-card p-6 rounded-lg hover:shadow-lg transition-all duration-300 relative group overflow-hidden hover:-translate-y-1">
-                        <div class="absolute -top-10 -left-10 w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span class="text-lg font-bold translate-x-5 translate-y-5 text-primary">3</span>
-                        </div>
-                        <div class="flex justify-center mb-4 text-primary mt-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m17 2 4 4-4 4"></path>
-                                <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
-                                <path d="m7 22-4-4 4-4"></path>
-                                <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2 text-center">Repost Tracks</h3>
-                        <p class="text-gray-400 text-center">Use your ponts to get your tracks reposted by other artists.</p>
-                        <div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-all duration-300"></div>
-                    </div>
-                    
-                    <div class="bg-dark-card p-6 rounded-lg hover:shadow-lg transition-all duration-300 relative group overflow-hidden hover:-translate-y-1">
-                        <div class="absolute -top-10 -left-10 w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span class="text-lg font-bold translate-x-5 translate-y-5 text-primary">4</span>
-                        </div>
-                        <div class="flex justify-center mb-4 text-primary mt-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                                <polyline points="16 7 22 7 22 13"></polyline>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2 text-center">Grow Followers</h3>
-                        <p class="text-gray-400 text-center">Watch your fan base grow as your music reaches new audiences.</p>
-                        <div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-all duration-300"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
-        </section>
+ <section id="how-it-works" class="py-20 bg-black relative">
+     <div class="max-w-[1400px] mx-auto relative">
+         <div class="text-center mb-16">
+             <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">How RepostChain Works</h2>
+             <p class="text-lg md:text-xl text-zinc-300 max-w-4xl mx-auto leading-relaxed">Our platform makes it easy
+                 to grow your audience through a fair exchange system that benefits everyone involved.</p>
+         </div>
+         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+             <div
+                 class="group bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800/50 hover:border-[#ff5500]/50 transition-all duration-300 hover:scale-[1.05] relative overflow-hidden">
+                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ff5500] to-orange-600"></div>
+                 <span class="text-4xl font-bold text-[#ff5500] mb-6 block">1</span>
+                 <div
+                     class="bg-[#ff5500]/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#ff5500]/20 transition-all">
+                     <svg class="w-8 h-8 text-[#ff5500]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                             d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3">
+                         </path>
+                     </svg>
+                 </div>
+                 <h3 class="text-2xl font-bold text-white mb-4">Connect SoundCloud</h3>
+                 <p class="text-zinc-400 leading-relaxed">Link your SoundCloud account to get started. It only takes
+                     a few seconds.</p>
+             </div>
+             <div
+                 class="group bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800/50 hover:border-[#ff5500]/50 transition-all duration-300 hover:scale-[1.05] relative overflow-hidden">
+                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ff5500] to-orange-600"></div>
+                 <span class="text-4xl font-bold text-[#ff5500] mb-6 block">2</span>
+                 <div
+                     class="bg-[#ff5500]/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#ff5500]/20 transition-all">
+                     <svg class="w-8 h-8 text-[#ff5500]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                         </path>
+                     </svg>
+                 </div>
+                 <h3 class="text-2xl font-bold text-white mb-4">Earn Points</h3>
+                 <p class="text-zinc-400 leading-relaxed">Listen to and repost tracks from other artists to earn
+                     promotion points.</p>
+             </div>
+             <div
+                 class="group bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800/50 hover:border-[#ff5500]/50 transition-all duration-300 hover:scale-[1.05] relative overflow-hidden">
+                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ff5500] to-orange-600"></div>
+                 <span class="text-4xl font-bold text-[#ff5500] mb-6 block">3</span>
+                 <div
+                     class="bg-[#ff5500]/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#ff5500]/20 transition-all">
+                     <svg class="w-8 h-8 text-[#ff5500]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                             d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                         </path>
+                     </svg>
+                 </div>
+                 <h3 class="text-2xl font-bold text-white mb-4">Repost Tracks</h3>
+                 <p class="text-zinc-400 leading-relaxed">Use your points to get your tracks reposted by other
+                     artists.</p>
+             </div>
+             <div
+                 class="group bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800/50 hover:border-[#ff5500]/50 transition-all duration-300 hover:scale-[1.05] relative overflow-hidden">
+                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#ff5500] to-orange-600"></div>
+                 <span class="text-4xl font-bold text-[#ff5500] mb-6 block">4</span>
+                 <div
+                     class="bg-[#ff5500]/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#ff5500]/20 transition-all">
+                     <svg class="w-8 h-8 text-[#ff5500]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                             d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                     </svg>
+                 </div>
+                 <h3 class="text-2xl font-bold text-white mb-4">Grow Followers</h3>
+                 <p class="text-zinc-400 leading-relaxed">Watch your fan base grow as your music reaches new
+                     audiences.</p>
+             </div>
+         </div>
+     </div>
+ </section>
