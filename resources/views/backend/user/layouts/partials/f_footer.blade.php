@@ -49,7 +49,7 @@
             <div>
                 <h4 class="text-white font-semibold mb-4 text-base">Quick Links</h4>
                 <ul class="space-y-3">
-                    <li><a href="#how-repostchain-works"
+                    <li><a href="{{ route('f.landing') }}#how-it-works"
                             class="text-zinc-400 hover:text-zinc-200 transition-colors text-sm">How It Works</a>
                     </li>
                     <li><a wire:navigate href="{{ route('f.features') }}"
