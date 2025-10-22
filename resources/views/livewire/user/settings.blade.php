@@ -662,7 +662,7 @@
                                 </thead>
                                 <tbody>
 
-                                    @forelse ($credits as $credit)
+                                    {{-- @forelse ($credits as $credit)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
                                             <td class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap">
                                                 {{ $credit->created_at->format('M d, Y') }}
@@ -693,7 +693,7 @@
                                             </td>
                                         </tr>
                                     @empty
-                                    @endforelse
+                                    @endforelse --}}
 
                                     @forelse ($credits as $credit)
                                         <tr
@@ -719,11 +719,14 @@
                                                             </div>
                                                         </div><span
                                                             class="text-sm font-bold text-red-700">{{ $credit->credits }}</span>
+
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-8 py-5 text-right"><span
                                                     class="text-sm font-semibold text-gray-900">{{ $credit->balance }}</span>
+                                                <br>
+                                                <span>Credits</span>
                                             </td>
                                         </tr>
                                         <tr
@@ -738,9 +741,9 @@
                                                 <div class="flex items-center justify-center"><span
                                                         class="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-200">{{ $credit->transaction_type_name }}</span>
                                                 </div>
-                                                <div class="flex items-center justify-center"><span
+                                                {{-- <div class="flex items-center justify-center"><span
                                                         class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold border {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'bg-red-100 text-red-700 bg-gradient-to-br from-red-100 to-rose-100 border-red-200' : 'bg-green-100 text-green-700 border-emerald-200' }}">{{ $credit->transaction_type_name }}</span>
-                                                </div>
+                                                </div> --}}
                                             </td>
                                             <td class="px-8 py-5">
                                                 <div class="flex items-center justify-center gap-2">
@@ -758,6 +761,8 @@
                                             </td>
                                             <td class="px-8 py-5 text-right"><span
                                                     class="text-sm font-semibold text-gray-900">{{ $credit->balance }}</span>
+                                                <br>
+                                                <span>Credits</span>
                                             </td>
                                         </tr>
                                     @empty
@@ -780,7 +785,7 @@
                     <div
                         class="dark:bg-gray-800 from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
-                            <table class="w-full">
+                            <table class="w-full ">
                                 <thead>
                                     <tr class="border-b border-gray-200 bg-white">
                                         <th class="px-8 py-5 text-left text-sm font-bold text-gray-900">Date</th>
@@ -792,15 +797,104 @@
                                     </tr>
                                 </thead>
 
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                                <tbody>
                                     @forelse ($payments as $payment)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                                {{ $payment->created_at_formatted }}
+                                        <tr
+                                            class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
+                                            <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700 font-medium">{{ $payment->created_at_formatted }}</span>
                                             </td>
-                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                                {{ $payment->notes ?? 'N/A' }}
+                                            <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700">{{ $payment->notes ?? 'N/A' }}</span>
                                             </td>
+                                            {{-- <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700">{{ $payment->order->source->name ?? 'N/A' }}</span>
+                                            </td> --}}
+                                            <td class="px-5 p-3 text-gray-700   whitespace-nowrap">
+                                                @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
+                                                    {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
+                                                @else
+                                                    <div class="flex items-center gap-1">
+                                                        <span
+                                                            class="flex items-center gap-1 font-semibold text-orange-500">
+
+                                                            <div
+                                                                class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                                                                <div class="w-3 h-3 rounded-sm border-2 border-white">
+                                                                </div>
+                                                            </div>
+                                                            {{ number_format($payment->order->credits) }}
+                                                        </span>
+                                                        <span class="text-sm text-gray-600">Credits</span>
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            {{-- <td class="px-8 py-5 text-right">
+                                                <div class="flex items-center gap-2">
+                                                    <div
+                                                        class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                                                        <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
+                                                    </div>
+                                                    <span
+                                                        class="text-sm font-semibold text-orange-600">{{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}</span>
+                                                </div>
+                                            </td> --}}
+
+                                            <td class="px-8 py-5 text-right">
+                                                <div class="flex items-center justify-end gap-2">
+                                                    {{-- <div
+                                                    class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                                                    <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
+                                                </div> --}}
+                                                    <span class="text-sm font-semibold text-black leading-none">
+                                                        {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
+                                                    </span>
+                                                </div>
+                                            </td>
+
+
+                                            <td class="px-8 py-5">
+                                                <div class="flex items-center justify-center">
+                                                    <button
+                                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all group-hover:scale-110">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                            height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-download w-5 h-5">
+                                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                                            <line x1="12" x2="12" y1="15"
+                                                                y2="3"></line>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="">
+                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
+                                                No transactions found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+
+                                {{-- Second Row --}}
+                                {{-- <tbody>
+                                    @forelse ($credits as $credit)
+                                        <tr
+                                            class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
+                                            <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700 font-medium">{{ $payment->created_at_formatted }}</span>
+                                            </td>
+                                            <td class="px-8 py-5"><span
+                                                    class="text-sm text-gray-700">{{ $payment->notes ?? 'N/A' }}</span>
+                                            </td>
+
+                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">{{ $payment->order->source->name ?? 'N/A' }}   </span><span
+                                                    class="text-sm text-gray-600">Credits</span></td>
+
                                             <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
                                                 @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
                                                     {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
@@ -828,39 +922,6 @@
                                                 class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
                                                 {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                             </td>
-                                            <td class="px-5 p-3 text-gray-800 font-medium whitespace-nowrap">
-                                                <a href="javascript:void(0);"
-                                                    wire:click="downloadInvoice({{ $payment->id }})"
-                                                    class="text-blue-600 hover:underline">
-                                                    <x-lucide-file-down class="w-6 h-6" />
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr class="">
-                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                                No transactions found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-
-                                {{-- Second Row --}}
-                                <tbody>
-                                    @forelse ($credits as $credit)
-                                        <tr
-                                            class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
-                                            <td class="px-8 py-5"><span class="text-sm text-gray-700 font-medium">04
-                                                    Oct,
-                                                    2025 09:33 AM</span></td>
-                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">Plan
-                                                    subscription
-                                                    for Premium Plan</span></td>
-                                            <td class="px-8 py-5"><span
-                                                    class="text-sm text-gray-700">{{ $credit->amount }}</span></td>
-
-                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">666</span><span
-                                                    class="text-sm text-gray-600">Credits</span></td>
 
                                             <td class="px-8 py-5">
                                                 <div class="flex items-center gap-2">
@@ -869,8 +930,7 @@
                                                         <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
                                                     </div>
                                                     <span
-                                                        class="text-sm font-semibold text-orange-600">{{ $credit->amount }}</span>
-                                                    <span class="text-sm text-gray-600">Credits</span>
+                                                        class="text-sm font-semibold text-orange-600">{{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}</span>
                                                 </div>
                                             </td>
 
@@ -902,7 +962,7 @@
                                             </td>
                                         </tr>
                                     @endforelse
-                                </tbody>
+                                </tbody> --}}
                             </table>
                         </div>
                     </div>
@@ -959,7 +1019,4 @@
             @endif
         </div>
     </div>
-
-
-
 </section>
