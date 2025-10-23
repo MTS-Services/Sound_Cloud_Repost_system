@@ -824,56 +824,69 @@ class AnalyticsService
     //     return $topSources;
     // }
 
-    public function getTopSources(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
+    public function getTopSources(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null, ?string $actionableType = null): array
     {
-        // Define dynamic date range: last 7 days
-        $startDate = Carbon::now()->subDays(7)->startOfDay();
-        $endDate   = Carbon::now()->endOfDay();
+        $periods = $this->calculatePeriods($filter, $dateRange);
 
-        $topAnalytics = UserAnalytics::query()
-            ->whereNotNull('actionable_id')
-            ->where('actionable_type', Campaign::class)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->select([
-                'source_id',
-                'source_type',
-                'actionable_id',
-                // Conditional aggregation per type
-                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) as total_views'),
-                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 ELSE 0 END) as total_streams'),
-                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 ELSE 0 END) as total_likes'),
-                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 ELSE 0 END) as total_comments'),
-                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 ELSE 0 END) as total_reposts'),
-                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 ELSE 0 END) as total_followers'),
-                // Engagement rate in SQL
-                DB::raw('
-                    CASE WHEN SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) > 0 THEN
-                        LEAST(100, (
-                            (
-                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 ELSE 0 END) +
-                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 ELSE 0 END) +
-                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 ELSE 0 END) +
-                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 ELSE 0 END) +
-                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 ELSE 0 END)
-                            ) / 5
-                            ) / SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) * 100
-                        )
-                    ELSE 0 END as engagement_rate
-                ')
-            ])
-            ->groupBy('source_id', 'source_type', 'actionable_id')
+        $query = UserAnalytics::query();
+
+        // 🔹 Filter by user URN if provided
+        if ($userUrn !== null) {
+            $query->where('owner_user_urn', $userUrn);
+        }
+
+        // 🔹 Filter by actionable type if provided
+        if ($actionableType !== null) {
+            $query->whereNotNull('actionable_id')
+                ->where('actionable_type', $actionableType);
+        }
+
+        // 🔹 Apply date filter
+        $query->whereBetween('created_at', [
+            $periods['current']['start']->format('Y-m-d'),
+            $periods['current']['end']->format('Y-m-d'),
+        ]);
+
+        // 🔹 Get one actionable_id per source using subquery or MAX/MIN
+        $topSources = $query->select([
+            'source_id',
+            'source_type',
+            DB::raw('MAX(actionable_id) as actionable_id'), // Get one actionable per source
+            DB::raw('MAX(actionable_type) as actionable_type'),
+            DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) as total_views'),
+            DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 ELSE 0 END) as total_streams'),
+            DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 ELSE 0 END) as total_likes'),
+            DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 ELSE 0 END) as total_comments'),
+            DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 ELSE 0 END) as total_reposts'),
+            DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 ELSE 0 END) as total_followers'),
+            DB::raw('
+                CASE WHEN SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) > 0 THEN
+                    LEAST(100, (
+                        (
+                            SUM(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 ELSE 0 END) +
+                            SUM(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 ELSE 0 END) +
+                            SUM(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 ELSE 0 END) +
+                            SUM(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 ELSE 0 END) +
+                            SUM(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 ELSE 0 END)
+                        ) / 5
+                    ) / SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) * 100
+                    )
+                ELSE 0 END as engagement_rate
+            ')
+        ])
+            ->groupBy(['source_id', 'source_type'])
             ->orderByDesc('engagement_rate')
-            ->take(20)
+            ->take($limit)
             ->get();
 
+        // 🔹 Eager load both source and actionable in one go
+        $topSources->load(['source', 'actionable']);
 
-        $topAnalytics->load(['actionable', 'source']);
-
-        // Map to readable format
-        $results = $topAnalytics->map(function ($item) {
+        // 🔹 Map results
+        $topSourcesFormatted = $topSources->map(function ($item) {
             return [
-                'campaign' => $item->actionable,
-                'source'   => $item->source,
+                'actionable' => $item->actionable ?? null,
+                'source' => $item->source ?? null,
                 'source_type' => $item->source_type,
                 'views' => (int) $item->total_views,
                 'streams' => (int) $item->total_streams,
@@ -884,7 +897,8 @@ class AnalyticsService
                 'engagement_rate' => round($item->engagement_rate, 2),
             ];
         });
-        return $results->toArray();
+
+        return $topSourcesFormatted->toArray();
     }
 
     /**
