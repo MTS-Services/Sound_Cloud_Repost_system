@@ -828,52 +828,63 @@ class AnalyticsService
     {
         // Define dynamic date range: last 7 days
         $startDate = Carbon::now()->subDays(7)->startOfDay();
-        $endDate   = Carbon::now()->endOfDay(); // today, end of day
+        $endDate   = Carbon::now()->endOfDay();
 
-        // Base query
         $topAnalytics = UserAnalytics::query()
-            ->with(['actionable', 'source']) // eager load Campaign and Track/Playlist
             ->whereNotNull('actionable_id')
             ->where('actionable_type', Campaign::class)
-            ->where('type', UserAnalytics::TYPE_VIEW) // Only views
             ->whereBetween('created_at', [$startDate, $endDate])
             ->select([
-                'user_analytics.source_id',
-                'user_analytics.source_type',
-                DB::raw('COUNT(*) as total_views')
+                'source_id',
+                'source_type',
+                'actionable_id',
+                // Conditional aggregation per type
+                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) as total_views'),
+                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 ELSE 0 END) as total_streams'),
+                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 ELSE 0 END) as total_likes'),
+                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 ELSE 0 END) as total_comments'),
+                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 ELSE 0 END) as total_reposts'),
+                DB::raw('SUM(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 ELSE 0 END) as total_followers'),
+                // Engagement rate in SQL
+                DB::raw('
+                    CASE WHEN SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) > 0 THEN
+                        LEAST(100, (
+                            (
+                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 ELSE 0 END) +
+                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 ELSE 0 END) +
+                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 ELSE 0 END) +
+                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 ELSE 0 END) +
+                                SUM(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 ELSE 0 END)
+                            ) / 5
+                            ) / SUM(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 ELSE 0 END) * 100
+                        )
+                    ELSE 0 END as engagement_rate
+                ')
             ])
-            ->groupBy('user_analytics.source_id', 'user_analytics.source_type')
-            ->orderByDesc('total_views')
+            ->groupBy('source_id', 'source_type', 'actionable_id')
+            ->orderByDesc('engagement_rate')
             ->take(20)
             ->get();
 
-        $results = $topAnalytics->map(function ($analytics) {
-            $avg_total = ($analytics->total_likes + $analytics->total_reposts + $analytics->total_followers + $analytics->total_streams + $analytics->total_comments) / 5;
 
-            $engagement_rate = 0;
-            if ($analytics->total_views >= $avg_total) {
-                $engagement_rate = round(min(100, ($avg_total / ($analytics->total_views == 0 ? 1 : $analytics->total_views)) * 100), 2);
-            }
+        $topAnalytics->load(['actionable', 'source']);
 
+        // Map to readable format
+        $results = $topAnalytics->map(function ($item) {
             return [
-                'campaign' => $analytics->actionable,
-                'source'   => $analytics->source,
-                'source_type' => $analytics->source_type,
-                'views' => (int) $analytics->total_views,
-                'streams' => (int) $analytics->total_streams,
-                'likes' => (int) $analytics->total_likes,
-                'comments' => (int) $analytics->total_comments,
-                'reposts' => (int) $analytics->total_reposts,
-                'followers' => (int) $analytics->total_followers,
-                'avg_total' => $avg_total,
-                'engagement_rate' => $engagement_rate,
+                'campaign' => $item->actionable,
+                'source'   => $item->source,
+                'source_type' => $item->source_type,
+                'views' => (int) $item->total_views,
+                'streams' => (int) $item->total_streams,
+                'likes' => (int) $item->total_likes,
+                'comments' => (int) $item->total_comments,
+                'reposts' => (int) $item->total_reposts,
+                'followers' => (int) $item->total_followers,
+                'engagement_rate' => round($item->engagement_rate, 2),
             ];
         });
-
-        // Sort by engagement_rate descending
-        $results = $results->sortByDesc('engagement_rate')->values()->toArray();
-        dd($results);
-        return $results;
+        return $results->toArray();
     }
 
     /**
