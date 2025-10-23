@@ -275,13 +275,13 @@
                                 </a>
 
                                 <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=tracks"
-                                    wire:navigate
+                                    wire:navigate wire:click="setActiveTab('tracks')"
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'tracks') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Tracks
                                 </a>
 
                                 <a href="{{ route('user.my-account.user', !empty($user->name) ? $user->name : $user->urn) }}?tab=playlists"
-                                    wire:navigate
+                                    wire:navigate wire:click="setActiveTab('playlists')"
                                     class="tab-btn pb-3 sm:pb-4 px-1 text-xs sm:text-sm font-medium transition-colors @if ($activeTab === 'playlists') text-orange-500 border-b-2 border-orange-500 dark:text-orange-400 dark:border-orange-400 @else text-gray-500 border-transparent dark:text-slate-400 @endif">
                                     Playlists
                                 </a>

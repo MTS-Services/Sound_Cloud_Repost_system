@@ -16,7 +16,6 @@ use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\AnalyticsService;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Url;
@@ -146,6 +145,11 @@ class MyAccount extends Component
 
     public function setActiveTab(string $tab): void
     {
+        if($tab === 'tracks') {
+            $this->soundCloudService->syncUserTracks(user(), []);
+        }elseif($tab === 'playlists') {
+            $this->soundCloudService->syncUserPlaylists(user(), []);
+        }
         $this->activeTab = $tab;
     }
 
