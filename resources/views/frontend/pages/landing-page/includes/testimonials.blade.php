@@ -4,7 +4,7 @@
             0% {
                 transform: translateX(0);
             }
-
+                
             100% {
                 transform: translateX(-50%);
             }
@@ -53,10 +53,9 @@
                         system is brilliant. I've built real relationships with other artists and my fanbase has
                         grown organically."</p>
                     <div class="flex items-center gap-3">
-                        <div
-                            class=" w-12 h-12   bg-white flex items-center justify-center text-white font-bold">
-                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10" src="{{ asset('frontend/images/testimonial/1.jpg') }}"
-                                alt="">
+                        <div class=" w-12 h-12   bg-white flex items-center justify-center text-white font-bold">
+                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10"
+                                src="{{ asset('frontend/images/testimonial/1.jpg') }}" alt="">
                         </div>
                         <div>
                             <p class="text-white font-semibold">Riley Monroe</p>
@@ -92,10 +91,9 @@
                         music career. The analytics help me understand my audience, and the community is incredibly
                         supportive."</p>
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-12 h-12 bg-white flex items-center justify-center text-white font-bold">
-                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10" src="{{ asset('frontend/images/testimonial/2.jpg') }}"
-                                alt="images">
+                        <div class="w-12 h-12 bg-white flex items-center justify-center text-white font-bold">
+                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10"
+                                src="{{ asset('frontend/images/testimonial/2.jpg') }}" alt="images">
                         </div>
                         <div>
                             <p class="text-white font-semibold">Kai Rivers</p>
@@ -131,10 +129,9 @@
                         2,500 genuine followers in just 3 months. The engagement is real, and my plays have
                         increased dramatically."</p>
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-12 h-12 bg-white flex items-center justify-center text-white font-bold">
-                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10" src="{{ asset('frontend/images/testimonial/3.jpg') }}"
-                                alt="images">
+                        <div class="w-12 h-12 bg-white flex items-center justify-center text-white font-bold">
+                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10"
+                                src="{{ asset('frontend/images/testimonial/3.jpg') }}" alt="images">
                         </div>
                         <div>
                             <p class="text-white font-semibold">The Velvet Echoes</p>
@@ -170,10 +167,9 @@
                         through until I found RepostChain. Now my tracks are being discovered by the right audience.
                         Incredible platform!"</p>
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-12 h-12  bg-white flex items-center justify-center text-white font-bold">
-                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10" src="{{ asset('frontend/images/testimonial/4.jpg') }}"
-                                alt="img">
+                        <div class="w-12 h-12  bg-white flex items-center justify-center text-white font-bold">
+                            <img class="ring-1 ring-gray-400 rounded-full w-10 h-10"
+                                src="{{ asset('frontend/images/testimonial/4.jpg') }}" alt="img">
                         </div>
                         <div>
                             <p class="text-white font-semibold">Midnight Skyline</p>
@@ -211,7 +207,7 @@
                     <div class="flex items-center gap-3">
                         <div
                             class="w-12 h-12 rounded-full bg-gradient-to-br from-[#ff5500] to-orange-600 flex items-center justify-center text-white font-bold">
-                            <img  src="{{ asset('frontend/images/testimonial/smith.png') }}" alt="">
+                            <img src="{{ asset('frontend/images/testimonial/smith.png') }}" alt="">
                         </div>
                         <div>
                             <p class="text-white font-semibold">Riley Monroe</p>
@@ -249,8 +245,7 @@
                     <div class="flex items-center gap-3">
                         <div
                             class="w-12 h-12 rounded-full bg-gradient-to-br from-[#ff5500] to-orange-600 flex items-center justify-center text-white font-bold">
-                            <img 
-                                src="{{ asset('frontend/images/testimonial/singh.png') }}" alt="images">
+                            <img src="{{ asset('frontend/images/testimonial/singh.png') }}" alt="images">
                         </div>
                         <div>
                             <p class="text-white font-semibold">Kai Rivers</p>
