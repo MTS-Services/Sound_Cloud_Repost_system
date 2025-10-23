@@ -2,10 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,27 +35,41 @@ class Authenticate extends Middleware
     {
         // Check if a user is authenticated with the 'web' guard
         if (Auth::guard('web')->check() && $request->routeIs('user.*')) {
-            $user = Auth::user();
-
-            Auth::user()->update(['last_seen_at' => now()]);
-
-            $user->load('genres');
-
+            $userId = Auth::id();
+            
+            // Single query: Update last_seen_at and check genres existence in one go
+            $hasGenres = User::where('id', $userId)
+                ->whereExists(function ($query) use ($userId) {
+                    $query->select(DB::raw(1))
+                        ->from('user_genres')
+                        ->whereColumn('user_genres.user_urn', 'users.urn')
+                        ->whereNull('user_genres.deleted_at');
+                })
+                ->exists();
+            
+            // Separate update query (can't combine with exists check)
+            User::where('id', $userId)
+                ->whereNull('deleted_at')
+                ->update([
+                    'last_seen_at' => now(),
+                    'updated_at' => now()
+                ]);
+            
             // if ($user->email == null) {
             //     return redirect()->route('user.email.add');
             // }
 
-            if ($user->genres()->count() == 0) {
-                // return redirect()->route('user.genre.add');
+            if (!$hasGenres) {
                 if (!$request->routeIs('user.email.add') && !$request->routeIs('user.email.store') || $request->routeIs('user.dashboard')) {
                     return redirect()->route('user.email.add');
                 }
             }
+            
+            Log::info('User authenticated');
         } else {
             Log::info('User not authenticated');
             return parent::handle($request, $next, ...$guards);
         }
-        Log::info('User authenticated');
 
         return $next($request);
     }
