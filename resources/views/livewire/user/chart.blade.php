@@ -39,7 +39,7 @@
                                                 <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                                                 <path d="M3 10h18"></path>
                                             </svg>
-                                            <span>Week of {{ date('F j, Y', strtotime(now()->subDays(7))) }}</span>
+                                            <span>Week of {{ isset($period['start']) ? $period['start']->format('M d, Y') : 'N/A' }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -49,14 +49,14 @@
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <polyline points="12 6 12 12 16 14"></polyline>
                                             </svg>
-                                            <span>Updated {{ date('F j, Y', strtotime(now())) }}</span>
+                                            <span>Updated {{ isset($period['end']) ? $period['end']->format('M d, Y') : 'N/A' }}</span>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('user.charts') }}" wire:navigate
+                                {{-- <a href="{{ route('user.charts') }}" wire:navigate
                                     class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
 
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -70,9 +70,34 @@
                                     </svg>
                                     <span class="hidden sm:inline" wire:loading.remove
                                         wire:target="refresh">Refresh</span>
+                                </a> --}}
 
-
-                                </a>
+                                <button wire:click="refresh()"
+                                    class="flex items-center gap-2 bg-gray-200 hover:bg-white dark:bg-gray-800 dark:hover:bg-gray-700 px-4 py-2 rounded-xl transition-all duration-200 font-medium border dark:border-gray-700 text-gray-900 dark:text-white">
+                                    <span wire:loading.remove wire:target="refresh" class="hidden sm:inline">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-refresh-cw w-4 h-4">
+                                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                            <path d="M21 3v5h-5"></path>
+                                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                                            <path d="M8 16H3v5"></path>
+                                        </svg>
+                                    </span>
+                                    <span wire:loading wire:target="refresh" class="animate-spin ">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-refresh-cw w-4 h-4">
+                                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                            <path d="M21 3v5h-5"></path>
+                                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                                            <path d="M8 16H3v5"></path>
+                                        </svg>
+                                    </span>
+                                    <span wire:target="refresh">Refresh</span>
+                                </button>
                                 <button
                                     class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl transition-all duration-200 font-medium">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -403,8 +428,7 @@
                                             <img src="{{ soundcloud_image($source['source']?->artwork_url ?? null) }}"
                                                 alt="{{ $source['source']?->title ?? 'Unknown' }}"
                                                 class="w-full aspect-square rounded-xl object-cover transition-transform duration-300 group-hover:scale-105">
-                                            <a href="{{ $source['source']?->permalink_url ?? '#' }}"
-                                                target="_blank"
+                                            <a href="{{ $source['source']?->permalink_url ?? '#' }}" target="_blank"
                                                 class="absolute inset-0 bg-gray-950 bg-gray-950/0 group-hover:bg-gray-950/30 rounded-xl transition-all duration-300 flex items-center justify-center">
                                                 <x-lucide-external-link
                                                     class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -413,8 +437,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-4">
-                                        <a href="{{ $source['source']?->permalink_url ?? '#' }}"
-                                            target="_blank"
+                                        <a href="{{ $source['source']?->permalink_url ?? '#' }}" target="_blank"
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
                                             {{ Str::limit($source['source']?->title ?? 'Unknown', 20, '...') }}</a>
                                         <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}"
