@@ -759,70 +759,123 @@ class AnalyticsService
     /**
      * Get top performing sources
      */
+    // public function getTopSources(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
+    // {
+    //     $periods = $this->calculatePeriods($filter, $dateRange);
+
+    //     $query = UserAnalytics::query();
+
+    //     if ($userUrn !== null) {
+    //         $query->where('owner_user_urn', $userUrn);
+    //     }
+
+    //     // Start the query chain and store the final result directly in $topSources
+    //     $topSources = $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
+    //         ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'))
+    //         ->select([
+    //             'source_id',
+    //             'source_type',
+    //             'owner_user_urn',
+    //             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
+    //             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
+    //             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
+    //             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
+    //             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
+    //             DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
+    //         ])
+    //         ->groupBy('source_id', 'source_type', 'owner_user_urn')
+    //         ->orderByDesc('total_views')
+    //         ->orderByDesc('total_streams')
+    //         ->orderByDesc('total_likes')
+    //         ->orderByDesc('total_reposts')
+    //         ->orderByDesc('total_followers')
+    //         ->with(['source.user', 'ownerUser'])
+    //         ->limit($limit)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             // Calculate avg_total first
+    //             $avg_total = ($item->total_likes + $item->total_reposts + $item->total_followers + $item->total_streams + $item->total_comments) / 5;
+
+    //             // Apply the new engagement rate logic
+    //             $engagement_rate = 0;
+    //             if ($item->total_views >= $avg_total) {
+    //                 $engagement_rate = round(min(100, ($avg_total / ($item->total_views == 0 ? 1 : $item->total_views)) * 100), 2);
+    //             }
+
+    //             return [
+    //                 'source' => $item->source,
+    //                 'source_type' => $item->source_type,
+    //                 'views' => (int) $item->total_views,
+    //                 'streams' => (int) $item->total_streams,
+    //                 'likes' => (int) $item->total_likes,
+    //                 'comments' => (int) $item->total_comments,
+    //                 'reposts' => (int) $item->total_reposts,
+    //                 'followers' => (int) $item->total_followers,
+    //                 'avg_total' => $avg_total,
+    //                 'engagement_rate' => $engagement_rate,
+    //             ];
+    //         })
+    //         ->filter(function ($item) {
+    //             return $item['source'] !== null;
+    //         })
+    //         ->values()
+    //         ->toArray();
+
+    //     return $topSources;
+    // }
+
     public function getTopSources(int $limit = 20, ?string $userUrn = null, ?string $filter = 'last_week', ?array $dateRange = null): array
     {
-        $periods = $this->calculatePeriods($filter, $dateRange);
+        // Define dynamic date range: last 7 days
+        $startDate = Carbon::now()->subDays(7)->startOfDay();
+        $endDate   = Carbon::now()->endOfDay(); // today, end of day
 
-        $query = UserAnalytics::query();
-
-        if ($userUrn !== null) {
-            $query->where('owner_user_urn', $userUrn);
-        }
-
-        // Start the query chain and store the final result directly in $topSources
-        $topSources = $query->whereDate('created_at', '>=', $periods['current']['start']->format('Y-m-d'))
-            ->whereDate('created_at', '<=', $periods['current']['end']->format('Y-m-d'))
+        // Base query
+        $topAnalytics = UserAnalytics::query()
+            ->with(['actionable', 'source']) // eager load Campaign and Track/Playlist
+            ->whereNotNull('actionable_id')
+            ->where('actionable_type', Campaign::class)
+            ->where('type', UserAnalytics::TYPE_VIEW) // Only views
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->select([
-                'source_id',
-                'source_type',
-                'owner_user_urn',
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_VIEW . ' THEN 1 END) as total_views'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_PLAY . ' THEN 1 END) as total_streams'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_LIKE . ' THEN 1 END) as total_likes'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_COMMENT . ' THEN 1 END) as total_comments'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_REPOST . ' THEN 1 END) as total_reposts'),
-                DB::raw('COUNT(CASE WHEN type = ' . UserAnalytics::TYPE_FOLLOW . ' THEN 1 END) as total_followers'),
+                'user_analytics.source_id',
+                'user_analytics.source_type',
+                DB::raw('COUNT(*) as total_views')
             ])
-            ->groupBy('source_id', 'source_type', 'owner_user_urn')
+            ->groupBy('user_analytics.source_id', 'user_analytics.source_type')
             ->orderByDesc('total_views')
-            ->orderByDesc('total_streams')
-            ->orderByDesc('total_likes')
-            ->orderByDesc('total_reposts')
-            ->orderByDesc('total_followers')
-            ->with(['source.user', 'ownerUser'])
-            ->limit($limit)
-            ->get()
-            ->map(function ($item) {
-                // Calculate avg_total first
-                $avg_total = ($item->total_likes + $item->total_reposts + $item->total_followers + $item->total_streams + $item->total_comments) / 5;
+            ->take(20)
+            ->get();
 
-                // Apply the new engagement rate logic
-                $engagement_rate = 0;
-                if ($item->total_views >= $avg_total) {
-                    $engagement_rate = round(min(100, ($avg_total / ($item->total_views == 0 ? 1 : $item->total_views)) * 100), 2);
-                }
+        $results = $topAnalytics->map(function ($analytics) {
+            $avg_total = ($analytics->total_likes + $analytics->total_reposts + $analytics->total_followers + $analytics->total_streams + $analytics->total_comments) / 5;
 
-                return [
-                    'source' => $item->source,
-                    'source_type' => $item->source_type,
-                    'views' => (int) $item->total_views,
-                    'streams' => (int) $item->total_streams,
-                    'likes' => (int) $item->total_likes,
-                    'comments' => (int) $item->total_comments,
-                    'reposts' => (int) $item->total_reposts,
-                    'followers' => (int) $item->total_followers,
-                    'avg_total' => $avg_total,
-                    'engagement_rate' => $engagement_rate,
-                ];
-            })
-            ->filter(function ($item) {
-                return $item['source'] !== null;
-            })
-            ->values()
-            ->toArray();
+            $engagement_rate = 0;
+            if ($analytics->total_views >= $avg_total) {
+                $engagement_rate = round(min(100, ($avg_total / ($analytics->total_views == 0 ? 1 : $analytics->total_views)) * 100), 2);
+            }
 
-        return $topSources;
+            return [
+                'campaign' => $analytics->actionable,
+                'source'   => $analytics->source,
+                'source_type' => $analytics->source_type,
+                'views' => (int) $analytics->total_views,
+                'streams' => (int) $analytics->total_streams,
+                'likes' => (int) $analytics->total_likes,
+                'comments' => (int) $analytics->total_comments,
+                'reposts' => (int) $analytics->total_reposts,
+                'followers' => (int) $analytics->total_followers,
+                'avg_total' => $avg_total,
+                'engagement_rate' => $engagement_rate,
+            ];
+        });
+
+        // Sort by engagement_rate descending
+        $results = $results->sortByDesc('engagement_rate')->values()->toArray();
+
+        return $results;
     }
+
     /**
      * Get genre performance breakdown
      */
