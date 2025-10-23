@@ -11,8 +11,12 @@
     @include('frontend.pages.landing-page.includes.about')
     <!-- How It Works Section -->
     @include('frontend.pages.landing-page.includes.how-it-works')
+     <!-- SoundCloud Pro Section -->
+    @include('frontend.pages.landing-page.includes.sound-cloud-pro')
     <!-- Features Section -->
-    @include('frontend.pages.landing-page.includes.features')
+    {{-- @include('frontend.pages.landing-page.includes.features') --}}
+
+    
 
     <!-- Statistics Section -->
     @include('frontend.pages.landing-page.includes.statistics')
