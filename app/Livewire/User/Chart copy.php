@@ -11,7 +11,6 @@ use App\Models\UserAnalytics;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\CampaignManagement\CampaignService;
-use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
@@ -46,23 +45,21 @@ class Chart extends Component
         $this->getPaginatedSourceData();
     }
 
-    public function getPaginatedSourceData()
+    public function getPaginatedSourceData(): LengthAwarePaginator
     {
         try {
-            $startDate = Carbon::now()->subDays(6)->startOfDay();
-            $endDate = Carbon::now()->endOfDay();
-            $sources =  $this->analyticsService->getTopSources(
-                filter: 'date_range',
-                dateRange: [
-                    'start' => $startDate,
-                    'end' => $endDate
-                ],
+            $sources =  $this->analyticsService->getPaginatedAnalytics(
+                filter: 'last_week',
+                dateRange: null,
+                genres: [],
+                perPage: $this->sourcesPerPage,
+                page: $this->getPage(),
                 actionableType: Campaign::class
             );
             return $sources;
         } catch (\Throwable $e) {
-            Log::error('Source data loading failed', ['error' => $e->getMessage()]);
-            throw $e;
+            Log::error('Paginated source data loading failed', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $this->sourcesPerPage, $this->getPage());
         }
     }
 
@@ -255,28 +252,56 @@ class Chart extends Component
     {
 
         $paginated = $this->getPaginatedSourceData();
-        $items = collect($paginated);
+        // Get the collection from paginator
+        $items = $paginated->getCollection();
 
-        // // Map over items to calculate engagement score and rate
+        // Map over items to calculate engagement score and rate
         $itemsWithMetrics = $items->map(function ($source) {
+            $totalViews = $source['metrics']['total_views']['current_total'] == 0 ? 1 : $source['metrics']['total_views']['current_total'];
+            $totalPlays = $source['metrics']['total_plays']['current_total'];
+            $totalReposts = $source['metrics']['total_reposts']['current_total'];
+            $totalLikes = $source['metrics']['total_likes']['current_total'];
+            $totalComments = $source['metrics']['total_comments']['current_total'];
+            $totalFollowers = $source['metrics']['total_followers']['current_total'];
             $source['repost'] = false;
-            if ($source['actionable'] != null) {
-                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $source['actionable']['id'])->exists();
+            if ($source['actionable_details'] != null) {
+                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $source['actionable_details']['id'])->exists();
                 if ($repost) {
                     $source['repost'] = true;
                 }
             }
             $source['like'] = false;
-            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('source_id', $source['source']['id'])->exists();
+            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('source_id', $source['source_details']['id'])->exists();
             if ($like) {
                 $source['like'] = true;
             }
+
+
+            $avgTotal = ($totalLikes + $totalComments + $totalReposts + $totalPlays + $totalFollowers) / 5;
+
+            // Engagement % (capped at 100)
+            $engagementRate = $totalViews >= $avgTotal ? min(100, ($avgTotal / $totalViews)  * 100) : 0;
+
+            // Engagement Score (0–10 scale)
+            $engagementScore = round(($engagementRate / 100) * 10, 1);
+            // $source['getMusicSrc'] = $this->soundCloudService->getMusicSrc($source['source_details']['id']);
+
+            // Add score and rate to source array
+            $source['engagement_score'] = $engagementScore;
+            $source['engagement_rate'] = round($engagementRate, 2); // optional rounding
+
             return $source;
         });
+
+        // Sort by engagement score descending
+        $sorted = $itemsWithMetrics->sortByDesc('engagement_score');
+
+        // Update paginator collection
+        $paginated->setCollection($sorted);
         return view(
             'livewire.user.chart',
             [
-                'topSources' => $itemsWithMetrics
+                'topSources' => $paginated
             ]
         );
     }
