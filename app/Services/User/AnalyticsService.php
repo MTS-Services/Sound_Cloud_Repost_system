@@ -895,6 +895,7 @@ class AnalyticsService
                 'reposts' => (int) $item->total_reposts,
                 'followers' => (int) $item->total_followers,
                 'engagement_rate' => round($item->engagement_rate, 2),
+                'engagement_score' => round(($item->engagement_rate / 100) * 10, 2),
             ];
         });
 

@@ -245,7 +245,7 @@
                                             {{-- Score --}}
                                             <div
                                                 class="col-span-2 flex items-center justify-center font-bold text-orange-400">
-                                                {{ $source['engagement_rate'] }}/10
+                                                {{ $source['engagement_score'] }}/10
                                             </div>
 
                                             {{-- Reach --}}
@@ -327,7 +327,7 @@
                                                 {{ number_shorten($source['views']) }}</span>
                                             <div class="flex items-center space-x-2">
                                                 <span class="font-bold text-orange-400">
-                                                    {{ $source['engagement_rate'] }}/10
+                                                    {{ $source['engagement_score'] }}/10
                                                 </span>
                                             </div>
                                             <span>Reposts:
@@ -429,7 +429,7 @@
                                         <div
                                             class="text-center cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
                                             <div class="text-xl font-bold text-orange-400">
-                                                {{ $source['engagement_rate'] }}/10</div>
+                                                {{ $source['engagement_score'] }}/10</div>
                                             <div class="text-xs text-gray-800 dark:text-gray-400">Engagement Score
                                             </div>
                                         </div>
@@ -598,7 +598,7 @@
                                                 </div>
                                                 <div class="text-right cursor-pointer">
                                                     <div class="text-lg font-bold text-black dark:text-white">
-                                                        {{ $source['engagement_rate'] }}/10</div>
+                                                        {{ $source['engagement_score'] }}/10</div>
                                                     <div class="text-xs text-gray-800 dark:text-gray-400">score</div>
                                                 </div>
                                             </div>
