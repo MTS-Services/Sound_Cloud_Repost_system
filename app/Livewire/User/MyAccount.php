@@ -92,6 +92,11 @@ class MyAccount extends Component
         $this->getAnalyticsData($user);
 
         $this->activeTab = request()->query('tab', $this->activeTab);
+        if(request()->query('tab') == 'tracks') {
+            $this->soundCloudService->syncUserTracks(user(), []);
+        }elseif(request()->query('tab') == 'playlists') {
+            $this->soundCloudService->syncUserPlaylists(user(), []);
+        }
 
         $userUrn = $user->urn ?? user()->urn;
         $this->user_urn = $userUrn;
