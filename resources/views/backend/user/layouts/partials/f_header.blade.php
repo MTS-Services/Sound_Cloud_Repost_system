@@ -1,5 +1,9 @@
+
+
+
 <!-- Alpine.js -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 
 <header x-data="{ open: false, darkMode: localStorage.getItem('theme') === 'dark' }"
         x-init="$watch('darkMode', val => { 
@@ -18,13 +22,13 @@
         </a>
 
         <!-- Desktop Menu -->
-        <nav class="hidden md:flex items-center space-x-6">
-            <a href="{{ route('f.landing') }}#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
-            <a href="{{ route('f.plan') }}" wire:navigate class="text-gray-300 hover:text-white transition-colors">Plan</a>
-            <a href="{{ route('f.landing') }}#about" class="text-gray-300 hover:text-white transition-colors">About</a>
-            <a href="{{ route('f.landing') }}#how-it-works" class="text-gray-300 hover:text-white transition-colors">How it Works</a>
-            <a href="{{ route('f.landing') }}#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
-            <a href="{{ route('f.landing') }}#testimonials" class="text-gray-300 hover:text-white transition-colors">Testimonials</a>
+        <nav class="hidden lg:flex items-center space-x-2 sm:space-x-3 xl:space-x-6 custom-nav ">
+            <a href="{{ route('f.landing') }}#home" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Home</a>
+            <a href="{{ route('f.plan') }}" wire:navigate class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Plan</a>
+            <a href="{{ route('f.landing') }}#about" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">About</a>
+            <a href="{{ route('f.landing') }}#how-it-works" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">How it Works</a>
+            <a href="{{ route('f.features') }}" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Features</a>
+            <a href="{{ route('f.landing') }}#testimonials" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Testimonials</a>
 
 
             @if (Auth::check())
@@ -37,7 +41,7 @@
         </nav>
 
         <!-- Mobile Menu Button -->
-        <div class="md:hidden flex items-center space-x-3">
+        <div class="lg:hidden flex items-center space-x-3">
             {{-- <!-- Dark Mode Toggle (Mobile) -->
             <button @click="darkMode = !darkMode" class="text-gray-300 hover:text-white">
                 <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -62,7 +66,7 @@
             <!-- Toggle Button -->
             <button @click="open = !open" class="text-gray-200 hover:text-white">
                 <!-- Hamburger -->
-                <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round">
                     <line x1="4" x2="20" y1="12" y2="12"></line>
@@ -70,7 +74,7 @@
                     <line x1="4" x2="20" y1="18" y2="18"></line>
                 </svg>
                 <!-- Close -->
-                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -81,7 +85,7 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div x-show="open" x-transition class="md:hidden bg-dark-card border-t border-dark-border">
+    <div x-show="open" x-transition class="lg:hidden bg-dark-card border-t border-dark-border">
         <div class="container mx-auto px-4 py-4 space-y-4">
             <a href="{{ route('f.landing') }}#home" class="block text-gray-300 hover:text-white transition-colors">Home</a>
             <a href="{{ route('f.plan') }}" wire:navigate class="block text-gray-300 hover:text-white transition-colors">Plan</a>

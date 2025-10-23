@@ -812,14 +812,33 @@ function hasEmailSentPermission($value, $userUrn = null): bool
     }
     return UserSetting::where('user_urn', user()->urn)->value($value) ?? false;
 }
-function app_setting($key)
-{
-    $setting = ApplicationSetting::where('key', $key)->first();
-    if ($setting) {
-        return $setting->value;
+// if(!function_exists('app_setting')){
+//     function app_setting($key)
+//     {
+//         $setting = ApplicationSetting::where('key', $key)->first();
+//         if ($setting) {
+//             return $setting->value;
+//         }
+//         return null;
+//     }
+// }
+if (!function_exists('app_setting')) {
+    function app_setting($key)
+    {
+        static $settings = [];
+
+        if (array_key_exists($key, $settings)) {
+            return $settings[$key];
+        }
+
+        $setting = ApplicationSetting::where('key', $key)->first();
+
+        $settings[$key] = $setting ? $setting->value : null;
+
+        return $settings[$key];
     }
-    return null;
 }
+
 // function logos()
 
 if (!function_exists('number_shorten')) {
@@ -863,9 +882,4 @@ if (!function_exists('is_email_verified')) {
         $user = $userUrn ? User::where('urn', $userUrn)->first() : user();
         return $user->hasVerifiedEmail();
     }
-
 }
-
-
-
-
