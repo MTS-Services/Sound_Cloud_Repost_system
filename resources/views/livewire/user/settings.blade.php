@@ -1,6 +1,9 @@
 <section>
     <x-slot name="page_slug">settings</x-slot>
     {{-- error check --}}
+    <div class="flex justify-center">
+        <x-gbutton wire:click="deleteAccount" variant="primary">Yes, Delete Account</x-gbutton>
+    </div>
 
     <style>
         /* Custom styles for the active tab indicator */
@@ -21,43 +24,69 @@
         }
     </style>
 
-    <div x-data="{ open: true, activeTab: @entangle('activeTab').live, isGenreDropdownOpen: false }" class="#">
-        <div class="bg-white dark:bg-gray-800 rounded-t-lg shadow-lg max-w-8xl mx-auto overflow-hidden ">
-            <div class="border-b border-gray-200 dark:border-gray-700 ">
+    <div x-data="{ activeTab: @entangle('activeTab').live }" class="#">
+        <div class="bg-white dark:bg-gray-800 rounded-t-lg shadow-lg max-w-8xl mx-auto overflow-hidden">
+            <div class="border-b border-gray-200 dark:border-gray-700">
                 <div
                     class="flex overflow-x-auto no-scrollbar text-gray-600 dark:text-gray-300 font-medium text-xs sm:text-sm">
-                    <button wire:click="setActiveTab('profile')"
-                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'profile' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+
+                    <!-- Profile -->
+                    <button x-on:click="activeTab = 'profile'"
+                        :class="activeTab === 'profile'
+                            ?
+                            'border-b-2 border-orange-500 text-orange-500' :
+                            'hover:bg-gray-50 dark:hover:bg-gray-600'"
+                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Edit profile
-                        <span class="tab-indicator {{ $activeTab === 'profile' ? '' : 'hidden' }}"></span>
+                        <span x-show="activeTab === 'profile'" class="tab-indicator"></span>
                     </button>
 
-                    <button wire:click="setActiveTab('notifications')"
-                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'notifications' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+                    <!-- Notifications -->
+                    <button x-on:click="activeTab = 'notifications'"
+                        :class="activeTab === 'notifications'
+                            ?
+                            'border-b-2 border-orange-500 text-orange-500' :
+                            'hover:bg-gray-50 dark:hover:bg-gray-600'"
+                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Notifications & alerts
-                        <span class="tab-indicator {{ $activeTab === 'notifications' ? '' : 'hidden' }}"></span>
+                        <span x-show="activeTab === 'notifications'" class="tab-indicator"></span>
                     </button>
 
-                    <button wire:click="setActiveTab('settings')"
-                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'settings' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+                    <!-- Settings -->
+                    <button x-on:click="activeTab = 'settings'"
+                        :class="activeTab === 'settings'
+                            ?
+                            'border-b-2 border-orange-500 text-orange-500' :
+                            'hover:bg-gray-50 dark:hover:bg-gray-600'"
+                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Settings
-                        <span class="tab-indicator {{ $activeTab === 'settings' ? '' : 'hidden' }}"></span>
+                        <span x-show="activeTab === 'settings'" class="tab-indicator"></span>
                     </button>
 
-                    <button wire:click="setActiveTab('credit')"
-                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'credit' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+                    <!-- Credit -->
+                    <button x-on:click="activeTab = 'credit'"
+                        :class="activeTab === 'credit'
+                            ?
+                            'border-b-2 border-orange-500 text-orange-500' :
+                            'hover:bg-gray-50 dark:hover:bg-gray-600'"
+                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Credit history
-                        <span class="tab-indicator {{ $activeTab === 'credit' ? '' : 'hidden' }}"></span>
+                        <span x-show="activeTab === 'credit'" class="tab-indicator"></span>
                     </button>
 
-                    <button wire:click="setActiveTab('invoices')"
-                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out {{ $activeTab === 'invoices' ? 'border-b-2 border-orange-500 text-orange-500' : 'hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+                    <!-- Invoices -->
+                    <button x-on:click="activeTab = 'invoices'"
+                        :class="activeTab === 'invoices'
+                            ?
+                            'border-b-2 border-orange-500 text-orange-500' :
+                            'hover:bg-gray-50 dark:hover:bg-gray-600'"
+                        class="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap relative tab-link focus:outline-none transition-colors duration-200 ease-in-out">
                         Invoices
-                        <span class="tab-indicator {{ $activeTab === 'invoices' ? '' : 'hidden' }}"></span>
+                        <span x-show="activeTab === 'invoices'" class="tab-indicator"></span>
                     </button>
+
                 </div>
             </div>
-
 
             <div x-show="activeTab === 'profile'" x-cloak>
                 <!-- Edit Profile -->
@@ -116,7 +145,7 @@
                         <div class=" p-3">
                             <!-- Wrapper with gradient background -->
                             <div
-                                class="dark:bg-gray-800  from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
+                                class="dark:bg-gray-800  from-gray-50 to-white p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
                                 <!-- Decorative circles -->
                                 <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12">
                                 </div>
@@ -133,7 +162,7 @@
 
                                     <!-- Input -->
                                     <input type="email" id="email" wire:model="email"
-                                        class="dark:bg-gray-800 w-full px-3 py-2.5 bg-white border-2 border-gray-100 rounded-lg text-gray-900 text-sm focus:outline-none dark:text-white focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400"
+                                        class="dark:bg-gray-800 w-full px-3 py-2.5 bg-white border-2 border-gray-100 dark:border-gray-700 rounded-lg text-gray-900 text-sm focus:outline-none dark:text-white focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400"
                                         placeholder="your.email@example.com">
 
                                     <!-- Error / Verification Message -->
@@ -144,7 +173,7 @@
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" />
                                             </svg>
-                                            <p class="text-xs text-white/90">
+                                            <p class="text-xs text-orange-500">
                                                 Email not verified, please verify your email.
                                             </p>
                                         </div>
@@ -157,7 +186,7 @@
                         <div class=" p-3" x-data="{ isGenreDropdownOpen: false }">
                             <!-- Gray Gradient Wrapper -->
                             <div
-                                class="dark:bg-gray-800 from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                class="dark:bg-gray-800 from-gray-50 to-white p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
                                 <!-- Decorative circles -->
                                 <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12">
                                 </div>
@@ -167,7 +196,7 @@
                                 <!-- Content -->
                                 <div class="relative space-y-3 ">
                                     <!-- Header -->
-                                    <div class="border-b border-white/30 pb-2">
+                                    <div class="border-b border-white/30 dark:border-gray-700 pb-2">
                                         <h3 class="block text-sm font-bold text-gray-900 mb-1.5 dark:text-white">Your
                                             Music Genres</h3>
                                     </div>
@@ -175,7 +204,7 @@
                                     <!-- Selected Genres + Input -->
                                     <div class="relative">
                                         <div
-                                            class="dark:bg-gray-800 flex flex-wrap gap-2 p-3 bg-white border-2 border-gray-100 rounded-lg min-h-[48px] focus-within:ring-4 focus-within:ring-orange-500/20 focus-within:border-orange-500 transition-all">
+                                            class="dark:bg-gray-800 flex flex-wrap gap-2 p-3 bg-white border-2 border-gray-100 dark:border-gray-700 rounded-lg min-h-[48px] focus-within:ring-4 focus-within:ring-orange-500/20 focus-within:border-orange-500 transition-all">
 
                                             <!-- Selected genres -->
                                             @foreach ($selectedGenres as $genre)
@@ -183,7 +212,7 @@
                                                     class="dark:bg-gray-800 group inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg text-xs font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all">
                                                     {{ $genre }}
                                                     <button type="button"
-                                                        wire:click="removeGenre('{{ $genre }}')"
+                                                        @click="$wire.removeGenre('{{ $genre }}')"
                                                         class="p-0.5 hover:bg-white/20 rounded-md transition-all">
                                                         <x-lucide-x class="w-3 h-3 text-white" />
                                                     </button>
@@ -195,8 +224,8 @@
                                                 x-on:click="isGenreDropdownOpen = true"
                                                 x-on:input="isGenreDropdownOpen = true"
                                                 placeholder="{{ count($selectedGenres) < 5 ? 'Search genres...' : '' }}"
-                                                class="dark:bg-white flex-1 outline-none border-0 text-xs font-medium 
-                                                focus:outline-none focus:ring-0 bg-transparent text-black placeholder:text-gray-600 min-w-[100px]"
+                                                class="dark:bg-gray-800 flex-1 outline-none border-0 text-xs font-medium 
+                                                focus:outline-none focus:ring-0 bg-transparent text-black dark:text-white placeholder:text-gray-600 dark:placeholder:text-gray-300 min-w-[100px]"
                                                 @if (count($selectedGenres) >= $maxGenres) disabled @endif>
 
                                             <!-- Search icon -->
@@ -209,7 +238,7 @@
 
                                         <!-- Genre Limit or Count Errors -->
                                         @if ($genreLimitError)
-                                            <div class="flex items-center mt-2 text-white text-sm">
+                                            <div class="flex items-center mt-2 text-orange-500 text-sm">
                                                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd"
                                                         d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -218,7 +247,7 @@
                                                 You can only choose up to {{ $maxGenres }} genres.
                                             </div>
                                         @elseif ($genreCountError)
-                                            <div class="flex items-center mt-2 text-white text-sm">
+                                            <div class="flex items-center mt-2 text-orange-500 text-sm">
                                                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd"
                                                         d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -239,10 +268,10 @@
                                             class="absolute z-10 w-full mt-2 bg-white/95 backdrop-blur-md border border-white/30 dark:bg-slate-800 rounded-lg shadow-lg max-h-60 overflow-y-auto">
 
                                             @if (count($this->filteredGenres) > 0)
-                                                @foreach ($this->filteredGenres as $genre)
+                                                @foreach ($this->filteredGenres as $index => $genre)
                                                     <button type="button"
                                                         wire:click="addGenre('{{ $genre }}')"
-                                                        class="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-orange-100 focus:bg-orange-100 focus:outline-none"
+                                                        class="w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-gray-100 dark:bg-gray-600 hover:bg-orange-100 dark:hover:bg-gray-700 focus:bg-orange-100 focus:outline-none"
                                                         @if (count($selectedGenres) >= $maxGenres) disabled @endif>
                                                         {{ $genre }}
                                                     </button>
@@ -285,7 +314,7 @@
                                 <div class="grid grid-cols-2 gap-2.5">
                                     <!-- Instagram -->
                                     <div
-                                        class="group relative bg-white rounded-lg border-2 border-gray-200 overflow-hidden hover:border-pink-300 transition-all">
+                                        class="group relative bg-white dark:bg-gray-600 dark:text-gray-50 rounded-lg border-2 border-gray-200 dark:border-gray-600 overflow-hidden hover:border-pink-300 transition-all">
                                         <div
                                             class="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -295,14 +324,14 @@
                                             </svg>
                                         </div>
                                         <input type="text" placeholder="@username" wire:model="instagram_username"
-                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent focus:outline-none border-0 text-gray-900 placeholder:text-gray-400 font-medium text-xs">
+                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent focus:outline-none border-0 text-gray-900 dark:text-white placeholder:text-gray-400 font-medium text-xs">
                                     </div>
 
 
 
                                     <!-- Twitter -->
                                     <div
-                                        class="group relative bg-white rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 transition-all">
+                                        class="group relative bg-white dark:bg-gray-600 dark:text-gray-50 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 transition-all">
                                         <div
                                             class="absolute left-0 top-0 bottom-0 w-10 bg-blue-400 flex items-center justify-center">
                                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -312,12 +341,12 @@
                                             </svg>
                                         </div>
                                         <input type="text" placeholder="@username" wire:model="twitter_username"
-                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900 placeholder:text-gray-400 font-medium text-xs">
+                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900 dark:text-white placeholder:text-gray-400 font-medium text-xs">
                                     </div>
 
                                     <!-- Facebook -->
                                     <div
-                                        class="group relative bg-white rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-600 transition-all">
+                                        class="group relative bg-white dark:bg-gray-600 dark:text-gray-50 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-600 transition-all">
                                         <div
                                             class="absolute left-0 top-0 bottom-0 w-10 bg-blue-600 flex items-center justify-center">
                                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -327,12 +356,12 @@
                                             </svg>
                                         </div>
                                         <input type="text" placeholder="/pagelink" wire:model="facebook_username"
-                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 font-medium text-xs border-0">
+                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900  dark:text-white placeholder:text-gray-400 font-medium text-xs">
                                     </div>
 
                                     <!-- YouTube -->
                                     <div
-                                        class="group relative bg-white rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-red-400 transition-all">
+                                        class="group relative bg-white dark:bg-gray-600 dark:text-gray-50 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-red-400 transition-all">
                                         <div
                                             class="absolute left-0 top-0 bottom-0 w-10 bg-red-600 flex items-center justify-center">
                                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -343,12 +372,12 @@
                                         </div>
                                         <input type="text" placeholder="Channel ID"
                                             wire:model="youtube_channel_id"
-                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900 placeholder:text-gray-400 font-medium text-xs">
+                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900 dark:text-white placeholder:text-gray-400 font-medium text-xs">
                                     </div>
 
                                     <!-- TikTok -->
                                     <div
-                                        class="group relative bg-white rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-black transition-all">
+                                        class="group relative bg-white dark:bg-gray-600 dark:text-gray-50 rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-black dark:hover:border-white transition-all">
                                         <div
                                             class="absolute left-0 top-0 bottom-0 w-10 bg-black flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -361,14 +390,14 @@
                                             </svg>
                                         </div>
                                         <input type="text" placeholder="@username" wire:model="tiktok_username"
-                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900 placeholder:text-gray-400 font-medium text-xs">
+                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900  dark:text-white placeholder:text-gray-400 font-medium text-xs">
                                     </div>
 
 
 
                                     <!-- Spotify (full width) -->
                                     <div
-                                        class="group relative bg-white rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-green-400 transition-all col-span-2">
+                                        class="group relative bg-white dark:bg-gray-600 dark:text-gray-50 t rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden hover:border-green-400 transition-all col-span-2">
                                         <div
                                             class="absolute left-0 top-0 bottom-0 w-10 bg-green-500 flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -383,7 +412,7 @@
                                         <input type="text"
                                             placeholder="Artist link (https://open.spotify.com/artist/...)"
                                             wire:model="spotify_artist_link"
-                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 font-medium text-xs border-0">
+                                            class="w-full pl-12 pr-3 py-2.5 bg-transparent border-0 focus:outline-none text-gray-900  dark:text-white placeholder:text-gray-400 font-medium text-xs">
                                     </div>
                                 </div>
                             </div>
@@ -431,13 +460,15 @@
                 <h2 class="dark:text-white text-2xl font-bold text-gray-900 mb-2">
                     Notifications &amp; Alerts
                 </h2>
-                <p class="text-gray-400 mb-8 ">
+                <p class="text-gray-500 dark:text-gray-300 mb-8 ">
                     Manage your email and notification preferences.
                 </p>
                 <!-- Alerts Section -->
-                <div class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm">
+                <div
+                    class="dark:bg-gray-800 bg-gray-100/50  p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
                     <!-- Title Bar -->
-                    <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
+                    <div
+                        class="flex items-center justify-between mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="dark:text-white text-lg font-bold text-gray-900">Alerts</h3>
                         <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">Email</span>
                     </div>
@@ -446,7 +477,7 @@
                     <form wire:submit.prevent="notificationUpdate">
                         @foreach ($this->alerts as $key => $alert)
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                class="flex items-center justify-between p-4 rounded-xl {{ $key % 2 == 0 ? 'bg-white hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-600/20' : 'bg-gray-100/50 dark:bg-gray-800 hover:bg-white dark:hover:bg-gray-700' }} transition">
                                 <span
                                     class="text-sm font-medium text-gray-900 dark:text-white">{{ $alert['name'] }}</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
@@ -492,54 +523,40 @@
         <div x-show="activeTab === 'settings'" x-cloak class="p-6 bg-white dark:bg-gray-800">
             <div class="mb-8">
                 <h2 class="dark:text-white text-2xl font-bold text-gray-900 mb-2">Settings</h2>
-                <p class="text-gray-400">Manage your account preferences and features.</p>
+                <p class="text-gray-500 dark:text-gray-300">Manage your account preferences and features.</p>
             </div>
 
             <form wire:submit.prevent="settingsUpdate" method="POST">
                 @csrf
                 <div class="space-y-8">
                     <!-- My Requests -->
-                    <div class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm bg-gray-100/50">
+                    <div
+                        class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm bg-gray-100/50">
                         <h3 class="dark:text-white text-lg font-bold text-gray-900 mb-6">My requests</h3>
 
                         <div class="space-y-1">
                             <!-- Accept Direct Repost Requests -->
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
+                                class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900/30 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
                                 <div>
-                                    <p class="text-gray-700 dark:text-gray-900">Accept Direct repost requests</p>
+                                    <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
                                     @if (!user()->email_verified_at)
                                         <p class="text-sm text-red-500">You must confirm your email address to
                                             accept
                                             direct repost requests</p>
                                     @endif
                                 </div>
-                                {{-- <div class="flex items-center gap-4">
-                                        <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                                {{ user()->email_verified_at ? '' : 'disabled' }}
-                                                class="w-5 h-5 text-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }} border-gray-300 focus:ring-2 focus:ring-orange-500/20"
-                                                checked>
-                                            <span class="text-sm font-medium text-gray-700">Yes</span>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="radio" name="acceptRequests" wire:model="accept_repost"
-                                                {{ user()->email_verified_at ? '' : 'disabled' }}
-                                                class="w-5 h-5 text-orange-500  border-gray-300 focus:ring-2 focus:ring-orange-500/20 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
-                                            <span class="text-sm font-medium text-gray-700">No</span>
-                                        </label>
-                                    </div> --}}
                                 <div class="flex items-center gap-6">
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="acceptRequests" wire:model="accept_repost"
                                             value="1" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
                                         <span class="text-gray-600 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-1">
                                         <input type="radio" name="acceptRequests" wire:model="accept_repost"
                                             value="0" {{ user()->email_verified_at ? '' : 'disabled' }}
-                                            class="text-orange-500 focus:ring-orange-500 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
+                                            class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20 {{ user()->email_verified_at ? '' : 'cursor-not-allowed' }}">
                                         <span class="text-gray-600 dark:text-white">No</span>
                                     </label>
                                 </div>
@@ -547,9 +564,9 @@
 
                             <!-- Block Non-Matching Genres -->
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group">
+                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 dark:bg-gray-600/20 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
                                 <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                    class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                     Block direct repost requests for tracks which do not match my profile
                                     genres
                                 </span>
@@ -557,13 +574,13 @@
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="blockNonMatchingGenres"
                                             class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="blockNonMatchingGenres"
                                             class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
                                             checked>
-                                        <span class="text-sm font-medium text-gray-700">No</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
@@ -572,17 +589,17 @@
 
                     <!-- Additional Features -->
                     <div
-                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm">
+                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
                         <h3 class="text-lg font-bold text-gray-900 mb-6 dark:text-white">Additional
                             features</h3>
 
                         <div class="space-y-1">
                             <!-- Auto Free Boost -->
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-white hover:bg-gray-50/50 transition-all group">
+                                class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900/30 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
                                 <div class="flex items-center gap-2">
                                     <span
-                                        class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                        class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                         Auto Free Boost
                                     </span>
                                     <span class="text-xs text-gray-400">(i)</span>
@@ -592,21 +609,21 @@
                                         <input type="radio" name="autoFreeBoost"
                                             class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
                                             checked>
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="autoFreeBoost"
                                             class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
-                                        <span class="text-sm font-medium text-gray-700">No</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
 
                             <!-- Enable Reactions -->
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group">
+                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 dark:bg-gray-600/20 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
                                 <span
-                                    class="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                    class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                     Enable Reactions
                                 </span>
                                 <div class="flex items-center gap-4">
@@ -614,12 +631,12 @@
                                         <input type="radio" name="enableReactions"
                                             class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20"
                                             checked>
-                                        <span class="text-sm font-medium text-gray-700">Yes</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-white">Yes</span>
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="enableReactions"
                                             class="w-5 h-5 text-orange-500 border-gray-300 focus:ring-2 focus:ring-orange-500/20">
-                                        <span class="text-sm font-medium text-gray-700">No</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-white">No</span>
                                     </label>
                                 </div>
                             </div>
@@ -628,11 +645,11 @@
 
                     <!-- Subscription -->
                     <div
-                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm">
+                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
                         <h1 class="text-lg font-bold text-gray-900 mb-4 dark:text-white">Subscription</h1>
                         <div class="mflex items-center gap-3">
-                            <p class="text-sm text-gray-600">{{ userPlanName() }} Plan <a wire:navigate
-                                    href="{{ route('user.plans') }}"
+                            <p class="text-sm text-gray-600 dark:text-gray-300">{{ userPlanName() }} Plan <a
+                                    wire:navigate href="{{ route('user.plans') }}"
                                     class="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">Change</a>
                             </p>
                         </div>
@@ -669,26 +686,34 @@
             <div class="p-6">
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-white">Credit History</h2>
-                    <p class="text-gray-400">Track your credit transactions and balance changes.</p>
+                    <p class="text-gray-500 dark:text-gray-300">Track your credit transactions and balance changes.</p>
                 </div>
                 <div
-                    class="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    class="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="dark:bg-gray-800 border-b border-gray-200 bg-white dark:text-white">
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Date</th>
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Description
+                                <tr
+                                    class="dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 bg-white dark:text-white">
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">
+                                        Date
                                     </th>
-                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">Type</th>
-                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">Credits</th>
-                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900 dark:text-white">Balance</th>
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">
+                                        Description
+                                    </th>
+                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">
+                                        Type
+                                    </th>
+                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">
+                                        Credits</th>
+                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900 dark:text-white">
+                                        Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($credits as $credit)
                                     <tr
-                                        class="border-b border-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group bg-white dark:bg-gray-800">
+                                        class="border-b border-gray-100 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700 transition-all group bg-white dark:bg-gray-800">
                                         <td class="px-8 py-5"><span
                                                 class="text-sm text-gray-700 font-medium dark:text-white">{{ $credit->created_at }}</span>
                                         </td>
@@ -740,28 +765,37 @@
             <div class="p-6">
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-white">Invoices</h2>
-                    <p class="text-gray-500">View and download your transaction history.</p>
+                    <p class="text-gray-500 dark:text-gray-300">View and download your transaction history.</p>
                 </div>
                 <div
-                    class="dark:bg-gray-800 from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    class="dark:bg-gray-800 from-gray-50 to-white rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full ">
                             <thead>
-                                
-                                <tr class="dark:bg-gray-800 border-b border-gray-200 bg-white dark:text-white">
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Date</th>
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Description
+
+                                <tr
+                                    class="dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 bg-white dark:text-white">
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">
+                                        Date
                                     </th>
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Source</th>
-                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900 dark:text-white">Total</th>
-                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">Invoice</th>
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">
+                                        Description
+                                    </th>
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">
+                                        Source
+                                    </th>
+                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900 dark:text-white">
+                                        Total
+                                    </th>
+                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">
+                                        Invoice</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 @forelse ($payments as $payment)
                                     <tr
-                                        class="dark:bg-gray-800 border-b border-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group bg-white">
+                                        class="dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group bg-white">
                                         <td class="px-8 py-5"><span
                                                 class="text-sm text-gray-700 font-medium dark:text-white">{{ $payment->created_at_formatted }}</span>
                                         </td>
@@ -790,7 +824,8 @@
 
                                         <td class="px-8 py-5 text-right">
                                             <div class="flex items-center justify-end gap-2">
-                                                <span class="dark:text-white text-sm font-semibold text-black leading-none">
+                                                <span
+                                                    class="dark:text-white text-sm font-semibold text-black leading-none">
                                                     {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                                 </span>
                                             </div>
@@ -798,7 +833,7 @@
                                         <td class="px-8 py-5">
                                             <div class="flex items-center justify-center">
                                                 <button wire:click="downloadInvoice({{ $payment->id }})"
-                                                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all group-hover:scale-110">
+                                                    class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600 rounded-lg transition-all group-hover:scale-110">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                         height="24" viewBox="0 0 24 24" fill="none"
                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -821,96 +856,11 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-
-                            {{-- Second Row --}}
-                            {{-- <tbody>
-                                    @forelse ($credits as $credit)
-                                        <tr
-                                            class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
-                                            <td class="px-8 py-5"><span
-                                                    class="text-sm text-gray-700 font-medium">{{ $payment->created_at_formatted }}</span>
-                                            </td>
-                                            <td class="px-8 py-5"><span
-                                                    class="text-sm text-gray-700">{{ $payment->notes ?? 'N/A' }}</span>
-                                            </td>
-
-                                            <td class="px-8 py-5"><span class="text-sm text-gray-700">{{ $payment->order->source->name ?? 'N/A' }}   </span><span
-                                                    class="text-sm text-gray-600">Credits</span></td>
-
-                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                                @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
-                                                    {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
-                                                @else
-                                                    <div class="flex items-center gap-1">
-                                                        <span
-                                                            class="flex items-center gap-1 font-semibold text-orange-500">
-                                                            <svg class="w-8 h-" width="26" height="18"
-                                                                viewBox="0 0 26 18" fill="none"
-                                                                xmlns="http://www.w3.org/2000/svg">
-                                                                <rect x="1" y="1" width="24" height="16"
-                                                                    rx="3" fill="none"
-                                                                    stroke="currentColor" stroke-width="2" />
-                                                                <circle cx="8" cy="9" r="3"
-                                                                    fill="none" stroke="currentColor"
-                                                                    stroke-width="2" />
-                                                            </svg>
-                                                            {{ number_format($payment->order->credits) }}
-                                                        </span>
-                                                        <span>Credits</span>
-                                                    </div>
-                                                @endif
-                                            </td>
-                                            <td
-                                                class="px-5 p-3 text-gray-700 dark:text-gray-100 whitespace-nowrap font-semibold">
-                                                {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
-                                            </td>
-
-                                            <td class="px-8 py-5">
-                                                <div class="flex items-center gap-2">
-                                                    <div
-                                                        class="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
-                                                        <div class="w-3 h-3 rounded-sm border-2 border-white"></div>
-                                                    </div>
-                                                    <span
-                                                        class="text-sm font-semibold text-orange-600">{{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}</span>
-                                                </div>
-                                            </td>
-
-                                            <td class="px-8 py-5 text-right"><span
-                                                    class="text-sm font-semibold text-gray-900">{{ $credit->total }}</span>
-                                            </td>
-                                            <td class="px-8 py-5">
-                                                <div class="flex items-center justify-center">
-                                                    <button
-                                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all group-hover:scale-110">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                            height="24" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="lucide lucide-download w-5 h-5">
-                                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                                            <polyline points="7 10 12 15 17 10"></polyline>
-                                                            <line x1="12" x2="12" y1="15"
-                                                                y2="3"></line>
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr class="">
-                                            <td class="px-5 p-3 text-gray-700 dark:text-white whitespace-nowrap">
-                                                No Credit found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody> --}}
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <div x-data="{ confirmModal: @entangle('confirmModal').live }" x-show="confirmModal" x-cloak x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
