@@ -14,7 +14,7 @@
             /* Blue color for the active tab */
             transition: transform 0.3s ease-in-out;
         }
-        
+
         /* Hide cloaked elements until Alpine shows them */
         [x-cloak] {
             display: none !important;
@@ -22,7 +22,7 @@
     </style>
 
     <div x-data="{ open: true, activeTab: @entangle('activeTab').live, isGenreDropdownOpen: false }" class="#">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-8xl mx-auto overflow-hidden ">
+        <div class="bg-white dark:bg-gray-800 rounded-t-lg shadow-lg max-w-8xl mx-auto overflow-hidden ">
             <div class="border-b border-gray-200 dark:border-gray-700 ">
                 <div
                     class="flex overflow-x-auto no-scrollbar text-gray-600 dark:text-gray-300 font-medium text-xs sm:text-sm">
@@ -116,7 +116,7 @@
                         <div class=" p-3">
                             <!-- Wrapper with gradient background -->
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
+                                class="dark:bg-gray-800  from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
                                 <!-- Decorative circles -->
                                 <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12">
                                 </div>
@@ -126,13 +126,14 @@
                                 <!-- Content -->
                                 <div class="relative">
                                     <!-- Label -->
-                                    <label for="email" class="block text-sm font-bold text-gray-900 mb-1.5">
+                                    <label for="email"
+                                        class="block text-sm dark:text-white font-bold text-gray-900 mb-1.5">
                                         Email Address
                                     </label>
 
                                     <!-- Input -->
                                     <input type="email" id="email" wire:model="email"
-                                        class="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400"
+                                        class="dark:bg-gray-800 w-full px-3 py-2.5 bg-white border-2 border-gray-100 rounded-lg text-gray-900 text-sm focus:outline-none dark:text-white focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400"
                                         placeholder="your.email@example.com">
 
                                     <!-- Error / Verification Message -->
@@ -156,7 +157,7 @@
                         <div class=" p-3" x-data="{ isGenreDropdownOpen: false }">
                             <!-- Gray Gradient Wrapper -->
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                class="dark:bg-gray-800 from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
                                 <!-- Decorative circles -->
                                 <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12">
                                 </div>
@@ -164,21 +165,22 @@
                                 </div>
 
                                 <!-- Content -->
-                                <div class="relative space-y-3">
+                                <div class="relative space-y-3 ">
                                     <!-- Header -->
                                     <div class="border-b border-white/30 pb-2">
-                                        <h3 class="block text-sm font-bold text-gray-900 mb-1.5">Your Music Genres</h3>
+                                        <h3 class="block text-sm font-bold text-gray-900 mb-1.5 dark:text-white">Your
+                                            Music Genres</h3>
                                     </div>
 
                                     <!-- Selected Genres + Input -->
                                     <div class="relative">
                                         <div
-                                            class="flex flex-wrap gap-2 p-3 bg-white border-2 border-gray-200 rounded-lg min-h-[48px] focus-within:ring-4 focus-within:ring-orange-500/20 focus-within:border-orange-500 transition-all">
+                                            class="dark:bg-gray-800 flex flex-wrap gap-2 p-3 bg-white border-2 border-gray-100 rounded-lg min-h-[48px] focus-within:ring-4 focus-within:ring-orange-500/20 focus-within:border-orange-500 transition-all">
 
                                             <!-- Selected genres -->
                                             @foreach ($selectedGenres as $genre)
                                                 <span
-                                                    class="group inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg text-xs font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all">
+                                                    class="dark:bg-gray-800 group inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-lg text-xs font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all">
                                                     {{ $genre }}
                                                     <button type="button"
                                                         wire:click="removeGenre('{{ $genre }}')"
@@ -193,13 +195,13 @@
                                                 x-on:click="isGenreDropdownOpen = true"
                                                 x-on:input="isGenreDropdownOpen = true"
                                                 placeholder="{{ count($selectedGenres) < 5 ? 'Search genres...' : '' }}"
-                                                class="flex-1 outline-none border-0 text-xs font-medium 
+                                                class="dark:bg-white flex-1 outline-none border-0 text-xs font-medium 
                                                 focus:outline-none focus:ring-0 bg-transparent text-black placeholder:text-gray-600 min-w-[100px]"
                                                 @if (count($selectedGenres) >= $maxGenres) disabled @endif>
 
                                             <!-- Search icon -->
-                                            <svg class="w-4 h-4 text-black mt-2" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
+                                            <svg class="dark:text-white w-4 h-4 text-black mt-2" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                             </svg>
@@ -234,7 +236,7 @@
                                             x-transition:leave="transition ease-in duration-75"
                                             x-transition:leave-start="opacity-100 scale-100"
                                             x-transition:leave-end="opacity-0 scale-95"
-                                            class="absolute z-10 w-full mt-2 bg-white/95 backdrop-blur-md border border-white/30 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                            class="absolute z-10 w-full mt-2 bg-white/95 backdrop-blur-md border border-white/30 dark:bg-slate-800 rounded-lg shadow-lg max-h-60 overflow-y-auto">
 
                                             @if (count($this->filteredGenres) > 0)
                                                 @foreach ($this->filteredGenres as $genre)
@@ -267,8 +269,8 @@
                         <!-- Artist link -->
                         <div class=" p-3">
                             <div
-                                class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                                <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
+                                class="dark:bg-slate-800  from-gray-50 to-white p-4 rounded-xl border border-gray-100 shadow-sm dark:border-gray-700">
+                                <div class="flex items-center justify-between mb-2  border-gray-200">
                                     <h3 class="dark:text-white text-lg font-bold text-gray-900">Social Accounts</h3>
                                 </div>
                                 <!-- Header -->
@@ -424,20 +426,20 @@
         <!-- Notifications -->
 
         <!-- Header -->
-        <div x-show="activeTab === 'notifications'" class="mb-8">
-            <div class="p-6">
+        <div x-show="activeTab === 'notifications'" class="mb-8 bg-white ">
+            <div class="p-6  bg-white dark:bg-gray-800">
                 <h2 class="dark:text-white text-2xl font-bold text-gray-900 mb-2">
                     Notifications &amp; Alerts
                 </h2>
-                <p class="text-gray-800 mb-8">
+                <p class="text-gray-400 mb-8 ">
                     Manage your email and notification preferences.
                 </p>
                 <!-- Alerts Section -->
-                <div class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                <div class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm">
                     <!-- Title Bar -->
                     <div class="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
                         <h3 class="dark:text-white text-lg font-bold text-gray-900">Alerts</h3>
-                        <span class="text-sm font-semibold text-gray-600">Email</span>
+                        <span class="text-sm font-semibold text-gray-600 dark:text-gray-400">Email</span>
                     </div>
 
 
@@ -487,17 +489,17 @@
             </div>
         </div>
 
-        <div x-show="activeTab === 'settings'" x-cloak class="p-6">
+        <div x-show="activeTab === 'settings'" x-cloak class="p-6 bg-white dark:bg-gray-800">
             <div class="mb-8">
                 <h2 class="dark:text-white text-2xl font-bold text-gray-900 mb-2">Settings</h2>
-                <p class="text-gray-800">Manage your account preferences and features.</p>
+                <p class="text-gray-400">Manage your account preferences and features.</p>
             </div>
 
             <form wire:submit.prevent="settingsUpdate" method="POST">
                 @csrf
                 <div class="space-y-8">
                     <!-- My Requests -->
-                    <div class=" from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm bg-gray-100/50">
                         <h3 class="dark:text-white text-lg font-bold text-gray-900 mb-6">My requests</h3>
 
                         <div class="space-y-1">
@@ -570,7 +572,7 @@
 
                     <!-- Additional Features -->
                     <div
-                        class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm">
                         <h3 class="text-lg font-bold text-gray-900 mb-6 dark:text-white">Additional
                             features</h3>
 
@@ -626,7 +628,7 @@
 
                     <!-- Subscription -->
                     <div
-                        class="dake:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 shadow-sm">
                         <h1 class="text-lg font-bold text-gray-900 mb-4 dark:text-white">Subscription</h1>
                         <div class="mflex items-center gap-3">
                             <p class="text-sm text-gray-600">{{ userPlanName() }} Plan <a wire:navigate
@@ -662,40 +664,40 @@
         </div>
 
         <!-- Credit History Table -->
-        <div x-show="activeTab === 'credit'" class="w-full" x-transition>
+        <div x-show="activeTab === 'credit'" class="w-full bg-white dark:bg-gray-800" x-transition>
             <!-- Card Table -->
             <div class="p-6">
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-white">Credit History</h2>
-                    <p class="text-gray-600">Track your credit transactions and balance changes.</p>
+                    <p class="text-gray-400">Track your credit transactions and balance changes.</p>
                 </div>
                 <div
                     class="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b border-gray-200 bg-white">
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900">Date</th>
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900">Description
+                                <tr class="dark:bg-gray-800 border-b border-gray-200 bg-white dark:text-white">
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Date</th>
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Description
                                     </th>
-                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900">Type</th>
-                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900">Credits</th>
-                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900">Balance</th>
+                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">Type</th>
+                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">Credits</th>
+                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900 dark:text-white">Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($credits as $credit)
                                     <tr
-                                        class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
+                                        class="border-b border-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group bg-white dark:bg-gray-800">
                                         <td class="px-8 py-5"><span
-                                                class="text-sm text-gray-700 font-medium">{{ $credit->created_at }}</span>
+                                                class="text-sm text-gray-700 font-medium dark:text-white">{{ $credit->created_at }}</span>
                                         </td>
                                         <td class="px-8 py-5"><span
-                                                class="text-sm text-gray-700">{{ $credit->description }}</span>
+                                                class="text-sm text-gray-700 dark:text-white">{{ $credit->description }}</span>
                                         </td>
                                         <td class="px-8 py-5">
                                             <div class="flex items-center justify-center"><span
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold border {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'bg-red-100 text-red-700 bg-gradient-to-br from-red-100 to-rose-100 border-red-200' : 'bg-green-100 text-green-700 bg-gradient-to-br from-green-100 to-emerald-100 border-green-200' }}">{{ $credit->calculation_type_name }}</span>
+                                                    class=" inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold border {{ $credit->calculation_type == App\Models\CreditTransaction::CALCULATION_TYPE_CREDIT ? 'bg-red-100 text-red-700 bg-gradient-to-br from-red-100 to-rose-100 border-red-200' : 'bg-green-100 text-green-700 bg-gradient-to-br from-green-100 to-emerald-100 border-green-200' }}">{{ $credit->calculation_type_name }}</span>
                                             </div>
                                         </td>
                                         <td class="px-8 py-5">
@@ -712,8 +714,8 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-8 py-5 text-right"><span
-                                                class="text-sm font-semibold text-gray-900">{{ $credit->balance }}</span>
+                                        <td class="px-8 py-5 text-right dark:text-white"><span
+                                                class="text-sm font-semibold text-gray-900 dark:text-white">{{ $credit->balance }}</span>
                                             <br>
                                             <span>Credits</span>
                                         </td>
@@ -733,39 +735,40 @@
         </div>
 
         <!--invoices Section -->
-        <div x-show="activeTab === 'invoices'" class="overflow-x-auto w-full " x-transition>
+        <div x-show="activeTab === 'invoices'" class="overflow-x-auto w-full bg-white dark:bg-gray-800" x-transition>
             <!-- Card Table -->
             <div class="p-6">
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-2 dark:text-white">Invoices</h2>
-                    <p class="text-gray-600">View and download your transaction history.</p>
+                    <p class="text-gray-500">View and download your transaction history.</p>
                 </div>
                 <div
                     class="dark:bg-gray-800 from-gray-50 to-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full ">
                             <thead>
-                                <tr class="border-b border-gray-200 bg-white">
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900">Date</th>
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900">Description
+                                
+                                <tr class="dark:bg-gray-800 border-b border-gray-200 bg-white dark:text-white">
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Date</th>
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Description
                                     </th>
-                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900">Source</th>
-                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900">Total</th>
-                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900">Invoice</th>
+                                    <th class="px-8 py-5 text-left text-sm font-bold text-gray-900 dark:text-white">Source</th>
+                                    <th class="px-8 py-5 text-right text-sm font-bold text-gray-900 dark:text-white">Total</th>
+                                    <th class="px-8 py-5 text-center text-sm font-bold text-gray-900 dark:text-white">Invoice</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 @forelse ($payments as $payment)
                                     <tr
-                                        class="border-b border-gray-100 hover:bg-gray-50/50 transition-all group bg-white">
+                                        class="dark:bg-gray-800 border-b border-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group bg-white">
                                         <td class="px-8 py-5"><span
-                                                class="text-sm text-gray-700 font-medium">{{ $payment->created_at_formatted }}</span>
+                                                class="text-sm text-gray-700 font-medium dark:text-white">{{ $payment->created_at_formatted }}</span>
                                         </td>
                                         <td class="px-8 py-5"><span
-                                                class="text-sm text-gray-700">{{ $payment->notes ?? 'N/A' }}</span>
+                                                class="text-sm text-gray-700 dark:text-white">{{ $payment->notes ?? 'N/A' }}</span>
                                         </td>
-                                        <td class="px-5 p-3 text-gray-700   whitespace-nowrap">
+                                        <td class="px-5 p-3 text-gray-700   whitespace-nowrap dark:text-white">
                                             @if ($payment->order->type == App\Models\Order::TYPE_PLAN)
                                                 {{ $payment->order->source->name ?? 'N/A' }} Plan Subscription
                                             @else
@@ -780,14 +783,14 @@
                                                         </div>
                                                         {{ number_format($payment->order->credits) }}
                                                     </span>
-                                                    <span class="text-sm text-gray-600">Credits</span>
+                                                    <span class="text-sm text-gray-600 dark:text-white">Credits</span>
                                                 </div>
                                             @endif
                                         </td>
 
                                         <td class="px-8 py-5 text-right">
                                             <div class="flex items-center justify-end gap-2">
-                                                <span class="text-sm font-semibold text-black leading-none">
+                                                <span class="dark:text-white text-sm font-semibold text-black leading-none">
                                                     {{ ($payment->amount ?? '0.00') . ' ' . $payment->currency }}
                                                 </span>
                                             </div>
