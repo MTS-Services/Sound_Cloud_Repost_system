@@ -872,7 +872,7 @@ class AnalyticsService
 
         // Sort by engagement_rate descending
         $results = $results->sortByDesc('engagement_rate')->values()->toArray();
-
+        dd($results);
         return $results;
     }
 
