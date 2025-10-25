@@ -117,6 +117,118 @@ class UserAnalytics extends BaseModel
       =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
 
+
+      
+
+      /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                Start of SCOPES
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+    /**
+     * Scope for specific owner user
+     */
+    public function scopeForOwnerUser($query, string $userUrn)
+    {
+        return $query->where('owner_user_urn', $userUrn);
+    }
+
+    /**
+     * Scope for specific acting user
+     */
+    public function scopeForActUser($query, string $userUrn)
+    {
+        return $query->where('act_user_urn', $userUrn);
+    }
+
+    /**
+     * Scope for date range
+     */
+    public function scopeDateRange($query, $startDate, $endDate)
+    {
+        return $query->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate);
+    }
+
+    /**
+     * Scope for specific track
+     */
+    public function scopeForTrack($query, string $trackUrn)
+    {
+        return $query->where('track_urn', $trackUrn);
+    }
+
+    /**
+     * Scope for specific action type
+     */
+    public function scopeForType($query, int $type)
+    {
+        return $query->where('type', $type);
+    }
+
+    /**
+     * Scope for specific genres
+     */
+    public function scopeForGenres($query, array $genres)
+    {
+        $filteredGenres = array_filter($genres, function ($genre) {
+            return $genre !== 'Any Genre';
+        });
+
+        if (!empty($filteredGenres)) {
+            return $query->whereIn('genre', $filteredGenres);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope for aggregated analytics by type
+     */
+    public function scopeAggregatedByType($query, $startDate, $endDate)
+    {
+        return $query->select([
+            'type',
+            'track_urn',
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('COUNT(DISTINCT act_user_urn) as unique_users'),
+        ])
+            ->dateRange($startDate, $endDate)
+            ->groupBy(['type', 'track_urn']);
+    }
+
+    /**
+     * Scope for daily aggregation
+     */
+    public function scopeDailyAggregation($query, $startDate, $endDate)
+    {
+        return $query->select([
+            DB::raw('DATE(created_at) as date'),
+            'type',
+            'track_urn',
+            DB::raw('COUNT(*) as total_count'),
+            DB::raw('COUNT(DISTINCT act_user_urn) as unique_users'),
+        ])
+            ->dateRange($startDate, $endDate)
+            ->groupBy([DB::raw('DATE(created_at)'), 'type', 'track_urn']);
+    }
+
+    public function scopeFollowed($query)
+    {
+        return $query->where('type', self::TYPE_FOLLOW);
+    }
+    public function scopeLiked($query)
+    {
+        return $query->where('type', self::TYPE_LIKE);
+    }
+
+    /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
+                End of SCOPES
+     =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
+
+
+
+
+
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 Start of ACCESSORS & MUTATORS
       =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
