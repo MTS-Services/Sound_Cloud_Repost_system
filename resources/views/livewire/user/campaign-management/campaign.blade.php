@@ -320,10 +320,13 @@
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     SoundCloud
                                                     Profile</a>
-                                                <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
+                                                @if ($campaign_->user)
+                                                    <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn)  }}"
                                                     wire:navigate
                                                     class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                                     RepostChain Profile</a>
+                                                @endif
+                                                
                                                 {{-- <button
                                                 class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                 all content from this
