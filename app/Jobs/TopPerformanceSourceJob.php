@@ -38,22 +38,43 @@ class TopPerformanceSourceJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(AnalyticsService $analyticsService): void
+   public function handle(AnalyticsService $analyticsService): void
     {
         Log::info('Starting TopPerformanceSourceJob', [
             'period' => $this->period,
             'attempts' => $this->attempts()
         ]);
+        
         $sources = $analyticsService->getTopSources(
             filter: 'date_range',
             dateRange: $this->period,
             actionableType: Campaign::class
         );
 
-        Cache::put('top_20_sources_cache', [
+        $cacheKey = 'top_20_sources_cache';
+        
+        // Log what key is actually being used
+        Log::info('Storing cache with key', [
+            'key' => $cacheKey,
+            'prefix' => Cache::getStore()->getPrefix(),
+            'full_key' => Cache::getStore()->getPrefix() . $cacheKey
+        ]);
+
+        // Cache::put($cacheKey, [
+        //     'period' => $this->period,
+        //     'analytics' => $sources,
+        // ], 2592000);
+
+        Cache::store('database')->put('top_20_sources_cache', [
             'period' => $this->period,
             'analytics' => $sources,
-        ],  2592000); // cache for 30 days
+        ], 2592000);
+        
+        // Verify it was stored
+        Log::info('Cache stored, verifying...', [
+            'exists' => Cache::has($cacheKey),
+            'can_retrieve' => Cache::get($cacheKey) !== null
+        ]);
     }
 
     public function failed(Throwable $exception): void
