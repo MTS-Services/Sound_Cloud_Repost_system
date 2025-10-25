@@ -217,7 +217,8 @@
                 <div class="flex justify-center items-center gap-1">
                     <div class="flex flex-col lg:flex-row gap-1 lg:gap-2">
                         <p class="text-sm text-gray-600 dark:text-gray-300">
-                            Please confirm your email address to unlock core platform features.
+                            {{-- Please confirm your email address to unlock core platform features. --}}
+                            Verify your email now and receive 100 free credits.
                         </p>
                         <form x-data="{ loading: false }" x-ref="form" method="POST"
                             action="{{ route('user.email.resend.verification') }}"
