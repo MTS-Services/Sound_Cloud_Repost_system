@@ -1,10 +1,5 @@
 <section>
     <x-slot name="page_slug">settings</x-slot>
-    {{-- error check --}}
-    <div class="flex justify-center">
-        <x-gbutton wire:click="deleteAccount" variant="primary">Yes, Delete Account</x-gbutton>
-    </div>
-
     <style>
         /* Custom styles for the active tab indicator */
         .tab-indicator {
