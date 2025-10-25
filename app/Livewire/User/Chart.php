@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Jobs\NotificationMailSent;
+use App\Jobs\TopPerformanceSourceJob;
 use App\Models\Campaign;
 use App\Models\Playlist;
 use App\Models\Repost;
@@ -16,23 +17,21 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\Locked;
 use Throwable;
 
 class Chart extends Component
 {
-    use WithPagination;
-
     protected AnalyticsService $analyticsService;
     protected ?CampaignService $campaignService = null;
     protected ?SoundCloudService $soundCloudService = null;
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
 
-    public $sourcesPerPage = 20;
     public $activeTab = 'listView';
-    public $playing = null;
 
     public function boot(AnalyticsService $analyticsService, CampaignService $campaignService, SoundCloudService $soundCloudService)
     {
@@ -43,32 +42,10 @@ class Chart extends Component
 
     public function refresh()
     {
-        $this->getPaginatedSourceData();
-    }
-
-    public function getPaginatedSourceData()
-    {
-        try {
-            $startDate = Carbon::now()->subDays(6)->startOfDay();
-            $endDate = Carbon::now()->endOfDay();
-            $sources =  $this->analyticsService->getTopSources(
-                filter: 'date_range',
-                dateRange: [
-                    'start' => $startDate,
-                    'end' => $endDate
-                ],
-                actionableType: Campaign::class
-            );
-            return $sources;
-        } catch (\Throwable $e) {
-            Log::error('Source data loading failed', ['error' => $e->getMessage()]);
-            throw $e;
-        }
-    }
-
-    public function setActiveTab($tab)
-    {
-        $this->activeTab = $tab;
+        $startDate = Carbon::now()->subDays(6)->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+        TopPerformanceSourceJob::dispatch($startDate, $endDate);
+        $this->redirectRoute('user.charts',navigate:true);
     }
 
     public function baseValidation($encryptedCampaignId, $encryptedSourceId)
@@ -99,8 +76,6 @@ class Chart extends Component
                 $this->dispatch('alert', type: 'error', message: 'You have already liked this campaign.');
                 return;
             }
-
-            $soundcloudRepostId = null;
 
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
@@ -246,37 +221,66 @@ class Chart extends Component
         }
     }
 
-    public function updated()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    }
-
     public function render()
     {
+        $paginated = Cache::store('database')->get('top_20_sources_cache');
+        $period = [];
 
-        $paginated = $this->getPaginatedSourceData();
+        if ($paginated != null) {
+            $period = $paginated['period'];
+            $paginated = $paginated['analytics'];
+        }
+
         $items = collect($paginated);
 
         // // Map over items to calculate engagement score and rate
-        $itemsWithMetrics = $items->map(function ($source) {
-            $source['repost'] = false;
-            if ($source['actionable'] != null) {
-                $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $source['actionable']['id'])->exists();
-                if ($repost) {
-                    $source['repost'] = true;
-                }
-            }
-            $source['like'] = false;
-            $like = UserAnalytics::where('act_user_urn', user()->urn)->where('source_id', $source['source']['id'])->exists();
-            if ($like) {
-                $source['like'] = true;
-            }
+        // $itemsWithMetrics = $items->map(function ($source) {
+        //     $source['repost'] = false;
+        //     // NOTE: The access path below needs to be checked carefully against what the service returns
+        //     if ($source['actionable'] != null) {
+                
+        //         // If the service returns an array, the subsequent database query is okay here.
+        //         $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $source['actionable']['id'])->exists();
+        //         if ($repost) {
+        //             $source['repost'] = true;
+        //         }
+        //     }
+        //     $source['like'] = false;
+        //     // NOTE: The access path below needs to be checked carefully against what the service returns
+        //     $like = UserAnalytics::where('act_user_urn', user()->urn)->where('source_id', $source['source']['id'])->exists();
+        //     if ($like) {
+        //         $source['like'] = true;
+        //     }
+        //     return $source;
+        // });
+
+        $sourceIds = $items->pluck('source.id')->filter()->all();
+        $campaignIds = $items->pluck('actionable.id')->filter()->all();
+        $userUrn = user()->urn;
+
+        // Preload reposts for the current user for all campaigns
+        $reposts = Repost::where('reposter_urn', $userUrn)
+            ->whereIn('campaign_id', $campaignIds)
+            ->pluck('campaign_id')
+            ->toArray();
+
+        // Preload likes for the current user for all sources
+        $likes = UserAnalytics::where('act_user_urn', $userUrn)
+            ->whereIn('source_id', $sourceIds)
+            ->pluck('source_id')
+            ->toArray();
+
+        $itemsWithMetrics = $items->map(function ($source) use ($reposts, $likes) {
+            $source['repost'] = $source['actionable'] && in_array($source['actionable']['id'], $reposts);
+            $source['like'] = $source['source'] && in_array($source['source']['id'], $likes);
             return $source;
         });
+
         return view(
             'livewire.user.chart',
             [
-                'topSources' => $itemsWithMetrics
+                'topSources' => $itemsWithMetrics,
+                'period' => $period
             ]
         );
     }

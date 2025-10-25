@@ -880,7 +880,15 @@ class AnalyticsService
             ->get();
 
         // 🔹 Eager load both source and actionable in one go
-        $topSources->load(['source', 'actionable']);
+        $topSources->load([
+            'source',
+            'actionable',
+            'source.user', // User related to the source model
+            'actionable.user', // User related to the actionable model
+            'actionable.music', // Music related to the actionable model
+            'ownerUser', // Direct UserAnalytics relations
+            'actUser'    // Direct UserAnalytics relations
+        ]);
 
         // 🔹 Map results
         $topSourcesFormatted = $topSources->map(function ($item) {
