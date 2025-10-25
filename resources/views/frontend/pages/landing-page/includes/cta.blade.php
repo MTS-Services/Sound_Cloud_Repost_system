@@ -20,7 +20,7 @@
                 <a href="{{ route('soundcloud.redirect') }}" wire:navigate
                     class="bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-12 py-5 rounded-lg text-xl font-semibold transition-all hover:scale-105 shadow-lg shadow-[#ff5500]/30">Start
                     Your Music Growth</a>
-                <p class="text-sm text-zinc-500 mt-4">No credit card required • 100% Free for Artists</p>
+                <p class="text-sm text-zinc-500 mt-8">No credit card required • 100% Free for Artists</p>
             </div>
         </div>
     </div>
