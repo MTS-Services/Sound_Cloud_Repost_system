@@ -73,7 +73,7 @@
         }
     </style>
 @endpush
-<section id="plan" class="py-24 px-8 relative overflow-hidden bg-gradient-to-b from-black via-[#ff5500]/5 to-black">
+<section id="plan" class="py-24 relative overflow-hidden bg-gradient-to-b from-black via-[#ff5500]/5 to-black">
     <div class="max-w-[1400px] mx-auto relative">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
             <div class="text-left">

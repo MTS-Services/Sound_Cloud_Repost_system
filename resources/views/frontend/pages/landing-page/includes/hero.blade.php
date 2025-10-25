@@ -1,4 +1,4 @@
- <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden bg-black" id="home">
+ <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden" id="home">
 
      <div class="container mx-auto px-4 relative z-10">
          <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
