@@ -25,7 +25,7 @@
         </div>
         <div class="overflow-hidden relative w-full">
             <div id="testimonial-slider" class="flex gap-6 animate-scroll">
-                <div
+                {{-- <div
                     class="flex-shrink-0 w-[400px] bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800/50 hover:border-[#ff5500]/50 transition-all duration-300">
                     <div class="flex items-center gap-0.5 mb-4">
                         <div class="bg-[#00b67a] p-1"><svg class="w-4 h-4 text-white fill-white" viewBox="0 0 24 24">
@@ -176,7 +176,7 @@
                             <p class="text-[#ff5500] text-sm">Record Label</p>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div
                     class="flex-shrink-0 w-[400px] bg-gradient-to-br from-zinc-900/90 to-zinc-800/70 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800/50 hover:border-[#ff5500]/50 transition-all duration-300">
                     <div class="flex items-center gap-0.5 mb-4">
