@@ -218,10 +218,10 @@ class Settings extends Component
     public function notificationUpdate()
     {
         try {
-            if(!user()->email_verified_at) {
+            if (!user()->email_verified_at) {
                 return $this->dispatch('alert', type: 'error', message: 'You need to verify your email first.');
             }
-            $userUrn = user()->urn; 
+            $userUrn = user()->urn;
 
             $data = [
                 'user_urn' => $userUrn,

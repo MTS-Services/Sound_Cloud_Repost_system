@@ -1,4 +1,4 @@
-<div>
+<div class="bg-black px-8">
     @push('cs')
         <link rel="stylesheet" href="{{ asset('assets/landing/css/landing.css') }}">
     @endpush
