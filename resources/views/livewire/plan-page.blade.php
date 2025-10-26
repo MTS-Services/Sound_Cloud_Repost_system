@@ -1,4 +1,4 @@
-<section class="bg-gradient-to-b from-dark-darker to-dark-bg" x-data="{ isYearly: @entangle('isYearly') }">
+<section class="bg-gradient-to-b from-dark-darker to-dark-bg" x-data="{ isYearly: false }">
     <div class="container mx-auto px-4 pt-24 pb-8" id="plans">
         <div class="text-center mb-12">
             <h1 class="text-5xl font-bold text-white mb-4">Choose Your Perfect Plan</h1>
@@ -6,7 +6,7 @@
                 Repostxchange
                 with exclusive features designed to supercharge your music promotion.</p>
         </div>
-        <div class="flex items-center justify-center mb-12">
+        {{-- <div class="flex items-center justify-center mb-12">
             <div class="bg-slate-700 p-1 rounded-xl shadow-lg border border-slate-600">
                 <div class="flex items-center">
                     <button @click="isYearly = false"
@@ -15,6 +15,26 @@
                         Monthly</button>
                     <button @click="isYearly = true"
                         :class="isYearly ? 'bg-slate-600 shadow-md text-white ' : 'text-slate-300 hover:text-white'"
+                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 relative">Billed
+                        Annually<span
+                            class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">Save
+                            {{ App\Models\Plan::getYearlySavePercentage() }}%</span>
+                    </button>
+                </div>
+            </div>
+        </div> --}}
+        <div class="flex items-center justify-center mb-12">
+            <div
+                class="bg-slate-700 p-1 rounded-xl shadow-lg border border-slate-600">
+                <div class="flex items-center">
+                    <button @click="isYearly = false"
+                        :class="!isYearly ? 'bg-slate-600 shadow-md text-white' :
+                            'text-slate-300 hover:text-white'"
+                        class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300">Billed
+                        Monthly</button>
+                    <button @click="isYearly = true"
+                        :class="isYearly ? 'bg-slate-600 shadow-md text-white' :
+                            'text-slate-300 hover:text-white'"
                         class="px-8 py-3 rounded-lg text-sm font-semibold transition-all duration-300 relative">Billed
                         Annually<span
                             class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">Save
@@ -36,10 +56,12 @@
                             <div class="mb-6">
                                 <div class="flex items-baseline justify-center">
                                     <span class="text-6xl font-bold text-white">
-                                        ${{ $plan->monthly_price }}
+                                        $<span
+                                            x-text="isYearly ? {{ number_format($plan->yearly_price, 2) }} : {{ number_format($plan->monthly_price, 2) }}"></span>
                                     </span>
                                     <span class="text-slate-400 ml-2">
-                                        /<span>{{ $plan->monthly_price > 0 ?  'month' : 'Forever' }}</span>
+                                        /<span
+                                            x-text="{{ $plan->monthly_price > 0 ? 'isYearly ? \'year\' : \'month\'' : '\'Forever\'' }}"></span>
                                     </span>
                                 </div>
                             </div>
