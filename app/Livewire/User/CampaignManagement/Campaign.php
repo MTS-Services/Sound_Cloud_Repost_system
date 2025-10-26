@@ -347,26 +347,43 @@ class Campaign extends Component
                 function ($attribute, $value, $fail) {
                     if (!$value) return; // skip if null or empty
 
+                    // Require at least 2 words
                     if (str_word_count(trim($value)) < 2) {
                         $fail('Your comment must contain at least two words.');
                     }
 
+                    // Prevent repetitive letters: e.g., "aaaaaa", "bbbbbbb"
                     $plainValue = preg_replace('/\s+/', '', $value);
-
                     if (preg_match('/([a-zA-Z])\1{4,}/i', $plainValue)) {
                         $fail('Your comment looks like spam.');
                     }
 
+                    // Disallow SoundCloud links (self-promo)
                     if (preg_match('/https?:\/\/(soundcloud\.com|snd\.sc)/i', $value)) {
-                        $fail('Posting track links in comments is not allowed.');
+                        $fail('Posting SoundCloud track links is not allowed.');
                     }
 
+                    // Disallow other external links (optional)
+                    if (preg_match('/https?:\/\/(?!soundcloud\.com|snd\.sc)[^\s]+/i', $value)) {
+                        $fail('Posting external links is not allowed in comments.');
+                    }
+
+                    // Prevent excessive punctuation like !!! or ????
                     if (preg_match('/([!?.,])\1{3,}/', $value)) {
                         $fail('Please avoid excessive punctuation.');
                     }
 
+                    // Prevent repeating same word multiple times
                     if (preg_match('/\b(\w+)\b(?:.*\b\1\b){3,}/i', $value)) {
                         $fail('Please avoid repeating the same word too many times.');
+                    }
+
+                    // Optional: check for common spammy words (like "check out my track")
+                    $spamWords = ['check out', 'subscribe', 'follow me', 'free download', 'visit my profile'];
+                    foreach ($spamWords as $spam) {
+                        if (stripos($value, $spam) !== false) {
+                            $fail('Your comment looks like self-promotion or spam.');
+                        }
                     }
                 },
             ],
