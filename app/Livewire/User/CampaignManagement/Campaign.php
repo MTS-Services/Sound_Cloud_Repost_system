@@ -295,9 +295,35 @@ class Campaign extends Component
         return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
-    protected function rules()
+    // protected function rules()
+    // {
+    //     $rules = [
+    //         'credit' => [
+    //             'required',
+    //             'integer',
+    //             'min:50',
+    //             function ($attribute, $value, $fail) {
+    //                 if ($value > userCredits()) {
+    //                     $fail('The credit is not available.');
+    //                 }
+    //             },
+    //         ],
+    //     ];
+
+    //     return $rules;
+    // }
+
+    protected function messages()
     {
-        $rules = [
+        return [
+            'credit.required' => 'Minimum credit is 100.',
+            'maxFollower.required' => 'Max follower is required.',
+        ];
+    }
+
+    protected function creditRules()
+    {
+        return [
             'credit' => [
                 'required',
                 'integer',
@@ -309,17 +335,44 @@ class Campaign extends Component
                 },
             ],
         ];
-
-        return $rules;
     }
 
-    protected function messages()
+    protected function commentedRules()
     {
         return [
-            'credit.required' => 'Minimum credit is 100.',
-            'maxFollower.required' => 'Max follower is required.',
+            'commented' => [
+                'nullable',
+                'string',
+                'min:5',
+                function ($attribute, $value, $fail) {
+                    if (!$value) return; // skip if null or empty
+
+                    if (str_word_count(trim($value)) < 2) {
+                        $fail('Your comment must contain at least two words.');
+                    }
+
+                    $plainValue = preg_replace('/\s+/', '', $value);
+
+                    if (preg_match('/([a-zA-Z])\1{4,}/i', $plainValue)) {
+                        $fail('Your comment looks like spam.');
+                    }
+
+                    if (preg_match('/https?:\/\/(soundcloud\.com|snd\.sc)/i', $value)) {
+                        $fail('Posting track links in comments is not allowed.');
+                    }
+
+                    if (preg_match('/([!?.,])\1{3,}/', $value)) {
+                        $fail('Please avoid excessive punctuation.');
+                    }
+
+                    if (preg_match('/\b(\w+)\b(?:.*\b\1\b){3,}/i', $value)) {
+                        $fail('Please avoid repeating the same word too many times.');
+                    }
+                },
+            ],
         ];
     }
+
 
     /**
      * Set the active main tab and reset pagination for that tab
@@ -775,7 +828,7 @@ class Campaign extends Component
 
     public function createCampaign()
     {
-        $this->validate();
+        $this->validate($this->creditRules());
 
         try {
             $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
@@ -1582,39 +1635,7 @@ class Campaign extends Component
     public function repost($campaignId)
     {
         try {
-            $this->validate([
-                'commented' => [
-                    'required',
-                    'string',
-                    'min:5',
-                    function ($attribute, $value, $fail) {
-                        // Require at least 2 words
-                        if (str_word_count(trim($value)) < 2) {
-                            $fail('Your comment must contain at least two words.');
-                        }
-
-                        // Detect repetitive/spammy text (like "aaaaaaa" or "aaa aaa")
-                        if (preg_match('/([a-zA-Z])\1{4,}/i', preg_replace('/\s+/', '', $value))) {
-                            $fail('Your comment looks like spam.');
-                        }
-
-                        // Disallow SoundCloud links or URLs (self-promo)
-                        if (preg_match('/https?:\/\/(soundcloud\.com|snd\.sc)/i', $value)) {
-                            $fail('Posting track links in comments is not allowed.');
-                        }
-
-                        // Optional: prevent excessive repeated punctuation
-                        if (preg_match('/([!?.,])\1{3,}/', $value)) {
-                            $fail('Please avoid excessive punctuation.');
-                        }
-
-                        // Optional: detect same word repeated too much
-                        if (preg_match('/\b(\w+)\b(?:.*\b\1\b){3,}/i', $value)) {
-                            $fail('Please avoid repeating the same word too many times.');
-                        }
-                    },
-                ],
-            ]);
+        $this->validate($this->commentedRules());
 
             if (!$this->canRepost($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
