@@ -243,7 +243,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         if (session()->has('repostedId')) {
             session()->forget('repostedId');
@@ -1582,6 +1582,40 @@ class Campaign extends Component
     public function repost($campaignId)
     {
         try {
+            $this->validate([
+                'commented' => [
+                    'required',
+                    'string',
+                    'min:5',
+                    function ($attribute, $value, $fail) {
+                        // Require at least 2 words
+                        if (str_word_count(trim($value)) < 2) {
+                            $fail('Your comment must contain at least two words.');
+                        }
+
+                        // Detect repetitive/spammy text (like "aaaaaaa" or "aaa aaa")
+                        if (preg_match('/([a-zA-Z])\1{4,}/i', preg_replace('/\s+/', '', $value))) {
+                            $fail('Your comment looks like spam.');
+                        }
+
+                        // Disallow SoundCloud links or URLs (self-promo)
+                        if (preg_match('/https?:\/\/(soundcloud\.com|snd\.sc)/i', $value)) {
+                            $fail('Posting track links in comments is not allowed.');
+                        }
+
+                        // Optional: prevent excessive repeated punctuation
+                        if (preg_match('/([!?.,])\1{3,}/', $value)) {
+                            $fail('Please avoid excessive punctuation.');
+                        }
+
+                        // Optional: detect same word repeated too much
+                        if (preg_match('/\b(\w+)\b(?:.*\b\1\b){3,}/i', $value)) {
+                            $fail('Please avoid repeating the same word too many times.');
+                        }
+                    },
+                ],
+            ]);
+
             if (!$this->canRepost($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost this campaign. Please play it for at least 5 seconds first.');
                 return;
