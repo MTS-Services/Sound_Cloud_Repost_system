@@ -104,7 +104,7 @@
                 @endif
 
                 <div class="flex justify-center gap-4">
-                    <button @click="showRepostConfirmationModal = false" wire:click="repost('{{ $campaign->id }}')"
+                    <button  wire:click="repost('{{ $campaign->id }}')"
                         class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200">
                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
