@@ -29,12 +29,12 @@
                          </svg>
                          See How It Works
                      </button> --}}
-                     <x-gbutton variant="outline"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                     <x-gabutton href="#how-it-works" variant="outline"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
                          </svg>
-                         See How It Works</x-gbutton>
+                         See How It Works</x-gabutton>
                  </div>
              </div>
 

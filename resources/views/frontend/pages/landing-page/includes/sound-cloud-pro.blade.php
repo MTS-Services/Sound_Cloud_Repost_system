@@ -141,7 +141,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="https://checkout.soundcloud.com/pro" target="_blank" rel="noopener noreferrer"
+                <a href="https://invite.soundcloud.com/pjoy4" target="_blank" rel="noopener noreferrer"
                     class="inline-flex items-center gap-2 bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-[#ff5500]/30 soundCloud-pro">
                     Upgrade to SoundCloud Pro
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,10 +224,9 @@
                                     </div>
                                 </div>
                                 <div class="text-center mb-2">
-                                    <a href="https://checkout.soundcloud.com/pro" target="_blank"
+                                    <a href="https://invite.soundcloud.com/pjoy4" target="_blank"
                                         rel="noopener noreferrer"
-                                        class="inline-block bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get
-                                        Started</a>
+                                        class="inline-block bg-gradient-to-r from-[#ff5500] to-orange-600 hover:from-[#ff6a1a] hover:to-orange-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get Started</a>
                                 </div>
                                 <div class="text-center">
                                     <div class="inline-flex items-center gap-2 text-[#ff5500] text-xs font-semibold">
@@ -308,7 +307,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center mb-2">
-                                    <a href="https://checkout.soundcloud.com/artist" target="_blank"
+                                    <a href="https://invite.soundcloud.com/pjoy4" target="_blank"
                                         rel="noopener noreferrer"
                                         class="inline-block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105 w-full text-center">Get
                                         Started</a>

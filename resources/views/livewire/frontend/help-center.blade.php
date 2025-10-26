@@ -803,7 +803,7 @@
                     <h3 class="text-2xl font-bold text-white mb-3">Still need help?</h3>
                     <p class="text-zinc-400 mb-6">If you have any other questions, please don't hesitate to contact our
                         support team. We're here to help you succeed!</p>
-                    <a href="mailto:support@repostchain.com"
+                    <a href="{{ route('f.contact-us') }}"
                         class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-400 text-white font-semibold hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300">
                         Contact Support
                     </a>

@@ -347,10 +347,10 @@
                 Join thousands of artists who are already using RepostChain to expand their reach and build their
                 fanbase organically
             </p>
-            <button
-                class="px-8 py-4 rounded-xl bg-black text-white font-semibold hover:bg-zinc-900 transition-all duration-300 hover:scale-105">
+            <a href="https://invite.soundcloud.com/pjoy4"
+                class="px-8 py-4 rounded-xl bg-black text-white font-semibold hover:bg-zinc-900 transition-all duration-300 hover:scale-105 inline-block">
                 Get Started Today
-            </button>
+            </a>
         </div>
 
         <!-- Footer -->

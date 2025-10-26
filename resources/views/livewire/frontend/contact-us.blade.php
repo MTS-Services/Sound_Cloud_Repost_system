@@ -241,7 +241,7 @@
                 <p class="text-zinc-400 mb-4">
                     Check our FAQ section for quick answers to common questions
                 </p>
-                <a href="#faq"
+                <a href="{{ route('f.faq') }}"
                     class="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition-colors">
                     View FAQ
                 </a>
