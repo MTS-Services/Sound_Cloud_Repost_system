@@ -526,13 +526,13 @@
                 <div class="space-y-8">
                     <!-- My Requests -->
                     <div
-                        class="dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm bg-gray-100/50">
+                        class="dark:bg-gray-800 from-gray-50 to-white p-4 lg:p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm bg-gray-100/50">
                         <h3 class="dark:text-white text-lg font-bold text-gray-900 mb-6">My requests</h3>
 
                         <div class="space-y-1">
                             <!-- Accept Direct Repost Requests -->
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900/30 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
+                                class="flex items-center justify-between gap-2 p-4 rounded-xl bg-white dark:bg-gray-900/30 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
                                 <div>
                                     <p class="text-gray-700 dark:text-white">Accept Direct repost requests</p>
                                     @if (!user()->email_verified_at)
@@ -559,7 +559,7 @@
 
                             <!-- Block Non-Matching Genres -->
                             <div
-                                class="flex items-center justify-between p-4 rounded-xl bg-gray-50/30 dark:bg-gray-600/20 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
+                                class="flex items-center justify-between p-4 lg:p-8 rounded-xl bg-gray-50/30 dark:bg-gray-600/20 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
                                 <span
                                     class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                     Block direct repost requests for tracks which do not match my profile
@@ -584,7 +584,7 @@
 
                     <!-- Additional Features -->
                     <div
-                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
+                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-4 lg:p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
                         <h3 class="text-lg font-bold text-gray-900 mb-6 dark:text-white">Additional
                             features</h3>
 
@@ -592,12 +592,12 @@
                             <!-- Auto Free Boost -->
                             <div
                                 class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900/30 hover:bg-gray-50/50 dark:hover:bg-gray-700 transition-all group">
-                                <div class="flex items-center gap-2">
+                                <div>
                                     <span
-                                        class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                                        class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors mr-2">
                                         Auto Free Boost
+                                        <span class="text-xs text-gray-400">(i)</span>
                                     </span>
-                                    <span class="text-xs text-gray-400">(i)</span>
                                 </div>
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-2 cursor-pointer">
@@ -640,7 +640,7 @@
 
                     <!-- Subscription -->
                     <div
-                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
+                        class="bg-gray-100/50 dark:bg-gray-800 from-gray-50 to-white p-4 lg:p-8 rounded-2xl border border-gray-100/50 dark:border-gray-700 shadow-sm">
                         <h1 class="text-lg font-bold text-gray-900 mb-4 dark:text-white">Subscription</h1>
                         <div class="mflex items-center gap-3">
                             <p class="text-sm text-gray-600 dark:text-gray-300">{{ userPlanName() }} Plan <a
