@@ -812,9 +812,9 @@
             initializeSoundCloudWidgets();
             // @this.call('forgetRepostedId');
         });
-        // document.addEventListener('livewire:load', function() {
-        //     initializeSoundCloudWidgets();
-        // });
+        document.addEventListener('livewire:load', function() {
+            initializeSoundCloudWidgets();
+        });
         document.addEventListener('livewire:updated', function() {
             initializeSoundCloudWidgets();
         });
