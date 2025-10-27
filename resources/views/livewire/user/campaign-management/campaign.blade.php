@@ -2,7 +2,7 @@
     <x-slot name="page_slug">campaign-feed</x-slot>
 
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6" x-data="{ playingCampaigns: @entangle('playingCampaigns'), dashboardSummary: false }">
-        {{-- <script>
+        <script>
             // Only update when audio actually plays
             document.addEventListener('livewire:initialized', () => {
                 setInterval(() => {
@@ -11,7 +11,7 @@
                     }
                 }, 1000);
             });
-        </script> --}}
+        </script>
 
         {{-- Left Side --}}
         <div class="w-full">
@@ -733,93 +733,91 @@
     @include('backend.user.includes.repost-confirmation-modal')
 
 
-   <script>
-    let playTrackTimers = {}; // { campaignId: { timer, elapsed, counted } }
+    <script>
+        function initializeSoundCloudWidgets() {
+            if (typeof SC === 'undefined') {
+                setTimeout(initializeSoundCloudWidgets, 500);
+                return;
+            }
+            const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
 
-    function initializeSoundCloudWidgets() {
-        if (typeof SC === 'undefined') {
-            setTimeout(initializeSoundCloudWidgets, 500);
-            return;
-        }
+            playerContainers.forEach(container => {
+                const campaignId = container.dataset.campaignId;
 
-        const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
 
-        playerContainers.forEach(container => {
-            const campaignId = container.dataset.campaignId;
-            const iframe = container.querySelector('iframe');
-            if (!iframe || !campaignId) return;
+                let currentCampaignCard = container.closest('.campaign-card');
 
-            const widget = SC.Widget(iframe);
+                // Safety check - make sure we found the card
+                if (!currentCampaignCard) {
+                    console.error('Could not find the parent campaign-card for campaignId', campaignId);
+                    return;
+                }
 
-            widget.bind(SC.Widget.Events.PLAY, () => handlePlay(widget, campaignId));
-            widget.bind(SC.Widget.Events.PAUSE, () => handlePause(campaignId));
-            widget.bind(SC.Widget.Events.FINISH, () => handleFinish(campaignId));
-        });
-    }
+                // 2. Find the next campaign-card sibling
+                const nextCampaignCard = currentCampaignCard.nextElementSibling;
 
-    function handlePlay(widget, campaignId) {
-        if (!playTrackTimers[campaignId]) {
-            playTrackTimers[campaignId] = { timer: null, elapsed: 0, counted: false };
-        }
+                // 3. Find the iframe inside the NEXT campaign card
+                let nextIframe = null;
+                let nextCampaignId = null;
 
-        const track = playTrackTimers[campaignId];
+                if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
+                    // Find the iframe inside the next card
+                    const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
 
-        // If already counted — skip countdown
-        if (track.counted) return;
-
-        const intervalTime = 1000; // 1 second tick
-        const countdown = 5; // seconds required
-
-        // If already partially played, resume countdown
-        if (track.elapsed < countdown) {
-            clearInterval(track.timer);
-            track.timer = setInterval(() => {
-                track.elapsed++;
-
-                if (track.elapsed >= countdown) {
-                    clearInterval(track.timer);
-                    if (!track.counted) {
-                        track.counted = true;
-                        // Dispatch Livewire call to backend job
-                        @this.call('dispatchPlayCountJob', campaignId);
-                        console.log(`✅ Counted play for campaignId ${campaignId}`);
+                    if (nextPlayerContainer) {
+                        nextIframe = nextPlayerContainer.querySelector('iframe');
+                        nextCampaignId = nextPlayerContainer.dataset.campaignId;
                     }
                 }
-            }, intervalTime);
+                const iframe = container.querySelector('iframe');
+
+                if (iframe && campaignId) {
+                    const widget = SC.Widget(iframe);
+
+                    widget.bind(SC.Widget.Events.PLAY, () => {
+                        @this.call('handleAudioPlay', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.PAUSE, () => {
+                        @this.call('handleAudioPause', campaignId);
+                    });
+
+                    widget.bind(SC.Widget.Events.FINISH, () => {
+                        @this.call('handleAudioEnded', campaignId);
+                        if (nextCampaignId && nextIframe) {
+                            const nextWidget = SC.Widget(nextIframe);
+                            nextWidget.play();
+                        }
+                    });
+
+                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                        const currentTime = data.currentPosition / 1000;
+                        @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                    });
+                }
+            });
         }
-    }
-
-    function handlePause(campaignId) {
-        const track = playTrackTimers[campaignId];
-        if (track && track.timer) {
-            clearInterval(track.timer);
-            track.timer = null;
-            console.log(`⏸️ Paused countdown for ${campaignId} at ${track.elapsed}s`);
-        }
-    }
-
-    function handleFinish(campaignId) {
-        const track = playTrackTimers[campaignId];
-        if (track) {
-            clearInterval(track.timer);
-            track.timer = null;
-            track.elapsed = 0; // Reset for replay if needed
-            console.log(`🏁 Track finished for ${campaignId}`);
-        }
-    }
-
-    // Reinitialize for Livewire events
-    document.addEventListener('livewire:initialized', initializeSoundCloudWidgets);
-    document.addEventListener('livewire:navigated', initializeSoundCloudWidgets);
-    document.addEventListener('livewire:load', initializeSoundCloudWidgets);
-    document.addEventListener('livewire:updated', initializeSoundCloudWidgets);
-    document.addEventListener('DOMContentLoaded', initializeSoundCloudWidgets);
-
-    document.addEventListener('livewire:dispatched', (event) => {
-        if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+        document.addEventListener('livewire:initialized', function() {
             initializeSoundCloudWidgets();
-        }
-    });
-</script>
+        });
+        document.addEventListener('livewire:navigated', function() {
+            initializeSoundCloudWidgets();
+            // @this.call('forgetRepostedId');
+        });
+        document.addEventListener('livewire:load', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('livewire:updated', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSoundCloudWidgets();
+        });
 
+        document.addEventListener('livewire:dispatched', (event) => {
+            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                initializeSoundCloudWidgets();
+            }
+        });
+    </script>
 </div>
