@@ -1135,7 +1135,6 @@ class Campaign extends Component
             "allPlaylistTracks",
             "userinfo",
             "playListTrackShow",
-            "repostedCampaigns",
             "tracks",
             "playlists",
             "playlistTracks",
