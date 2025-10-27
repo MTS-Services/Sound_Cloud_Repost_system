@@ -3,6 +3,7 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Jobs\NotificationMailSent;
+use App\Jobs\RecordSoundCloudPlay;
 use App\Jobs\TrackViewCount;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\CreditTransaction;
@@ -34,6 +35,7 @@ use App\Models\UserSetting;
 use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Livewire\Attributes\On;
 
 class Campaign extends Component
 {
@@ -1963,5 +1965,29 @@ class Campaign extends Component
                 'campaigns' => $campaigns
             ]);
         }
+    }
+
+    // #[On('playCount')]
+    // public function playCount($campaignId)
+    // {
+    //     $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+    //     Log::info('playCount campaignId: ' . $campaignId);
+    //     if ($campaign->music_type == Track::class) {
+    //         $this->reset('track');
+    //         $this->track = $this->trackService->getTrack(encrypt($campaign->music_id));
+    //     } elseif ($campaign->music_type == Playlist::class) {
+    //         $this->reset('track');
+    //         $playlist = Playlist::findOrFail($campaign->music_id);
+    //         $this->track = $playlist;
+    //     }
+
+    //     $response = $this->analyticsService->recordAnalytics(source: $this->track, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
+    //     if ($response != false || $response != null) {
+    //         $campaign->increment('playback_count');
+    //     }
+    // }
+    public function dispatchPlayCountJob($campaignId)
+    {
+        RecordSoundCloudPlay::dispatch($campaignId);
     }
 }
