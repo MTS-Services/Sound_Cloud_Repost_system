@@ -58,7 +58,7 @@ class SoundCloudController extends Controller
                 ->with('error', 'SoundCloud authentication was cancelled or failed.');
         }
         $soundCloudUser = Socialite::driver('soundcloud')->user();
-        dd($soundCloudUser);
+        dd($soundCloudUser->getId());
 
         try {
             
