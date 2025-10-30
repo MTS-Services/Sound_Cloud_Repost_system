@@ -5,17 +5,9 @@ namespace App\Http\Controllers\SouncCloud\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SoundCloud\SoundCloudAuthRequest;
 use App\Jobs\SyncUserJob;
-use App\Models\Playlist;
-use App\Models\Product;
-use App\Models\Subscription;
-use App\Models\Track;
 use App\Models\User;
-use App\Models\UserCredits;
-use App\Models\UserInformation;
-use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,6 +62,19 @@ class SoundCloudController extends Controller
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
+
+            // Find or create (and restore if deleted)
+            $user = User::withTrashed()
+                ->where('soundcloud_id', $soundCloudUser->id)
+                ->orWhere('email', $soundCloudUser->email)
+                ->first();
+
+            if ($user) {
+                // If soft deleted, restore the account
+                if ($user->trashed()) {
+                    $user->restore();
+                }
+            }
 
             // SyncUserJob::dispatch($user, $soundCloudUser);
 
