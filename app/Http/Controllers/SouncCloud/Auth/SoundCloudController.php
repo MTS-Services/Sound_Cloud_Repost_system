@@ -66,13 +66,7 @@ class SoundCloudController extends Controller
                     ->with('warning', '🎟️ Artist Access Only! To maintain quality and fairness, only artists can create accounts. If youre a curator or label, please contact our support team for verification.');
             }
 
-            $userRstore = User::onlyTrashed()
-                ->where('soundcloud_id', $soundCloudUser->getId())
-                ->where('email', $soundCloudUser->getEmail())
-                ->first();
-            if ($userRstore) {
-                $userRstore->restore();
-            }
+
 
             // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
