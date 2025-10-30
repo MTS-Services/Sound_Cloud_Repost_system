@@ -62,7 +62,8 @@ class SoundCloudController extends Controller
                 ->where('email', $soundCloudUser->getEmail())
                 ->first();
             if ($userRstore) {
-                $userRstore->restore();
+                $user = $userRstore->restore();
+                dd($user);
             }
 
             // Find or create user
