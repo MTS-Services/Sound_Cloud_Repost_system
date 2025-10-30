@@ -49,49 +49,9 @@ class SoundCloudController extends Controller
         }
     }
 
-    // public function callback(SoundCloudAuthRequest $request): RedirectResponse
-    // {
-
-    //     // Check for error from SoundCloud
-    //     if ($request->has('error')) {
-    //         return redirect()->route('f.landing')
-    //             ->with('error', 'SoundCloud authentication was cancelled or failed.');
-    //     }
-
-    //     try {
-
-    //         $soundCloudUser = Socialite::driver('soundcloud')->user();
-
-    //         if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
-    //             return redirect()->route('f.landing')
-    //                 ->with('warning', '🎟️ Artist Access Only! To maintain quality and fairness, only artists can create accounts. If youre a curator or label, please contact our support team for verification.');
-    //         }
-
-
-
-    //         // Find or create user
-    //         $user = $this->findOrCreateUser($soundCloudUser);
-
-    //         // SyncUserJob::dispatch($user, $soundCloudUser);
-
-    //         Auth::guard('web')->login($user, true);
-    //         $this->syncUser($user, $soundCloudUser);
-
-    //         return redirect()->intended(route('user.my-account', absolute: false))
-    //             ->with('success', 'Successfully connected to SoundCloud!');
-    //     } catch (\Exception $e) {
-    //         Log::error('SoundCloud callback error', [
-    //             'error' => $e->getMessage(),
-    //             'user_id' => Auth::guard('web')->id(),
-    //         ]);
-
-    //         return redirect()->route('f.landing')
-    //             ->with('error', 'Failed to authenticate with SoundCloud. Please try again.');
-    //     }
-    // }
-
     public function callback(SoundCloudAuthRequest $request): RedirectResponse
     {
+
         // Check for error from SoundCloud
         if ($request->has('error')) {
             return redirect()->route('f.landing')
@@ -101,15 +61,18 @@ class SoundCloudController extends Controller
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
 
-            // Only allow artists
             if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
                 return redirect()->route('f.landing')
-                    ->with('warning', '🎟️ Artist Access Only! To maintain quality and fairness, only artists can create accounts. If you’re a curator or label, please contact our support team for verification.');
+                    ->with('warning', '🎟️ Artist Access Only! To maintain quality and fairness, only artists can create accounts. If youre a curator or label, please contact our support team for verification.');
             }
 
+
+
+            // Find or create user
             $user = $this->findOrCreateUser($soundCloudUser);
 
-            // Login & sync
+            // SyncUserJob::dispatch($user, $soundCloudUser);
+
             Auth::guard('web')->login($user, true);
             $this->syncUser($user, $soundCloudUser);
 
@@ -125,7 +88,6 @@ class SoundCloudController extends Controller
                 ->with('error', 'Failed to authenticate with SoundCloud. Please try again.');
         }
     }
-
 
     public function disconnect(): RedirectResponse
     {
@@ -177,75 +139,25 @@ class SoundCloudController extends Controller
         }
     }
 
-    // protected function findOrCreateUser($soundCloudUser): User
-    // {
-
-    //     try {
-    //         return User::updateOrCreate(
-    //             ['soundcloud_id' => $soundCloudUser->getId()],
-    //             [
-    //                 'name' => $soundCloudUser->getName(),
-    //                 'nickname' => $soundCloudUser->getNickname(),
-    //                 'avatar' => $soundCloudUser->getAvatar(),
-    //                 'token' => $soundCloudUser->token,
-    //                 'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'],
-    //                 'refresh_token' => $soundCloudUser->refreshToken,
-    //                 'expires_in' => $soundCloudUser->expiresIn,
-    //                 'last_synced_at' => now(),
-    //                 'urn' => $soundCloudUser->user['urn'],
-    //                 'status' => User::STATUS_ACTIVE
-    //             ]
-    //         );
-    //     } catch (Throwable $e) {
-    //         Log::error('SoundCloud find or create user error', [
-    //             'error' => $e->getMessage(),
-    //         ]);
-    //         throw $e;
-    //     }
-    // }
-
     protected function findOrCreateUser($soundCloudUser): User
     {
+
         try {
-            $user = User::withTrashed()
-                ->where('soundcloud_id', $soundCloudUser->getId())
-                ->orWhere('email', $soundCloudUser->getEmail())
-                ->first();
-
-            if ($user && $user->trashed()) {
-                $user->restore();
-            }
-
-            if ($user) {
-                $user->update([
-                    'name'          => $soundCloudUser->getName(),
-                    'nickname'      => $soundCloudUser->getNickname(),
-                    'avatar'        => $soundCloudUser->getAvatar(),
-                    'token'         => $soundCloudUser->token,
-                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'] ?? null,
-                    'refresh_token' => $soundCloudUser->refreshToken ?? null,
-                    'expires_in'    => $soundCloudUser->expiresIn ?? null,
+            return User::updateOrCreate(
+                ['soundcloud_id' => $soundCloudUser->getId()],
+                [
+                    'name' => $soundCloudUser->getName(),
+                    'nickname' => $soundCloudUser->getNickname(),
+                    'avatar' => $soundCloudUser->getAvatar(),
+                    'token' => $soundCloudUser->token,
+                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'],
+                    'refresh_token' => $soundCloudUser->refreshToken,
+                    'expires_in' => $soundCloudUser->expiresIn,
                     'last_synced_at' => now(),
-                    'urn'           => $soundCloudUser->user['urn'] ?? null,
-                    'status'        => User::STATUS_ACTIVE,
-                ]);
-            } else {
-                $user = User::create([
-                    'soundcloud_id' => $soundCloudUser->getId(),
-                    'name'          => $soundCloudUser->getName(),
-                    'nickname'      => $soundCloudUser->getNickname(),
-                    'avatar'        => $soundCloudUser->getAvatar(),
-                    'token'         => $soundCloudUser->token,
-                    'soundcloud_permalink_url' => $soundCloudUser->getRaw()['permalink_url'] ?? null,
-                    'refresh_token' => $soundCloudUser->refreshToken ?? null,
-                    'expires_in'    => $soundCloudUser->expiresIn ?? null,
-                    'last_synced_at' => now(),
-                    'urn'           => $soundCloudUser->user['urn'] ?? null,
-                    'status'        => User::STATUS_ACTIVE,
-                ]);
-            }
-
-            return $user;
+                    'urn' => $soundCloudUser->user['urn'],
+                    'status' => User::STATUS_ACTIVE
+                ]
+            );
         } catch (Throwable $e) {
             Log::error('SoundCloud find or create user error', [
                 'error' => $e->getMessage(),
@@ -253,7 +165,6 @@ class SoundCloudController extends Controller
             throw $e;
         }
     }
-
 
     private function notAnArtist($soundCloudUser)
     {
