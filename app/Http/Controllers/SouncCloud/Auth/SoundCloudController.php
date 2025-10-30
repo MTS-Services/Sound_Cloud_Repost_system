@@ -58,10 +58,8 @@ class SoundCloudController extends Controller
             }
 
             $userRstore = User::onlyTrashed()
-                ->where('provider_id', $soundCloudUser->getId())
+                ->where('soundcloud_id', $soundCloudUser->getId())
                 ->first();
-                dd($userRstore);
-
             if ($userRstore) {
                 $userRstore->restore();
                 $user = $userRstore;
