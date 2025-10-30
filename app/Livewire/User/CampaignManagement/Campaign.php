@@ -1809,7 +1809,7 @@ class Campaign extends Component
                             'email' => $campaign->user->email,
                             'subject' => 'Repost Notification',
                             'title' => 'Dear ' . $campaign->user->name,
-                            'body' => 'Your ' . $campaign->title . 'campaign has been reposted successfully.',
+                            'body' => 'Your ' . $campaign->title . 'has been reposted successfully.',
                         ],
                     ];
                     NotificationMailSent::dispatch($datas);
