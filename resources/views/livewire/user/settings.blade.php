@@ -596,7 +596,6 @@
                                     <span
                                         class="text-sm font-medium text-gray-700 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white transition-colors mr-2">
                                         Auto Free Boost
-                                        <span class="text-xs text-gray-400">(i)</span>
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-4">
