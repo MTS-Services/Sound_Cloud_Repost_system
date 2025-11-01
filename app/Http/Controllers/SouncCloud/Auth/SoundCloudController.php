@@ -56,6 +56,15 @@ class SoundCloudController extends Controller
                 return redirect()->route('f.landing')
                     ->with('warning', '🎟️ Artist Access Only! To maintain quality and fairness, only artists can create accounts. If youre a curator or label, please contact our support team for verification.');
             }
+            $isBanned = User::where('status', User::STATUS_BANNED)
+                ->where('soundcloud_id', $soundCloudUser->getId())
+                ->exists();
+
+            if ($isBanned) {
+                return redirect()->route('f.landing')
+                    ->with('error', 'Your account has been banned from Repostchain. Please contact Support if you believe this is an error.');
+            }
+
 
             $userRstore = User::onlyTrashed()
                 ->where('soundcloud_id', $soundCloudUser->getId())

@@ -18,6 +18,12 @@ class AuthenticatedSessionController extends Controller
     public function create(): View|RedirectResponse
     {
         if (Auth::guard('web')->check()) {
+            // Banned user check
+            if (Auth::user()->status == User::STATUS_BANNED) {
+                Auth::guard('web')->logout();
+                return redirect()->route('f.landing')
+                    ->with('error', 'Access Denied: Your account has been banned from Repostchain. Please contact Support if you believe this is an error.');
+            }
             return redirect()->intended(route('user.my-account', absolute: false));
         }
         return view('auth.login');
@@ -31,6 +37,12 @@ class AuthenticatedSessionController extends Controller
     public function store(UserLoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+        // Banned user check
+        if (Auth::user()->status == User::STATUS_BANNED) {
+            Auth::guard('web')->logout();
+            return redirect()->route('f.landing')
+                ->with('error', 'Your account has been banned from Repostchain. Please contact Support if you believe this is an error.');
+        }
 
         $request->session()->regenerate();
         session()->flash('success', 'Login successful!');

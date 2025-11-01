@@ -224,7 +224,7 @@ class SoundCloudServiceCopy
                 ]);
 
                 if (is_null($track_author->last_synced_at)) {
-                    $track_author->update(['status' => User::STATUS_INACTIVE]);
+                    $track_author->update(['status' => User::STATUS_BANNED]);
                 }
 
                 // Log::info('SoundCloud sync started for playlist ' . $playlist_urn . ' for user ' . $userUrn);
@@ -435,7 +435,7 @@ class SoundCloudServiceCopy
             ]);
 
             if (is_null($track_author->last_synced_at)) {
-                $track_author->update(['status' => User::STATUS_INACTIVE]);
+                $track_author->update(['status' => User::STATUS_BANNED]);
             }
             $commonTrackData = $this->mapCommonTrackData($trackData);
 
@@ -534,7 +534,7 @@ class SoundCloudServiceCopy
                     ]);
 
                     if (is_null($track_author->last_synced_at)) {
-                        $track_author->update(['status' => User::STATUS_INACTIVE]);
+                        $track_author->update(['status' => User::STATUS_BANNED]);
                     }
                     $commonTrackData = $this->mapCommonTrackData($trackData);
 

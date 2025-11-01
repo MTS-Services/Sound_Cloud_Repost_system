@@ -46,7 +46,7 @@ class UserPlan extends BaseModel
 
     public const STATUS_PENDING = 0;
     public const STATUS_ACTIVE = 1;
-    public const STATUS_INACTIVE = 2;
+    public const STATUS_BANNED = 2;
     public const STATUS_CANCELED = 3;
     public const STATUS_EXPIRED = 4;
 
@@ -55,7 +55,7 @@ class UserPlan extends BaseModel
         return [
             self::STATUS_PENDING  => 'Pending',
             self::STATUS_ACTIVE   => 'Active',
-            self::STATUS_INACTIVE => 'Inactive',
+            self::STATUS_BANNED => 'Inactive',
             self::STATUS_CANCELED => 'Canceled',
             self::STATUS_EXPIRED  => 'Expired',
         ];
@@ -66,7 +66,7 @@ class UserPlan extends BaseModel
         return [
             self::STATUS_PENDING  => 'info',
             self::STATUS_ACTIVE   => 'success',
-            self::STATUS_INACTIVE => 'warning',
+            self::STATUS_BANNED => 'warning',
             self::STATUS_CANCELED => 'error',
             self::STATUS_EXPIRED  => 'secondary',
         ];
@@ -76,21 +76,21 @@ class UserPlan extends BaseModel
     {
         return $this->status
             ? self::getStatusList()[$this->status]
-            : self::getStatusList()[self::STATUS_INACTIVE];
+            : self::getStatusList()[self::STATUS_BANNED];
     }
 
     public function getStatusColorAttribute()
     {
         return $this->status
             ? 'badge-' . self::getStatusColorList()[$this->status]
-            : 'badge-' . self::getStatusColorList()[self::STATUS_INACTIVE];
+            : 'badge-' . self::getStatusColorList()[self::STATUS_BANNED];
     }
 
     public function getStatusBtnLabelAttribute()
     {
         return $this->status == self::STATUS_PENDING
             ? self::getStatusList()[self::STATUS_ACTIVE]
-            : self::getStatusList()[self::STATUS_INACTIVE];
+            : self::getStatusList()[self::STATUS_BANNED];
     }
 
     public function getStatusBtnColorAttribute()
@@ -102,7 +102,7 @@ class UserPlan extends BaseModel
 
     public function getStatusBtnClassAttribute()
     {
-        return $this->status == self::STATUS_INACTIVE
+        return $this->status == self::STATUS_BANNED
             ? 'btn-error'
             : 'btn-primary';
     }
@@ -131,7 +131,7 @@ class UserPlan extends BaseModel
 
     public function scopeInactive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_INACTIVE);
+        return $query->where('status', self::STATUS_BANNED);
     }
 
     public function scopeExpired(Builder $query): Builder

@@ -31,11 +31,11 @@ class ApplicationSetting extends BaseModel
 
 
     public const PAYMENT_GATEWAY_STATUS_ACTIVE = '1';
-    public const PAYMENT_GATEWAY_STATUS_INACTIVE = '0';
+    public const PAYMENT_GATEWAY_STATUS_BANNED = '0';
 
     public const PAYMENT_GATEWAY_STATUSES = [
         self::PAYMENT_GATEWAY_STATUS_ACTIVE => 'Active',
-        self::PAYMENT_GATEWAY_STATUS_INACTIVE => 'Inactive',
+        self::PAYMENT_GATEWAY_STATUS_BANNED => 'Inactive',
     ];
 
     // public function getPublicRegistrationLabelAttribute()
