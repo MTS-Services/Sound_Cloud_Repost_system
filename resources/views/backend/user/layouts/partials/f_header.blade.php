@@ -24,7 +24,7 @@
         <!-- Desktop Menu -->
         <nav class="hidden lg:flex items-center space-x-2 sm:space-x-3 xl:space-x-6 custom-nav ">
             <a href="{{ route('f.landing') }}#home" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Home</a>
-            <a href="{{ route('f.plan') }}" wire:navigate class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Plan</a>
+            <a href="{{ route('f.plan') }}" wire:navigate class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Pricing</a>
             <a href="{{ route('f.landing') }}#about" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">About</a>
             <a href="{{ route('f.landing') }}#how-it-works" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">How it Works</a>
             <a href="{{ route('f.features') }}" class="text-gray-300 text-sm xl:text-base hover:text-white transition-colors">Features</a>
@@ -88,7 +88,7 @@
     <div x-show="open" x-transition class="lg:hidden bg-dark-card border-t border-dark-border">
         <div class="container mx-auto px-4 py-4 space-y-4">
             <a href="{{ route('f.landing') }}#home" class="block text-gray-300 hover:text-white transition-colors">Home</a>
-            <a href="{{ route('f.plan') }}" wire:navigate class="block text-gray-300 hover:text-white transition-colors">Plan</a>
+            <a href="{{ route('f.plan') }}" wire:navigate class="block text-gray-300 hover:text-white transition-colors">Pricing</a>
             <a href="{{ route('f.landing') }}#about" class="block text-gray-300 hover:text-white transition-colors">About</a>
             <a href="{{ route('f.landing') }}#how-it-works" class="block text-gray-300 hover:text-white transition-colors">How it Works</a>
             <a href="{{ route('f.landing') }}#features" class="block text-gray-300 hover:text-white transition-colors">Features</a>
