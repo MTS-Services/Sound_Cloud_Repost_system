@@ -37,23 +37,23 @@
                         </div>
 
                         {{-- User Info --}}
-                        <div class="flex-1 text-center w-full sm:text-left ml-0 sm:ml-4">
+                        <div class="flex-1 text-center w-full md:text-left ml-0 sm:ml-4">
                             <div
-                                class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2 text-center sm:text-left">
+                                class="flex flex-col md:flex-row items-center md:space-x-4 mb-2 text-center md:text-left">
                                 <h1 class="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
                                     {{ $user->name ?? 'name' }}
                                 </h1>
 
                                 @if (proUser($user->urn))
-                                    <span
+                                    <p
                                         class="mt-1 sm:mt-0 text-xs md:text-sm lg:text-base badge badge-soft badge-warning rounded-full font-semibold">
                                         {{ userPlanName($user->urn) }}
-                                    </span>
+                                    </p>
                                 @else
-                                    <span
+                                    <p
                                         class="mt-1 sm:mt-0 text-xs md:text-sm lg:text-base badge badge-soft badge-info rounded-full font-semibold">
                                         {{ userPlanName($user->urn) }}
-                                    </span>
+                                    </p>
                                 @endif
                             </div>
 
@@ -62,7 +62,7 @@
                                 {{ $user->userInfo->followers_count ?? '150' }} Followers
                             </p>
                             <div
-                                class="flex flex-col xs:flex-col lg:flex-row space-y-2 xs:space-y-1 lg:space-y-0 text-gray-500 dark:text-slate-300">
+                                class="flex flex-col items-center lg:flex-row space-y-2 md:space-y-0 md:space-x-2 xs:space-y-1 lg:space-y-0 text-gray-500 dark:text-slate-300">
 
                                 {{-- MEMBER SINCE --}}
                                 <div class="flex items-center space-x-1">
