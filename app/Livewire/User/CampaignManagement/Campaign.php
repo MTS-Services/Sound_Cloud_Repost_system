@@ -817,7 +817,7 @@ class Campaign extends Component
                 $this->musicId = null;
             }
             $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
-            $exists = Campaign::where('music_id', $musicId)
+            $exists = ModelsCampaign::where('music_id', $musicId)
                 ->where('music_type', $this->musicType)
                 ->open()->exists();
             if ($exists) {
