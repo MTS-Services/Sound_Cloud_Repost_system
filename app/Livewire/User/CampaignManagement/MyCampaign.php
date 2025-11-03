@@ -416,7 +416,7 @@ class MyCampaign extends Component
             return;
         }
 
-        $this->showSubmitModal = true;
+
 
         try {
             match ($type) {
@@ -424,6 +424,16 @@ class MyCampaign extends Component
                 'playlist' => $this->setupPlaylistSubmission($id),
                 default => throw new \InvalidArgumentException("Invalid type: {$type}")
             };
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
+            $exists = Campaign::where('music_id', $musicId)
+                ->where('music_type', $this->musicType)
+                ->open()->exists();
+                
+            if ($exists) {
+                $this->dispatch('alert', type: 'error', message: 'You already have an active campaign for this track. Please end or close it before creating a new one.');
+                return;
+            }
+            $this->showSubmitModal = true;
         } catch (\Exception $e) {
             $this->handleSubmissionError($e, $type, $id);
         }
@@ -997,7 +1007,7 @@ class MyCampaign extends Component
 
     public function mount($categoryId = null)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->activeMainTab = request()->query('tab', 'all');
         $this->resetPage('allPage');
         $this->resetPage('activePage');
@@ -1031,7 +1041,7 @@ class MyCampaign extends Component
             DB::transaction(function () use ($campaign) {
                 $campaign->status = Campaign::STATUS_STOP;
                 $campaign->save();
-                $campaign->load('user');    
+                $campaign->load('user');
                 $remainingBudget = $campaign->budget_credits - $campaign->credits_spent;
 
                 CreditTransaction::create([
@@ -1041,7 +1051,7 @@ class MyCampaign extends Component
                     'source_type' => Campaign::class,
                     'transaction_type' => CreditTransaction::TYPE_REFUND,
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
-                    'amount'=> 0,
+                    'amount' => 0,
                     'credits' => $remainingBudget,
                     'description' => 'Refund for stopped campaign',
                     'metadata' => [
@@ -1069,9 +1079,8 @@ class MyCampaign extends Component
                 $this->dispatch('alert', type: 'success', message: 'Campaign stopped successfully.');
                 $this->mount();
             });
- 
         } catch (\Exception $e) {
-            Log::error('failed to stop campaign. error: '. $e->getMessage());
+            Log::error('failed to stop campaign. error: ' . $e->getMessage());
             $this->handleError('Failed to stop campaign', $e, ['campaign_id' => $id]);
             return;
         }
@@ -1087,7 +1096,7 @@ class MyCampaign extends Component
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'activePage', $this->activePage),
                 'completed' => $this->getCampaignsQuery()
-                    ->where('status','!=', Campaign::STATUS_OPEN)
+                    ->where('status', '!=', Campaign::STATUS_OPEN)
                     ->latest()
                     ->self()
                     ->paginate(self::ITEMS_PER_PAGE, ['*'], 'completedPage', $this->completedPage),

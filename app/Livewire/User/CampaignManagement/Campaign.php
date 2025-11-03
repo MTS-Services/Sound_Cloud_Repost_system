@@ -435,10 +435,10 @@ class Campaign extends Component
     // public $repostedId = null;
     private function getCampaignsQuery(): Builder
     {
-        // $allowedTargetCredits = repostPrice(user(), true);
         $allowedTargetCredits = user()->repost_price;
-        $baseQuery = ModelsCampaign::where('budget_credits', '>=', $allowedTargetCredits)
-            ->withoutSelf()->open()
+        $baseQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', [$allowedTargetCredits])
+            ->withoutSelf()
+            ->open()
             ->with(['music.user.userInfo', 'reposts', 'user']);
 
         if (session()->has('repostedId') && session()->get('repostedId') != null) {
@@ -792,7 +792,6 @@ class Campaign extends Component
             $this->showLowCreditWarningModal = false;
         }
 
-        $this->showSubmitModal = true;
 
         try {
             if ($type === 'track') {
@@ -817,6 +816,15 @@ class Campaign extends Component
                 $this->fetchPlaylistTracks();
                 $this->musicId = null;
             }
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
+            $exists = Campaign::where('music_id', $musicId)
+                ->where('music_type', $this->musicType)
+                ->open()->exists();
+            if ($exists) {
+                $this->dispatch('alert', type: 'error', message: 'You already have an active campaign for this track. Please end or close it before creating a new one.');
+                return;
+            }
+            $this->showSubmitModal = true;
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: 'Failed to load content: ' . $e->getMessage());
             $this->showSubmitModal = false;

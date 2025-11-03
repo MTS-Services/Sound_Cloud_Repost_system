@@ -830,7 +830,7 @@ class Dashboard extends Component
             $this->showLowCreditWarningModal = false;
         }
 
-        $this->showSubmitModal = true;
+
 
         try {
             if ($type === 'track') {
@@ -855,6 +855,16 @@ class Dashboard extends Component
                 $this->fetchPlaylistTracks();
                 $this->musicId = null;
             }
+            $musicId = $this->musicType === Track::class ? $this->musicId : $this->playlistId;
+            $exists = ModelsCampaign::where('music_id', $musicId)
+                ->where('music_type', $this->musicType)
+                ->open()->exists();
+            if ($exists) {
+                $this->dispatch('alert', type: 'error', message: 'You already have an active campaign for this track. Please end or close it before creating a new one.');
+                return;
+            }
+
+            $this->showSubmitModal = true;
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: 'Failed to load content: ' . $e->getMessage());
             $this->showSubmitModal = false;
@@ -1183,11 +1193,11 @@ class Dashboard extends Component
             $this->alreadyFollowing = true;
         }
 
-        if($this->request->likeable === 0){
+        if ($this->request->likeable === 0) {
             $this->liked = false;
         }
 
-        if($this->request->commentable === 0){
+        if ($this->request->commentable === 0) {
             $this->commented = '';
         }
     }
