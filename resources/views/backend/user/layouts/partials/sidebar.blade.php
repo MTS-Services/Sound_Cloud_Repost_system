@@ -8,8 +8,17 @@
             <img src="{{ auth_storage_url(user()->avatar) }}" alt="{{ user()->name ?? 'name' }}"
                 class="w-8 h-8 md:w-10 md:h-10 rounded-full">
             <div>
-                <h3 class="text-slate-800 dark:text-white text-xs md:text-sm">{{ user()->name ?? 'name' }}</h3>
-                <p class="text-slate-400 text-[10px] md:text-xs">{{ userCredits() . ' ' . __('Credits') }} </p>
+                <h3 class="text-slate-800 dark:text-white text-md md:text-lg font-semibold">{{ user()->name ?? 'name' }}</h3>
+                <div class="flex items-center space-x-2 mt-2 dark:text-white text-black ">
+                    <svg class="w-6 h-6" viewBox="0 0 26 18" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                            stroke="currentColor" stroke-width="2" />
+                        <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                            stroke-width="2" />
+                    </svg>
+                    <h6 class="font-medium">{{ userCredits() . ' ' . __('Credits') }} </h6>
+                </div>
             </div>
         </div>
     </div>
