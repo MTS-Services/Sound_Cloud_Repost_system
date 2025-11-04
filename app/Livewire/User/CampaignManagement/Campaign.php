@@ -1869,17 +1869,17 @@ class Campaign extends Component
         }
     }
 
-    public function starMarkUser(User $user)
+    public function starMarkUser(string $userUrn)
     {
         try {
-            $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
-            if ($status['status'] === 'invalid') {
+            $status = $this->starredUserService->toggleStarMark(user()->urn, $userUrn);
+            if (!$status) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
             }
         } catch (\Exception $e) {
             Log::error('Error in starMarkUser: ' . $e->getMessage(), [
                 'user_urn' => user()->urn ?? 'N/A',
-                'target_user_urn' => $user->urn ?? 'N/A',
+                'target_user_urn' => $userUrn ?? 'N/A',
                 'exception' => $e,
             ]);
             $this->dispatch('alert', type: 'error', message: 'An error occurred while updating star mark status. Please try again later.');

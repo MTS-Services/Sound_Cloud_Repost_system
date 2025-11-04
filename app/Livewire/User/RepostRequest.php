@@ -497,7 +497,7 @@ class RepostRequest extends Component
     {
         try {
             $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
-            if ($status['status'] === 'invalid') {
+            if (!$status) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
             }
         } catch (\Exception $e) {
