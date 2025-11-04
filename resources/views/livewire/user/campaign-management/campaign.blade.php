@@ -305,7 +305,11 @@
                                                 </svg>
                                             </div>
                                             <button x-on:click="Livewire.dispatch('starMarkUser', '{{ $campaign_?->music?->user?->urn }}')">
-
+                                                <x-lucide-star
+                                                    class="w-5 h-5 mt-1 relative {{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn)
+                                                        ? 'text-orange-300 '
+                                                        : 'text-gray-400 dark:text-gray-500' }}"
+                                                    fill="{{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
                                             </button>
                                             {{-- <button wire:click="starMarkUser({{ $campaign_?->music?->user?->urn }})">
                                                 <x-lucide-star
