@@ -1873,7 +1873,6 @@ class Campaign extends Component
     #[On('starMarkUser')]
     public function starMarkUser($userUrn)
     {
-        dd($userUrn);
         try {
             $status = $this->starredUserService->toggleStarMark(user()->urn, $userUrn);
             if (!$status) {
