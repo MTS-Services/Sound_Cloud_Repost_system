@@ -9,7 +9,7 @@
         @endif
     </h2>
     <div>
-        @if ($starred == 'favourite')
+        @if ($starred == 'favourited')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
                     class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0">
@@ -68,14 +68,14 @@
                     </div>
 
                     <!-- Request Button -->
-                    {{-- @if (requestReceiveable($favouriteUser->follower_urn)) --}}
+                    @if (requestReceiveable($favouriteUser->follower_urn))
                         <x-gbutton variant="primary" :full-width="false"
                             wire:click="openModal('{{ $favouriteUser->follower_urn }}')">Request</x-gbutton>
-                    {{-- @else
+                    @else
                         <x-gbutton variant="primary" :full-width="false" disabled
                             class="!cursor-not-allowed !py-3">Request
                             Later</x-gbutton>
-                    @endif --}}
+                    @endif
                 </div>
             @empty
                 <div
@@ -99,10 +99,10 @@
                     </a>
                 </div>
             @endforelse
-        @elseif ($starred == 'favourited')
+        @elseif ($starred == 'favourite')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
-                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0">
+                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     <!-- Member Card -->
                     <div class="flex items-center space-x-4">
                         <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
@@ -158,11 +158,14 @@
                     </div>
 
                     <!-- Request Button -->
-                    <div class="flex justify-end">
-                        <button class="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600">
-                            10 Request
-                        </button>
-                    </div>
+                    @if (requestReceiveable($favouriteUser->follower_urn))
+                        <x-gbutton variant="primary" :full-width="false"
+                            wire:click="openModal('{{ $favouriteUser->follower_urn }}')">Request</x-gbutton>
+                    @else
+                        <x-gbutton variant="primary" :full-width="false" disabled
+                            class="!cursor-not-allowed !py-3">Request
+                            Later</x-gbutton>
+                    @endif
                 </div>
             @empty
                 <div
