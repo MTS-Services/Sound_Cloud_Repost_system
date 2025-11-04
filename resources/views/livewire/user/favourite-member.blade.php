@@ -9,7 +9,7 @@
         @endif
     </h2>
     <div>
-        @if ($starred == 'favourite')
+        @if ($starred == 'favourited')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
                     class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0">
@@ -99,7 +99,7 @@
                     </a>
                 </div>
             @endforelse
-        @elseif ($starred == 'favourited')
+        @elseif ($starred == 'favourite')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
                     class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
