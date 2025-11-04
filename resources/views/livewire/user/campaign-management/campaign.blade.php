@@ -304,14 +304,17 @@
                                                         stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                                 </svg>
                                             </div>
-                                            <button wire:click="starMarkUser({{ $campaign_?->music?->user?->urn }})">
+                                            <button x-on:click="Livewire.dispatch('starMarkUser', '{{ $campaign_?->music?->user?->urn }}')">
+
+                                            </button>
+                                            {{-- <button wire:click="starMarkUser({{ $campaign_?->music?->user?->urn }})">
                                                 <x-lucide-star
                                                     class="w-5 h-5 mt-1 relative {{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn)
                                                         ? 'text-orange-300 '
                                                         : 'text-gray-400 dark:text-gray-500' }}"
                                                     fill="{{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
                                                 
-                                            </button>
+                                            </button> --}}
 
                                             <div x-show="open" x-transition.opacity
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"

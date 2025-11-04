@@ -35,6 +35,7 @@ use App\Services\User\StarredUserService;
 use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Livewire\Attributes\On;
 
 class Campaign extends Component
 {
@@ -1869,6 +1870,7 @@ class Campaign extends Component
         }
     }
 
+    #[On('starMarkUser')]
     public function starMarkUser(string $userUrn)
     {
         dd($userUrn);
