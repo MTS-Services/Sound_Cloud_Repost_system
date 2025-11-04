@@ -102,9 +102,9 @@ class FavouriteMember extends Component
 
     public function mount()
     {
-        if ($this->starred === 'favourited') {
+        if ($this->starred === 'favourite') {
             $this->loadYourFavouriteMembers();
-        } elseif ($this->starred === 'favourite') {
+        } elseif ($this->starred === 'favourited') {
             $this->loadFavouriteMembers();
         }
     }
