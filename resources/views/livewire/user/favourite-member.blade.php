@@ -21,7 +21,7 @@
                         </div>
                         <div class="relative mt-2 sm:mt-0">
                             <div x-data="{ open: false }" class="inline-block text-left">
-                                <div class="flex items-center gap-3">
+                                <div class="flex flex-col sm:flex-row items-center gap-3">
                                     <div @click="open = !open" @click.outside="open = false"
                                         class="flex items-center gap-1 cursor-pointer">
                                         <span
@@ -108,7 +108,7 @@
                         </div>
                         <div class="relative mt-2 sm:mt-0">
                             <div x-data="{ open: false }" class="inline-block text-left">
-                                <div class="flex items-center gap-3">
+                                <div class="flex flex-col sm:flex-row items-center gap-3">
                                     <div @click="open = !open" @click.outside="open = false"
                                         class="flex items-center gap-1 cursor-pointer">
                                         <span
