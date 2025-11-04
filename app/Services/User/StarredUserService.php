@@ -16,6 +16,10 @@ class StarredUserService
 
     public function toggleStarMark($followerUrn, $starredUserUrn)
     {
+        if ($followerUrn == $starredUserUrn) {
+            return ['status' => 'invalid'];
+        }
+
         $existingRecord = StarredUser::withTrashed()
             ->where('follower_urn', $followerUrn)
             ->where('starred_user_urn', $starredUserUrn)
@@ -29,6 +33,7 @@ class StarredUserService
             $existingRecord->delete();
             return ['status' => 'unstarred'];
         }
+
 
         StarredUser::create([
             'follower_urn' => $followerUrn,

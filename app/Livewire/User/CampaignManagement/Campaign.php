@@ -1872,7 +1872,10 @@ class Campaign extends Component
     public function starMarkUser(User $user)
     {
         try {
-            $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+            $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+            if ($status['status'] === 'invalid') {
+                $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
+            }
         } catch (\Exception $e) {
             Log::error('Error in starMarkUser: ' . $e->getMessage(), [
                 'user_urn' => user()->urn ?? 'N/A',

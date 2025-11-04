@@ -140,23 +140,6 @@
                                         data-request-id="{{ $repostRequest->id }}" wire:ignore>
                                         <x-sound-cloud.sound-cloud-player :track="$repostRequest->music" :visual="false" />
                                     </div>
-
-                                    {{-- <!-- Play Time Display -->
-                                    <div class="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10">
-                                        {{ $this->getPlayTime($repostRequest->id) }}s / 5s
-                                    </div> --}}
-
-                                    <!-- Request Status Badge -->
-                                    {{-- <div
-                                        class="absolute top-2 left-2 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
-                                        FEATURED
-                                    </div> --}}
-
-                                    {{-- <!-- Play Progress Bar -->
-                                    <div class="absolute bottom-2 left-2 right-2 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
-                                        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                                             style="width: {{ min(100, ($this->getPlayTime($repostRequest->id) / 5) * 100) }}%"></div>
-                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -184,13 +167,16 @@
 
                                                 <!-- Rating Stars -->
                                                 <div class="flex items-center mt-1">
-                                                    @for ($i = 1; $i <= 5; $i++)
-                                                        <svg class="w-4 h-4 {{ $i <= ($repostRequest->requester->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
-                                                            fill="currentColor" viewBox="0 0 20 20">
-                                                            <path
-                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                                                        </svg>
-                                                    @endfor
+                                                    @if ($activeMainTab == 'incoming_request')
+                                                        <button
+                                                            wire:click="starMarkUser({{ $repostRequest->targetUser }})">
+                                                            <x-lucide-star
+                                                                class="w-5 h-5 mt-1 relative {{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn)
+                                                                    ? 'text-orange-300 '
+                                                                    : 'text-gray-400 dark:text-gray-500' }}"
+                                                                fill="{{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
+                                                        </button>
+                                                    @endif
                                                 </div>
 
                                                 <!-- Dropdown Menu -->
@@ -345,13 +331,14 @@
 
                                                         <!-- Rating Stars -->
                                                         <div class="flex items-center mt-1">
-                                                            @for ($i = 1; $i <= 5; $i++)
-                                                                <svg class="w-4 h-4 {{ $i <= ($repostRequest->targetUser->rating ?? 4) ? 'text-yellow-400' : 'text-gray-300' }}"
-                                                                    fill="currentColor" viewBox="0 0 20 20">
-                                                                    <path
-                                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                                                                </svg>
-                                                            @endfor
+                                                            <button
+                                                                wire:click="starMarkUser({{ $repostRequest->targetUser }})">
+                                                                <x-lucide-star
+                                                                    class="w-5 h-5 mt-1 relative {{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn)
+                                                                        ? 'text-orange-300 '
+                                                                        : 'text-gray-400 dark:text-gray-500' }}"
+                                                                    fill="{{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>

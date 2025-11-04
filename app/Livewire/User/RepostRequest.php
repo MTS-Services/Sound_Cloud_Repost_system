@@ -16,6 +16,7 @@ use App\Models\UserSetting;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\AnalyticsService;
 use App\Services\User\Mamber\RepostRequestService;
+use App\Services\User\StarredUserService;
 use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -68,13 +69,15 @@ class RepostRequest extends Component
     protected UserSettingsService $userSettingsService;
     protected ?AnalyticsService $analyticsService = null;
     protected RepostRequestService $repostRequestService;
+    protected StarredUserService $starredUserService;
 
-    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService, RepostRequestService $repostRequestService, AnalyticsService $analyticsService)
+    public function boot(SoundCloudService $soundCloudService, UserSettingsService $userSettingsService, RepostRequestService $repostRequestService, AnalyticsService $analyticsService, StarredUserService $starredUserService)
     {
         $this->soundCloudService = $soundCloudService;
         $this->userSettingsService = $userSettingsService;
         $this->analyticsService = $analyticsService;
         $this->repostRequestService = $repostRequestService;
+        $this->starredUserService = $starredUserService;
     }
 
     public function mount()
@@ -342,10 +345,10 @@ class RepostRequest extends Component
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        if($this->request->likeable === 0){
+        if ($this->request->likeable === 0) {
             $this->liked = false;
         }
-        if($this->request->commentable === 0){
+        if ($this->request->commentable === 0) {
             $this->commented = '';
         }
 
@@ -454,7 +457,7 @@ class RepostRequest extends Component
 
     public function dataLoad()
     {
-        $query = ModelsRepostRequest::orderBy('created_at', 'desc')->with(['music', 'targetUser', 'requester']);
+        $query = ModelsRepostRequest::orderBy('created_at', 'desc')->with(['music', 'targetUser.starredUsers', 'requester.starredUsers']);
         $tab = request()->query('tab', $this->activeMainTab);
         $this->activeMainTab = $tab;
 
@@ -488,6 +491,23 @@ class RepostRequest extends Component
         $this->userSettingsService->createOrUpdate($userUrn, ['response_rate_reset' => now()]);
         $this->dataLoad();
         $this->dispatch('alert', type: 'success', message: 'Your response rate has been reset.');
+    }
+
+    public function starMarkUser(User $user)
+    {
+        try {
+            $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+            if ($status['status'] === 'invalid') {
+                $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in starMarkUser: ' . $e->getMessage(), [
+                'user_urn' => user()->urn ?? 'N/A',
+                'target_user_urn' => $user->urn ?? 'N/A',
+                'exception' => $e,
+            ]);
+            $this->dispatch('alert', type: 'error', message: 'An error occurred while updating star mark status. Please try again later.');
+        }
     }
 
     public function render()

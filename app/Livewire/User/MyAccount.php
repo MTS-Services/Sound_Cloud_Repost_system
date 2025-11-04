@@ -16,6 +16,7 @@ use App\Services\SoundCloud\FollowerAnalyzer;
 use App\Services\SoundCloud\SoundCloudService;
 use App\Services\TrackService;
 use App\Services\User\AnalyticsService;
+use App\Services\User\StarredUserService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
@@ -60,6 +61,7 @@ class MyAccount extends Component
     private SoundCloudService $soundCloudService;
     private FollowerAnalyzer $followerAnalyzer;
     private AnalyticsService $analyticsService;
+    protected StarredUserService $starredUserService;
 
     public $userFollowerAnalysis = [];
 
@@ -73,7 +75,7 @@ class MyAccount extends Component
     public $user_name;
 
     // Livewire v3: boot runs on every request (initial + subsequent)
-    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer, AnalyticsService $analyticsService): void
+    public function boot(UserService $userService, CreditTransactionService $creditTransactionService, TrackService $trackService, SoundCloudService $soundCloudService, PlaylistService $playlistService, FollowerAnalyzer $followerAnalyzer, AnalyticsService $analyticsService, StarredUserService $starredUserService): void
     {
         $this->userService = $userService;
         $this->creditTransactionService = $creditTransactionService;
@@ -82,6 +84,7 @@ class MyAccount extends Component
         $this->playlistService = $playlistService;
         $this->followerAnalyzer = $followerAnalyzer;
         $this->analyticsService = $analyticsService;
+        $this->starredUserService = $starredUserService;
     }
 
     public function mount($user_name = null): void
@@ -89,13 +92,13 @@ class MyAccount extends Component
         $user = $user_name ? User::where('name', $user_name)->orWhere('urn', $user_name)->first() : user();
 
         $this->user_name = $user->name;
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->getAnalyticsData($user);
 
         $this->activeTab = request()->query('tab', $this->activeTab);
-        if(request()->query('tab') == 'tracks') {
+        if (request()->query('tab') == 'tracks') {
             $this->soundCloudService->syncUserTracks(user(), []);
-        }elseif(request()->query('tab') == 'playlists') {
+        } elseif (request()->query('tab') == 'playlists') {
             $this->soundCloudService->syncUserPlaylists(user(), []);
         }
 
@@ -140,9 +143,7 @@ class MyAccount extends Component
         // dd($this->chart_data);
     }
 
-    public function updated()
-    {
-    }
+    public function updated() {}
 
     public function updatedActiveTab()
     {
@@ -220,11 +221,27 @@ class MyAccount extends Component
         $this->youtube = $social_link->youtube ?? '';
         $this->spotify = $social_link->spotify ?? '';
     }
+    public function starMarkUser(User $user)
+    {
+        try {
+            $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+            if ($status['status'] === 'invalid') {
+                $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in starMarkUser: ' . $e->getMessage(), [
+                'user_urn' => user()->urn ?? 'N/A',
+                'target_user_urn' => $user->urn ?? 'N/A',
+                'exception' => $e,
+            ]);
+            $this->dispatch('alert', type: 'error', message: 'An error occurred while updating star mark status. Please try again later.');
+        }
+    }
 
     public function render()
     {
         Log::info('MyAccount render', ['user_urn' => $this->user_urn]);
-        $user = $this->userService->getUser(encrypt($this->user_urn), 'urn');
+        $user = $this->userService->getUser(encrypt($this->user_urn), 'urn')->load('starredUsers');
 
         // Tracks pagination
         $tracks = Track::where('user_urn', $this->user_urn)
