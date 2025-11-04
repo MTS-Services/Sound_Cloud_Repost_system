@@ -102,9 +102,9 @@ class FavouriteMember extends Component
 
     public function mount()
     {
-        if ($this->starred === 'favourite') {
+        if ($this->starred === 'favourited') {
             $this->loadYourFavouriteMembers();
-        } elseif ($this->starred === 'favourited') {
+        } elseif ($this->starred === 'favourite') {
             $this->loadFavouriteMembers();
         }
     }
@@ -112,14 +112,14 @@ class FavouriteMember extends Component
     public function loadYourFavouriteMembers()
     {
         $this->favouriteUsers = StarredUser::with('following.genres')
-            ->where('starred_user_urn', user()->urn)
+            ->where('follower_urn', user()->urn)
             ->get();
     }
 
     public function loadFavouriteMembers()
     {
         $this->favouriteUsers = StarredUser::with('follower.genres')
-            ->where('follower_urn', user()->urn)
+            ->where('starred_user_urn', user()->urn)
             ->get();
     }
 
