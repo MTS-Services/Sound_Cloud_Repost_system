@@ -1871,7 +1871,7 @@ class Campaign extends Component
     }
 
     #[On('starMarkUser')]
-    public function starMarkUser(string $userUrn)
+    public function starMarkUser($userUrn)
     {
         dd($userUrn);
         try {

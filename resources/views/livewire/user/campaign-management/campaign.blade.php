@@ -304,7 +304,8 @@
                                                         stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                                 </svg>
                                             </div>
-                                            <button x-on:click="Livewire.dispatch('starMarkUser', '{{ $campaign_?->music?->user?->urn }}')">
+                                            <button
+                                                x-on:click="Livewire.dispatch('starMarkUser', { userUrn: '{{ $campaign_?->music?->user?->urn }}' })">
                                                 <x-lucide-star
                                                     class="w-5 h-5 mt-1 relative {{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn)
                                                         ? 'text-orange-300 '
@@ -329,12 +330,12 @@
                                                     SoundCloud
                                                     Profile</a>
                                                 @if ($campaign_->user)
-                                                    <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn)  }}"
-                                                    wire:navigate
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    RepostChain Profile</a>
+                                                    <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
+                                                        wire:navigate
+                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                        RepostChain Profile</a>
                                                 @endif
-                                                
+
                                                 {{-- <button
                                                 class="block w-full text-left hover:bg-gray-800 px-3 py-1 rounded">Hide
                                                 all content from this
