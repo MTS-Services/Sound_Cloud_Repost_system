@@ -12,14 +12,14 @@
         @if ($starred == 'favourited')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
-                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0">
+                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0 flex-col sm:flex-row">
                     <!-- Member Card -->
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                    <div class="flex items-center space-x-4 sm:flex-row flex-col mb-4 sm:mb-0">
+                        <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
                             <img src="{{ auth_storage_url($favouriteUser->follower?->avatar) }}" alt="Member Avatar"
-                                class="w-12 h-12 rounded-full">
+                                class="w-16 h-16 rounded-full object-cover">
                         </div>
-                        <div class="relative">
+                        <div class="relative mt-2 sm:mt-0">
                             <div x-data="{ open: false }" class="inline-block text-left">
                                 <div class="flex items-center gap-3">
                                     <div @click="open = !open" @click.outside="open = false"
@@ -29,8 +29,7 @@
                                         <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7">
-                                            </path>
+                                                d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
                                     @if (proUser(user()->urn))
@@ -45,9 +44,7 @@
                                     class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                     x-cloak>
                                     <a href="{{ $favouriteUser->follower?->soundcloud_permalink_url }}" target="_blank"
-                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                        SoundCloud
-                                        Profile</a>
+                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
                                     <a href="{{ route('user.my-account.user', !empty($favouriteUser->follower?->name) ? $favouriteUser->follower?->name : $favouriteUser->follower_urn) }}"
                                         wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                         RepostChain Profile</a>
@@ -58,9 +55,8 @@
                         </div>
                     </div>
 
-
                     <!-- Tags Section -->
-                    <div class="flex space-x-2 mt-4">
+                    <div class="flex space-x-2 mt-4 flex-wrap">
                         @foreach ($favouriteUser->follower?->genres as $genre)
                             <span
                                 class="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">{{ $genre->genre }}</span>
@@ -68,18 +64,19 @@
                     </div>
 
                     <!-- Request Button -->
-                    @if (requestReceiveable($favouriteUser->follower_urn))
-                        <x-gbutton variant="primary" :full-width="false"
-                            wire:click="openModal('{{ $favouriteUser->follower_urn }}')">Request</x-gbutton>
-                    @else
-                        <x-gbutton variant="primary" :full-width="false" disabled
-                            class="!cursor-not-allowed !py-3">Request
-                            Later</x-gbutton>
-                    @endif
+                    <div class="mt-4 sm:mt-0">
+                        @if (requestReceiveable($favouriteUser->follower_urn))
+                            <x-gbutton variant="primary" :full-width="false"
+                                wire:click="openModal('{{ $favouriteUser->follower_urn }}')">Request</x-gbutton>
+                        @else
+                            <x-gbutton variant="primary" :full-width="false" disabled
+                                class="!cursor-not-allowed !py-3">Request Later</x-gbutton>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div
-                    class="flex items-center p-4 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] space-x-4 mt-4">
+                    class="flex items-center p-4 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] space-x-4 mt-4 flex-col sm:flex-row">
                     <!-- Avatar placeholder -->
                     <div class="w-12 h-12 rounded-full bg-gray-200 animate-pulse"></div>
                     <div class="flex flex-col gap-2">
@@ -88,13 +85,13 @@
                     </div>
 
                     <!-- Text -->
-                    <p class="flex-1 text-gray-400 text-sm select-none lg:ms-10">
+                    <p class="flex-1 text-gray-400 text-sm select-none lg:ms-10 text-center sm:text-left">
                         Seems like you haven't starred any members yet
                     </p>
 
                     <!-- Discover Members button -->
                     <a href="{{ route('user.members') }}" wire:navigate
-                        class="inline-block px-5 py-2 text-white bg-orange-600 hover:bg-orange-700 rounded transition">
+                        class="inline-block px-5 py-2 text-white bg-orange-600 hover:bg-orange-700 rounded transition mt-4 sm:mt-0">
                         Discover Members
                     </a>
                 </div>
@@ -102,14 +99,14 @@
         @elseif ($starred == 'favourite')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
-                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0 flex-col sm:flex-row">
                     <!-- Member Card -->
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                    <div class="flex items-center space-x-4 sm:flex-row flex-col mb-4 sm:mb-0">
+                        <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
                             <img src="{{ auth_storage_url($favouriteUser->following?->avatar) }}" alt="Member Avatar"
-                                class="w-12 h-12 rounded-full">
+                                class="w-16 h-16 rounded-full object-cover">
                         </div>
-                        <div class="relative">
+                        <div class="relative mt-2 sm:mt-0">
                             <div x-data="{ open: false }" class="inline-block text-left">
                                 <div class="flex items-center gap-3">
                                     <div @click="open = !open" @click.outside="open = false"
@@ -119,8 +116,7 @@
                                         <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7">
-                                            </path>
+                                                d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
                                     @if (proUser(user()->urn))
@@ -134,10 +130,8 @@
                                 <div x-show="open" x-transition.opacity
                                     class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                     x-cloak>
-                                    <a href="{{ $favouriteUser->following?->soundcloud_permalink_url }}"
-                                        target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                        SoundCloud
-                                        Profile</a>
+                                    <a href="{{ $favouriteUser->following?->soundcloud_permalink_url }}" target="_blank"
+                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
                                     <a href="{{ route('user.my-account.user', !empty($favouriteUser->following?->name) ? $favouriteUser->following?->name : $favouriteUser->following_urn) }}"
                                         wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                         RepostChain Profile</a>
@@ -148,9 +142,8 @@
                         </div>
                     </div>
 
-
                     <!-- Tags Section -->
-                    <div class="flex space-x-2 mt-4">
+                    <div class="flex space-x-2 mt-4 flex-wrap">
                         @foreach ($favouriteUser->following?->genres as $genre)
                             <span
                                 class="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">{{ $genre->genre }}</span>
@@ -158,37 +151,39 @@
                     </div>
 
                     <!-- Request Button -->
-                    @if (requestReceiveable($favouriteUser->follower_urn))
-                        <x-gbutton variant="primary" :full-width="false"
-                            wire:click="openModal('{{ $favouriteUser->follower_urn }}')">Request</x-gbutton>
-                    @else
-                        <x-gbutton variant="primary" :full-width="false" disabled
-                            class="!cursor-not-allowed !py-3">Request
-                            Later</x-gbutton>
-                    @endif
+                    <div class="mt-4 sm:mt-0">
+                        @if (requestReceiveable($favouriteUser->following_urn))
+                            <x-gbutton variant="primary" :full-width="false"
+                                wire:click="openModal('{{ $favouriteUser->following_urn }}')">Request</x-gbutton>
+                        @else
+                            <x-gbutton variant="primary" :full-width="false" disabled
+                                class="!cursor-not-allowed !py-3">Request Later</x-gbutton>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div
-                    class="flex items-center p-4 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] space-x-4 mt-4">
+                    class="flex items-center p-4 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] space-x-4 mt-4 flex-col sm:flex-row">
                     <!-- Avatar placeholder -->
                     <div class="w-12 h-12 rounded-full bg-gray-200 animate-pulse"></div>
                     <div class="flex flex-col gap-2">
-                        <div class="w-48 h-3 bg-gray-300 dark:bg-gray-700 animate-pulse"></div>
-                        <div class="w-40 h-3 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
+                        <div class="w-48 h-3 bg-gray-300 animate-pulse"></div>
+                        <div class="w-40 h-3 bg-gray-200 animate-pulse"></div>
                     </div>
 
                     <!-- Text -->
-                    <p class="flex-1 text-gray-400 text-sm select-none lg:ms-10">
+                    <p class="flex-1 text-gray-400 text-sm select-none lg:ms-10 text-center sm:text-left">
                         Seems like you haven't starred any members yet
                     </p>
 
                     <!-- Discover Members button -->
                     <a href="{{ route('user.members') }}" wire:navigate
-                        class="inline-block px-5 py-2 text-white bg-orange-600 hover:bg-orange-700 rounded transition">
+                        class="inline-block px-5 py-2 text-white bg-orange-600 hover:bg-orange-700 rounded transition mt-4 sm:mt-0">
                         Discover Members
                     </a>
                 </div>
             @endforelse
+
         @endif
     </div>
 
