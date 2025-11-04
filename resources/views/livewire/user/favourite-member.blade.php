@@ -12,9 +12,9 @@
         @if ($starred == 'favourited')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
-                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0 flex-col sm:flex-row">
+                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-2 md:space-y-0 flex-col sm:flex-row">
                     <!-- Member Card -->
-                    <div class="flex items-center space-x-4 sm:flex-row flex-col mb-4 sm:mb-0">
+                    <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                         <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
                             <img src="{{ auth_storage_url($favouriteUser->follower?->avatar) }}" alt="Member Avatar"
                                 class="w-16 h-16 rounded-full object-cover">
@@ -64,7 +64,7 @@
                     </div>
 
                     <!-- Request Button -->
-                    <div class="mt-4 sm:mt-0">
+                    <div class="mt-4 sm:mt-0 text-right">
                         @if (requestReceiveable($favouriteUser->follower_urn))
                             <x-gbutton variant="primary" :full-width="false"
                                 wire:click="openModal('{{ $favouriteUser->follower_urn }}')">Request</x-gbutton>
@@ -99,9 +99,9 @@
         @elseif ($starred == 'favourite')
             @forelse ($favouriteUsers as $favouriteUser)
                 <div
-                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-4 md:space-y-0 flex-col sm:flex-row">
+                    class="p-6 mt-4 bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex justify-between items-center space-y-2 md:space-y-0 flex-col sm:flex-row">
                     <!-- Member Card -->
-                    <div class="flex items-center space-x-4 sm:flex-row flex-col mb-4 sm:mb-0">
+                    <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                         <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
                             <img src="{{ auth_storage_url($favouriteUser->following?->avatar) }}" alt="Member Avatar"
                                 class="w-16 h-16 rounded-full object-cover">
