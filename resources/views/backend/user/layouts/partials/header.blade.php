@@ -166,8 +166,7 @@
                             <p>{{ __('Current Plan') }}</p>
                         </div>
                     </li>
-                    <li
-                        class="px-4 pb-2">
+                    <li class="px-4 pb-2">
                         <div class="text-sm flex justify-between items-center">
                             <span class="font-semibold text-slate-800 dark:text-white">
                                 {{ userPlanName() }}
@@ -177,6 +176,18 @@
                                 {{ __('Plans') }}
                             </a>
                         </div>
+                    </li>
+                    <li>
+                        <a href="{{ route('user.favourites', ['starred' => 'favourite']) }}" wire:navigate
+                            class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            {{ __("Members you've starred") }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user.favourites', ['starred' => 'favourited']) }}" wire:navigate
+                            class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            {{ __("Members who starred you") }}
+                        </a>
                     </li>
 
                     <li>

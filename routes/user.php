@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Livewire\User\Chart;
 use App\Livewire\User\Dashboard;
 use App\Livewire\User\Faq;
+use App\Livewire\User\FavouriteMember;
 use App\Livewire\User\HelpAndSupport;
 use App\Livewire\User\Member;
 use App\Livewire\User\RepostRequest;
@@ -20,7 +21,6 @@ use App\Livewire\User\Plans;
 use App\Livewire\User\MyAccount;
 use App\Livewire\User\Settings;
 use App\Livewire\User\TrackSubmit;
-
 
 // SoundCloud Routes
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -85,4 +85,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/paypal/payment/success/', 'paypalPaymentSuccess')->name('paypal.paymentSuccess');
         Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
     });
+    
+    // Favourite / Starred Users Routes
+    Route::get('favourites', FavouriteMember::class)->name('favourites');
 });

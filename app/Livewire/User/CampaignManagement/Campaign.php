@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\UserAnalytics;
 use App\Models\UserPlan;
 use App\Models\UserSetting;
+use App\Services\User\StarredUserService;
 use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -228,8 +229,9 @@ class Campaign extends Component
     protected ?AnalyticsService $analyticsService = null;
     protected ?MyCampaignService $myCampaignService = null;
     protected ?UserSettingsService $userSettingsService = null;
+    protected ?StarredUserService $starredUserService = null;
 
-    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService, MyCampaignService $myCampaignService, UserSettingsService $userSettingsService)
+    public function boot(CampaignService $campaignService, TrackService $trackService, PlaylistService $playlistService, SoundCloudService $soundCloudService, AnalyticsService $analyticsService, MyCampaignService $myCampaignService, UserSettingsService $userSettingsService, StarredUserService $starredUserService)
     {
         $this->campaignService = $campaignService;
         $this->trackService = $trackService;
@@ -238,12 +240,13 @@ class Campaign extends Component
         $this->analyticsService = $analyticsService;
         $this->myCampaignService = $myCampaignService;
         $this->userSettingsService = $userSettingsService;
+        $this->starredUserService = $starredUserService;
     }
 
 
     public function mount(Request $request)
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         if (session()->has('repostedId')) {
             session()->forget('repostedId');
@@ -439,7 +442,7 @@ class Campaign extends Component
         $baseQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', [$allowedTargetCredits])
             ->withoutSelf()
             ->open()
-            ->with(['music.user.userInfo', 'reposts', 'user']);
+            ->with(['music.user.userInfo', 'reposts', 'user.starredUsers']);
 
         if (session()->has('repostedId') && session()->get('repostedId') != null) {
             $baseQuery->where(function ($query) {
@@ -1863,6 +1866,20 @@ class Campaign extends Component
             ]);
             $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
             return;
+        }
+    }
+
+    public function starMarkUser(User $user)
+    {
+        try {
+            $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+        } catch (\Exception $e) {
+            Log::error('Error in starMarkUser: ' . $e->getMessage(), [
+                'user_urn' => user()->urn ?? 'N/A',
+                'target_user_urn' => $user->urn ?? 'N/A',
+                'exception' => $e,
+            ]);
+            $this->dispatch('alert', type: 'error', message: 'An error occurred while updating star mark status. Please try again later.');
         }
     }
 

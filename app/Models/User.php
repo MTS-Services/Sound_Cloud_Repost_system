@@ -186,6 +186,10 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return $this->hasOne(UserSetting::class, 'user_urn', 'urn');
     }
+    public function starredUsers(): HasMany
+    {
+        return $this->hasMany(StarredUser::class, 'starred_user_urn', 'urn');
+    }
 
     /* =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#=
                 End of RELATIONSHIPS
