@@ -23,11 +23,11 @@ class FavouriteMember extends Component
     }
     public function loadYourFavouriteMembers()
     {
-        $this->favouriteUsers = StarredUser::with('following.genres')->where('follower_urn', user()->urn)->get();
+        $this->favouriteUsers = StarredUser::with('following.genres')->where('starred_user_urn', user()->urn)->get();
     }
     public function loadFavouriteMembers()
     {
-        $this->favouriteUsers = StarredUser::with('follower.genres')->where('starred_user_urn', user()->urn)->get();
+        $this->favouriteUsers = StarredUser::with('follower.genres')->where('follower_urn', user()->urn)->get();
     }
     public function render()
     {
