@@ -247,7 +247,7 @@ class Campaign extends Component
 
     public function mount(Request $request)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         if (session()->has('repostedId')) {
             session()->forget('repostedId');

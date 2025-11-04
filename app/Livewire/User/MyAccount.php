@@ -20,6 +20,7 @@ use App\Services\User\StarredUserService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -221,10 +222,12 @@ class MyAccount extends Component
         $this->youtube = $social_link->youtube ?? '';
         $this->spotify = $social_link->spotify ?? '';
     }
-    public function starMarkUser(User $user)
+
+    #[On('starMarkUser')]
+    public function starMarkUser($userUrn)
     {
         try {
-            $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+            $status = $this->starredUserService->toggleStarMark(user()->urn, $userUrn);
             if (!$status) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
             }

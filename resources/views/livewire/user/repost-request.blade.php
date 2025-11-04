@@ -169,12 +169,12 @@
                                                 <div class="flex items-center mt-1">
                                                     @if ($activeMainTab == 'incoming_request')
                                                         <button
-                                                            wire:click="starMarkUser({{ $repostRequest->targetUser }})">
+                                                            x-on:click="Livewire.dispatch('starMarkUser', { userUrn: '{{ $repostRequest->requester?->urn }}' })">
                                                             <x-lucide-star
-                                                                class="w-5 h-5 mt-1 relative {{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn)
+                                                                class="w-5 h-5 mt-1 relative {{ $repostRequest->requester?->starredUsers?->contains('follower_urn', user()->urn)
                                                                     ? 'text-orange-300 '
                                                                     : 'text-gray-400 dark:text-gray-500' }}"
-                                                                fill="{{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
+                                                                fill="{{ $repostRequest->requester?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
                                                         </button>
                                                     @endif
                                                 </div>
@@ -332,12 +332,12 @@
                                                         <!-- Rating Stars -->
                                                         <div class="flex items-center mt-1">
                                                             <button
-                                                                wire:click="starMarkUser({{ $repostRequest->targetUser }})">
+                                                                x-on:click="Livewire.dispatch('starMarkUser', { userUrn: '{{ $repostRequest->requester?->urn }}' })">
                                                                 <x-lucide-star
-                                                                    class="w-5 h-5 mt-1 relative {{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn)
+                                                                    class="w-5 h-5 mt-1 relative {{ $repostRequest->requester?->starredUsers?->contains('follower_urn', user()->urn)
                                                                         ? 'text-orange-300 '
                                                                         : 'text-gray-400 dark:text-gray-500' }}"
-                                                                    fill="{{ $repostRequest->targetUser?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
+                                                                    fill="{{ $repostRequest->requester?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
                                                             </button>
                                                         </div>
                                                     </div>

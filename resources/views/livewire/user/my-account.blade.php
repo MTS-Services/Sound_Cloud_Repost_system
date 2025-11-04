@@ -62,7 +62,7 @@
                                     {{ $user->userInfo->followers_count ?? '150' }} Followers
                                 </p>
                                 @if (user()->urn !== $user->urn)
-                                    <button wire:click="starMarkUser({{ $user }})">
+                                    <button x-on:click="Livewire.dispatch('starMarkUser', { userUrn: '{{ $user->urn }}' })">
                                         <x-lucide-star
                                             class="w-5 h-5 relative {{ $user->starredUsers?->contains('follower_urn', user()->urn)
                                                 ? 'text-orange-300 '

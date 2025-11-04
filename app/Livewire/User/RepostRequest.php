@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Throwable;
 
@@ -92,7 +93,7 @@ class RepostRequest extends Component
 
     public function updated()
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updatedActiveMainTab()
@@ -493,10 +494,11 @@ class RepostRequest extends Component
         $this->dispatch('alert', type: 'success', message: 'Your response rate has been reset.');
     }
 
-    public function starMarkUser(User $user)
+    #[On('starMarkUser')]
+    public function starMarkUser($userUrn)
     {
         try {
-            $status = $this->starredUserService->toggleStarMark(user()->urn, $user->urn);
+            $status = $this->starredUserService->toggleStarMark(user()->urn, $userUrn);
             if (!$status) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot star mark yourself.');
             }

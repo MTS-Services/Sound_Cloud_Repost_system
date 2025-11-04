@@ -102,9 +102,9 @@ class FavouriteMember extends Component
 
     public function mount()
     {
-        if ($this->starred === 'favourite') {
+        if ($this->starred === 'favourited') {
             $this->loadYourFavouriteMembers();
-        } elseif ($this->starred === 'favourited') {
+        } elseif ($this->starred === 'favourite') {
             $this->loadFavouriteMembers();
         }
     }
@@ -329,8 +329,8 @@ class FavouriteMember extends Component
             return;
         }
 
-        // $this->soundCloudService->syncUserTracks(user(), []);
-        // $this->soundCloudService->syncUserPlaylists(user());
+        $this->soundCloudService->syncUserTracks(user(), []);
+        $this->soundCloudService->syncUserPlaylists(user());
 
         $this->reset([
             'showModal',

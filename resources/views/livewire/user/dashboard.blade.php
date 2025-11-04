@@ -209,17 +209,24 @@
             <!-- Right: Buttons group -->
             <div class="flex flex-col lg:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
                 <!-- Earn Credits -->
-                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}"
-                    class="text-sm md:text-xs lg:text-xs">
+                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
                     <span>💰</span>{{ __('Earn Credits') }}
                 </x-gbutton>
 
                 <!-- Submit Track -->
-                <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="text-sm md:text-xs lg:text-xs">
+                <x-gbutton variant="primary" wire:click="toggleCampaignsModal" >
                     <span>
-                        <x-lucide-plus class="inline-block text-center h-4 w-4 text-white mr-1" />
+                        <x-lucide-plus class="inline-block text-center h-5 w-5 text-white mr-1" />
                     </span>{{ __('Start a new campaign') }}
                 </x-gbutton>
+                {{-- <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
+                    <span>
+                        <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
+                    </span>
+                    <span class="text-base lg:text-sm xl:text-base">
+                        {{ __('Start a new campaign') }}
+                    </span>
+                </x-gbutton> --}}
             </div>
 
         </div>
@@ -374,16 +381,14 @@
                 <p class="text-slate-400 text-sm mb-5">What your audience listens to</p>
 
                 <div style="position: relative; width: 100%; max-width: 700px; margin: 0 auto;">
-                <canvas
-                    id="genreChart"
-                    style="
+                    <canvas id="genreChart"
+                        style="
                     width: 100% !important;
                     height: auto !important;
                     max-height: 300px !important;
                     vertical-align: baseline !important;
                     display: block;
-                    "
-                ></canvas>
+                    "></canvas>
                 </div>
 
                 <div class="flex flex-wrap justify-center gap-2 text-xs mt-4">
