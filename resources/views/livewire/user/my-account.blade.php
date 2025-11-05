@@ -59,7 +59,7 @@
 
                             <div class="flex items-center justify-center md:justify-start gap-3 mb-4">
                                 <p class="text-base md:text-lg lg:text-xl text-gray-600 dark:text-slate-200">
-                                    {{ $user->userInfo->followers_count ?? '150' }} Followers
+                                    {{ $user->userInfo->followers_count ?? '0' }} Followers
                                 </p>
                                 @if (user()->urn !== $user->urn)
                                     <button x-on:click="Livewire.dispatch('starMarkUser', { userUrn: '{{ $user->urn }}' })">
