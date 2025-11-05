@@ -8,6 +8,8 @@
     <meta http-equiv="Permissions-Policy" content="encrypted-media=()">
     <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
 
+    <meta name="google-site-verification" content="GVWhyXjde2aylNlCiqPIqSvPhx-VGi6hh5ajLaa-erg"/>
+
     <script>
         function setFavicon(dark = false) {
             let favicon = document.getElementById('favicon');

@@ -12,6 +12,8 @@
         {{ config('app.name', 'RepostChain') }}
     </title>
 
+    <meta name="google-site-verification" content="GVWhyXjde2aylNlCiqPIqSvPhx-VGi6hh5ajLaa-erg" />
+
     {{-- Theme selector && Theme store --}}
     {{-- <script>
         // On page load, immediately apply theme from localStorage to prevent flash
