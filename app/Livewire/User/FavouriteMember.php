@@ -28,7 +28,7 @@ class FavouriteMember extends Component
 {
     // Properties for favorite members
     public $favouriteUsers = [];
-    
+
     #[Url]
     public $starred = '';
 
@@ -65,10 +65,10 @@ class FavouriteMember extends Component
 
     // Request form fields
     public $description = '';
-    public $following = false;
+    public $following = true;
     public $alreadyFollowing = false;
     public $commentable = false;
-    public $likeable = false;
+    public $likeable = true;
     public $blockMismatchGenre = false;
     public $userMismatchGenre = null;
 
@@ -107,6 +107,7 @@ class FavouriteMember extends Component
         } elseif ($this->starred === 'favourited') {
             $this->loadFavouriteMembers();
         }
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function loadYourFavouriteMembers()
@@ -158,7 +159,7 @@ class FavouriteMember extends Component
                     ->orWhere('title', 'like', '%' . $this->searchQuery . '%');
             })
             ->get();
-        
+
         $this->tracks = $this->allPlaylistTracks->take($this->perPage);
     }
 
@@ -171,11 +172,11 @@ class FavouriteMember extends Component
             });
 
         $this->allTracks = $query->with('user')->get();
-        
+
         if ($this->allTracks->isEmpty() && $this->isSoundCloudUrl($this->searchQuery)) {
             $this->resolveSoundcloudUrl();
         }
-        
+
         $this->tracks = $this->allTracks->take($this->trackLimit);
     }
 
@@ -188,11 +189,11 @@ class FavouriteMember extends Component
             });
 
         $this->allPlaylists = $query->get();
-        
+
         if ($this->allPlaylists->isEmpty() && $this->isSoundCloudUrl($this->searchQuery)) {
             $this->resolveSoundcloudUrl();
         }
-        
+
         $this->playlists = $this->allPlaylists->take($this->playlistLimit);
     }
 
@@ -220,10 +221,10 @@ class FavouriteMember extends Component
     {
         try {
             $resolvedData = $this->soundCloudService->makeResolveApiRequest(
-                $this->searchQuery, 
+                $this->searchQuery,
                 'Failed to resolve SoundCloud URL'
             );
-            
+
             if (!isset($resolvedData) || $resolvedData == null) {
                 $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
                 return;
@@ -239,7 +240,6 @@ class FavouriteMember extends Component
 
             $this->processSearchData($urn);
             Log::info('Successfully resolved SoundCloud URL: ' . $this->searchQuery);
-            
         } catch (Exception $e) {
             Log::error('Failed to resolve SoundCloud URL', ['error' => $e->getMessage()]);
             $this->dispatch('alert', type: 'error', message: 'Could not resolve the SoundCloud link. Please check the URL.');
@@ -314,7 +314,7 @@ class FavouriteMember extends Component
     {
         $this->reset(['searchQuery', 'playlistTrackLimit']);
         $this->selectedPlaylistId = $playlistId;
-        
+
         $playlist = Playlist::with('tracks')->find($playlistId);
         $this->allTracks = $playlist ? $playlist->tracks : collect();
         $this->tracks = $this->allTracks->take($this->trackLimit);
@@ -368,7 +368,7 @@ class FavouriteMember extends Component
         $this->showModal = true;
         $this->activeTab = 'tracks';
         $this->user_urn = $this->user->urn;
-        
+
         $this->allTracks = Track::self()->get();
         $this->tracks = $this->allTracks->take($this->trackLimit);
         $this->allPlaylists = Playlist::self()->get();
@@ -409,7 +409,7 @@ class FavouriteMember extends Component
 
         $this->blockMismatchGenre = UserSetting::where('user_urn', $this->user->urn)
             ->value('block_mismatch_genre') ?? false;
-        
+
         $this->reset(['music']);
         $this->selectedMusicId = $musicId;
 
@@ -439,7 +439,6 @@ class FavouriteMember extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            
             $userUrn = $this->user->urn;
             $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
@@ -463,7 +462,7 @@ class FavouriteMember extends Component
 
         // Validate credits
         $totalCredits = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);
-        
+
         if (userCredits() < $totalCredits) {
             $this->addError('credits', 'Insufficient credits to send this request.');
             return;
@@ -515,8 +514,8 @@ class FavouriteMember extends Component
                     'description' => "Repost request for track by " . $requester->name,
                     'metadata' => [
                         'request_type' => 'track',
-                        'target_urn' => get_class($this->music) == Track::class 
-                            ? $this->music->urn 
+                        'target_urn' => get_class($this->music) == Track::class
+                            ? $this->music->urn
                             : $this->music->soundcloud_urn,
                     ],
                     'status' => CreditTransaction::STATUS_SUCCEEDED,
@@ -530,7 +529,6 @@ class FavouriteMember extends Component
             $this->closeModal();
             $this->reset();
             $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
-            
         } catch (InvalidArgumentException $e) {
             Log::error('Repost request failed', ['error' => $e->getMessage()]);
             $this->dispatch('alert', type: 'error', message: $e->getMessage());
@@ -546,17 +544,16 @@ class FavouriteMember extends Component
             $httpClient = Http::withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
-            
+
             $follow_response = $httpClient->put("{$this->baseUrl}/me/followings/{$this->user->urn}");
-            
+
             if (!$follow_response->successful()) {
                 $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
                 return false;
             }
-            
+
             Log::info('Successfully followed user: ' . $this->user->urn);
             return true;
-            
         } catch (Exception $e) {
             Log::error('Failed to follow user', ['error' => $e->getMessage()]);
             $this->dispatch('alert', type: 'error', message: 'Failed to follow user.');
@@ -590,7 +587,7 @@ class FavouriteMember extends Component
         broadcast(new UserNotificationSent($targetUserNotification));
 
         $repostEmailPermission = hasEmailSentPermission('em_new_repost', $this->user->urn);
-        
+
         if ($repostEmailPermission) {
             $emailData = [
                 [
