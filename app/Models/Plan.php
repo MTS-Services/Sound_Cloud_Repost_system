@@ -60,13 +60,13 @@ class Plan extends BaseModel
 
 
     public const STATUS_ACTIVE = 1;
-    public const STATUS_BANNED = 0;
+    public const STATUS_INACTIVE = 0;
 
     public static function statusList(): array
     {
         return [
             self::STATUS_ACTIVE => 'Active',
-            self::STATUS_BANNED => 'Inactive',
+            self::STATUS_INACTIVE => 'Inactive',
         ];
     }
     public function getStatusLabelAttribute()
@@ -81,7 +81,7 @@ class Plan extends BaseModel
 
     public function getStatusBtnLabelAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_BANNED] : self::statusList()[self::STATUS_ACTIVE];
+        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList()[self::STATUS_ACTIVE];
     }
 
     public function getStatusBtnColorAttribute()
@@ -134,6 +134,6 @@ class Plan extends BaseModel
 
     public function scopeInactive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_BANNED);
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }

@@ -28,6 +28,7 @@ return new class extends Migration {
             $table->string('nickname')->nullable()->index();
 
             $table->tinyInteger('status')->default(User::STATUS_ACTIVE)->index(); // Assuming 1 is for active status
+            $table->timestamp('banned_at')->nullable()->index();
             $table->string('avatar')->nullable();
             $table->text('token')->nullable();
             $table->string('email_token')->nullable();

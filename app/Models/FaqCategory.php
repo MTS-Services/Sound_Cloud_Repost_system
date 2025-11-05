@@ -41,13 +41,13 @@ class FaqCategory extends BaseModel
         ]);
     }
     public const STATUS_ACTIVE = 1;
-    public const STATUS_BANNED = 0;
+    public const STATUS_INACTIVE = 0;
 
     public static function statusList(): array
     {
         return [
             self::STATUS_ACTIVE => 'Active',
-            self::STATUS_BANNED => 'Inactive',
+            self::STATUS_INACTIVE => 'Inactive',
         ];
     }
 
@@ -64,7 +64,7 @@ class FaqCategory extends BaseModel
     }
     public function getStatusBtnLabelAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_BANNED] : self::statusList();
+        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
     }
 
     public function scopeFaqCategoryBy($query, $userId)
@@ -79,6 +79,6 @@ class FaqCategory extends BaseModel
 
     public function scopeInactive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_BANNED);
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }

@@ -19,7 +19,7 @@ class AuthenticatedSessionController extends Controller
     {
         if (Auth::guard('web')->check()) {
             // Banned user check
-            if (Auth::user()->status == User::STATUS_BANNED) {
+            if (Auth::user()->status == User::STATUS_INACTIVE) {
                 Auth::guard('web')->logout();
                 return redirect()->route('f.landing')
                     ->with('error', 'Access Denied: Your account has been banned from Repostchain. Please contact Support if you believe this is an error.');
@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         // Banned user check
-        if (Auth::user()->status == User::STATUS_BANNED) {
+        if (Auth::user()->status == User::STATUS_INACTIVE) {
             Auth::guard('web')->logout();
             return redirect()->route('f.landing')
                 ->with('error', 'Your account has been banned from Repostchain. Please contact Support if you believe this is an error.');

@@ -99,6 +99,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         Route::controller(UserController::class)->name('user.')->prefix('user')->group(function () {
             Route::post('/show/{user}', 'show')->name('show');
             Route::get('/status/{user}', 'status')->name('status');
+            Route::get('/banned/{user}', 'banned')->name('banned');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');

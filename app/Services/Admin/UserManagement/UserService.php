@@ -86,6 +86,14 @@ class UserService
             'updater_type' => get_class(admin())
         ]);
     }
+    public function toggleBanned(User $user): void
+    {
+        $user->update([
+            'banned_at' => $user->banned_at ? null : now(),
+            'updater_id' => admin()->id,
+            'updater_type' => get_class(admin())
+        ]);
+    }
 
     // public function addCredit(User $user, array $data)
     // {

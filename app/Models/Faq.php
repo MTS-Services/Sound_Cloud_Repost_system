@@ -39,13 +39,13 @@ class Faq extends BaseModel
     }
 
     public const STATUS_ACTIVE = 1;
-    public const STATUS_BANNED = 0;
+    public const STATUS_INACTIVE = 0;
 
     public static function statusList(): array
     {
         return [
             self::STATUS_ACTIVE => 'Active',
-            self::STATUS_BANNED => 'Inactive',
+            self::STATUS_INACTIVE => 'Inactive',
         ];
     }
 
@@ -62,7 +62,7 @@ class Faq extends BaseModel
 
     public function getStatusBtnLabelAttribute()
     {
-        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_BANNED] : self::statusList();
+        return $this->status == self::STATUS_ACTIVE ? self::statusList()[self::STATUS_INACTIVE] : self::statusList();
     }
 
     public function getStatusBtnColorAttribute()
@@ -71,7 +71,7 @@ class Faq extends BaseModel
     }
     public function getStatusBtnClassAttribute()
     {
-        return $this->status == self::STATUS_BANNED ? 'btn-error' : 'btn-primary';
+        return $this->status == self::STATUS_INACTIVE ? 'btn-error' : 'btn-primary';
     }
 
     public const KEY_CAMPAIGN = 0;

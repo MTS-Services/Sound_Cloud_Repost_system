@@ -102,6 +102,9 @@ class UserController extends Controller implements HasMiddleware
                 ->editColumn('last_synced_at', function ($user) {
                     return $user->last_synced_at_human;
                 })
+                ->editColumn('banned_at', function ($user) {
+                    return $user->banned_at ? 'Banned' : 'Not Banned';
+                })
                 ->editColumn('creater_id', fn($user) => $this->creater_name($user))
                 ->editColumn('created_at', fn($user) => $user->created_at_formatted)
                 ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->menuItems($user)])->render())
@@ -178,6 +181,12 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['permission-status']
             ],
             [
+                'routeName' => 'um.user.banned',
+                'params' => [encrypt($model->id)],
+                'label' => $model->banned_at ? 'Unbanned' : 'Banned',
+                'permissions' => ['permission-status']
+            ],
+            [
                 'routeName' => 'um.user.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
@@ -207,6 +216,13 @@ class UserController extends Controller implements HasMiddleware
         $user = $this->userService->getUser($id);
         $this->userService->toggleStatus($user);
         session()->flash('success', 'User status updated successfully.');
+        return $this->redirectIndex();
+    }
+    public function banned(Request $request, string $id)
+    {
+        $user = $this->userService->getUser($id);
+        $this->userService->toggleBanned($user);
+        session()->flash('success', 'User banned successfully.');
         return $this->redirectIndex();
     }
     public function destroy(string $id)

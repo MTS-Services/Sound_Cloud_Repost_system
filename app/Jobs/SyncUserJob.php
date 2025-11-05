@@ -83,7 +83,7 @@ class SyncUserJob implements ShouldQueue
                 return;
             }
 
-            if ($authUser->status === User::STATUS_BANNED) {
+            if ($authUser->status === User::STATUS_INACTIVE) {
                 Log::info('User is inactive, skipping syncUserJob', [
                     'auth_user_id' => $authUser->id,
                     'auth_user_urn' => $authUser->urn,

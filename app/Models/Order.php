@@ -197,7 +197,7 @@ class Order extends BaseModel
 
                 if ($model->userPlan) {
                     UserPlan::where('user_urn', $model->user_urn)->where('status', UserPlan::STATUS_ACTIVE)->update([
-                        'status' => UserPlan::STATUS_BANNED,
+                        'status' => UserPlan::STATUS_INACTIVE,
                         'notes' => $model->notes
                     ]);
                     $model->userPlan?->update([
@@ -219,7 +219,7 @@ class Order extends BaseModel
                 }
                 if ($model->userPlan) {
                     UserPlan::where('user_urn', $model->user_urn)->where('status', UserPlan::STATUS_ACTIVE)->update([
-                        'status' => UserPlan::STATUS_BANNED,
+                        'status' => UserPlan::STATUS_INACTIVE,
                         'notes' => $model->notes
                     ]);
                     $model->userPlan?->update([
