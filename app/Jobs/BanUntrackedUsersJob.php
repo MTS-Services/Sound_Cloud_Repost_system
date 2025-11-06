@@ -47,6 +47,7 @@ class BanUntrackedUsersJob implements ShouldQueue
                 $user->update([
                     'banned_at' => now(),
                     'bander_id' => null, // system action
+                    'status' => User::STATUS_INACTIVE,
                 ]);
                 $bannedCount++;
             }
