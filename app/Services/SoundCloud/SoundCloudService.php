@@ -1493,9 +1493,17 @@ class SoundCloudService
 
     public function soundCloudRealTracksCount(User $user, ?User $firstUser = null, int $limit = 1): int
     {
-        $this->refreshUserTokenIfNeeded($firstUser);
-        $response = Http::withToken($firstUser->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks?limit=' . $limit);
-        $data = $response->json();
-        return count($data) ?? 0;
+        try {
+            $this->refreshUserTokenIfNeeded($firstUser);
+            $response = Http::withToken($firstUser->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks?limit=' . $limit);
+            $data = $response->json();
+            return count($data) ?? 0;
+        } catch (Exception $e) {
+            Log::error('Error syncing user tracks in syncUserTracks', [
+                'user_urn' => user()->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
 }
