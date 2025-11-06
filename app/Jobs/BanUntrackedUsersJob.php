@@ -42,15 +42,17 @@ class BanUntrackedUsersJob implements ShouldQueue
         foreach ($users as $user) {
             $trackCount = $this->soundCloudService->soundCloudRealTracksCount($user, $firstUser);
 
-            Log::info("User {$user->urn} has {$trackCount} SoundCloud tracks.");
-            // if ($trackCount === 0) {
-            //     $user->update([
-            //         'banned_at' => now(),
-            //         'bander_id' => null, // system action
-            //         'status' => User::STATUS_INACTIVE,
-            //     ]);
-            //     $bannedCount++;
-            // }
+            // Log::info("User {$user->urn} has {$trackCount} SoundCloud tracks.");
+            if ($trackCount === 0) {
+
+                Log::info("User {$user->urn} has no SoundCloud tracks. Banning user.");
+                // $user->update([
+                //     'banned_at' => now(),
+                //     'bander_id' => null, // system action
+                //     'status' => User::STATUS_INACTIVE,
+                // ]);
+                $bannedCount++;
+            }
         }
 
         Log::info("{$bannedCount} users banned because they had no SoundCloud tracks.");
