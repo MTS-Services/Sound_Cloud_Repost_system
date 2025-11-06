@@ -29,8 +29,10 @@ class BanUntrackedUsersJob implements ShouldQueue
 
         $bannedCount = 0;
 
+        $firstUser = $users->first();
+
         foreach ($users as $user) {
-            $trackCount = $this->soundCloudService->soundCloudRealTracksCount($user);
+            $trackCount = $this->soundCloudService->soundCloudRealTracksCount($user, $firstUser);
 
             if ($trackCount === 0) {
                 $user->update([
