@@ -86,6 +86,8 @@ class UserController extends Controller implements HasMiddleware
             new Middleware('permission:user-restore', only: ['restore']),
             new Middleware('permission:user-permanent-delete', only: ['permanentDelete']),
             new Middleware('permission:user-status', only: ['status']),
+            new Middleware('permission:user-ban-list', only: ['bannedUsers']),
+            new Middleware('permission:user-ban-unban', only: ['banned']),
             //add more permissions if needed
         ];
     }
@@ -211,7 +213,7 @@ class UserController extends Controller implements HasMiddleware
                 ->editColumn('banned_at_formatted', fn($user) => $user->banned_at_formatted)
                 ->editColumn('banned_at_by', fn($user) => $user->banned_by)
                 ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->bannedUserMenuItems($user)])->render())
-                ->rawColumns(['action','status', 'banned_label', 'banned_at_formatted', 'banned_by', 'profile_link', 'last_synced_at'])
+                ->rawColumns(['action', 'status', 'banned_label', 'banned_at_formatted', 'banned_by', 'profile_link', 'last_synced_at'])
                 ->make(true);
         }
         return view('backend.admin.user-management.user.banned-users');
@@ -220,7 +222,6 @@ class UserController extends Controller implements HasMiddleware
     protected function bannedUserMenuItems($model): array
     {
         return [
-
             [
                 'routeName' => 'um.user.detail',
                 'params' => encrypt($model->id),
@@ -231,7 +232,7 @@ class UserController extends Controller implements HasMiddleware
                 'routeName' => 'um.user.banned',
                 'params' => [encrypt($model->id)],
                 'label' => $model->banned_at ? 'Unbanned' : 'Banned',
-                'permissions' => ['permission-status']
+                'permissions' => ['permission-banned']
             ],
             [
                 'routeName' => 'um.user.destroy',
