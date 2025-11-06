@@ -3,40 +3,44 @@
 namespace App\Jobs;
 
 use App\Models\User;
+use App\Services\SoundCloud\SoundCloudService;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 
 class BanUntrackedUsersJob implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
+    protected SoundCloudService $soundCloudService;
+
+    public function __construct(SoundCloudService $soundCloudService)
     {
-        //
+        $this->soundCloudService = $soundCloudService;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        // Find users who have NO tracks on SoundCloud
-        // Assuming you have a relation like ->tracks() or ->soundcloud_tracks()
         $users = User::whereNull('banned_at')
             ->where('status', User::STATUS_ACTIVE)
             ->get();
 
+        $bannedCount = 0;
+
         foreach ($users as $user) {
-            $user->update([
-                'banned_at' => now(),
-                'bander_id' => 1, // optional: system user/admin ID
-            ]);
+            $trackCount = $this->soundCloudService->soundCloudRealTracksCount($user);
+
+            if ($trackCount === 0) {
+                $user->update([
+                    'banned_at' => now(),
+                    'bander_id' => null, // system action
+                ]);
+                $bannedCount++;
+            }
         }
 
-        Log::info("{$users->count()} users banned because they had no SoundCloud tracks.");
+        Log::info("{$bannedCount} users banned because they had no SoundCloud tracks.");
     }
 }

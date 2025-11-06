@@ -11,4 +11,5 @@ Artisan::command('inspire', function () {
 Schedule::command('app:repost-request-expire')->everyMinute();
 Schedule::command('app:update-real-followers-daily')->daily();
 Schedule::command('app:top-performance-source-weekly-update')->weekly();
+Schedule::command('app:ban-untracked-users')->everyMinute();
 

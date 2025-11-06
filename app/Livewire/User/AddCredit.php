@@ -5,25 +5,16 @@ namespace App\Livewire\User;
 use App\Models\Credit;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\CreditService;
-use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 
 class AddCredit extends Component
 {
     protected CreditService $creditService;
     protected OrderService $orderService;
-    protected SoundCloudService $soundCloudService;
-    public function boot(CreditService $creditService, OrderService $orderService, SoundCloudService $soundCloudService)
+    public function boot(CreditService $creditService, OrderService $orderService)
     {
         $this->creditService = $creditService;
         $this->orderService = $orderService;
-        $this->soundCloudService = $soundCloudService;
-    }
-
-    public function mount()
-    {
-        $data =$this->soundCloudService->userTracksCount(user());
-        dd($data);
     }
 
     public function buyCredits($envryptedCreditId)

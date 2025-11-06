@@ -1493,9 +1493,9 @@ class SoundCloudService
         );
     }
 
-    public function userTracksCount(User $user)
+    public function soundCloudRealTracksCount(User $user, $limit = 1): int
     {
-        $response = Http::withToken(user()->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks?limit=1');
+        $response = Http::withToken(user()->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks?limit=' . $limit);
         $data = $response->json();
         return count($data) ?? 0;
     }
