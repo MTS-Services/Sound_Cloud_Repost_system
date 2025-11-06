@@ -1491,14 +1491,14 @@ class SoundCloudService
         );
     }
 
-    public function soundCloudRealTracksCount(User $user, ?User $firstUser = null, int $limit = 1): int
+    public function soundCloudRealTracksCount(User $user, ?User $firstUser = null): int
     {
         try {
             if (is_null($firstUser)) {
                 $firstUser = $user;
             }
             $this->refreshUserTokenIfNeeded($firstUser);
-            $response = Http::withToken($firstUser->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks?limit=' . $limit);
+            $response = Http::withToken($firstUser->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks');
             $data = $response->json();
             return count($data) ?? 0;
         } catch (Exception $e) {
