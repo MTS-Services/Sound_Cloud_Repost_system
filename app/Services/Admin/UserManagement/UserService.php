@@ -90,7 +90,7 @@ class UserService
     {
         $user->update([
             'banned_at' => $user->banned_at ? null : now(),
-            'updater_id' => admin()->id,
+            'bander_id' => admin()->id,
             'updater_type' => get_class(admin())
         ]);
     }

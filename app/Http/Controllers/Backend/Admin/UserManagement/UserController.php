@@ -29,6 +29,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -95,15 +96,12 @@ class UserController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = $this->userService->getUsers('status', 'desc');
+            $query = $this->userService->getUsers('status', 'desc')->where('banned_at', null);
             return DataTables::eloquent($query)
                 ->editColumn('status', fn($user) => "<span class='badge badge-soft {$user->status_color}'>{$user->status_label}</span>")
                 ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
                 ->editColumn('last_synced_at', function ($user) {
                     return $user->last_synced_at_human;
-                })
-                ->editColumn('banned_at', function ($user) {
-                    return $user->banned_at ? 'Banned' : 'Not Banned';
                 })
                 ->editColumn('creater_id', fn($user) => $this->creater_name($user))
                 ->editColumn('created_at', fn($user) => $user->created_at_formatted)
@@ -196,6 +194,54 @@ class UserController extends Controller implements HasMiddleware
 
         ];
     }
+    public function bannedUsers(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = $this->userService->getUsers('banned_at', 'desc')->where('banned_at', '!=', null);
+            return DataTables::eloquent($query)
+                ->addColumn('profile_link', fn($user) => "<a href='{$user->soundcloud_permalink_url}'  target='_blank' class='inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-100 hover:bg-blue-200 text-blue-700 dark:bg-blue-900/30 dark:hover:bg-blue-800/40 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:shadow-sm hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50'>Profile</a>")
+                ->editColumn('last_synced_at', function ($user) {
+                    return $user->last_synced_at_human;
+                })
+                ->editColumn('banned_label', function ($user) {
+                    return $user->banned_at ? 'Banned' : 'Not Banned';
+                })
+                ->editColumn('created_at', fn($user) => $user->created_at_formatted)
+                ->editColumn('banned_at_formatted', fn($user) => $user->banned_at_formatted)
+                ->editColumn('banned_at_by', fn($user) => $user->banned_by)
+                ->editColumn('action', fn($user) => view('components.action-buttons', ['menuItems' => $this->bannedUserMenuItems($user)])->render())
+                ->rawColumns(['action', 'banned_label', 'banned_at_formatted', 'banned_by', 'profile_link', 'last_synced_at'])
+                ->make(true);
+        }
+        return view('backend.admin.user-management.user.banned-users');
+    }
+
+    protected function bannedUserMenuItems($model): array
+    {
+        return [
+
+            // [
+            //     'routeName' => 'um.user.detail',
+            //     'params' => encrypt($model->id),
+            //     'label' => 'Details',
+            //     'permissions' => ['user-detail']
+            // ],
+            [
+                'routeName' => 'um.user.banned',
+                'params' => [encrypt($model->id)],
+                'label' => $model->banned_at ? 'Unbanned' : 'Banned',
+                'permissions' => ['permission-status']
+            ],
+            [
+                'routeName' => 'um.user.destroy',
+                'params' => [encrypt($model->id)],
+                'label' => 'Delete',
+                'delete' => true,
+                'permissions' => ['permission-delete']
+            ]
+
+        ];
+    }
 
     public function detail(Request $request, string $id)
     {
@@ -225,13 +271,16 @@ class UserController extends Controller implements HasMiddleware
         session()->flash('success', 'User banned successfully.');
         return $this->redirectIndex();
     }
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             $user = $this->userService->getUser($id);
 
             $this->userService->delete($user);
             session()->flash('success', 'User deleted successfully!');
+            if (request()->routeIs('um.user.banned-users')) {
+                return redirect()->route('um.user.banned-users');
+            }
         } catch (\Throwable $e) {
             session()->flash('error', 'User delete failed!');
             throw $e;
@@ -452,9 +501,9 @@ class UserController extends Controller implements HasMiddleware
         $data['tracklists'] = $this->trackService->getTrack($trackUrn, 'urn')->load(['user']);
         return view('backend.admin.user-management.tracklist.details', $data);
     }
-    public function playlistShow(string $soudcloud_urn, )
+    public function playlistShow(string $soudcloud_urn,)
     {
-        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn', );
+        $data = $this->playlistService->getPlaylist($soudcloud_urn, 'soundcloud_urn',);
         $data['creater_name'] = $this->creater_name($data);
         $data['updater_name'] = $this->updater_name($data);
         return response()->json($data);

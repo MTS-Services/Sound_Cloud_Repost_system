@@ -83,7 +83,13 @@
                         'active' => 'user',
                         'permission' => 'user-list',
                     ],
-                
+                    [
+                        'name' => 'Banned Users',
+                        'route' => route('um.user.banned-users'),
+                        'icon' => 'user',
+                        'active' => 'banned-users',
+                        'permission' => 'user-list',
+                    ],
                     [
                         'name' => 'User Plan',
                         'route' => route('um.user-plane.index'),
@@ -91,6 +97,7 @@
                         'active' => 'users_plane',
                         'permission' => 'user-plane-list',
                     ],
+                
                     // [
                     //     'name' => 'Top Reposters',
                     //     'route' => '#',
@@ -200,7 +207,7 @@
             <x-admin.navlink icon="settings" name="Settings" :page_slug="$active" :items="[
                 [
                     'name' => 'User Settings',
-                    'route' => route('app-settings.user-settings'), 
+                    'route' => route('app-settings.user-settings'),
                     'icon' => 'user',
                     'active' => 'user-settings',
                     'permission' => 'user-setting',

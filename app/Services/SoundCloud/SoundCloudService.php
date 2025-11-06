@@ -1492,4 +1492,11 @@ class SoundCloudService
             ]
         );
     }
+
+    public function userTracksCount(User $user)
+    {
+        $response = Http::withToken(user()->token)->get($this->baseUrl . '/users/' . $user->urn . '/tracks?limit=1');
+        $data = $response->json();
+        return count($data) ?? 0;
+    }
 }

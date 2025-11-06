@@ -22,7 +22,6 @@
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Profile Link') }}</th>
                         <th>{{ __('Status') }}</th>
-                        <th>{{ __('Banned Status') }}</th>
                         <th>{{ __('Last Synced At') }}</th>
                         <th>{{ __('Created By') }}</th>
                         <th>{{ __('Created Date') }}</th>
@@ -251,7 +250,6 @@
                     ['name', true, true],
                     ['profile_link', true, true],
                     ['status', true, true],
-                    ['banned_at', true, true],
                     ['last_synced_at', true, true],
                     ['creater_id', true, true],
                     ['created_at', true, true],

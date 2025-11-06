@@ -71,10 +71,10 @@ class Authenticate extends Middleware
             return parent::handle($request, $next, ...$guards);
         }
 
-        if (Auth::guard('web')->check() && Auth::user()->status == User::STATUS_INACTIVE) {
+        if (Auth::guard('web')->check() && Auth::user()->banned_at != null) {
             Auth::guard('web')->logout();
             return redirect()->route('f.landing')
-                ->with('error', 'Your account has been banned from Repostchain. ');
+                ->with('error', 'Your account has been banned from Repostchain. Please contact Support if you believe this is an error.');
         }
 
         return $next($request);

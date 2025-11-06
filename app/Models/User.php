@@ -40,6 +40,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'last_synced_at',
         'status',
         'banned_at',
+        'bander_id',
         'urn',
         'email',
         'last_seen_at',
@@ -228,6 +229,8 @@ class User extends AuthBaseModel implements MustVerifyEmail
             'modified_image',
             'is_pro',
             'repost_price',
+            'banned_at_formatted',
+            'banned_by'
         ]);
     }
 
@@ -335,5 +338,19 @@ class User extends AuthBaseModel implements MustVerifyEmail
             return true;
         }
         return !Carbon::parse($resetAt)->greaterThan(now()->subMonth(1));
+    }
+
+    public function getBannedAtFormattedAttribute()
+    {
+        return $this->banned_at ? timeFormat($this->banned_at) : 'N/A';
+    }
+    public function getBannedByAttribute()
+    {
+        if (!$this->bander_id) {
+            return 'System';
+        }
+
+        $admin = Admin::find($this->bander_id);
+        return $admin ? $admin->name : 'System';
     }
 }
