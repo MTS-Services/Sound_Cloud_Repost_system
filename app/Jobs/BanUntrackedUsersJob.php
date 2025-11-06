@@ -32,6 +32,11 @@ class BanUntrackedUsersJob implements ShouldQueue
 
         $firstUser = $users->first();
 
+        if (!$firstUser) {
+            Log::warning('No active unbanned users found. Job exiting. and the users : ' . json_encode($users));
+            return;
+        }
+
         Log::info("Found " . $users->count() . " active unbanned users to check.");
 
         foreach ($users as $user) {
@@ -48,5 +53,10 @@ class BanUntrackedUsersJob implements ShouldQueue
         }
 
         Log::info("{$bannedCount} users banned because they had no SoundCloud tracks.");
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('BanUntrackedUsersJob failed: ' . $exception->getMessage());
     }
 }
