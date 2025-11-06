@@ -23,6 +23,7 @@ class BanUntrackedUsersJob implements ShouldQueue
 
     public function handle(): void
     {
+        Log::info('Starting BanUntrackedUsersJob...');
         $users = User::whereNull('banned_at')
             ->where('status', User::STATUS_ACTIVE)
             ->get();
@@ -31,9 +32,12 @@ class BanUntrackedUsersJob implements ShouldQueue
 
         $firstUser = $users->first();
 
+        Log::info("Found " . $users->count() . " active unbanned users to check.");
+
         foreach ($users as $user) {
             $trackCount = $this->soundCloudService->soundCloudRealTracksCount($user, $firstUser);
 
+            Log::info("User {$user->urn} has {$trackCount} SoundCloud tracks.");
             if ($trackCount === 0) {
                 $user->update([
                     'banned_at' => now(),
