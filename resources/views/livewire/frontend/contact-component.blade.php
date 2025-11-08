@@ -149,6 +149,7 @@
                                 <option value="support">Technical Support</option>
                                 <option value="billing">Billing & Payments</option>
                                 <option value="account">Account Issues</option>
+                                <option value="account">Appeal for Suspended Account</option>
                                 <option value="partnership">Partnership Opportunities</option>
                                 <option value="feedback">Feedback & Suggestions</option>
                             </select>
