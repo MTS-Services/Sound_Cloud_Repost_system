@@ -67,9 +67,7 @@ class SoundCloudController extends Controller
                     ]);
                 }
             } elseif ($findUser && $findUser->banned_at != null) {
-                // return redirect()->route('f.landing')
-                //     ->with('error', 'Your account has been banned from Repostchain. If you believe this was a mistake, please contact our support team for verification.');
-                return redirect()->route('login')
+                return redirect()->route('f.landing')
                     ->with('showBannedModal', true)
                     ->with('ban_reason', $findUser->ban_reason)
                     ->with('name', $findUser->name);
