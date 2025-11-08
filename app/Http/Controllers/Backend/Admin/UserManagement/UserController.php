@@ -283,6 +283,7 @@ class UserController extends Controller implements HasMiddleware
             'body' => 'We’ve suspended your RepostChain account ' . $user->name . ' for a potential violation of our Community Guidelines.',
             'ban_reason' => $user->ban_reason ?? 'Unspecified violation',
             'guideline_link' => route('f.terms-and-conditions'),
+            'unban' => false,
         ]];
 
         NotificationMailSent::dispatch($datas);
@@ -295,6 +296,16 @@ class UserController extends Controller implements HasMiddleware
         try {
             $user = $this->userService->getUser($user_urn, 'urn');
             $this->userService->banUnbanUser($user);
+
+            $datas = [[
+                'email' => $user->email,
+                'subject' => 'Your RepostChain access has been restored',
+                'title' => 'Hi ' . $user->name . ',',
+                'body' => 'Good news — after reviewing your appeal, we’ve reinstated your account '. $user->name.'.',
+                'unban' => true
+            ]];
+
+            NotificationMailSent::dispatch($datas);
 
             session()->flash('success', 'User unbanned successfully.');
         } catch (\Throwable $e) {
