@@ -3,9 +3,8 @@
 use App\Livewire\Home;
 use App\Livewire\PlanPage;
 use App\Livewire\Frontend\FAQ;
-use App\Livewire\analyticsPage;
+use App\Livewire\Frontend\ContactComponent;
 use App\Livewire\Frontend\Features;
-use App\Livewire\Frontend\ContactUs;
 use App\Livewire\Frontend\HelpCenter;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Frontend\PrivacyPolicy;
@@ -22,6 +21,6 @@ Route::group(['as' => 'f.'], function () {
     Route::get('/terms-and-conditions',  TermsConditions::class)->name('terms-and-conditions');
     Route::get('/refund-policy',  RefundPolicy::class)->name('refund-policy');
     Route::get('/privacy-policy',  PrivacyPolicy::class)->name('privacy-policy');
-    Route::get('/contact-us', ContactUs::class)->name('contact-us');
+    Route::get('/contact-us', ContactComponent::class)->name('contact-us');
     Route::get('/help', HelpCenter::class)->name('help');
 });

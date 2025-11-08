@@ -436,7 +436,7 @@
 <body>
     <div class="email-wrapper">
         <div class="email-container">
-            <!-- Header with Logo 
+            <!-- Header with Logo
             <div class="header">
                 <div class="logo-container">
                     <a href="{{ url('/') }}">
@@ -448,22 +448,31 @@
 
             <!-- Main Content -->
             <div class="content">
-                <!-- Greeting -->
                 <div class="greeting">
-                    {{ $title ?? 'Hello there' }},
+                    {{ $title ?? 'Hello there,' }}
                 </div>
 
-                <!-- Message Body -->
-                @isset($body)
-                    <div class="message-body">
-                        {{ $body ?? 'You have a new notification' }}
-                        <br><br>
-                        <p>Thank you for being an active part of our community!</p>
+                <div class="message-body">
+                    {!! $body !!}
+                    <br><br>
+
+                    @if (!empty($ban_reason))
+                        <p><strong>Reason:</strong> {{ $ban_reason }}</p>
+                        <p><strong>What this means:</strong> You can’t log in or use any feature of RepostChain.</p>
+                        <p>Please review our <a href="{{ $guideline_link }}">Terms of Service</a> and Guidelines.
+                        </p>
+                        <p>If you believe this suspension is a mistake, simply reply to this email — it goes
+                            directly to our Appeals Team.</p>
                         <br>
+                        <p>Regards,</p>
+                        <p><strong>RepostChain Trust & Safety</strong></p>
+                    @else
+                        <p>Thank you for being an active part of our community!</p>
                         <p>Best regards,</p>
                         <p>The {{ config('app.name') }} Team</p>
-                    </div>
-                @endisset
+                    @endif
+                </div>
+
 
                 <!-- Data Table -->
                 @isset($tableData)

@@ -6,7 +6,7 @@ use App\Models\Contact;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class ContactUs extends Component
+class ContactComponent extends Component
 {
     public $name;
     public $email;
@@ -58,10 +58,10 @@ class ContactUs extends Component
     }
     public function render()
     {
-        if (Auth::check() && Auth::user()->banned_at === null) {
-            $this->redirectRoute('user.dashboard', navigate: true);
-        }
+        // if (Auth::check() && Auth::user()->banned_at === null) {
+        //     $this->redirectRoute('user.dashboard', navigate: true);
+        // }
 
-        return view('livewire.frontend.contact-us');
+        return view('livewire.frontend.contact-component');
     }
 }

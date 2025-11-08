@@ -6,6 +6,7 @@ use App\Events\AdminNotificationSent;
 use App\Events\UserNotificationSent;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\AuditRelationTraits;
+use App\Jobs\NotificationMailSent;
 use App\Models\Admin;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
@@ -274,6 +275,18 @@ class UserController extends Controller implements HasMiddleware
         ]);
         $user = $this->userService->getUser($user_urn, 'urn');
         $this->userService->banUnbanUser($user, $validated);
+
+        $datas = [[
+            'email' => $user->email,
+            'subject' => 'Your RepostChain account is temporarily suspended',
+            'title' => 'Hi ' . $user->name . ',',
+            'body' => 'We’ve suspended your RepostChain account ' . $user->name . ' for a potential violation of our Community Guidelines.',
+            'ban_reason' => $user->ban_reason ?? 'Unspecified violation',
+            'guideline_link' => route('f.terms-and-conditions'),
+        ]];
+
+        NotificationMailSent::dispatch($datas);
+
         session()->flash('success', 'User banned successfully.');
         return $this->redirectIndex();
     }
