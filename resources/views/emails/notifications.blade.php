@@ -451,12 +451,13 @@
                 <div class="greeting">
                     {{ $title ?? 'Hello there,' }}
                 </div>
+                <br>
 
                 <div class="message-body">
                     {!! $body !!}
                     <br><br>
 
-                    @if (!empty($ban_reason))
+                    @if (!empty($ban_reason) && empty($unban))
                         <p><strong>Reason:</strong> {{ $ban_reason }}</p>
                         <p><strong>What this means:</strong> You can’t log in or use any feature of RepostChain.</p>
                         <p>Please review our <a href="{{ $guideline_link }}">Terms of Service</a> and Guidelines.
@@ -466,7 +467,18 @@
                         <br>
                         <p>Regards,</p>
                         <p><strong>RepostChain Trust & Safety</strong></p>
-                    @else
+                    @endif
+
+                    @if (!empty($unban))
+                        <p>Any incorrect strikes have been removed. We apologize for the inconvenience and appreciate
+                            your patience.</p>
+                        <p>For transparency, we’ll keep this case on file to improve our detection systems.</p>
+                        <p>If you notice anything off, please reply here.</p>
+                        <br>
+                        <p>Welcome back,</p>
+                        <p><strong>RepostChain Trust & Safety</strong></p>
+                    @endif
+                    @if (empty($ban_reason) && empty($unban))
                         <p>Thank you for being an active part of our community!</p>
                         <p>Best regards,</p>
                         <p>The {{ config('app.name') }} Team</p>
@@ -474,7 +486,6 @@
                 </div>
 
 
-                <!-- Data Table -->
                 @isset($tableData)
                     @foreach ($tableData as $data)
                         <table class="data-table" role="table">
@@ -499,7 +510,6 @@
                 @endisset
 
 
-                <!-- Website Info -->
                 @isset($websiteInfo)
                     <div class="website-info">
                         <h3>Website Information</h3>
@@ -522,7 +532,6 @@
                     </div>
                 @endisset
 
-                <!-- More Details Button -->
                 @isset($url)
                     <div class="button-container">
                         <a href="{{ $url ?? '#' }}" class="more-details-btn">View More Details</a>
@@ -541,7 +550,6 @@
                 </div>
             </div> --}}
 
-            <!-- Footer -->
             <div class="footer">
                 <p>&copy; 2025 Your Company Name. All rights reserved.</p>
                 <div class="footer-links">
