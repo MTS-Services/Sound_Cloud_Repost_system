@@ -18,17 +18,18 @@ class AuthenticatedSessionController extends Controller
     public function create(): View|RedirectResponse
     {
         if (Auth::guard('web')->check()) {
-            // Banned user check
             if (Auth::user()->banned_at != null) {
+                $name = Auth::user()->name;
+                $ban_reason = Auth::user()->ban_reason;
                 Auth::guard('web')->logout();
                 return redirect()->route('f.landing')
-                    ->with('error', 'Your account has been banned from Repostchain. If you believe this was a mistake, please contact our support team for verification.');
+                    ->with('showBannedModal', true)
+                    ->with('ban_reason', $ban_reason)
+                    ->with('name', $name);
             }
             return redirect()->intended(route('user.my-account', absolute: false));
         }
         return view('auth.login');
-        // return redirect()->route('soundcloud.redirect');
-        // return redirect()->route('f.landing');
     }
 
     /**
@@ -37,11 +38,15 @@ class AuthenticatedSessionController extends Controller
     public function store(UserLoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-        // Banned user check
+
         if (Auth::user()->banned_at != null) {
+            $name = Auth::user()->name;
+            $ban_reason = Auth::user()->ban_reason;
             Auth::guard('web')->logout();
             return redirect()->route('f.landing')
-                ->with('error', 'Your account has been banned from Repostchain. If you believe this was a mistake, please contact our support team for verification.');
+                ->with('showBannedModal', true)
+                ->with('ban_reason', $ban_reason)
+                ->with('name', $name);
         }
 
         $request->session()->regenerate();

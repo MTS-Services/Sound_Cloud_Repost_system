@@ -10,7 +10,7 @@ class Home extends Component
 {
     public function render()
     {
-        if (Auth::guard('web')->check()) {
+        if (Auth::guard('web')->check() && Auth::user()->banned_at == null) {
             $this->redirect(route('user.dashboard'), true);
         }
         return view('frontend.pages.landing-page.landing');

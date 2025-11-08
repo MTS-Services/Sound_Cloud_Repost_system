@@ -3,6 +3,11 @@
         <link rel="stylesheet" href="{{ asset('assets/landing/css/landing.css') }}">
     @endpush
     {{-- <slot name="title">Landing Page</slot> --}}
+    {{-- Banned modal --}}
+    <div x-data="{ showBannedModal: {{ session('showBannedModal') ? 'true' : 'false' }} }">
+        @include('frontend.pages.landing-page.modals.banned-modal')
+    </div>
+
 
     <!-- Hero Section -->
     @include('frontend.pages.landing-page.includes.hero')
@@ -11,12 +16,12 @@
     @include('frontend.pages.landing-page.includes.about')
     <!-- How It Works Section -->
     @include('frontend.pages.landing-page.includes.how-it-works')
-     <!-- SoundCloud Pro Section -->
+    <!-- SoundCloud Pro Section -->
     @include('frontend.pages.landing-page.includes.sound-cloud-pro')
     <!-- Features Section -->
     {{-- @include('frontend.pages.landing-page.includes.features') --}}
 
-    
+
 
     <!-- Statistics Section -->
     @include('frontend.pages.landing-page.includes.statistics')
