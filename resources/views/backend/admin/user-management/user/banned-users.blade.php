@@ -22,8 +22,6 @@
                         <th>{{ __('Name') }}</th>
                         <th>{{ __('Profile Link') }}</th>
                         <th>{{ __('Status') }}</th>
-                        {{-- <th>{{ __('Banned Status') }}</th> --}}
-                        {{-- <th>{{ __('Last Synced At') }}</th> --}}
                         <th>{{ __('Banned By') }}</th>
                         <th>{{ __('Banned Date') }}</th>
                         <th width="10%">{{ __('Action') }}</th>
@@ -45,8 +43,6 @@
                     ['name', true, true],
                     ['profile_link', true, true],
                     ['status', true, true],
-                    // ['banned_label', true, true],
-                    // ['last_synced_at', true, true],
                     ['banned_by', true, true],
                     ['banned_at_formatted', true, true],
                     ['action', false, false],

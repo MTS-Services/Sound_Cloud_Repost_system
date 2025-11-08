@@ -236,6 +236,56 @@
 
     </dialog>
 
+    {{-- Ban Modal --}}
+    <dialog id="ban_reason_modal"
+        class="modal modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm animate-fade-in flex items-center justify-center min-h-screen p-4">
+        <div
+            class="modal-box glass-card relative w-full max-w-2xl mx-auto rounded-2xl shadow-2xl animate-slide-up bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border border-white/20 dark:border-gray-700/30">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                        <i data-lucide="layout-list" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+                    </div>
+                    <div>
+                        <h3 id="modal-title" class="text-xl font-bold text-gray-900 dark:text-white">
+                            {{ __('Banned') }}
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('Ban to user') }}
+                        </p>
+                    </div>
+                </div>
+
+                <form method="dialog">
+                    <button
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Content -->
+            <div class="modal-action p-6 mt-0">
+                <form action="" method="POST" id="ban_reason_form" class="space-y-4 w-full">
+                    @csrf
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text mb-2 text-gray-800 dark:text-white">{{ __('Ban Reason') }}</span>
+                        </label>
+                        <textarea name="ban_reason" id="ban_reason" rows="4"
+                            class="textarea textarea-bordered text-gray-800 dark:text-gray-200 w-full" autofocus
+                            placeholder="{{ __('Enter ban reason') }}" required></textarea>
+                    </div>
+                    <div class="flex justify-end mt-5">
+                        <x-button type="accent" :button="true">{{ __('Confirm') }}</x-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </dialog>
+
 
     {{-- Details Modal --}}
     <x-admin.details-modal />
@@ -494,6 +544,16 @@
                     const form = document.getElementById('add_credit_form');
                     form.action = url;
                     const modal = document.getElementById('add_credit_modal');
+                    modal.showModal();
+                });
+
+                $(document).on('click', '.ban-user', function() {
+                    const user_urn = $(this).data('id');
+                    const route = "{{ route('um.user.banned', ':urn') }}";
+                    const url = route.replace(':urn', user_urn);
+                    const form = document.getElementById('ban_reason_form');
+                    form.action = url;
+                    const modal = document.getElementById('ban_reason_modal');
                     modal.showModal();
                 });
 

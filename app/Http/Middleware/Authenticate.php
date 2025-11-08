@@ -33,10 +33,20 @@ class Authenticate extends Middleware
      */
     public function handle($request, \Closure $next, ...$guards): Response
     {
+        if (Auth::guard('web')->check() && Auth::user()->banned_at != null) {
+            $name = Auth::user()->name;
+            $ban_reason = Auth::user()->ban_reason;
+            Auth::guard('web')->logout();
+            return redirect()->route('f.landing')
+                ->with('showBannedModal', true)
+                ->with('ban_reason', $ban_reason)
+                ->with('name', $name);
+        }
         // Check if a user is authenticated with the 'web' guard
         if (Auth::guard('web')->check() && $request->routeIs('user.*')) {
+
             $userId = Auth::id();
-            
+
             // Single query: Update last_seen_at and check genres existence in one go
             $hasGenres = User::where('id', $userId)
                 ->whereExists(function ($query) use ($userId) {
@@ -46,7 +56,7 @@ class Authenticate extends Middleware
                         ->whereNull('user_genres.deleted_at');
                 })
                 ->exists();
-            
+
             // Separate update query (can't combine with exists check)
             User::where('id', $userId)
                 ->whereNull('deleted_at')
@@ -54,7 +64,7 @@ class Authenticate extends Middleware
                     'last_seen_at' => now(),
                     'updated_at' => now()
                 ]);
-            
+
             // if ($user->email == null) {
             //     return redirect()->route('user.email.add');
             // }
@@ -64,17 +74,11 @@ class Authenticate extends Middleware
                     return redirect()->route('user.email.add');
                 }
             }
-            
+
             Log::info('User authenticated');
         } else {
             Log::info('User not authenticated');
             return parent::handle($request, $next, ...$guards);
-        }
-
-        if (Auth::guard('web')->check() && Auth::user()->banned_at != null) {
-            Auth::guard('web')->logout();
-            return redirect()->route('f.landing')
-                ->with('error', 'Your account has been banned from Repostchain. If you believe this was a mistake, please contact our support team for verification.');
         }
 
         return $next($request);
