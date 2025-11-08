@@ -100,7 +100,8 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
             Route::post('/show/{user}', 'show')->name('show');
             Route::get('/status/{user}', 'status')->name('status');
             Route::get('/banned/users', 'bannedUsers')->name('banned-users');
-            Route::get('/banned/{user}', 'banned')->name('banned');
+            Route::post('/banned/{user_urn}', 'banned')->name('banned');
+            Route::get('/unbanned/{user_urn}', 'unbanned')->name('unbanned');
             Route::get('/trash/bin', 'trash')->name('trash');
             Route::get('/restore/{user}', 'restore')->name('restore');
             Route::delete('/permanent-delete/{user}', 'permanentDelete')->name('permanent-delete');

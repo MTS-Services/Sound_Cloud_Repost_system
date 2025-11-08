@@ -1,7 +1,7 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('Trashed User List') }}</x-slot>
     <x-slot name="breadcrumb">{{ __('Trashed User List') }}</x-slot>
-    <x-slot name="page_slug">user</x-slot>
+    <x-slot name="page_slug">{{ url()->previous() === route('um.user.banned-users') ? 'banned-users' : 'user' }}</x-slot>
     <section>
 
         <div class="glass-card rounded-2xl p-6 mb-6">

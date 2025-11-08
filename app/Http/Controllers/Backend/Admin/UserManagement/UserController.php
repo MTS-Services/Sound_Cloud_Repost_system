@@ -181,10 +181,11 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['permission-status']
             ],
             [
-                'routeName' => 'um.user.banned',
-                'params' => [encrypt($model->id)],
-                'label' => $model->banned_at ? 'Unbanned' : 'Banned',
-                'permissions' => ['permission-status']
+                'routeName' => 'javascript:void(0)',
+                'label' => 'Banned',
+                'data-id' => encrypt($model->urn),
+                'className' => 'ban-user',
+                'permissions' => ['permission-banned']
             ],
             [
                 'routeName' => 'um.user.destroy',
@@ -229,9 +230,9 @@ class UserController extends Controller implements HasMiddleware
                 'permissions' => ['user-detail']
             ],
             [
-                'routeName' => 'um.user.banned',
-                'params' => [encrypt($model->id)],
-                'label' => $model->banned_at ? 'Unbanned' : 'Banned',
+                'routeName' => 'um.user.unbanned',
+                'params' => [encrypt($model->urn)],
+                'label' => 'Unbanned',
                 'permissions' => ['permission-banned']
             ],
             [
@@ -266,12 +267,28 @@ class UserController extends Controller implements HasMiddleware
         session()->flash('success', 'User status updated successfully.');
         return $this->redirectIndex();
     }
-    public function banned(Request $request, string $id)
+    public function banned(Request $request, string $user_urn)
     {
-        $user = $this->userService->getUser($id);
-        $this->userService->toggleBanned($user);
+        $validated = $request->validate([
+            'ban_reason' => 'required',
+        ]);
+        $user = $this->userService->getUser($user_urn, 'urn');
+        $this->userService->banUnbanUser($user, $validated);
         session()->flash('success', 'User banned successfully.');
         return $this->redirectIndex();
+    }
+    public function unbanned(Request $request, string $user_urn)
+    {
+        try {
+            $user = $this->userService->getUser($user_urn, 'urn');
+            $this->userService->banUnbanUser($user);
+
+            session()->flash('success', 'User unbanned successfully.');
+        } catch (\Throwable $e) {
+            session()->flash('error', 'User unbanned failed!');
+            throw $e;
+        }
+        return redirect()->route('um.user.banned-users');
     }
     public function destroy(Request $request, string $id)
     {

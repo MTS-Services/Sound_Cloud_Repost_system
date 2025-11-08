@@ -29,8 +29,8 @@ return new class extends Migration {
 
             $table->tinyInteger('status')->default(User::STATUS_ACTIVE)->index(); // Assuming 1 is for active status
             $table->timestamp('banned_at')->nullable()->index();
-            // banned_by column to track who banned the user
             $table->unsignedBigInteger('bander_id')->nullable()->index();
+            $table->text('ban_reason')->nullable();
             $table->string('avatar')->nullable();
             $table->text('token')->nullable();
             $table->string('email_token')->nullable();

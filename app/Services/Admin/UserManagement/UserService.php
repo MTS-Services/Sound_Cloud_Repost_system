@@ -6,6 +6,7 @@ use App\Http\Traits\FileManagementTrait;
 use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\User;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -86,14 +87,60 @@ class UserService
             'updater_type' => get_class(admin())
         ]);
     }
-    public function toggleBanned(User $user): void
+    public function banUser(User $user): void
+    {
+        try {
+            $user->update([
+                'banned_at'  => now(),
+                'bander_id'  => admin()->id,
+                'ban_reason' => 'Banned by ' . admin()->name,
+                'updater_id' => admin()->id,
+                'updater_type' => get_class(admin()),
+            ]);
+        } catch (\Exception $e) {
+            $user->update([
+                'banned_at'  => null,
+                'bander_id'  => null,
+                'ban_reason' => null,
+                'updater_id' => admin()->id,
+                'updater_type' => get_class(admin()),
+            ]);
+        }
+    }
+    public function UnbanUser(User $user): void
     {
         $user->update([
-            'banned_at' => $user->banned_at ? null : now(),
-            'bander_id' => admin()->id,
-            'updater_type' => get_class(admin())
+            'banned_at'  => null,
+            'bander_id'  => null,
+            'ban_reason' => null,
+            'updater_id' => admin()->id,
+            'updater_type' => get_class(admin()),
         ]);
     }
+    public function banUnbanUser(User $user, array $data = []): void
+    {
+        $isBanned = !is_null($user->banned_at);
+
+        if ($isBanned) {
+            $user->update([
+                'banned_at'  => null,
+                'bander_id'  => null,
+                'ban_reason' => null,
+                'updater_id' => admin()->id,
+                'updater_type' => get_class(admin()),
+            ]);
+        } else {
+            $user->update([
+                'banned_at'  => now(),
+                'bander_id'  => admin()->id,
+                'ban_reason' => $data['ban_reason'] ?? null,
+                'updater_id' => admin()->id,
+                'updater_type' => get_class(admin()),
+            ]);
+        }
+    }
+
+
 
     // public function addCredit(User $user, array $data)
     // {

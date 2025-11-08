@@ -1,7 +1,8 @@
 <x-admin::layout>
     <x-slot name="title">{{ __('User Detail') }}</x-slot>
-    <x-slot name="breadcrumb">{{ __('User Detail') }}</x-slot>
-    <x-slot name="page_slug">user</x-slot>
+    <x-slot
+        name="breadcrumb">{{ url()->previous() === route('um.user.banned-users') ? 'Banned User Detail' : 'User Detail' }}</x-slot>
+    <x-slot name="page_slug">{{ url()->previous() === route('um.user.banned-users') ? 'banned-users' : 'user' }}</x-slot>
 
     <div class="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
         <!-- Header -->
@@ -12,7 +13,9 @@
                     Comprehensive information about {{ $user->name }}
                 </p>
             </div>
-            <x-button href="{{ route('um.user.index') }}" permission="credit-create" class="flex items-center gap-2">
+            <x-button
+                href="{{ url()->previous() === route('um.user.banned-users') ? url()->previous() : route('um.user.index') }}"
+                permission="user-list" class="flex items-center gap-2">
                 <x-lucide-arrow-left class="w-4 h-4" />
                 {{ __('Back to Users') }}
             </x-button>
@@ -113,6 +116,34 @@
                             </div>
 
                         </div>
+
+                        @if (!empty($user->banned_at))
+                            <!-- Ban Details -->
+                            <div class="flex gap-2 mb-4">
+                                <x-lucide-ban class="w-5 h-5 text-orange-500" />
+                                <div>
+                                    <h3 class="text-md font-semibold text-gray-900 dark:text-white">
+                                        Ban User Details
+                                    </h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Banned At:
+                                        {{ $user->banned_at_formatted ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        {{ __('Banned By') }}</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ $user->banned_by ?? 'N/A' }}</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">
+                                        {{ __('Ban Reason') }}</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ $user->ban_reason ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- SoundCloud Details -->
                         <h3 class="text-md font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">

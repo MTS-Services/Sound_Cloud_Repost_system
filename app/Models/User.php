@@ -41,6 +41,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'status',
         'banned_at',
         'bander_id',
+        'ban_reason',
         'urn',
         'email',
         'last_seen_at',
