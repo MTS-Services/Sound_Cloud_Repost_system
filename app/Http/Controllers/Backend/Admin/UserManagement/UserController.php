@@ -183,7 +183,7 @@ class UserController extends Controller implements HasMiddleware
             ],
             [
                 'routeName' => 'javascript:void(0)',
-                'label' => 'Banned',
+                'label' => 'Ban User',
                 'data-id' => encrypt($model->urn),
                 'className' => 'ban-user',
                 'permissions' => ['permission-banned']
@@ -233,7 +233,7 @@ class UserController extends Controller implements HasMiddleware
             [
                 'routeName' => 'um.user.unbanned',
                 'params' => [encrypt($model->urn)],
-                'label' => 'Unbanned',
+                'label' => 'Unban User',
                 'permissions' => ['permission-banned']
             ],
             [

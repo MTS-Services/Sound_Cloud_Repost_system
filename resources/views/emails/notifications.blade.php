@@ -551,7 +551,7 @@
             </div> --}}
 
             <div class="footer">
-                <p>&copy; 2025 Your Company Name. All rights reserved.</p>
+                <p>&copy; 2025 ({{ config('app.name') }}) All rights reserved.</p>
                 <div class="footer-links">
                     <a href="#">Unsubscribe</a> |
                     <a href="#">Privacy Policy</a> |
