@@ -8,6 +8,7 @@ use App\Livewire\User\CampaignManagement\MyCampaign;
 use App\Http\Controllers\SouncCloud\Auth\SoundCloudController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\User\CampaignManagement\RedesignCampaign;
 use App\Livewire\User\Chart;
 use App\Livewire\User\Dashboard;
 use App\Livewire\User\Faq;
@@ -47,6 +48,7 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
     Route::group(['as' => 'cm.', 'prefix' => 'campaign-management'], function () {
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
         Route::get('/campaigns', Campaign::class)->name('campaigns');
+        Route::get('/campaigns2', RedesignCampaign::class)->name('campaigns2');
     });
     Route::name('notifications.')->prefix('notifications')->group(function () {
         Route::get('/', NotificationList::class)->name('index');
