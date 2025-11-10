@@ -6,6 +6,9 @@ use Livewire\Component;
 
 class RedesignCampaign extends Component
 {
+    public $search = '';
+    public $showSuggestions = false;
+    public $suggestedTags = [];
 
     public string $activeTab = 'recommendedPro';
 

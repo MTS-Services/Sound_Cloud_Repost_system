@@ -21,7 +21,7 @@
 
     <div class="max-w-screen-xl h-full mx-auto flex flex-col gap-y-4">
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 3xl:grid-cols-2 gap-4 lg:col-span-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 2xl:grid-cols-2 gap-4 lg:col-span-2">
 
             <!-- Stat Card -->
             <div
@@ -116,7 +116,7 @@
                 </a>
             </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56 hidden 3xl:block">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow min-h-56 hidden 2xl:block">
             <h2 class="text-xl font-semibold dark:text-gray-50 mb-2">About Direct Requests</h2>
             <p class="text-sm text-[#718096] dark:text-gray-100">Direct Requests allow artists to connect and
                 collaborate directly with other creators on RepostChain. Instead of waiting for repost campaigns, you
