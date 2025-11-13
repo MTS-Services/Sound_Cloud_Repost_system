@@ -126,7 +126,7 @@ class UserPlan extends BaseModel
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->where('status', self::STATUS_ACTIVE)->whereDate('end_date', '>=', now());
     }
 
     public function scopeInactive(Builder $query): Builder
