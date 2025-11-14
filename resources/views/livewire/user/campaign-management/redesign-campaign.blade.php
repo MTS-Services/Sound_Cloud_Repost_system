@@ -228,29 +228,44 @@
                                             <!-- Repost Button with animated fill effect -->
                                             <button
                                                 :data-campaign-id="{{ $campaign_->id }}"
-                                                x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}')"
+                                                x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}') || isReposted('{{ $campaign_->id }}')"
                                                 @click="handleRepost('{{ $campaign_->id }}')"
-                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
+                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
                                                 :class="{
-                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300': !isEligibleForRepost('{{ $campaign_->id }}'),
-                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost('{{ $campaign_->id }}')
+                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300': !isEligibleForRepost('{{ $campaign_->id }}') && !isReposted('{{ $campaign_->id }}'),
+                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost('{{ $campaign_->id }}') && !isReposted('{{ $campaign_->id }}'),
+                                                    'bg-green-500 text-white cursor-not-allowed': isReposted('{{ $campaign_->id }}'),
+                                                    'focus:ring-orange-500': !isReposted('{{ $campaign_->id }}'),
+                                                    'focus:ring-green-500': isReposted('{{ $campaign_->id }}')
                                                 }">
                                                 
-                                                <!-- Animated orange fill background -->
+                                                <!-- Animated orange fill background (only show if not reposted) -->
                                                 <div 
+                                                    x-show="!isReposted('{{ $campaign_->id }}')"
                                                     class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out"
                                                     :style="`width: ${getPlayTimePercentage('{{ $campaign_->id }}')}%`">
                                                 </div>
                                                 
                                                 <!-- Button content (stays on top) -->
                                                 <div class="relative z-10 flex items-center gap-2">
-                                                    <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <rect x="1" y="1" width="24" height="16" rx="3"
-                                                            fill="none" stroke="currentColor" stroke-width="2" />
-                                                        <circle cx="8" cy="9" r="3" fill="none"
-                                                            stroke="currentColor" stroke-width="2" />
-                                                    </svg>
-                                                    <span>{{ user()->repost_price }} Repost</span>
+                                                    <template x-if="!isReposted('{{ $campaign_->id }}')">
+                                                        <div class="flex items-center gap-2">
+                                                            <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="1" y="1" width="24" height="16" rx="3"
+                                                                    fill="none" stroke="currentColor" stroke-width="2" />
+                                                                <circle cx="8" cy="9" r="3" fill="none"
+                                                                    stroke="currentColor" stroke-width="2" />
+                                                            </svg>
+                                                            <span>{{ user()->repost_price }} Repost</span>
+                                                        </div>
+                                                    </template>
+                                                    
+                                                    <template x-if="isReposted('{{ $campaign_->id }}')">
+                                                        <div class="flex items-center gap-2">
+                                                            <span>✔️</span>
+                                                            <span>Reposted</span>
+                                                        </div>
+                                                    </template>
                                                 </div>
                                             </button>
                                         </div>
@@ -297,6 +312,14 @@
                 init() {
                     this.initializeSoundCloudWidgets();
                     this.startUpdateLoop();
+                    
+                    // Listen for repost success events
+                    window.addEventListener('repost-success', (event) => {
+                        const campaignId = event.detail.campaignId;
+                        if (this.tracks[campaignId]) {
+                            this.tracks[campaignId].reposted = true;
+                        }
+                    });
                 },
                 
                 startUpdateLoop() {
@@ -346,6 +369,7 @@
                                 playStartTime: null,
                                 seekDetected: false,
                                 widget: null,
+                                reposted: false,
                             };
                         }
                         
@@ -466,6 +490,10 @@
                     return this.tracks[campaignId]?.isEligible || false;
                 },
                 
+                isReposted(campaignId) {
+                    return this.tracks[campaignId]?.reposted || false;
+                },
+                
                 getPlayTime(campaignId) {
                     return this.tracks[campaignId]?.actualPlayTime || 0;
                 },
@@ -477,7 +505,7 @@
                 },
                 
                 handleRepost(campaignId) {
-                    if (!this.isEligibleForRepost(campaignId)) {
+                    if (!this.isEligibleForRepost(campaignId) || this.isReposted(campaignId)) {
                         return;
                     }
                     
@@ -516,7 +544,7 @@
         document.addEventListener('livewire:navigated', function() {
             // Reinitialize widgets after navigation
             setTimeout(() => {
-                const mainElement = document.querySelector('main[x-data]');
+                const mainElement = document.querySelector('main[x-data*="trackPlaybackManager"]');
                 if (mainElement && mainElement.__x) {
                     const trackManager = mainElement.__x.$data;
                     if (trackManager && trackManager.initializeSoundCloudWidgets) {
@@ -528,7 +556,7 @@
         
         // Clean up on page leave
         window.addEventListener('beforeunload', function() {
-            const mainElement = document.querySelector('main[x-data]');
+            const mainElement = document.querySelector('main[x-data*="trackPlaybackManager"]');
             if (mainElement && mainElement.__x) {
                 const trackManager = mainElement.__x.$data;
                 if (trackManager && trackManager.clearAllTracking) {
