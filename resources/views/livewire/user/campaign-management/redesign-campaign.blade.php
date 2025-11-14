@@ -243,13 +243,13 @@
                                                     '{{ $campaign_->id }}')"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
                                                 :class="{
-                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300':
+                                                    'cursor-not-allowed! bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300':
                                                         !isEligibleForRepost('{{ $campaign_->id }}') && !isReposted(
                                                             '{{ $campaign_->id }}'),
-                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost(
+                                                    'cursor-pointer! hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost(
                                                         '{{ $campaign_->id }}') && !isReposted(
                                                         '{{ $campaign_->id }}'),
-                                                    'bg-green-500 text-white cursor-not-allowed': isReposted(
+                                                    'bg-green-500 text-white cursor-not-allowed!': isReposted(
                                                         '{{ $campaign_->id }}'),
                                                     'focus:ring-orange-500': !isReposted('{{ $campaign_->id }}'),
                                                     'focus:ring-green-500': isReposted('{{ $campaign_->id }}')
@@ -257,15 +257,11 @@
                                                 @click="handleRepost('{{ $campaign_->id }}')">
 
                                                 <!-- Animated orange fill background (only show if not reposted) -->
-                                                <div x-show="!isReposted('{{ $campaign_->id }}')"
-                                                    class="absolute inset-0">
-                                                    <span
-                                                        class="w-full h-full bg-linear-to-r from-orange-600 to-orange-500 transition-all
-                                                        duration-300 ease-out"
+                                                <span x-show="!isReposted('{{ $campaign_->id }}')">
+                                                    <div class="absolute inset-0 bg-linear-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out"
                                                         :style="`width: ${getPlayTimePercentage('{{ $campaign_->id }}')}%`">
-                                                    </span>
-                                                </div>
-
+                                                    </div>
+                                                </span>
                                                 <!-- Button content (stays on top) -->
                                                 <div class="relative z-10 flex items-center gap-2">
                                                     <template x-if="!isReposted('{{ $campaign_->id }}')">
@@ -285,7 +281,7 @@
 
                                                     <template x-if="isReposted('{{ $campaign_->id }}')">
                                                         <div class="flex items-center gap-2">
-                                                            <x-lucide-check class="w-5 h-5 text-white fill-white" />
+                                                            <x-lucide-check class="w-5 h-5 text-white" />
                                                             <span>Reposted</span>
                                                         </div>
                                                     </template>
