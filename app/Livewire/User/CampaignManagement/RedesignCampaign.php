@@ -263,8 +263,6 @@ class RedesignCampaign extends Component
                 'play_count' => 0,
                 'last_action' => null,
                 'created_at' => now()->timestamp,
-                'reposted' => false,
-                'hasEverPlayed' => false,
             ];
         }
 
