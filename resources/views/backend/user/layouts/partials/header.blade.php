@@ -6,44 +6,44 @@
         selectedIndex: -1,
         suggestions: {{ searchableRoutes() }},
         filteredSuggestions: [],
-    
+
         init() {
             // No initial filtering. The list will be empty by default.
         },
-    
+
         filterSuggestions() {
             if (!Array.isArray(this.suggestions)) {
                 console.error('Suggestions data is not a valid array.');
                 return;
             }
-    
+
             const query = this.searchQuery.trim().toLowerCase();
-    
+
             // ✅ Only filter if the query is not empty.
             if (query === '') {
                 this.filteredSuggestions = [];
             } else {
                 this.filteredSuggestions = this.suggestions.filter(item => {
                     if (!item || !item.title || !item.keywords) return false;
-    
+
                     // Check if the query matches the title
                     const titleMatch = item.title.toLowerCase().includes(query);
-    
+
                     // Check if the query matches any of the keywords
                     const keywordMatch = item.keywords.some(keyword =>
                         keyword.toLowerCase().includes(query)
                     );
-    
+
                     return titleMatch || keywordMatch;
                 });
             }
             this.selectedIndex = -1;
         },
-    
+
         selectSuggestion(index) {
             this.selectedIndex = index;
         },
-    
+
         handleKeydown(event) {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -61,7 +61,7 @@
                 this.searchModalOpen = false;
             }
         },
-    
+
         // `performSearch` is no longer needed since we are using <a> tags
         performSearch(url) {
             this.searchModalOpen = false;
@@ -109,7 +109,7 @@
                         class="absolute right-2 !top-[62px] w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
                         <ul class="p-0 text-sm text-gray-700 dark:text-gray-200">
                             <li>
-                                <a href="{{ route('user.help-support') }}" wire:navigate
+                                <a href="{{ route('f.help') }}" wire:navigate
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Help Center') }}</a>
                             </li>
                             <li>
@@ -117,7 +117,7 @@
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Pricing') }}</a>
                             </li>
                             <li>
-                                <a href="{{ route('user.faq') }}" wire:navigate
+                                <a href="{{ route('f.faq') }}" wire:navigate
                                     class="block px-4 py-2  hover:bg-red-100 dark:hover:bg-gray-700">{{ __('FAQs') }}</a>
                             </li>
                         </ul>
@@ -186,7 +186,7 @@
                     <li>
                         <a href="{{ route('user.favourites', ['starred' => 'favourited']) }}" wire:navigate
                             class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
-                            {{ __("Members who starred you") }}
+                            {{ __('Members who starred you') }}
                         </a>
                     </li>
 

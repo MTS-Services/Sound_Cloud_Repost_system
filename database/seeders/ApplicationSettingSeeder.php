@@ -52,9 +52,11 @@ class ApplicationSettingSeeder extends Seeder
             ['key' => 'paypal_mode', 'value' => 'sandbox', 'env_key' => 'PAYPAL_MODE'],
             ['key' => 'paypal_key', 'value' => 'AdUa_Fvt0tf9rYbd1412hS_ChPoSbTP9fGj1PblIXwwOsBzLTyD8I2xnRDmT6eNgdBRMtiAAl9yVYYjW', 'env_key' => 'PAYPAL_SANDBOX_CLIENT_ID'],
             ['key' => 'paypal_secret', 'value' => 'ELmbYAx_lItW-Ic1loIHQq7PmXVY2OkwbBTJKQq-GJ58n8WcLn5awnRhN_v9tJP58ULO3hSvzmQ2jDEh', 'env_key' => 'PAYPAL_SANDBOX_CLIENT_SECRET'],
+            ['paypal_gateway_status', 'value' => ApplicationSetting::PAYMENT_GATEWAY_STATUS_INACTIVE],
             ['key' => 'stripe_mode', 'value' => 'sandbox', 'env_key' => 'STRIPE_MODE'],
             ['key' => 'stripe_key', 'value' => 'pk_test_51RpQw7ISIl8QzoFfXw1fwhUTinGRkt0zak7gkeNkOLlcr8MUPKKGh7mK7yJVideMMfVXSOSqfT5pZCrWlYOjE5dh008ykGM5Yx', 'env_key' => 'STRIPE_KEY'],
             ['key' => 'stripe_secret', 'value' => 'sk_test_51RpQw7ISIl8QzoFf8r7wCZtb1Oauyo05c4kf7eLfoET3edbVwHVoBH4UeViPTii9V5GfosbnlYInMS1CArx77fMS00zK935gJx', 'env_key' => 'STRIPE_SECRET'],
+            ['stripe_gateway_status', 'value' => ApplicationSetting::PAYMENT_GATEWAY_STATUS_ACTIVE],
 
 
             // Payment Gateway Setup

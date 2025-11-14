@@ -53,22 +53,22 @@ class UserPlan extends BaseModel
     public static function getStatusList(): array
     {
         return [
-            self::STATUS_PENDING  => 'Pending',
-            self::STATUS_ACTIVE   => 'Active',
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_ACTIVE => 'Active',
             self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_CANCELED => 'Canceled',
-            self::STATUS_EXPIRED  => 'Expired',
+            self::STATUS_EXPIRED => 'Expired',
         ];
     }
 
     public static function getStatusColorList(): array
     {
         return [
-            self::STATUS_PENDING  => 'info',
-            self::STATUS_ACTIVE   => 'success',
+            self::STATUS_PENDING => 'info',
+            self::STATUS_ACTIVE => 'success',
             self::STATUS_INACTIVE => 'warning',
             self::STATUS_CANCELED => 'error',
-            self::STATUS_EXPIRED  => 'secondary',
+            self::STATUS_EXPIRED => 'secondary',
         ];
     }
 
@@ -126,7 +126,7 @@ class UserPlan extends BaseModel
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->where('status', self::STATUS_ACTIVE)->whereDate('end_date', '>=', now());
     }
 
     public function scopeInactive(Builder $query): Builder
@@ -163,4 +163,12 @@ class UserPlan extends BaseModel
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
+
+    public static function markExpiredAsInactive(): int
+    {
+        return self::where('status', self::STATUS_ACTIVE)
+            ->whereDate('end_date', '<', now())
+            ->update(['status' => self::STATUS_INACTIVE]);
+    }
+
 }
