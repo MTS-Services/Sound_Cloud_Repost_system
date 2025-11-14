@@ -303,98 +303,96 @@
     @endif
 
 
-    @script
-        <script>
-            function initializeSoundCloudWidgets() {
-                if (typeof SC === 'undefined') {
-                    setTimeout(initializeSoundCloudWidgets, 500);
+    <script>
+        function initializeSoundCloudWidgets() {
+            if (typeof SC === 'undefined') {
+                setTimeout(initializeSoundCloudWidgets, 500);
+                return;
+            }
+            const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+            console.log('playerContainers', playerContainers);
+
+            playerContainers.forEach(container => {
+                const campaignId = container.dataset.campaignId;
+
+
+                let currentCampaignCard = container.closest('.campaign-card');
+                console.log('currentCampaignCard', currentCampaignCard);
+
+                // Safety check - make sure we found the card
+                if (!currentCampaignCard) {
+                    console.error('Could not find the parent campaign-card for campaignId', campaignId);
                     return;
                 }
-                const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                console.log('playerContainers', playerContainers);
 
-                playerContainers.forEach(container => {
-                    const campaignId = container.dataset.campaignId;
+                // 2. Find the next campaign-card sibling
+                const nextCampaignCard = currentCampaignCard.nextElementSibling;
+                console.log('nextCampaignCard', nextCampaignCard);
 
+                // 3. Find the iframe inside the NEXT campaign card
+                let nextIframe = null;
+                let nextCampaignId = null;
 
-                    let currentCampaignCard = container.closest('.campaign-card');
-                    console.log('currentCampaignCard', currentCampaignCard);
+                if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
+                    // Find the iframe inside the next card
+                    const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
 
-                    // Safety check - make sure we found the card
-                    if (!currentCampaignCard) {
-                        console.error('Could not find the parent campaign-card for campaignId', campaignId);
-                        return;
+                    if (nextPlayerContainer) {
+                        nextIframe = nextPlayerContainer.querySelector('iframe');
+                        nextCampaignId = nextPlayerContainer.dataset.campaignId;
                     }
+                }
+                const iframe = container.querySelector('iframe');
 
-                    // 2. Find the next campaign-card sibling
-                    const nextCampaignCard = currentCampaignCard.nextElementSibling;
-                    console.log('nextCampaignCard', nextCampaignCard);
+                if (iframe && campaignId) {
+                    const widget = SC.Widget(iframe);
 
-                    // 3. Find the iframe inside the NEXT campaign card
-                    let nextIframe = null;
-                    let nextCampaignId = null;
+                    widget.bind(SC.Widget.Events.PLAY, () => {
+                        console.log('PLAY event fired for campaignId', campaignId);
+                    });
 
-                    if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
-                        // Find the iframe inside the next card
-                        const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+                    widget.bind(SC.Widget.Events.PAUSE, () => {
+                        console.log('PAUSE event fired for campaignId', campaignId);
+                    });
 
-                        if (nextPlayerContainer) {
-                            nextIframe = nextPlayerContainer.querySelector('iframe');
-                            nextCampaignId = nextPlayerContainer.dataset.campaignId;
+                    widget.bind(SC.Widget.Events.FINISH, () => {
+                        console.log('FINISH event fired for campaignId', campaignId);
+                        if (nextCampaignId && nextIframe) {
+                            console.log('nextIframe', nextIframe);
+                            const nextWidget = SC.Widget(nextIframe);
+                            nextWidget.play();
                         }
-                    }
-                    const iframe = container.querySelector('iframe');
+                    });
 
-                    if (iframe && campaignId) {
-                        const widget = SC.Widget(iframe);
-
-                        widget.bind(SC.Widget.Events.PLAY, () => {
-                            console.log('PLAY event fired for campaignId', campaignId);
-                        });
-
-                        widget.bind(SC.Widget.Events.PAUSE, () => {
-                            console.log('PAUSE event fired for campaignId', campaignId);
-                        });
-
-                        widget.bind(SC.Widget.Events.FINISH, () => {
-                            console.log('FINISH event fired for campaignId', campaignId);
-                            if (nextCampaignId && nextIframe) {
-                                console.log('nextIframe', nextIframe);
-                                const nextWidget = SC.Widget(nextIframe);
-                                nextWidget.play();
-                            }
-                        });
-
-                        widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                            const currentTime = data.currentPosition / 1000;
-                            @this.call('handleAudioTimeUpdate', campaignId, currentTime);
-                        });
-                    }
-                });
-            }
-            document.addEventListener('livewire:initialized', function() {
-                initializeSoundCloudWidgets();
-            });
-            document.addEventListener('livewire:navigated', function() {
-                initializeSoundCloudWidgets();
-                // @this.call('forgetRepostedId');
-            });
-            document.addEventListener('livewire:load', function() {
-                initializeSoundCloudWidgets();
-            });
-            document.addEventListener('livewire:updated', function() {
-                initializeSoundCloudWidgets();
-            });
-            document.addEventListener('DOMContentLoaded', function() {
-                initializeSoundCloudWidgets();
-            });
-
-            document.addEventListener('livewire:dispatched', (event) => {
-                if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-                    initializeSoundCloudWidgets();
+                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                        const currentTime = data.currentPosition / 1000;
+                        @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                    });
                 }
             });
-        </script>
-    @endscript
+        }
+        document.addEventListener('livewire:initialized', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('livewire:navigated', function() {
+            initializeSoundCloudWidgets();
+            // @this.call('forgetRepostedId');
+        });
+        document.addEventListener('livewire:load', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('livewire:updated', function() {
+            initializeSoundCloudWidgets();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSoundCloudWidgets();
+        });
+
+        document.addEventListener('livewire:dispatched', (event) => {
+            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
+                initializeSoundCloudWidgets();
+            }
+        });
+    </script>
 
 </main>
