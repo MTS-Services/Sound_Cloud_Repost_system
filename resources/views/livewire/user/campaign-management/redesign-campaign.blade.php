@@ -303,206 +303,6 @@
 
     <script>
         // Alpine.js component for track playback management
-        // function trackPlaybackManager() {
-        //     return {
-        //         tracks: {},
-
-        //         init() {
-        //             this.initializeSoundCloudWidgets();
-        //             this.setupLivewireListeners();
-        //         },
-
-        //         initializeSoundCloudWidgets() {
-        //             if (typeof SC === 'undefined') {
-        //                 setTimeout(() => this.initializeSoundCloudWidgets(), 500);
-        //                 return;
-        //             }
-
-        //             const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-
-        //             playerContainers.forEach(container => {
-        //                 const campaignId = container.dataset.campaignId;
-        //                 const currentCampaignCard = container.closest('.campaign-card');
-
-        //                 if (!currentCampaignCard) return;
-
-        //                 // Initialize tracking for this campaign
-        //                 if (!this.tracks[campaignId]) {
-        //                     this.tracks[campaignId] = {
-        //                         isPlaying: false,
-        //                         actualPlayTime: 0,
-        //                         totalPlayTime: 0,
-        //                         isEligible: false,
-        //                         lastPosition: 0,
-        //                         playStartTime: null,
-        //                         seekDetected: false,
-        //                         reposted: false,
-        //                     };
-        //                 }
-
-        //                 const nextCampaignCard = currentCampaignCard.nextElementSibling;
-        //                 let nextIframe = null;
-        //                 let nextCampaignId = null;
-
-        //                 if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
-        //                     const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
-        //                     if (nextPlayerContainer) {
-        //                         nextIframe = nextPlayerContainer.querySelector('iframe');
-        //                         nextCampaignId = nextPlayerContainer.dataset.campaignId;
-        //                     }
-        //                 }
-
-        //                 const iframe = container.querySelector('iframe');
-        //                 if (!iframe || !campaignId) return;
-
-        //                 const widget = SC.Widget(iframe);
-
-        //                 // PLAY event
-        //                 widget.bind(SC.Widget.Events.PLAY, () => {
-        //                     this.tracks[campaignId].isPlaying = true;
-        //                     this.tracks[campaignId].playStartTime = Date.now();
-
-        //                     this.$wire.dispatch('trackPlaybackUpdate', {
-        //                         campaignId: campaignId,
-        //                         action: 'play',
-        //                         actualPlayTime: this.tracks[campaignId].actualPlayTime
-        //                     });
-        //                 });
-
-        //                 // PAUSE event
-        //                 widget.bind(SC.Widget.Events.PAUSE, () => {
-        //                     this.tracks[campaignId].isPlaying = false;
-        //                     this.tracks[campaignId].playStartTime = null;
-
-        //                     this.$wire.dispatch('trackPlaybackUpdate', {
-        //                         campaignId: campaignId,
-        //                         action: 'pause',
-        //                         actualPlayTime: this.tracks[campaignId].actualPlayTime
-        //                     });
-        //                 });
-
-        //                 // FINISH event
-        //                 widget.bind(SC.Widget.Events.FINISH, () => {
-        //                     this.tracks[campaignId].isPlaying = false;
-
-        //                     this.$wire.dispatch('trackPlaybackUpdate', {
-        //                         campaignId: campaignId,
-        //                         action: 'finish',
-        //                         actualPlayTime: this.tracks[campaignId].actualPlayTime
-        //                     });
-
-        //                     // Auto-play next track
-        //                     if (nextCampaignId && nextIframe) {
-        //                         const nextWidget = SC.Widget(nextIframe);
-        //                         nextWidget.play();
-        //                     }
-        //                 });
-
-        //                 // PLAY_PROGRESS event - Critical for tracking actual play time
-        //                 widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-        //                     const currentPosition = data.currentPosition / 1000; // Convert to seconds
-        //                     const track = this.tracks[campaignId];
-
-        //                     // Detect seeking (jumping forward/backward)
-        //                     const positionDiff = Math.abs(currentPosition - track.lastPosition);
-
-        //                     if (positionDiff > 1.5 && track.lastPosition > 0) {
-        //                         // User seeked - this doesn't count as actual play time
-        //                         track.seekDetected = true;
-        //                     } else if (track.isPlaying && !track.seekDetected) {
-        //                         // Valid continuous playback
-        //                         const increment = currentPosition - track.lastPosition;
-
-        //                         if (increment > 0 && increment < 2) {
-        //                             track.actualPlayTime += increment;
-        //                             track.totalPlayTime += increment;
-
-        //                             // Check if eligible (5 seconds actual play time)
-        //                             if (track.actualPlayTime >= 5 && !track.isEligible) {
-        //                                 track.isEligible = true;
-
-        //                                 this.$wire.dispatch('trackPlaybackUpdate', {
-        //                                     campaignId: campaignId,
-        //                                     action: 'progress',
-        //                                     actualPlayTime: track.actualPlayTime
-        //                                 });
-        //                             }
-        //                         }
-        //                     }
-
-        //                     track.lastPosition = currentPosition;
-        //                     track.seekDetected = false;
-        //                 });
-
-        //                 // SEEK event
-        //                 widget.bind(SC.Widget.Events.SEEK, (data) => {
-        //                     this.tracks[campaignId].seekDetected = true;
-        //                     this.tracks[campaignId].lastPosition = data.currentPosition / 1000;
-        //                 });
-        //             });
-        //         },
-
-        //         setupLivewireListeners() {
-        //             // Listen for playback state updates from backend
-        //             Livewire.on('playbackStateUpdated', (data) => {
-        //                 const { campaignId, isEligible, actualPlayTime } = data[0];
-
-        //                 if (this.tracks[campaignId]) {
-        //                     this.tracks[campaignId].isEligible = isEligible;
-        //                     this.tracks[campaignId].actualPlayTime = actualPlayTime;
-        //                 }
-        //             });
-
-        //             // Clear tracking data on navigation
-        //             Livewire.on('trackingDataCleared', () => {
-        //                 this.tracks = {};
-        //             });
-        //         },
-
-        //         isEligibleForRepost(campaignId) {
-        //             return this.tracks[campaignId]?.isEligible || false;
-        //         },
-
-        //         getPlayTime(campaignId) {
-        //             return this.tracks[campaignId]?.actualPlayTime || 0;
-        //         },
-
-        //         getPlayTimePercentage(campaignId) {
-        //             const playTime = this.getPlayTime(campaignId);
-        //             return (playTime / 5) * 100; // 5 seconds = 100%
-        //         },
-
-        //         handleRepost(campaignId) {
-        //             if (!this.isEligibleForRepost(campaignId)) {
-        //                 return;
-        //             }
-
-        //             // Dispatch repost action
-        //             this.$wire.dispatch('confirmRepost', { campaignId: campaignId });
-        //         },
-
-        //         clearAllTracking() {
-        //             this.tracks = {};
-        //             this.$wire.dispatch('clearTrackingData');
-        //         }
-        //     };
-        // }
-
-        // Initialize on various Livewire events
-        // document.addEventListener('livewire:initialized', function() {
-        //     Alpine.data('trackPlaybackManager', trackPlaybackManager);
-        // });
-
-        // document.addEventListener('livewire:navigated', function() {
-        //     // Reinitialize widgets after navigation
-        //     setTimeout(() => {
-        //         const trackManager = Alpine.$data(document.querySelector('[x-data]'));
-        //         if (trackManager && trackManager.initializeSoundCloudWidgets) {
-        //             trackManager.initializeSoundCloudWidgets();
-        //         }
-        //     }, 100);
-        // });
-
         function trackPlaybackManager() {
             return {
                 tracks: {},
@@ -537,7 +337,6 @@
                                 playStartTime: null,
                                 seekDetected: false,
                                 reposted: false,
-                                hasEverPlayed: false, // NEW: Track if ever played
                             };
                         }
 
@@ -546,8 +345,7 @@
                         let nextCampaignId = null;
 
                         if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
-                            const nextPlayerContainer = nextCampaignCard.querySelector(
-                                '[id^="soundcloud-player-"]');
+                            const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
                             if (nextPlayerContainer) {
                                 nextIframe = nextPlayerContainer.querySelector('iframe');
                                 nextCampaignId = nextPlayerContainer.dataset.campaignId;
@@ -562,9 +360,6 @@
                         // PLAY event
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             this.tracks[campaignId].isPlaying = true;
-                            this.tracks[campaignId].hasEverPlayed = true; // Mark as played
-
-                            // Don't reset playStartTime, just update it for the current play session
                             this.tracks[campaignId].playStartTime = Date.now();
 
                             this.$wire.dispatch('trackPlaybackUpdate', {
@@ -577,7 +372,6 @@
                         // PAUSE event
                         widget.bind(SC.Widget.Events.PAUSE, () => {
                             this.tracks[campaignId].isPlaying = false;
-                            // Keep the accumulated play time, just clear the start time
                             this.tracks[campaignId].playStartTime = null;
 
                             this.$wire.dispatch('trackPlaybackUpdate', {
@@ -590,7 +384,6 @@
                         // FINISH event
                         widget.bind(SC.Widget.Events.FINISH, () => {
                             this.tracks[campaignId].isPlaying = false;
-                            this.tracks[campaignId].playStartTime = null;
 
                             this.$wire.dispatch('trackPlaybackUpdate', {
                                 campaignId: campaignId,
@@ -610,20 +403,12 @@
                             const currentPosition = data.currentPosition / 1000; // Convert to seconds
                             const track = this.tracks[campaignId];
 
-                            // Initialize lastPosition on first play progress event
-                            if (!track.hasEverPlayed) {
-                                track.lastPosition = currentPosition;
-                                track.hasEverPlayed = true;
-                                return;
-                            }
-
                             // Detect seeking (jumping forward/backward)
                             const positionDiff = Math.abs(currentPosition - track.lastPosition);
 
                             if (positionDiff > 1.5 && track.lastPosition > 0) {
                                 // User seeked - this doesn't count as actual play time
                                 track.seekDetected = true;
-                                track.lastPosition = currentPosition;
                             } else if (track.isPlaying && !track.seekDetected) {
                                 // Valid continuous playback
                                 const increment = currentPosition - track.lastPosition;
@@ -643,13 +428,9 @@
                                         });
                                     }
                                 }
-
-                                track.lastPosition = currentPosition;
-                            } else {
-                                // If we detected a seek, just update position and clear the flag
-                                track.lastPosition = currentPosition;
                             }
 
+                            track.lastPosition = currentPosition;
                             track.seekDetected = false;
                         });
 
@@ -664,16 +445,11 @@
                 setupLivewireListeners() {
                     // Listen for playback state updates from backend
                     Livewire.on('playbackStateUpdated', (data) => {
-                        const {
-                            campaignId,
-                            isEligible,
-                            actualPlayTime
-                        } = data[0];
+                        const { campaignId, isEligible, actualPlayTime } = data[0];
 
                         if (this.tracks[campaignId]) {
                             this.tracks[campaignId].isEligible = isEligible;
-                            // Don't overwrite actualPlayTime from backend, keep the local value
-                            // this.tracks[campaignId].actualPlayTime = actualPlayTime;
+                            this.tracks[campaignId].actualPlayTime = actualPlayTime;
                         }
                     });
 
@@ -702,9 +478,7 @@
                     }
 
                     // Dispatch repost action
-                    this.$wire.dispatch('confirmRepost', {
-                        campaignId: campaignId
-                    });
+                    this.$wire.dispatch('confirmRepost', { campaignId: campaignId });
                 },
 
                 clearAllTracking() {
@@ -714,7 +488,7 @@
             };
         }
 
-        // Initialize on various Livewire events
+        Initialize on various Livewire events
         document.addEventListener('livewire:initialized', function() {
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
@@ -728,5 +502,231 @@
                 }
             }, 100);
         });
+
+        // function trackPlaybackManager() {
+        //     return {
+        //         tracks: {},
+
+        //         init() {
+        //             this.initializeSoundCloudWidgets();
+        //             this.setupLivewireListeners();
+        //         },
+
+        //         initializeSoundCloudWidgets() {
+        //             if (typeof SC === 'undefined') {
+        //                 setTimeout(() => this.initializeSoundCloudWidgets(), 500);
+        //                 return;
+        //             }
+
+        //             const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+        //             playerContainers.forEach(container => {
+        //                 const campaignId = container.dataset.campaignId;
+        //                 const currentCampaignCard = container.closest('.campaign-card');
+
+        //                 if (!currentCampaignCard) return;
+
+        //                 // Initialize tracking for this campaign
+        //                 if (!this.tracks[campaignId]) {
+        //                     this.tracks[campaignId] = {
+        //                         isPlaying: false,
+        //                         actualPlayTime: 0,
+        //                         totalPlayTime: 0,
+        //                         isEligible: false,
+        //                         lastPosition: 0,
+        //                         playStartTime: null,
+        //                         seekDetected: false,
+        //                         reposted: false,
+        //                         hasEverPlayed: false, // NEW: Track if ever played
+        //                     };
+        //                 }
+
+        //                 const nextCampaignCard = currentCampaignCard.nextElementSibling;
+        //                 let nextIframe = null;
+        //                 let nextCampaignId = null;
+
+        //                 if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
+        //                     const nextPlayerContainer = nextCampaignCard.querySelector(
+        //                         '[id^="soundcloud-player-"]');
+        //                     if (nextPlayerContainer) {
+        //                         nextIframe = nextPlayerContainer.querySelector('iframe');
+        //                         nextCampaignId = nextPlayerContainer.dataset.campaignId;
+        //                     }
+        //                 }
+
+        //                 const iframe = container.querySelector('iframe');
+        //                 if (!iframe || !campaignId) return;
+
+        //                 const widget = SC.Widget(iframe);
+
+        //                 // PLAY event
+        //                 widget.bind(SC.Widget.Events.PLAY, () => {
+        //                     this.tracks[campaignId].isPlaying = true;
+        //                     this.tracks[campaignId].hasEverPlayed = true; // Mark as played
+
+        //                     // Don't reset playStartTime, just update it for the current play session
+        //                     this.tracks[campaignId].playStartTime = Date.now();
+
+        //                     this.$wire.dispatch('trackPlaybackUpdate', {
+        //                         campaignId: campaignId,
+        //                         action: 'play',
+        //                         actualPlayTime: this.tracks[campaignId].actualPlayTime
+        //                     });
+        //                 });
+
+        //                 // PAUSE event
+        //                 widget.bind(SC.Widget.Events.PAUSE, () => {
+        //                     this.tracks[campaignId].isPlaying = false;
+        //                     // Keep the accumulated play time, just clear the start time
+        //                     this.tracks[campaignId].playStartTime = null;
+
+        //                     this.$wire.dispatch('trackPlaybackUpdate', {
+        //                         campaignId: campaignId,
+        //                         action: 'pause',
+        //                         actualPlayTime: this.tracks[campaignId].actualPlayTime
+        //                     });
+        //                 });
+
+        //                 // FINISH event
+        //                 widget.bind(SC.Widget.Events.FINISH, () => {
+        //                     this.tracks[campaignId].isPlaying = false;
+        //                     this.tracks[campaignId].playStartTime = null;
+
+        //                     this.$wire.dispatch('trackPlaybackUpdate', {
+        //                         campaignId: campaignId,
+        //                         action: 'finish',
+        //                         actualPlayTime: this.tracks[campaignId].actualPlayTime
+        //                     });
+
+        //                     // Auto-play next track
+        //                     if (nextCampaignId && nextIframe) {
+        //                         const nextWidget = SC.Widget(nextIframe);
+        //                         nextWidget.play();
+        //                     }
+        //                 });
+
+        //                 // PLAY_PROGRESS event - Critical for tracking actual play time
+        //                 widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+        //                     const currentPosition = data.currentPosition / 1000; // Convert to seconds
+        //                     const track = this.tracks[campaignId];
+
+        //                     // Initialize lastPosition on first play progress event
+        //                     if (!track.hasEverPlayed) {
+        //                         track.lastPosition = currentPosition;
+        //                         track.hasEverPlayed = true;
+        //                         return;
+        //                     }
+
+        //                     // Detect seeking (jumping forward/backward)
+        //                     const positionDiff = Math.abs(currentPosition - track.lastPosition);
+
+        //                     if (positionDiff > 1.5 && track.lastPosition > 0) {
+        //                         // User seeked - this doesn't count as actual play time
+        //                         track.seekDetected = true;
+        //                         track.lastPosition = currentPosition;
+        //                     } else if (track.isPlaying && !track.seekDetected) {
+        //                         // Valid continuous playback
+        //                         const increment = currentPosition - track.lastPosition;
+
+        //                         if (increment > 0 && increment < 2) {
+        //                             track.actualPlayTime += increment;
+        //                             track.totalPlayTime += increment;
+
+        //                             // Check if eligible (5 seconds actual play time)
+        //                             if (track.actualPlayTime >= 5 && !track.isEligible) {
+        //                                 track.isEligible = true;
+
+        //                                 this.$wire.dispatch('trackPlaybackUpdate', {
+        //                                     campaignId: campaignId,
+        //                                     action: 'progress',
+        //                                     actualPlayTime: track.actualPlayTime
+        //                                 });
+        //                             }
+        //                         }
+
+        //                         track.lastPosition = currentPosition;
+        //                     } else {
+        //                         // If we detected a seek, just update position and clear the flag
+        //                         track.lastPosition = currentPosition;
+        //                     }
+
+        //                     track.seekDetected = false;
+        //                 });
+
+        //                 // SEEK event
+        //                 widget.bind(SC.Widget.Events.SEEK, (data) => {
+        //                     this.tracks[campaignId].seekDetected = true;
+        //                     this.tracks[campaignId].lastPosition = data.currentPosition / 1000;
+        //                 });
+        //             });
+        //         },
+
+        //         setupLivewireListeners() {
+        //             // Listen for playback state updates from backend
+        //             Livewire.on('playbackStateUpdated', (data) => {
+        //                 const {
+        //                     campaignId,
+        //                     isEligible,
+        //                     actualPlayTime
+        //                 } = data[0];
+
+        //                 if (this.tracks[campaignId]) {
+        //                     this.tracks[campaignId].isEligible = isEligible;
+        //                     // Don't overwrite actualPlayTime from backend, keep the local value
+        //                     // this.tracks[campaignId].actualPlayTime = actualPlayTime;
+        //                 }
+        //             });
+
+        //             // Clear tracking data on navigation
+        //             Livewire.on('trackingDataCleared', () => {
+        //                 this.tracks = {};
+        //             });
+        //         },
+
+        //         isEligibleForRepost(campaignId) {
+        //             return this.tracks[campaignId]?.isEligible || false;
+        //         },
+
+        //         getPlayTime(campaignId) {
+        //             return this.tracks[campaignId]?.actualPlayTime || 0;
+        //         },
+
+        //         getPlayTimePercentage(campaignId) {
+        //             const playTime = this.getPlayTime(campaignId);
+        //             return (playTime / 5) * 100; // 5 seconds = 100%
+        //         },
+
+        //         handleRepost(campaignId) {
+        //             if (!this.isEligibleForRepost(campaignId)) {
+        //                 return;
+        //             }
+
+        //             // Dispatch repost action
+        //             this.$wire.dispatch('confirmRepost', {
+        //                 campaignId: campaignId
+        //             });
+        //         },
+
+        //         clearAllTracking() {
+        //             this.tracks = {};
+        //             this.$wire.dispatch('clearTrackingData');
+        //         }
+        //     };
+        // }
+
+        // // Initialize on various Livewire events
+        // document.addEventListener('livewire:initialized', function() {
+        //     Alpine.data('trackPlaybackManager', trackPlaybackManager);
+        // });
+
+        // document.addEventListener('livewire:navigated', function() {
+        //     // Reinitialize widgets after navigation
+        //     setTimeout(() => {
+        //         const trackManager = Alpine.$data(document.querySelector('[x-data]'));
+        //         if (trackManager && trackManager.initializeSoundCloudWidgets) {
+        //             trackManager.initializeSoundCloudWidgets();
+        //         }
+        //     }, 100);
+        // });
     </script>
 </main>
