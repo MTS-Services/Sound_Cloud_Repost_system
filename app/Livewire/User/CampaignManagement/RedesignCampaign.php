@@ -324,18 +324,24 @@ class RedesignCampaign extends Component
             return;
         }
 
-        // Here you would implement the actual repost logic
+        // TODO: Implement your actual repost logic here
+        // Example: $this->campaignService->repostCampaign($campaignId, user()->urn);
+        
         Log::info('Repost confirmed', [
             'campaign_id' => $campaignId,
             'actual_play_time' => $trackingData[$campaignId]['actual_play_time'],
             'user_urn' => user()->urn,
         ]);
 
-        $this->dispatch('alert', type: 'success', message: 'Track reposted successfully!');
-
         // Mark as reposted in tracking
         $trackingData[$campaignId]['reposted'] = true;
         $trackingData[$campaignId]['reposted_at'] = now()->toDateTimeString();
         session()->put('campaign_playback_tracking', $trackingData);
+
+        // Dispatch success message
+        $this->dispatch('alert', type: 'success', message: 'Track reposted successfully!');
+        
+        // Dispatch browser event to update Alpine.js state
+        $this->dispatch('repost-success', campaignId: $campaignId);
     }
 }
