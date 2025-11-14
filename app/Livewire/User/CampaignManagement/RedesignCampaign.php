@@ -248,7 +248,7 @@ class RedesignCampaign extends Component
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
-        return $query->paginate(10);
+        return $query->latest()->paginate(10);
     }
 
     #[On('updatePlaybackTracking')]
