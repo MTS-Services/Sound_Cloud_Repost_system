@@ -311,12 +311,14 @@
                     return;
                 }
                 const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+                console.log('playerContainers', playerContainers);
 
                 playerContainers.forEach(container => {
                     const campaignId = container.dataset.campaignId;
 
 
                     let currentCampaignCard = container.closest('.campaign-card');
+                    console.log('currentCampaignCard', currentCampaignCard);
 
                     // Safety check - make sure we found the card
                     if (!currentCampaignCard) {
@@ -326,6 +328,7 @@
 
                     // 2. Find the next campaign-card sibling
                     const nextCampaignCard = currentCampaignCard.nextElementSibling;
+                    console.log('nextCampaignCard', nextCampaignCard);
 
                     // 3. Find the iframe inside the NEXT campaign card
                     let nextIframe = null;
@@ -346,16 +349,17 @@
                         const widget = SC.Widget(iframe);
 
                         widget.bind(SC.Widget.Events.PLAY, () => {
-                            @this.call('handleAudioPlay', campaignId);
+                            console.log('PLAY event fired for campaignId', campaignId);
                         });
 
                         widget.bind(SC.Widget.Events.PAUSE, () => {
-                            @this.call('handleAudioPause', campaignId);
+                            console.log('PAUSE event fired for campaignId', campaignId);
                         });
 
                         widget.bind(SC.Widget.Events.FINISH, () => {
-                            @this.call('handleAudioEnded', campaignId);
+                            console.log('FINISH event fired for campaignId', campaignId);
                             if (nextCampaignId && nextIframe) {
+                                console.log('nextIframe', nextIframe);
                                 const nextWidget = SC.Widget(nextIframe);
                                 nextWidget.play();
                             }
