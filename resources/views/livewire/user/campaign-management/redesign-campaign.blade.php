@@ -499,7 +499,7 @@
             };
         }
 
-        Initialize on various Livewire events
+        // Initialize on various Livewire events
         document.addEventListener('livewire:initialized', function() {
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
