@@ -32,9 +32,9 @@ class RedesignCampaign extends Component
     public array $selectedGenres = [];
     public string $trackTypeFilter = 'all';
     public array $totalCounts = [
-        "recommendedPro" => 12,
-        "recommended" => 10,
-        "all" => 50,
+        "recommendedPro" => 0,
+        "recommended" => 0,
+        "all" => 0,
     ];
 
     public bool $showCampaignCreator = false;
