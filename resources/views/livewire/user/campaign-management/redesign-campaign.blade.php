@@ -337,6 +337,7 @@
                                 playStartTime: null,
                                 seekDetected: false,
                                 reposted: false,
+                                hasEverPlayed: false,
                             };
                         }
 
@@ -361,6 +362,7 @@
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             this.tracks[campaignId].isPlaying = true;
                             this.tracks[campaignId].playStartTime = Date.now();
+                            this.tracks[campaignId].hasEverPlayed = true;
 
                             this.$wire.dispatch('trackPlaybackUpdate', {
                                 campaignId: campaignId,
@@ -384,6 +386,7 @@
                         // FINISH event
                         widget.bind(SC.Widget.Events.FINISH, () => {
                             this.tracks[campaignId].isPlaying = false;
+                            this.tracks[campaignId].playStartTime = null;
 
                             this.$wire.dispatch('trackPlaybackUpdate', {
                                 campaignId: campaignId,
@@ -403,12 +406,19 @@
                             const currentPosition = data.currentPosition / 1000; // Convert to seconds
                             const track = this.tracks[campaignId];
 
+                            if (!track.hasEverPlayed) {
+                                track.lastPosition = currentPosition;
+                                track.hasEverPlayed = true;
+                                return;
+                            }
+
                             // Detect seeking (jumping forward/backward)
                             const positionDiff = Math.abs(currentPosition - track.lastPosition);
 
                             if (positionDiff > 1.5 && track.lastPosition > 0) {
                                 // User seeked - this doesn't count as actual play time
                                 track.seekDetected = true;
+                                track.lastPosition = currentPosition;
                             } else if (track.isPlaying && !track.seekDetected) {
                                 // Valid continuous playback
                                 const increment = currentPosition - track.lastPosition;
@@ -428,9 +438,10 @@
                                         });
                                     }
                                 }
+                            } else {
+                                track.lastPosition = currentPosition;
                             }
 
-                            track.lastPosition = currentPosition;
                             track.seekDetected = false;
                         });
 
