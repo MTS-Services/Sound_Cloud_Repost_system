@@ -366,7 +366,7 @@
 
                     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                         const currentTime = data.currentPosition / 1000;
-                        @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                        // @this.call('handleAudioTimeUpdate', campaignId, currentTime);
                     });
                 }
             });
