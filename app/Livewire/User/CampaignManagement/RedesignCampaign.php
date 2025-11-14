@@ -1,4 +1,5 @@
 <?php
+// RedesignCampaign.php - Livewire Component
 
 namespace App\Livewire\User\CampaignManagement;
 
@@ -38,9 +39,6 @@ class RedesignCampaign extends Component
 
     public bool $showCampaignCreator = false;
 
-    // Track playback tracking
-    public array $trackPlaybackData = [];
-
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
@@ -67,8 +65,7 @@ class RedesignCampaign extends Component
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
 
         // Clear tracking data on mount - fresh start every time
-        session()->forget('track_playback_data');
-        $this->trackPlaybackData = [];
+        session()->forget('campaign_playback_tracking');
     }
 
     public function render()
@@ -78,9 +75,14 @@ class RedesignCampaign extends Component
         } else {
             $this->selectedGenres = !empty($this->selectedGenres) ? $this->selectedGenres : user()->genres->pluck('genre')->toArray();
         }
-        $campaigns =  $this->fetchCampaigns();
+        $campaigns = $this->fetchCampaigns();
+
+        // Get tracking data from session
+        $trackingData = session()->get('campaign_playback_tracking', []);
+
         return view('livewire.user.campaign-management.redesign-campaign', [
             'campaigns' => $campaigns,
+            'trackingData' => $trackingData,
         ]);
     }
 
@@ -249,58 +251,48 @@ class RedesignCampaign extends Component
         return $query->paginate(10);
     }
 
-    #[On('trackPlaybackUpdate')]
-    public function updateTrackPlayback($campaignId, $action, $actualPlayTime = 0)
+    #[On('updatePlaybackTracking')]
+    public function updatePlaybackTracking($campaignId, $actualPlayTime, $isEligible, $action)
     {
+        $trackingData = session()->get('campaign_playback_tracking', []);
+
         $campaignId = (string) $campaignId;
 
-        if (!isset($this->trackPlaybackData[$campaignId])) {
-            $this->trackPlaybackData[$campaignId] = [
-                'played' => false,
+        if (!isset($trackingData[$campaignId])) {
+            $trackingData[$campaignId] = [
+                'campaign_id' => $campaignId,
                 'actual_play_time' => 0,
-                'total_play_time' => 0,
                 'is_eligible' => false,
-                'play_count' => 0,
-                'last_action' => null,
-                'created_at' => now()->timestamp,
+                'play_started_at' => now()->toDateTimeString(),
+                'last_updated_at' => now()->toDateTimeString(),
+                'actions' => [],
             ];
         }
 
-        $this->trackPlaybackData[$campaignId]['last_action'] = $action;
+        $trackingData[$campaignId]['actual_play_time'] = $actualPlayTime;
+        $trackingData[$campaignId]['is_eligible'] = $isEligible;
+        $trackingData[$campaignId]['last_updated_at'] = now()->toDateTimeString();
+        $trackingData[$campaignId]['actions'][] = [
+            'action' => $action,
+            'time' => $actualPlayTime,
+            'timestamp' => now()->toDateTimeString(),
+        ];
 
-        if ($action === 'play') {
-            $this->trackPlaybackData[$campaignId]['played'] = true;
-            $this->trackPlaybackData[$campaignId]['play_count']++;
-        }
+        session()->put('campaign_playback_tracking', $trackingData);
 
-        if ($action === 'progress' && $actualPlayTime > 0) {
-            $this->trackPlaybackData[$campaignId]['actual_play_time'] = $actualPlayTime;
-            $this->trackPlaybackData[$campaignId]['total_play_time'] = $actualPlayTime;
-
-            // Check if eligible for repost (5 seconds)
-            if ($actualPlayTime >= 5) {
-                $this->trackPlaybackData[$campaignId]['is_eligible'] = true;
-            }
-        }
-
-        // Save to session
-        session()->put('track_playback_data', $this->trackPlaybackData);
-
-        // Dispatch event to frontend to update button state
-        $this->dispatch('playbackStateUpdated', [
-            'campaignId' => $campaignId,
-            'isEligible' => $this->trackPlaybackData[$campaignId]['is_eligible'],
-            'actualPlayTime' => $this->trackPlaybackData[$campaignId]['actual_play_time'],
+        Log::info('Playback tracking updated', [
+            'campaign_id' => $campaignId,
+            'actual_play_time' => $actualPlayTime,
+            'is_eligible' => $isEligible,
+            'action' => $action,
         ]);
     }
 
-    #[On('clearTrackingData')]
-    public function clearTrackingData()
+    #[On('clearTrackingOnNavigation')]
+    public function clearTrackingOnNavigation()
     {
-        $this->trackPlaybackData = [];
-        session()->forget('track_playback_data');
-
-        $this->dispatch('trackingDataCleared');
+        session()->forget('campaign_playback_tracking');
+        Log::info('Playback tracking cleared on navigation');
     }
 
     #[On('starMarkUser')]
@@ -321,8 +313,29 @@ class RedesignCampaign extends Component
         }
     }
 
-    public function getTrackPlaybackStatus($campaignId)
+    #[On('confirmRepost')]
+    public function confirmRepost($campaignId)
     {
-        return $this->trackPlaybackData[$campaignId] ?? null;
+        $trackingData = session()->get('campaign_playback_tracking', []);
+        $campaignId = (string) $campaignId;
+
+        if (!isset($trackingData[$campaignId]) || !$trackingData[$campaignId]['is_eligible']) {
+            $this->dispatch('alert', type: 'error', message: 'Please play the track for at least 5 seconds before reposting.');
+            return;
+        }
+
+        // Here you would implement the actual repost logic
+        Log::info('Repost confirmed', [
+            'campaign_id' => $campaignId,
+            'actual_play_time' => $trackingData[$campaignId]['actual_play_time'],
+            'user_urn' => user()->urn,
+        ]);
+
+        $this->dispatch('alert', type: 'success', message: 'Track reposted successfully!');
+
+        // Mark as reposted in tracking
+        $trackingData[$campaignId]['reposted'] = true;
+        $trackingData[$campaignId]['reposted_at'] = now()->toDateTimeString();
+        session()->put('campaign_playback_tracking', $trackingData);
     }
 }

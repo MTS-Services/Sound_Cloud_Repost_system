@@ -230,16 +230,16 @@
                                                 :data-campaign-id="{{ $campaign_->id }}"
                                                 x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}')"
                                                 @click="handleRepost('{{ $campaign_->id }}')"
-                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200 text-white dark:text-gray-300 bg-gray-300 dark:bg-gray-600"
+                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
                                                 :class="{
-                                                    'cursor-not-allowed': !isEligibleForRepost('{{ $campaign_->id }}'),
-                                                    'cursor-pointer hover:shadow-lg': isEligibleForRepost('{{ $campaign_->id }}')
+                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300': !isEligibleForRepost('{{ $campaign_->id }}'),
+                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost('{{ $campaign_->id }}')
                                                 }">
                                                 
                                                 <!-- Animated orange fill background -->
                                                 <div 
                                                     class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out"
-                                                    :style="`width: ${Math.min(getPlayTimePercentage('{{ $campaign_->id }}'), 100)}%`">
+                                                    :style="`width: ${getPlayTimePercentage('{{ $campaign_->id }}')}%`">
                                                 </div>
                                                 
                                                 <!-- Button content (stays on top) -->
@@ -292,10 +292,34 @@
         function trackPlaybackManager() {
             return {
                 tracks: {},
+                updateInterval: null,
                 
                 init() {
                     this.initializeSoundCloudWidgets();
-                    this.setupLivewireListeners();
+                    this.startUpdateLoop();
+                },
+                
+                startUpdateLoop() {
+                    // Update UI every 100ms for smooth animation
+                    this.updateInterval = setInterval(() => {
+                        this.updateAllTrackTimes();
+                    }, 100);
+                },
+                
+                updateAllTrackTimes() {
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        
+                        if (track.isPlaying && track.playStartTime) {
+                            const elapsed = (Date.now() - track.playStartTime) / 1000;
+                            
+                            // Only update if increment is valid (not seeking)
+                            if (elapsed > 0 && elapsed < 2 && !track.seekDetected) {
+                                // This is for smooth UI updates only
+                                // Actual tracking happens in PLAY_PROGRESS event
+                            }
+                        }
+                    });
                 },
                 
                 initializeSoundCloudWidgets() {
@@ -317,11 +341,11 @@
                             this.tracks[campaignId] = {
                                 isPlaying: false,
                                 actualPlayTime: 0,
-                                totalPlayTime: 0,
                                 isEligible: false,
                                 lastPosition: 0,
                                 playStartTime: null,
-                                seekDetected: false
+                                seekDetected: false,
+                                widget: null,
                             };
                         }
                         
@@ -341,76 +365,73 @@
                         if (!iframe || !campaignId) return;
                         
                         const widget = SC.Widget(iframe);
+                        this.tracks[campaignId].widget = widget;
                         
                         // PLAY event
                         widget.bind(SC.Widget.Events.PLAY, () => {
-                            this.tracks[campaignId].isPlaying = true;
-                            this.tracks[campaignId].playStartTime = Date.now();
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = true;
+                            track.playStartTime = Date.now();
                             
-                            this.$wire.dispatch('trackPlaybackUpdate', {
-                                campaignId: campaignId,
-                                action: 'play',
-                                actualPlayTime: this.tracks[campaignId].actualPlayTime
-                            });
+                            this.syncToBackend(campaignId, 'play');
                         });
                         
                         // PAUSE event
                         widget.bind(SC.Widget.Events.PAUSE, () => {
-                            this.tracks[campaignId].isPlaying = false;
-                            this.tracks[campaignId].playStartTime = null;
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = false;
+                            track.playStartTime = null;
                             
-                            this.$wire.dispatch('trackPlaybackUpdate', {
-                                campaignId: campaignId,
-                                action: 'pause',
-                                actualPlayTime: this.tracks[campaignId].actualPlayTime
-                            });
+                            this.syncToBackend(campaignId, 'pause');
                         });
                         
                         // FINISH event
                         widget.bind(SC.Widget.Events.FINISH, () => {
-                            this.tracks[campaignId].isPlaying = false;
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = false;
+                            track.playStartTime = null;
                             
-                            this.$wire.dispatch('trackPlaybackUpdate', {
-                                campaignId: campaignId,
-                                action: 'finish',
-                                actualPlayTime: this.tracks[campaignId].actualPlayTime
-                            });
+                            this.syncToBackend(campaignId, 'finish');
                             
                             // Auto-play next track
                             if (nextCampaignId && nextIframe) {
                                 const nextWidget = SC.Widget(nextIframe);
-                                nextWidget.play();
+                                setTimeout(() => nextWidget.play(), 100);
                             }
                         });
                         
-                        // PLAY_PROGRESS event - Critical for tracking actual play time
+                        // PLAY_PROGRESS event - Critical for accurate tracking
                         widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                             const currentPosition = data.currentPosition / 1000; // Convert to seconds
                             const track = this.tracks[campaignId];
                             
-                            // Detect seeking (jumping forward/backward)
+                            // Detect seeking (user manually moved timeline)
                             const positionDiff = Math.abs(currentPosition - track.lastPosition);
                             
                             if (positionDiff > 1.5 && track.lastPosition > 0) {
-                                // User seeked - this doesn't count as actual play time
+                                // User seeked - mark as detected and don't count this time
                                 track.seekDetected = true;
-                            } else if (track.isPlaying && !track.seekDetected) {
+                                track.lastPosition = currentPosition;
+                                return;
+                            }
+                            
+                            if (track.isPlaying && !track.seekDetected) {
                                 // Valid continuous playback
                                 const increment = currentPosition - track.lastPosition;
                                 
+                                // Only count valid increments (between 0 and 2 seconds)
                                 if (increment > 0 && increment < 2) {
                                     track.actualPlayTime += increment;
-                                    track.totalPlayTime += increment;
                                     
                                     // Check if eligible (5 seconds actual play time)
                                     if (track.actualPlayTime >= 5 && !track.isEligible) {
                                         track.isEligible = true;
-                                        
-                                        this.$wire.dispatch('trackPlaybackUpdate', {
-                                            campaignId: campaignId,
-                                            action: 'progress',
-                                            actualPlayTime: track.actualPlayTime
-                                        });
+                                        this.syncToBackend(campaignId, 'eligible');
+                                    }
+                                    
+                                    // Sync to backend every 1 second of play time
+                                    if (Math.floor(track.actualPlayTime) % 1 === 0) {
+                                        this.syncToBackend(campaignId, 'progress');
                                     }
                                 }
                             }
@@ -421,26 +442,23 @@
                         
                         // SEEK event
                         widget.bind(SC.Widget.Events.SEEK, (data) => {
-                            this.tracks[campaignId].seekDetected = true;
-                            this.tracks[campaignId].lastPosition = data.currentPosition / 1000;
+                            const track = this.tracks[campaignId];
+                            track.seekDetected = true;
+                            track.lastPosition = data.currentPosition / 1000;
                         });
                     });
                 },
                 
-                setupLivewireListeners() {
-                    // Listen for playback state updates from backend
-                    Livewire.on('playbackStateUpdated', (data) => {
-                        const { campaignId, isEligible, actualPlayTime } = data[0];
-                        
-                        if (this.tracks[campaignId]) {
-                            this.tracks[campaignId].isEligible = isEligible;
-                            this.tracks[campaignId].actualPlayTime = actualPlayTime;
-                        }
-                    });
+                syncToBackend(campaignId, action) {
+                    const track = this.tracks[campaignId];
+                    if (!track) return;
                     
-                    // Clear tracking data on navigation
-                    Livewire.on('trackingDataCleared', () => {
-                        this.tracks = {};
+                    // Dispatch to Livewire backend
+                    this.$wire.dispatch('updatePlaybackTracking', {
+                        campaignId: campaignId,
+                        actualPlayTime: track.actualPlayTime,
+                        isEligible: track.isEligible,
+                        action: action
                     });
                 },
                 
@@ -454,7 +472,8 @@
                 
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
-                    return (playTime / 5) * 100; // 5 seconds = 100%
+                    const percentage = Math.min((playTime / 5) * 100, 100);
+                    return percentage.toFixed(2);
                 },
                 
                 handleRepost(campaignId) {
@@ -467,13 +486,29 @@
                 },
                 
                 clearAllTracking() {
+                    // Stop all playing tracks
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        if (track.widget && track.isPlaying) {
+                            track.widget.pause();
+                        }
+                    });
+                    
+                    // Clear tracking data
                     this.tracks = {};
-                    this.$wire.dispatch('clearTrackingData');
+                    
+                    // Clear backend session data
+                    this.$wire.dispatch('clearTrackingOnNavigation');
+                    
+                    // Clear update interval
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                    }
                 }
             };
         }
         
-        // Initialize on various Livewire events
+        // Initialize on Livewire events
         document.addEventListener('livewire:initialized', function() {
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
@@ -481,11 +516,25 @@
         document.addEventListener('livewire:navigated', function() {
             // Reinitialize widgets after navigation
             setTimeout(() => {
-                const trackManager = Alpine.$data(document.querySelector('[x-data]'));
-                if (trackManager && trackManager.initializeSoundCloudWidgets) {
-                    trackManager.initializeSoundCloudWidgets();
+                const mainElement = document.querySelector('main[x-data]');
+                if (mainElement && mainElement.__x) {
+                    const trackManager = mainElement.__x.$data;
+                    if (trackManager && trackManager.initializeSoundCloudWidgets) {
+                        trackManager.initializeSoundCloudWidgets();
+                    }
                 }
             }, 100);
+        });
+        
+        // Clean up on page leave
+        window.addEventListener('beforeunload', function() {
+            const mainElement = document.querySelector('main[x-data]');
+            if (mainElement && mainElement.__x) {
+                const trackManager = mainElement.__x.$data;
+                if (trackManager && trackManager.clearAllTracking) {
+                    trackManager.clearAllTracking();
+                }
+            }
         });
     </script>
 </main>
