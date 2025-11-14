@@ -65,7 +65,7 @@ class RedesignCampaign extends Component
     public function mount(): void
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
-        
+
         // Clear tracking data on mount - fresh start every time
         session()->forget('track_playback_data');
         $this->trackPlaybackData = [];
@@ -154,7 +154,7 @@ class RedesignCampaign extends Component
                 fn($q) => $q->whereIn('target_genre', $this->selectedGenres)
             )
             ->withoutSelf()
-            ->open() 
+            ->open()
             ->with(['music.user.userInfo', 'reposts', 'user.starredUsers'])
             ->count();
 
@@ -253,7 +253,7 @@ class RedesignCampaign extends Component
     public function updateTrackPlayback($campaignId, $action, $actualPlayTime = 0)
     {
         $campaignId = (string) $campaignId;
-        
+
         if (!isset($this->trackPlaybackData[$campaignId])) {
             $this->trackPlaybackData[$campaignId] = [
                 'played' => false,
@@ -264,20 +264,21 @@ class RedesignCampaign extends Component
                 'last_action' => null,
                 'created_at' => now()->timestamp,
                 'reposted' => false,
+                'hasEverPlayed' => false,
             ];
         }
 
         $this->trackPlaybackData[$campaignId]['last_action'] = $action;
-        
+
         if ($action === 'play') {
             $this->trackPlaybackData[$campaignId]['played'] = true;
             $this->trackPlaybackData[$campaignId]['play_count']++;
         }
-        
+
         if ($action === 'progress' && $actualPlayTime > 0) {
             $this->trackPlaybackData[$campaignId]['actual_play_time'] = $actualPlayTime;
             $this->trackPlaybackData[$campaignId]['total_play_time'] = $actualPlayTime;
-            
+
             // Check if eligible for repost (5 seconds)
             if ($actualPlayTime >= 5) {
                 $this->trackPlaybackData[$campaignId]['is_eligible'] = true;
@@ -286,7 +287,7 @@ class RedesignCampaign extends Component
 
         // Save to session
         session()->put('track_playback_data', $this->trackPlaybackData);
-        
+
         // Dispatch event to frontend to update button state
         $this->dispatch('playbackStateUpdated', [
             'campaignId' => $campaignId,
@@ -300,7 +301,7 @@ class RedesignCampaign extends Component
     {
         $this->trackPlaybackData = [];
         session()->forget('track_playback_data');
-        
+
         $this->dispatch('trackingDataCleared');
     }
 
