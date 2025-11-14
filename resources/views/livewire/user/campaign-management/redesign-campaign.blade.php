@@ -225,38 +225,34 @@
                                         </div>
                                         
                                         <div class="relative">
-                                            <!-- Repost Button with tracking -->
+                                            <!-- Repost Button with animated fill effect -->
                                             <button
                                                 :data-campaign-id="{{ $campaign_->id }}"
                                                 x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}')"
                                                 @click="handleRepost('{{ $campaign_->id }}')"
+                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200 text-white dark:text-gray-300 bg-gray-300 dark:bg-gray-600"
                                                 :class="{
-                                                    'opacity-50 cursor-not-allowed bg-gray-400': !isEligibleForRepost('{{ $campaign_->id }}'),
-                                                    'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 cursor-pointer': isEligibleForRepost('{{ $campaign_->id }}')
-                                                }"
-                                                class="repost-button flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200 text-white dark:text-gray-300">
-                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="1" y="1" width="24" height="16" rx="3"
-                                                        fill="none" stroke="currentColor" stroke-width="2" />
-                                                    <circle cx="8" cy="9" r="3" fill="none"
-                                                        stroke="currentColor" stroke-width="2" />
-                                                </svg>
-                                                <span>{{ user()->repost_price }} Repost</span>
+                                                    'cursor-not-allowed': !isEligibleForRepost('{{ $campaign_->id }}'),
+                                                    'cursor-pointer hover:shadow-lg': isEligibleForRepost('{{ $campaign_->id }}')
+                                                }">
+                                                
+                                                <!-- Animated orange fill background -->
+                                                <div 
+                                                    class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out"
+                                                    :style="`width: ${Math.min(getPlayTimePercentage('{{ $campaign_->id }}'), 100)}%`">
+                                                </div>
+                                                
+                                                <!-- Button content (stays on top) -->
+                                                <div class="relative z-10 flex items-center gap-2">
+                                                    <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="1" y="1" width="24" height="16" rx="3"
+                                                            fill="none" stroke="currentColor" stroke-width="2" />
+                                                        <circle cx="8" cy="9" r="3" fill="none"
+                                                            stroke="currentColor" stroke-width="2" />
+                                                    </svg>
+                                                    <span>{{ user()->repost_price }} Repost</span>
+                                                </div>
                                             </button>
-                                            
-                                            <!-- Play time indicator -->
-                                            <div x-show="getPlayTime('{{ $campaign_->id }}') > 0 && !isEligibleForRepost('{{ $campaign_->id }}')"
-                                                 x-transition
-                                                 class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                <span x-text="Math.floor(getPlayTime('{{ $campaign_->id }}'))"></span>s / 5s
-                                            </div>
-                                            
-                                            <!-- Eligible indicator -->
-                                            <div x-show="isEligibleForRepost('{{ $campaign_->id }}')"
-                                                 x-transition
-                                                 class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                Ready to Repost! ✓
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -454,6 +450,11 @@
                 
                 getPlayTime(campaignId) {
                     return this.tracks[campaignId]?.actualPlayTime || 0;
+                },
+                
+                getPlayTimePercentage(campaignId) {
+                    const playTime = this.getPlayTime(campaignId);
+                    return (playTime / 5) * 100; // 5 seconds = 100%
                 },
                 
                 handleRepost(campaignId) {

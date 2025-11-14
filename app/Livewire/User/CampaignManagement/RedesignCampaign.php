@@ -66,8 +66,9 @@ class RedesignCampaign extends Component
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
         
-        // Initialize tracking data from session or create new
-        $this->trackPlaybackData = session()->get('track_playback_data', []);
+        // Clear tracking data on mount - fresh start every time
+        session()->forget('track_playback_data');
+        $this->trackPlaybackData = [];
     }
 
     public function render()

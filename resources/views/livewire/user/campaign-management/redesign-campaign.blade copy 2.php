@@ -1,4 +1,4 @@
-<main>
+<main x-data="trackPlaybackManager()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -7,7 +7,9 @@
         <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
             <div class="flex gap-1 sm:space-x-8">
                 @foreach (['recommendedPro' => 'Recommended Pro', 'recommended' => 'Recommended', 'all' => 'All'] as $tab => $label)
-                    <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" wire:navigate
+                    <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" 
+                       wire:navigate
+                       @click="clearAllTracking()"
                         @class([
                             'tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2',
                             'border-orange-500 text-orange-600' => $activeMainTab === $tab,
@@ -15,8 +17,7 @@
                                 $activeMainTab !== $tab,
                         ])>
                         {{ __($label) }}
-                        <span
-                            class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCounts[$tab] }}</span>
+                        <span class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCounts[$tab] }}</span>
                     </a>
                 @endforeach
             </div>
@@ -33,7 +34,6 @@
 
         {{-- Filter options --}}
         <div x-data="{ openFilterByTrack: false, openFilterByGenre: false }" class="flex flex-col sm:flex-row sm:items-center gap-4 mt-4 mb-2">
-
             <div class="flex w-full sm:w-auto gap-2">
                 {{-- Filter by track --}}
                 <div class="relative flex-1 sm:flex-none">
@@ -80,7 +80,6 @@
                         class="absolute left-0 mt-2 w-96 rounded-md shadow-lg bg-white dark:bg-slate-800 z-50">
                         <div class="flex flex-wrap gap-2 p-2">
                             @foreach (AllGenres() as $genre)
-                                {{-- 🔥 UPDATED: Added loading indicator with proper wire:loading directive --}}
                                 <button wire:click="toggleGenre('{{ $genre }}')"
                                     wire:loading.class="opacity-50 cursor-wait" wire:loading.attr="disabled"
                                     wire:target="toggleGenre('{{ $genre }}')" @class([
@@ -90,10 +89,7 @@
                                             $genre,
                                             $selectedGenres),
                                     ])>
-                                    {{-- Genre text --}}
                                     <span>{{ $genre }}</span>
-
-                                    {{-- 🔥 UPDATED: Compact loading spinner (hidden by default, shown on loading) --}}
                                     <svg wire:loading wire:target="toggleGenre('{{ $genre }}')"
                                         class="animate-spin h-3.5 w-3.5 ml-1" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" viewBox="0 0 24 24">
@@ -112,10 +108,8 @@
 
             {{-- Search box --}}
             <div x-data="{ showInput: false }" class="w-full flex-1 relative">
-                <div
-                    class="relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
-                    <x-lucide-search
-                        class="w-4 h-4 absolute left-2 text-gray-500 dark:text-slate-300 pointer-events-none" />
+                <div class="relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
+                    <x-lucide-search class="w-4 h-4 absolute left-2 text-gray-500 dark:text-slate-300 pointer-events-none" />
 
                     <div x-show="!showInput" @click="showInput = true; $wire.call('getAllTags')"
                         class="w-full pl-8 pr-2 py-2 cursor-pointer dark:text-slate-300">
@@ -146,33 +140,27 @@
         </div>
 
         <div class="flex flex-col space-y-4">
-
             @forelse ($campaigns as $campaign_)
                 <div class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
+                    data-campaign-id="{{ $campaign_->id }}"
                     data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
-                        <div
-                            class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                        <div class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                             <div class="flex flex-col md:flex-row gap-4">
-                                <!-- Track Details -->
                                 <div class="flex-1 flex flex-col justify-between relative">
-                                    {{-- 💡 IMPORTANT: Only render the actual player for the first item --}}
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
-                                            :visual="false" />
+                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166" :visual="false" />
                                     </div>
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
-                                            <div
-                                                class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                            <div class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                                 FEATURED
                                             </div>
                                         @endif
                                         @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
-                                            <div
-                                                class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                            <div class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                                 {{ __('Boosted') }}
                                             </div>
                                         @endif
@@ -184,17 +172,14 @@
                         <!-- Right Column - Campaign Info -->
                         <div class="w-full lg:w-1/2 p-4">
                             <div class="flex flex-col h-full justify-between">
-                                <!-- Avatar + Title + Icon -->
-                                <div
-                                    class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
+                                <div class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
                                     <div class="flex items-center gap-3 w-full">
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
-                                            alt="Audio Cure avatar">
+                                            alt="Avatar">
                                         <div x-data="{ open: false }" class="inline-block text-left">
                                             <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                                <span
-                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
+                                                <span class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -215,44 +200,42 @@
                                                 x-cloak>
                                                 <a href="{{ $campaign_?->music?->user?->soundcloud_permalink_url }}"
                                                     target="_blank"
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                    SoundCloud
-                                                    Profile</a>
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
                                                 @if ($campaign_->user)
                                                     <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
                                                         wire:navigate
-                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                        RepostChain Profile</a>
+                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit RepostChain Profile</a>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Stats and Repost Button -->
+                                    
                                     <div class="flex items-center justify-between gap-4 w-full">
-                                        <div
-                                            class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
+                                        <div class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
-                                                <svg width="26" height="18" viewBox="0 0 26 18"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="1" y="1" width="24" height="16" rx="3"
                                                         fill="none" stroke="currentColor" stroke-width="2" />
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span
-                                                    class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
+                                                <span class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
                                             </div>
-                                            <span
-                                                class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                            <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
+                                        
                                         <div class="relative">
-                                            <!-- Repost Button -->
+                                            <!-- Repost Button with tracking -->
                                             <button
-                                                @if (session()->get('repostedId') != $campaign_->id) wire:click="confirmRepost('{{ $campaign_->id }}')" @endif
-                                                class="flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-colors bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white dark:text-gray-300 cursor-pointer">
-
-                                                <svg width="26" height="18" viewBox="0 0 26 18"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                :data-campaign-id="{{ $campaign_->id }}"
+                                                x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}')"
+                                                @click="handleRepost('{{ $campaign_->id }}')"
+                                                :class="{
+                                                    'opacity-50 cursor-not-allowed bg-gray-400': !isEligibleForRepost('{{ $campaign_->id }}'),
+                                                    'bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 cursor-pointer': isEligibleForRepost('{{ $campaign_->id }}')
+                                                }"
+                                                class="repost-button flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200 text-white dark:text-gray-300">
+                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="1" y="1" width="24" height="16" rx="3"
                                                         fill="none" stroke="currentColor" stroke-width="2" />
                                                     <circle cx="8" cy="9" r="3" fill="none"
@@ -260,20 +243,26 @@
                                                 </svg>
                                                 <span>{{ user()->repost_price }} Repost</span>
                                             </button>
-                                            {{-- @if (in_array($campaign_->id, $this->repostedCampaigns))
-                                                <div
-                                                    class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                    Reposted! ✓
-                                                </div>
-                                            @endif --}}
+                                            
+                                            <!-- Play time indicator -->
+                                            <div x-show="getPlayTime('{{ $campaign_->id }}') > 0 && !isEligibleForRepost('{{ $campaign_->id }}')"
+                                                 x-transition
+                                                 class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                                <span x-text="Math.floor(getPlayTime('{{ $campaign_->id }}'))"></span>s / 5s
+                                            </div>
+                                            
+                                            <!-- Eligible indicator -->
+                                            <div x-show="isEligibleForRepost('{{ $campaign_->id }}')"
+                                                 x-transition
+                                                 class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                                Ready to Repost! ✓
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Genre Badge -->
                                 <div class="mt-auto">
-                                    <span
-                                        class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
+                                    <span class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
                                         {{ !empty($campaign_->music?->genre) ? $campaign_->music?->genre : 'Unknown Genre' }}
                                     </span>
                                 </div>
@@ -295,104 +284,207 @@
                     ]) }}
                 </div>
             @endif
-
         </div>
     </section>
+    
     @if ($showCampaignCreator)
         @livewire('user.campaign-management.campaign-creator')
     @endif
 
-
     <script>
-        function initializeSoundCloudWidgets() {
-            if (typeof SC === 'undefined') {
-                setTimeout(initializeSoundCloudWidgets, 500);
-                return;
-            }
-            const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-            console.log('playerContainers', playerContainers);
-
-            playerContainers.forEach(container => {
-                const campaignId = container.dataset.campaignId;
-
-
-                let currentCampaignCard = container.closest('.campaign-card');
-                console.log('currentCampaignCard', currentCampaignCard);
-
-                // Safety check - make sure we found the card
-                if (!currentCampaignCard) {
-                    console.error('Could not find the parent campaign-card for campaignId', campaignId);
-                    return;
-                }
-
-                // 2. Find the next campaign-card sibling
-                const nextCampaignCard = currentCampaignCard.nextElementSibling;
-                console.log('nextCampaignCard', nextCampaignCard);
-
-                // 3. Find the iframe inside the NEXT campaign card
-                let nextIframe = null;
-                let nextCampaignId = null;
-
-                if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
-                    // Find the iframe inside the next card
-                    const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
-
-                    if (nextPlayerContainer) {
-                        nextIframe = nextPlayerContainer.querySelector('iframe');
-                        nextCampaignId = nextPlayerContainer.dataset.campaignId;
+        // Alpine.js component for track playback management
+        function trackPlaybackManager() {
+            return {
+                tracks: {},
+                
+                init() {
+                    this.initializeSoundCloudWidgets();
+                    this.setupLivewireListeners();
+                },
+                
+                initializeSoundCloudWidgets() {
+                    if (typeof SC === 'undefined') {
+                        setTimeout(() => this.initializeSoundCloudWidgets(), 500);
+                        return;
                     }
-                }
-                const iframe = container.querySelector('iframe');
-
-                if (iframe && campaignId) {
-                    const widget = SC.Widget(iframe);
-
-                    widget.bind(SC.Widget.Events.PLAY, () => {
-                        console.log('PLAY event fired for campaignId', campaignId);
+                    
+                    const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+                    
+                    playerContainers.forEach(container => {
+                        const campaignId = container.dataset.campaignId;
+                        const currentCampaignCard = container.closest('.campaign-card');
+                        
+                        if (!currentCampaignCard) return;
+                        
+                        // Initialize tracking for this campaign
+                        if (!this.tracks[campaignId]) {
+                            this.tracks[campaignId] = {
+                                isPlaying: false,
+                                actualPlayTime: 0,
+                                totalPlayTime: 0,
+                                isEligible: false,
+                                lastPosition: 0,
+                                playStartTime: null,
+                                seekDetected: false
+                            };
+                        }
+                        
+                        const nextCampaignCard = currentCampaignCard.nextElementSibling;
+                        let nextIframe = null;
+                        let nextCampaignId = null;
+                        
+                        if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
+                            const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+                            if (nextPlayerContainer) {
+                                nextIframe = nextPlayerContainer.querySelector('iframe');
+                                nextCampaignId = nextPlayerContainer.dataset.campaignId;
+                            }
+                        }
+                        
+                        const iframe = container.querySelector('iframe');
+                        if (!iframe || !campaignId) return;
+                        
+                        const widget = SC.Widget(iframe);
+                        
+                        // PLAY event
+                        widget.bind(SC.Widget.Events.PLAY, () => {
+                            this.tracks[campaignId].isPlaying = true;
+                            this.tracks[campaignId].playStartTime = Date.now();
+                            
+                            this.$wire.dispatch('trackPlaybackUpdate', {
+                                campaignId: campaignId,
+                                action: 'play',
+                                actualPlayTime: this.tracks[campaignId].actualPlayTime
+                            });
+                        });
+                        
+                        // PAUSE event
+                        widget.bind(SC.Widget.Events.PAUSE, () => {
+                            this.tracks[campaignId].isPlaying = false;
+                            this.tracks[campaignId].playStartTime = null;
+                            
+                            this.$wire.dispatch('trackPlaybackUpdate', {
+                                campaignId: campaignId,
+                                action: 'pause',
+                                actualPlayTime: this.tracks[campaignId].actualPlayTime
+                            });
+                        });
+                        
+                        // FINISH event
+                        widget.bind(SC.Widget.Events.FINISH, () => {
+                            this.tracks[campaignId].isPlaying = false;
+                            
+                            this.$wire.dispatch('trackPlaybackUpdate', {
+                                campaignId: campaignId,
+                                action: 'finish',
+                                actualPlayTime: this.tracks[campaignId].actualPlayTime
+                            });
+                            
+                            // Auto-play next track
+                            if (nextCampaignId && nextIframe) {
+                                const nextWidget = SC.Widget(nextIframe);
+                                nextWidget.play();
+                            }
+                        });
+                        
+                        // PLAY_PROGRESS event - Critical for tracking actual play time
+                        widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                            const currentPosition = data.currentPosition / 1000; // Convert to seconds
+                            const track = this.tracks[campaignId];
+                            
+                            // Detect seeking (jumping forward/backward)
+                            const positionDiff = Math.abs(currentPosition - track.lastPosition);
+                            
+                            if (positionDiff > 1.5 && track.lastPosition > 0) {
+                                // User seeked - this doesn't count as actual play time
+                                track.seekDetected = true;
+                            } else if (track.isPlaying && !track.seekDetected) {
+                                // Valid continuous playback
+                                const increment = currentPosition - track.lastPosition;
+                                
+                                if (increment > 0 && increment < 2) {
+                                    track.actualPlayTime += increment;
+                                    track.totalPlayTime += increment;
+                                    
+                                    // Check if eligible (5 seconds actual play time)
+                                    if (track.actualPlayTime >= 5 && !track.isEligible) {
+                                        track.isEligible = true;
+                                        
+                                        this.$wire.dispatch('trackPlaybackUpdate', {
+                                            campaignId: campaignId,
+                                            action: 'progress',
+                                            actualPlayTime: track.actualPlayTime
+                                        });
+                                    }
+                                }
+                            }
+                            
+                            track.lastPosition = currentPosition;
+                            track.seekDetected = false;
+                        });
+                        
+                        // SEEK event
+                        widget.bind(SC.Widget.Events.SEEK, (data) => {
+                            this.tracks[campaignId].seekDetected = true;
+                            this.tracks[campaignId].lastPosition = data.currentPosition / 1000;
+                        });
                     });
-
-                    widget.bind(SC.Widget.Events.PAUSE, () => {
-                        console.log('PAUSE event fired for campaignId', campaignId);
-                    });
-
-                    widget.bind(SC.Widget.Events.FINISH, () => {
-                        console.log('FINISH event fired for campaignId', campaignId);
-                        if (nextCampaignId && nextIframe) {
-                            console.log('nextIframe', nextIframe);
-                            const nextWidget = SC.Widget(nextIframe);
-                            nextWidget.play();
+                },
+                
+                setupLivewireListeners() {
+                    // Listen for playback state updates from backend
+                    Livewire.on('playbackStateUpdated', (data) => {
+                        const { campaignId, isEligible, actualPlayTime } = data[0];
+                        
+                        if (this.tracks[campaignId]) {
+                            this.tracks[campaignId].isEligible = isEligible;
+                            this.tracks[campaignId].actualPlayTime = actualPlayTime;
                         }
                     });
-
-                    widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                        const currentTime = data.currentPosition / 1000;
-                        // @this.call('handleAudioTimeUpdate', campaignId, currentTime);
+                    
+                    // Clear tracking data on navigation
+                    Livewire.on('trackingDataCleared', () => {
+                        this.tracks = {};
                     });
+                },
+                
+                isEligibleForRepost(campaignId) {
+                    return this.tracks[campaignId]?.isEligible || false;
+                },
+                
+                getPlayTime(campaignId) {
+                    return this.tracks[campaignId]?.actualPlayTime || 0;
+                },
+                
+                handleRepost(campaignId) {
+                    if (!this.isEligibleForRepost(campaignId)) {
+                        return;
+                    }
+                    
+                    // Dispatch repost action
+                    this.$wire.dispatch('confirmRepost', { campaignId: campaignId });
+                },
+                
+                clearAllTracking() {
+                    this.tracks = {};
+                    this.$wire.dispatch('clearTrackingData');
                 }
-            });
+            };
         }
+        
+        // Initialize on various Livewire events
         document.addEventListener('livewire:initialized', function() {
-            initializeSoundCloudWidgets();
+            Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
+        
         document.addEventListener('livewire:navigated', function() {
-            initializeSoundCloudWidgets();
-            // @this.call('forgetRepostedId');
-        });
-        document.addEventListener('livewire:load', function() {
-            initializeSoundCloudWidgets();
-        });
-        document.addEventListener('livewire:updated', function() {
-            initializeSoundCloudWidgets();
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeSoundCloudWidgets();
-        });
-
-        document.addEventListener('livewire:dispatched', (event) => {
-            if (event.detail.event === 'soundcloud-widgets-reinitialize') {
-                initializeSoundCloudWidgets();
-            }
+            // Reinitialize widgets after navigation
+            setTimeout(() => {
+                const trackManager = Alpine.$data(document.querySelector('[x-data]'));
+                if (trackManager && trackManager.initializeSoundCloudWidgets) {
+                    trackManager.initializeSoundCloudWidgets();
+                }
+            }, 100);
         });
     </script>
-
 </main>

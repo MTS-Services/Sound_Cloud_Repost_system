@@ -38,6 +38,9 @@ class RedesignCampaign extends Component
 
     public bool $showCampaignCreator = false;
 
+    // Track playback tracking
+    public array $trackPlaybackData = [];
+
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
     protected ?PlaylistService $playlistService = null;
@@ -62,6 +65,9 @@ class RedesignCampaign extends Component
     public function mount(): void
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
+        
+        // Initialize tracking data from session or create new
+        $this->trackPlaybackData = session()->get('track_playback_data', []);
     }
 
     public function render()
@@ -110,12 +116,6 @@ class RedesignCampaign extends Component
         $this->suggestedTags = [];
     }
 
-    public function getAllTrackTypes(): void
-    {
-        // This method seems unused - consider removing if not needed
-        // If needed, it's already optimized with the computed property
-    }
-
     public function toggleGenre(string $genre): void
     {
         $key = array_search($genre, $this->selectedGenres, true);
@@ -125,11 +125,9 @@ class RedesignCampaign extends Component
             $this->selectedGenres = array_values($this->selectedGenres);
         } else {
             $this->selectedGenres[] = $genre;
-            // Remove 'all' when specific genre is selected
             $this->selectedGenres = array_diff($this->selectedGenres, ['all']);
         }
 
-        // Reset to 'all' if no genres selected
         if (empty($this->selectedGenres)) {
             $this->selectedGenres = ['all'];
         }
@@ -143,14 +141,11 @@ class RedesignCampaign extends Component
     #[On('refreshCampaigns')]
     public function fetchCampaigns()
     {
-        // Determine explicit selection and user default genres
         $explicitSelection = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'];
         $explicitCleared = $this->selectedGenres === ['all'];
         $userDefaultGenres = user()->genres->pluck('genre')->toArray();
 
-        // ---------- COUNTS: Each tab has independent filtering logic ----------
-
-        // ALL tab count - only filtered if explicitly selected on ALL tab
+        // ALL tab count
         $allCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->when(
@@ -162,7 +157,7 @@ class RedesignCampaign extends Component
             ->with(['music.user.userInfo', 'reposts', 'user.starredUsers'])
             ->count();
 
-        // RECOMMENDED PRO tab count - only filtered if explicitly selected on RECOMMENDED PRO tab
+        // RECOMMENDED PRO tab count
         $recommendedProCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('user', fn($q) => $q->isPro())
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
@@ -175,7 +170,7 @@ class RedesignCampaign extends Component
             ->with(['music.user.userInfo', 'reposts', 'user.starredUsers'])
             ->count();
 
-        // RECOMMENDED tab count - complex logic
+        // RECOMMENDED tab count
         $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
@@ -183,17 +178,12 @@ class RedesignCampaign extends Component
             ->with(['music.user.userInfo', 'reposts', 'user.starredUsers']);
 
         if ($this->activeMainTab === 'recommended') {
-            // When on recommended tab
             if ($explicitSelection) {
-                // User explicitly selected genres
                 $recommendedCountQuery->whereIn('target_genre', $this->selectedGenres);
             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                // No explicit selection and not cleared = apply user default genres
                 $recommendedCountQuery->whereIn('target_genre', $userDefaultGenres);
             }
-            // If explicitCleared, show all (no filter)
         } else {
-            // When NOT on recommended tab, always show count with user default genres
             if (!empty($userDefaultGenres)) {
                 $recommendedCountQuery->whereIn('target_genre', $userDefaultGenres);
             }
@@ -207,7 +197,7 @@ class RedesignCampaign extends Component
             'all'            => $allCount,
         ];
 
-        // ---------- PAGINATION: build the displayed list according to active tab ----------
+        // Build query for pagination
         $query = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->with(['music', 'user', 'reposts', 'user.starredUsers'])
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
@@ -234,7 +224,6 @@ class RedesignCampaign extends Component
                 break;
         }
 
-        // Apply search filter
         if (!empty($this->search)) {
             $query->whereHas('music', function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
@@ -242,7 +231,6 @@ class RedesignCampaign extends Component
             });
         }
 
-        // Apply tag filters
         if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
             $query->whereHas('music', function ($q) {
                 $q->where(function ($tagQuery) {
@@ -253,12 +241,65 @@ class RedesignCampaign extends Component
             });
         }
 
-        // Apply music type filter
         if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
         return $query->paginate(10);
+    }
+
+    #[On('trackPlaybackUpdate')]
+    public function updateTrackPlayback($campaignId, $action, $actualPlayTime = 0)
+    {
+        $campaignId = (string) $campaignId;
+        
+        if (!isset($this->trackPlaybackData[$campaignId])) {
+            $this->trackPlaybackData[$campaignId] = [
+                'played' => false,
+                'actual_play_time' => 0,
+                'total_play_time' => 0,
+                'is_eligible' => false,
+                'play_count' => 0,
+                'last_action' => null,
+                'created_at' => now()->timestamp,
+            ];
+        }
+
+        $this->trackPlaybackData[$campaignId]['last_action'] = $action;
+        
+        if ($action === 'play') {
+            $this->trackPlaybackData[$campaignId]['played'] = true;
+            $this->trackPlaybackData[$campaignId]['play_count']++;
+        }
+        
+        if ($action === 'progress' && $actualPlayTime > 0) {
+            $this->trackPlaybackData[$campaignId]['actual_play_time'] = $actualPlayTime;
+            $this->trackPlaybackData[$campaignId]['total_play_time'] = $actualPlayTime;
+            
+            // Check if eligible for repost (5 seconds)
+            if ($actualPlayTime >= 5) {
+                $this->trackPlaybackData[$campaignId]['is_eligible'] = true;
+            }
+        }
+
+        // Save to session
+        session()->put('track_playback_data', $this->trackPlaybackData);
+        
+        // Dispatch event to frontend to update button state
+        $this->dispatch('playbackStateUpdated', [
+            'campaignId' => $campaignId,
+            'isEligible' => $this->trackPlaybackData[$campaignId]['is_eligible'],
+            'actualPlayTime' => $this->trackPlaybackData[$campaignId]['actual_play_time'],
+        ]);
+    }
+
+    #[On('clearTrackingData')]
+    public function clearTrackingData()
+    {
+        $this->trackPlaybackData = [];
+        session()->forget('track_playback_data');
+        
+        $this->dispatch('trackingDataCleared');
     }
 
     #[On('starMarkUser')]
@@ -277,5 +318,10 @@ class RedesignCampaign extends Component
             ]);
             $this->dispatch('alert', type: 'error', message: 'An error occurred while updating star mark status. Please try again later.');
         }
+    }
+
+    public function getTrackPlaybackStatus($campaignId)
+    {
+        return $this->trackPlaybackData[$campaignId] ?? null;
     }
 }
