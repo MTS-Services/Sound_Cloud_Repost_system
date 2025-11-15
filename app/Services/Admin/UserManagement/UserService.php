@@ -87,36 +87,6 @@ class UserService
             'updater_type' => get_class(admin())
         ]);
     }
-    public function banUser(User $user): void
-    {
-        try {
-            $user->update([
-                'banned_at'  => now(),
-                'bander_id'  => admin()->id,
-                'ban_reason' => 'Banned by ' . admin()->name,
-                'updater_id' => admin()->id,
-                'updater_type' => get_class(admin()),
-            ]);
-        } catch (\Exception $e) {
-            $user->update([
-                'banned_at'  => null,
-                'bander_id'  => null,
-                'ban_reason' => null,
-                'updater_id' => admin()->id,
-                'updater_type' => get_class(admin()),
-            ]);
-        }
-    }
-    public function UnbanUser(User $user): void
-    {
-        $user->update([
-            'banned_at'  => null,
-            'bander_id'  => null,
-            'ban_reason' => null,
-            'updater_id' => admin()->id,
-            'updater_type' => get_class(admin()),
-        ]);
-    }
     public function banUnbanUser(User $user, array $data = []): void
     {
         $isBanned = !is_null($user->banned_at);
@@ -126,6 +96,7 @@ class UserService
                 'banned_at'  => null,
                 'bander_id'  => null,
                 'ban_reason' => null,
+                'status'     => User::STATUS_ACTIVE,
                 'updater_id' => admin()->id,
                 'updater_type' => get_class(admin()),
             ]);
@@ -134,6 +105,7 @@ class UserService
                 'banned_at'  => now(),
                 'bander_id'  => admin()->id,
                 'ban_reason' => $data['ban_reason'] ?? null,
+                'status'     => User::STATUS_INACTIVE,
                 'updater_id' => admin()->id,
                 'updater_type' => get_class(admin()),
             ]);

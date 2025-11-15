@@ -64,6 +64,8 @@ class SoundCloudController extends Controller
                     $findUser->update([
                         'banned_at' => null,
                         'bander_id' => null,
+                        'ban_reason' => null,
+                        'status' => User::STATUS_ACTIVE,
                     ]);
                 }
             } elseif ($findUser && $findUser->banned_at != null) {

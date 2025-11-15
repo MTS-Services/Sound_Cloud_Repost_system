@@ -622,7 +622,7 @@ class Member extends Component
 
     public function render()
     {
-        $query = User::where('urn', '!=', user()->urn)
+        $query = User::where('urn', '!=', user()->urn)->where('banned_at', null)
             ->with(['userInfo', 'genres', 'tracks', 'reposts', 'playlists'])->active();
 
         // if ($this->selectedGenres) {

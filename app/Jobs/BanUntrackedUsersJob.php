@@ -48,6 +48,7 @@ class BanUntrackedUsersJob implements ShouldQueue
                 $user->update([
                     'banned_at' => now(),
                     'bander_id' => null,
+                    'ban_reason' => 'Your linked SoundCloud account has no public tracks. RepostChain is intended for active creators, so accounts without tracks may be temporarily suspended.',
                     'status' => User::STATUS_INACTIVE,
                 ]);
                 $mailDatas = [[
