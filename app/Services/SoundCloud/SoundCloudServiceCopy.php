@@ -52,7 +52,7 @@ class SoundCloudServiceCopy
         // $this->ensureSoundCloudConnection($user);
 
         // // Before every API call, check if the token needs to be refreshed.
-        // $this->refreshUserTokenIfNeeded($user);
+        $this->refreshUserTokenIfNeeded($user);
 
         // Retrieve the refreshed user instance and token to ensure we have the latest data.
         $user->refresh();

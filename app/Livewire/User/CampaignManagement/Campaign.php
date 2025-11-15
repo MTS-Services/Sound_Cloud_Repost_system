@@ -264,7 +264,7 @@ class Campaign extends Component
     }
     public function updated($propertyName)
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }

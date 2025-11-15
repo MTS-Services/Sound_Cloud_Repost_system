@@ -190,7 +190,7 @@ class MyCampaign extends Component
 
     public function updated($propertyName): void
     {
-        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $budgetValidationFields = ['costPerRepost', 'targetReposts', 'editCostPerRepost', 'editTargetReposts'];
 
         if (in_array($propertyName, $budgetValidationFields)) {
