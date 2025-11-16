@@ -289,7 +289,6 @@
             @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
                 <div class="mt-6">
                     {{ $campaigns->links('components.pagination.wire-navigate', [
-                        'pageName' => $activeMainTab . 'Page',
                         'keep' => ['tab' => $activeMainTab, 'selectedGenres' => $selectedGenres],
                     ]) }}
                 </div>
