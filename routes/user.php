@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CampaignPlaybackController;
 use App\Http\Controllers\Backend\User\PaymentController;
 use App\Livewire\User\AddCredit;
 use App\Livewire\User\Analytics;
@@ -87,7 +88,11 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/paypal/payment/success/', 'paypalPaymentSuccess')->name('paypal.paymentSuccess');
         Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
     });
-    
+
     // Favourite / Starred Users Routes
     Route::get('favourites', FavouriteMember::class)->name('favourites');
+
+
+    Route::post('/campaign/track-playback', [CampaignPlaybackController::class, 'trackPlayback'])
+        ->name('api.campaign.track-playback');
 });

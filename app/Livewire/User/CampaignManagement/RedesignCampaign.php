@@ -63,9 +63,6 @@ class RedesignCampaign extends Component
     public function mount(): void
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
-
-        // Clear tracking data on mount - fresh start every time
-        session()->forget('campaign_playback_tracking');
     }
 
     public function render()
@@ -77,12 +74,9 @@ class RedesignCampaign extends Component
         }
         $campaigns = $this->fetchCampaigns();
 
-        // Get tracking data from session
-        $trackingData = session()->get('campaign_playback_tracking', []);
-
         return view('livewire.user.campaign-management.redesign-campaign', [
             'campaigns' => $campaigns,
-            'trackingData' => $trackingData,
+            'trackingData' => [], // No longer needed as we use localStorage
         ]);
     }
 
@@ -148,12 +142,15 @@ class RedesignCampaign extends Component
         $explicitCleared = $this->selectedGenres === ['all'];
         $userDefaultGenres = user()->genres->pluck('genre')->toArray();
 
-        // ALL tab count
+        // ALL tab count - campaigns with 'anyGenre' should be included in all filters
         $allCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->when(
                 $explicitSelection && $this->activeMainTab === 'all',
-                fn($q) => $q->whereIn('target_genre', $this->selectedGenres)
+                fn($q) => $q->where(function($query) {
+                    $query->whereIn('target_genre', $this->selectedGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                })
             )
             ->withoutSelf()
             ->open()
@@ -166,7 +163,10 @@ class RedesignCampaign extends Component
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->when(
                 $explicitSelection && $this->activeMainTab === 'recommendedPro',
-                fn($q) => $q->whereIn('target_genre', $this->selectedGenres)
+                fn($q) => $q->where(function($query) {
+                    $query->whereIn('target_genre', $this->selectedGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                })
             )
             ->withoutSelf()
             ->open()
@@ -182,13 +182,22 @@ class RedesignCampaign extends Component
 
         if ($this->activeMainTab === 'recommended') {
             if ($explicitSelection) {
-                $recommendedCountQuery->whereIn('target_genre', $this->selectedGenres);
+                $recommendedCountQuery->where(function($query) {
+                    $query->whereIn('target_genre', $this->selectedGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                });
             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                $recommendedCountQuery->whereIn('target_genre', $userDefaultGenres);
+                $recommendedCountQuery->where(function($query) use ($userDefaultGenres) {
+                    $query->whereIn('target_genre', $userDefaultGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                });
             }
         } else {
             if (!empty($userDefaultGenres)) {
-                $recommendedCountQuery->whereIn('target_genre', $userDefaultGenres);
+                $recommendedCountQuery->where(function($query) use ($userDefaultGenres) {
+                    $query->whereIn('target_genre', $userDefaultGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                });
             }
         }
 
@@ -210,20 +219,32 @@ class RedesignCampaign extends Component
         switch ($this->activeMainTab) {
             case 'recommendedPro':
                 $query->whereHas('user', fn($q) => $q->isPro())
-                    ->when($explicitSelection, fn($q) => $q->whereIn('target_genre', $this->selectedGenres));
+                    ->when($explicitSelection, fn($q) => $q->where(function($subQuery) {
+                        $subQuery->whereIn('target_genre', $this->selectedGenres)
+                                 ->orWhere('target_genre', 'anyGenre');
+                    }));
                 break;
 
             case 'recommended':
                 if ($explicitSelection) {
-                    $query->whereIn('target_genre', $this->selectedGenres);
+                    $query->where(function($subQuery) {
+                        $subQuery->whereIn('target_genre', $this->selectedGenres)
+                                 ->orWhere('target_genre', 'anyGenre');
+                    });
                 } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                    $query->whereIn('target_genre', $userDefaultGenres);
+                    $query->where(function($subQuery) use ($userDefaultGenres) {
+                        $subQuery->whereIn('target_genre', $userDefaultGenres)
+                                 ->orWhere('target_genre', 'anyGenre');
+                    });
                 }
                 break;
 
             case 'all':
             default:
-                $query->when($explicitSelection, fn($q) => $q->whereIn('target_genre', $this->selectedGenres));
+                $query->when($explicitSelection, fn($q) => $q->where(function($subQuery) {
+                    $subQuery->whereIn('target_genre', $this->selectedGenres)
+                             ->orWhere('target_genre', 'anyGenre');
+                }));
                 break;
         }
 
@@ -251,50 +272,6 @@ class RedesignCampaign extends Component
         return $query->latest()->paginate(10);
     }
 
-    #[On('updatePlaybackTracking')]
-    public function updatePlaybackTracking($campaignId, $actualPlayTime, $isEligible, $action)
-    {
-        $trackingData = session()->get('campaign_playback_tracking', []);
-
-        $campaignId = (string) $campaignId;
-
-        if (!isset($trackingData[$campaignId])) {
-            $trackingData[$campaignId] = [
-                'campaign_id' => $campaignId,
-                'actual_play_time' => 0,
-                'is_eligible' => false,
-                'play_started_at' => now()->toDateTimeString(),
-                'last_updated_at' => now()->toDateTimeString(),
-                'actions' => [],
-            ];
-        }
-
-        $trackingData[$campaignId]['actual_play_time'] = $actualPlayTime;
-        $trackingData[$campaignId]['is_eligible'] = $isEligible;
-        $trackingData[$campaignId]['last_updated_at'] = now()->toDateTimeString();
-        $trackingData[$campaignId]['actions'][] = [
-            'action' => $action,
-            'time' => $actualPlayTime,
-            'timestamp' => now()->toDateTimeString(),
-        ];
-
-        session()->put('campaign_playback_tracking', $trackingData);
-
-        Log::info('Playback tracking updated', [
-            'campaign_id' => $campaignId,
-            'actual_play_time' => $actualPlayTime,
-            'is_eligible' => $isEligible,
-            'action' => $action,
-        ]);
-    }
-
-    #[On('clearTrackingOnNavigation')]
-    public function clearTrackingOnNavigation()
-    {
-        session()->forget('campaign_playback_tracking');
-        Log::info('Playback tracking cleared on navigation');
-    }
-
     #[On('starMarkUser')]
     public function starMarkUser($userUrn)
     {
@@ -316,27 +293,18 @@ class RedesignCampaign extends Component
     #[On('confirmRepost')]
     public function confirmRepost($campaignId)
     {
-        $trackingData = session()->get('campaign_playback_tracking', []);
+        // Get tracking from localStorage via JavaScript (client-side)
+        // This method now only handles the actual repost logic
+        
         $campaignId = (string) $campaignId;
-
-        if (!isset($trackingData[$campaignId]) || !$trackingData[$campaignId]['is_eligible']) {
-            $this->dispatch('alert', type: 'error', message: 'Please play the track for at least 5 seconds before reposting.');
-            return;
-        }
 
         // TODO: Implement your actual repost logic here
         // Example: $this->campaignService->repostCampaign($campaignId, user()->urn);
         
         Log::info('Repost confirmed', [
             'campaign_id' => $campaignId,
-            'actual_play_time' => $trackingData[$campaignId]['actual_play_time'],
             'user_urn' => user()->urn,
         ]);
-
-        // Mark as reposted in tracking
-        $trackingData[$campaignId]['reposted'] = true;
-        $trackingData[$campaignId]['reposted_at'] = now()->toDateTimeString();
-        session()->put('campaign_playback_tracking', $trackingData);
 
         // Dispatch success message
         $this->dispatch('alert', type: 'success', message: 'Track reposted successfully!');
