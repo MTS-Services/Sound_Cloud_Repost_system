@@ -361,8 +361,10 @@
                                             if (value && !oldValue && !isReposted('{{ $campaign_->id }}')) {
                                                 justBecameEligible = true;
                                                 showReadyTooltip = true;
-                                                setTimeout(() => { showReadyTooltip = false;
-                                                    justBecameEligible = false; }, 3000);
+                                                setTimeout(() => {
+                                                    showReadyTooltip = false;
+                                                    justBecameEligible = false;
+                                                }, 3000);
                                             }
                                         })">
 
@@ -383,23 +385,23 @@
 
                                             <!-- Ready Tooltip - Shows when eligible (auto-hide after 3s, show on hover) -->
                                             <div x-show="!isReposted('{{ $campaign_->id }}') && isEligibleForRepost('{{ $campaign_->id }}') && (showReadyTooltip || $el.parentElement.querySelector('.repost-button').matches(':hover'))"
-                                                x-transition:enter="transition ease-out duration-300"
-                                                x-transition:enter-start="opacity-0 transform scale-90 -translate-y-2"
-                                                x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                                                class="absolute -top-11 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-xl whitespace-nowrap z-20 pointer-events-none"
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 transform scale-95"
+                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none"
                                                 :class="{ 'animate-pulse': justBecameEligible }">
-                                                <div class="flex items-center gap-2">
-                                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <div class="flex items-center gap-1.5">
+                                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd"
                                                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                                             clip-rule="evenodd" />
                                                     </svg>
-                                                    <span>Ready to Repost!</span>
+                                                    <span>Ready</span>
                                                 </div>
                                                 <!-- Tooltip arrow -->
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
-                                                    <div class="border-4 border-transparent border-t-green-500"></div>
+                                                    <div class="border-4 border-transparent border-t-green-600"></div>
                                                 </div>
                                             </div>
 
