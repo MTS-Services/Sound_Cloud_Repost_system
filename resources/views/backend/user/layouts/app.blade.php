@@ -8,7 +8,7 @@
     <meta http-equiv="Permissions-Policy" content="encrypted-media=()">
     <link id="favicon" rel="icon" href="{{ storage_url(app_setting('favicon')) }}" type="image/x-icon">
 
-    <meta name="google-site-verification" content="GVWhyXjde2aylNlCiqPIqSvPhx-VGi6hh5ajLaa-erg"/>
+    <meta name="google-site-verification" content="GVWhyXjde2aylNlCiqPIqSvPhx-VGi6hh5ajLaa-erg" />
 
     <script>
         function setFavicon(dark = false) {
@@ -247,6 +247,13 @@
             </div>
         @endif
     @endif
+
+    @if (!session()->has('campaign_playback_tracking'))
+        <script>
+            localStorage.removeItem('campaign_tracking_data');
+        </script>
+    @endif
+    
     {{ $slot }}
     @if (auth()->guard('web')->check() && Route::is('user.*'))
         </div>
