@@ -1,4 +1,4 @@
-<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="localStorage.removeItem('campaign_tracking_data'); trackPlaybackManager().clearAllTracking()">
+<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
