@@ -63,6 +63,7 @@ class RedesignCampaign extends Component
     public function mount(): void
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
+        session()->forget('campaign_playback_tracking');
     }
 
     public function render()
