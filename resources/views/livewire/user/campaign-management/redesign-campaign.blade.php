@@ -689,7 +689,7 @@
 
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
-                    const percentage = Math.min((playTime / 5) * 100, 100);
+                    const percentage = Math.min((playTime / 15) * 100, 100);
                     return percentage.toFixed(2);
                 },
 
