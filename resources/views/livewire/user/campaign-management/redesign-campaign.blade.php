@@ -357,13 +357,21 @@
                                             </button>
                                         </div> --}}
 
-                                        <div class="relative">
+                                        <div class="relative" x-data="{ showReadyTooltip: false, justBecameEligible: false }" x-init="$watch('isEligibleForRepost(\'{{ $campaign_->id }}\')', (value, oldValue) => {
+                                            if (value && !oldValue && !isReposted('{{ $campaign_->id }}')) {
+                                                justBecameEligible = true;
+                                                showReadyTooltip = true;
+                                                setTimeout(() => { showReadyTooltip = false;
+                                                    justBecameEligible = false; }, 3000);
+                                            }
+                                        })">
+
                                             <!-- Countdown Tooltip - Shows remaining time -->
                                             <div x-show="!isReposted('{{ $campaign_->id }}') && !isEligibleForRepost('{{ $campaign_->id }}') && getPlayTime('{{ $campaign_->id }}') > 0"
                                                 x-transition:enter="transition ease-out duration-200"
                                                 x-transition:enter-start="opacity-0 transform scale-95"
                                                 x-transition:enter-end="opacity-100 transform scale-100"
-                                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20">
+                                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
                                                     x-text="Math.max(0, Math.ceil(15 - getPlayTime('{{ $campaign_->id }}'))).toString() + 's remaining'"></span>
                                                 <!-- Tooltip arrow -->
@@ -373,12 +381,13 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Ready Tooltip - Shows when eligible -->
-                                            <div x-show="!isReposted('{{ $campaign_->id }}') && isEligibleForRepost('{{ $campaign_->id }}')"
+                                            <!-- Ready Tooltip - Shows when eligible (auto-hide after 3s, show on hover) -->
+                                            <div x-show="!isReposted('{{ $campaign_->id }}') && isEligibleForRepost('{{ $campaign_->id }}') && (showReadyTooltip || $el.parentElement.querySelector('.repost-button').matches(':hover'))"
                                                 x-transition:enter="transition ease-out duration-300"
                                                 x-transition:enter-start="opacity-0 transform scale-90 -translate-y-2"
                                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                                                class="absolute -top-11 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-xl whitespace-nowrap z-20 animate-pulse">
+                                                class="absolute -top-11 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-xl whitespace-nowrap z-20 pointer-events-none"
+                                                :class="{ 'animate-pulse': justBecameEligible }">
                                                 <div class="flex items-center gap-2">
                                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd"
@@ -415,8 +424,8 @@
 
                                                 <!-- Animated orange fill background (only show if not reposted) -->
                                                 <div x-show="!isReposted('{{ $campaign_->id }}')"
-                                                    class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out"
-                                                    :style="`width: ${getPlayTimePercentage('{{ $campaign_->id }}')}%`">
+                                                    class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out z-0"
+                                                    :style="`width: ${Math.min((getPlayTime('{{ $campaign_->id }}') / 15) * 100, 100)}%`">
                                                 </div>
 
                                                 <!-- Button content (stays on top) -->
