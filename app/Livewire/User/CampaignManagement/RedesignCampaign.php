@@ -64,8 +64,8 @@ class RedesignCampaign extends Component
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
 
-        // Clear tracking data on mount - fresh start every time
-        session()->forget('campaign_playback_tracking');
+        // DON'T clear tracking data on mount - keep it persistent
+        // session()->forget('campaign_playback_tracking'); // REMOVED
     }
 
     public function render()
@@ -148,12 +148,15 @@ class RedesignCampaign extends Component
         $explicitCleared = $this->selectedGenres === ['all'];
         $userDefaultGenres = user()->genres->pluck('genre')->toArray();
 
-        // ALL tab count
+        // ALL tab count - campaigns with 'anyGenre' should be included in all filters
         $allCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->when(
                 $explicitSelection && $this->activeMainTab === 'all',
-                fn($q) => $q->whereIn('target_genre', $this->selectedGenres)
+                fn($q) => $q->where(function($query) {
+                    $query->whereIn('target_genre', $this->selectedGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                })
             )
             ->withoutSelf()
             ->open()
@@ -166,7 +169,10 @@ class RedesignCampaign extends Component
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->when(
                 $explicitSelection && $this->activeMainTab === 'recommendedPro',
-                fn($q) => $q->whereIn('target_genre', $this->selectedGenres)
+                fn($q) => $q->where(function($query) {
+                    $query->whereIn('target_genre', $this->selectedGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                })
             )
             ->withoutSelf()
             ->open()
@@ -182,13 +188,22 @@ class RedesignCampaign extends Component
 
         if ($this->activeMainTab === 'recommended') {
             if ($explicitSelection) {
-                $recommendedCountQuery->whereIn('target_genre', $this->selectedGenres);
+                $recommendedCountQuery->where(function($query) {
+                    $query->whereIn('target_genre', $this->selectedGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                });
             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                $recommendedCountQuery->whereIn('target_genre', $userDefaultGenres);
+                $recommendedCountQuery->where(function($query) use ($userDefaultGenres) {
+                    $query->whereIn('target_genre', $userDefaultGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                });
             }
         } else {
             if (!empty($userDefaultGenres)) {
-                $recommendedCountQuery->whereIn('target_genre', $userDefaultGenres);
+                $recommendedCountQuery->where(function($query) use ($userDefaultGenres) {
+                    $query->whereIn('target_genre', $userDefaultGenres)
+                          ->orWhere('target_genre', 'anyGenre');
+                });
             }
         }
 
@@ -210,20 +225,32 @@ class RedesignCampaign extends Component
         switch ($this->activeMainTab) {
             case 'recommendedPro':
                 $query->whereHas('user', fn($q) => $q->isPro())
-                    ->when($explicitSelection, fn($q) => $q->whereIn('target_genre', $this->selectedGenres));
+                    ->when($explicitSelection, fn($q) => $q->where(function($subQuery) {
+                        $subQuery->whereIn('target_genre', $this->selectedGenres)
+                                 ->orWhere('target_genre', 'anyGenre');
+                    }));
                 break;
 
             case 'recommended':
                 if ($explicitSelection) {
-                    $query->whereIn('target_genre', $this->selectedGenres);
+                    $query->where(function($subQuery) {
+                        $subQuery->whereIn('target_genre', $this->selectedGenres)
+                                 ->orWhere('target_genre', 'anyGenre');
+                    });
                 } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                    $query->whereIn('target_genre', $userDefaultGenres);
+                    $query->where(function($subQuery) use ($userDefaultGenres) {
+                        $subQuery->whereIn('target_genre', $userDefaultGenres)
+                                 ->orWhere('target_genre', 'anyGenre');
+                    });
                 }
                 break;
 
             case 'all':
             default:
-                $query->when($explicitSelection, fn($q) => $q->whereIn('target_genre', $this->selectedGenres));
+                $query->when($explicitSelection, fn($q) => $q->where(function($subQuery) {
+                    $subQuery->whereIn('target_genre', $this->selectedGenres)
+                             ->orWhere('target_genre', 'anyGenre');
+                }));
                 break;
         }
 
@@ -248,7 +275,7 @@ class RedesignCampaign extends Component
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
-        return $query->latest()->paginate(10);
+        return $query->paginate(10);
     }
 
     #[On('updatePlaybackTracking')]
@@ -291,8 +318,17 @@ class RedesignCampaign extends Component
     #[On('clearTrackingOnNavigation')]
     public function clearTrackingOnNavigation()
     {
+        // DON'T clear tracking - we want to persist it across navigation
+        // session()->forget('campaign_playback_tracking'); // REMOVED
+        Log::info('Navigation occurred - tracking data preserved');
+    }
+    
+    #[On('manualClearTracking')]
+    public function manualClearTracking()
+    {
+        // Only clear when explicitly requested (e.g., user logout, session end)
         session()->forget('campaign_playback_tracking');
-        Log::info('Playback tracking cleared on navigation');
+        Log::info('Playback tracking manually cleared');
     }
 
     #[On('starMarkUser')]
