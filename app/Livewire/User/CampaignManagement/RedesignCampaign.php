@@ -64,7 +64,7 @@ class RedesignCampaign extends Component
     {
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
         session()->forget('campaign_playback_tracking');
-        $this->dispatch('clearCampaignTracking');
+        $this->dispatch('clearCampaignTracking')->to('window');
     }
 
     public function render()
