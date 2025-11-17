@@ -37,7 +37,9 @@ class RedesignCampaign extends Component
     public array $selectedGenres = [];
 
     public array $suggestedTags = [];
-    public string $trackTypeFilter = 'all';
+
+    #[Url(keep: true)]
+    public string $trackType = 'all';
     public array $totalCounts = [
         "recommendedPro" => 12,
         "recommended" => 10,
@@ -144,117 +146,249 @@ class RedesignCampaign extends Component
     {
         $this->getAllTags();
     }
+    // #[On('refreshCampaigns')]
+    // public function fetchCampaigns()
+    // {
+    //     $explicitSelection = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'];
+    //     $explicitCleared = $this->selectedGenres === ['all'];
+    //     $userDefaultGenres = user()->genres->pluck('genre')->toArray();
+
+    //     // ALL tab count - campaigns with 'anyGenre' should be included in all filters
+    //     $allCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
+    //         ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
+    //         ->when(
+    //             $explicitSelection && $this->activeMainTab === 'all',
+    //             fn($q) => $q->where(function ($query) {
+    //                 $query->whereIn('target_genre', $this->selectedGenres)
+    //                     ->orWhere('target_genre', 'anyGenre');
+    //             })
+    //         )
+    //         ->withoutSelf()
+    //         ->open()
+    //         ->count();
+
+    //     // RECOMMENDED PRO tab count
+    //     $recommendedProCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
+    //         ->whereHas('user', fn($q) => $q->isPro())
+    //         ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
+    //         ->when(
+    //             $explicitSelection && $this->activeMainTab === 'recommendedPro',
+    //             fn($q) => $q->where(function ($query) {
+    //                 $query->whereIn('target_genre', $this->selectedGenres)
+    //                     ->orWhere('target_genre', 'anyGenre');
+    //             })
+    //         )
+    //         ->withoutSelf()
+    //         ->open()
+    //         ->count();
+
+    //     // RECOMMENDED tab count
+    //     $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
+    //         ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
+    //         ->withoutSelf()
+    //         ->open();
+
+    //     if ($this->activeMainTab === 'recommended') {
+    //         if ($explicitSelection) {
+    //             $recommendedCountQuery->where(function ($query) {
+    //                 $query->whereIn('target_genre', $this->selectedGenres)
+    //                     ->orWhere('target_genre', 'anyGenre');
+    //             });
+    //         } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
+    //             $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
+    //                 $query->whereIn('target_genre', $userDefaultGenres)
+    //                     ->orWhere('target_genre', 'anyGenre');
+    //             });
+    //         }
+    //     } else {
+    //         if (!empty($userDefaultGenres)) {
+    //             $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
+    //                 $query->whereIn('target_genre', $userDefaultGenres)
+    //                     ->orWhere('target_genre', 'anyGenre');
+    //             });
+    //         }
+    //     }
+
+    //     $recommendedCount = $recommendedCountQuery->count();
+
+    //     $this->totalCounts = [
+    //         'recommendedPro' => $recommendedProCount,
+    //         'recommended'    => $recommendedCount,
+    //         'all'            => $allCount,
+    //     ];
+
+    //     // Build query for pagination
+    //     $query = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
+    //         ->with(['music', 'user', 'reposts', 'user.starredUsers'])
+    //         ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
+    //         ->withoutSelf()
+    //         ->open();
+
+    //     switch ($this->activeMainTab) {
+    //         case 'recommendedPro':
+    //             $query->whereHas('user', fn($q) => $q->isPro())
+    //                 ->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
+    //                     $subQuery->whereIn('target_genre', $this->selectedGenres)
+    //                         ->orWhere('target_genre', 'anyGenre');
+    //                 }));
+    //             break;
+
+    //         case 'recommended':
+    //             if ($explicitSelection) {
+    //                 $query->where(function ($subQuery) {
+    //                     $subQuery->whereIn('target_genre', $this->selectedGenres)
+    //                         ->orWhere('target_genre', 'anyGenre');
+    //                 });
+    //             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
+    //                 $query->where(function ($subQuery) use ($userDefaultGenres) {
+    //                     $subQuery->whereIn('target_genre', $userDefaultGenres)
+    //                         ->orWhere('target_genre', 'anyGenre');
+    //                 });
+    //             }
+    //             break;
+
+    //         case 'all':
+    //         default:
+    //             $query->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
+    //                 $subQuery->whereIn('target_genre', $this->selectedGenres)
+    //                     ->orWhere('target_genre', 'anyGenre');
+    //             }));
+    //             break;
+    //     }
+
+    //     if (!empty($this->search)) {
+    //         $query->whereHas('music', function ($q) {
+    //             $q->where('title', 'like', '%' . $this->search . '%')
+    //                 ->orWhere('description', 'like', '%' . $this->search . '%');
+    //         });
+    //     }
+
+    //     if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
+    //         $query->whereHas('music', function ($q) {
+    //             $q->where(function ($tagQuery) {
+    //                 foreach ($this->selectedTags as $tag) {
+    //                     $tagQuery->orWhere('tag_list', 'LIKE', "%$tag%");
+    //                 }
+    //             });
+    //         });
+    //     }
+
+    //     if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
+    //         $query->where('music_type', 'like', "%{$this->searchMusicType}%");
+    //     }
+
+    //     return $query->latest()->paginate(10, ['*'], $this->activeMainTab . 'Page');
+    // }
+
+    private function applyMusicTypeFilter($query)
+    {
+        // dd($this->activeMainTab);
+        if (!empty($this->trackType)) {
+            if ($this->trackType === 'Track') {
+                $query->where('music_type', Track::class);
+            } else if ($this->trackType === 'Playlist') {
+                $query->where('music_type', Playlist::class);
+            }
+        }
+    }
+
+    private function applyUserGenreFilter($query)
+    {
+        $query->where(function ($q) {
+            $q->whereIn('target_genre', $this->selectedGenres)
+                ->orWhere('target_genre', 'anyGenre');
+        });
+    }
 
     #[On('refreshCampaigns')]
     public function fetchCampaigns()
     {
         $explicitSelection = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'];
-        $explicitCleared = $this->selectedGenres === ['all'];
+        $explicitCleared   = $this->selectedGenres === ['all'];
         $userDefaultGenres = user()->genres->pluck('genre')->toArray();
 
-        // ALL tab count - campaigns with 'anyGenre' should be included in all filters
-        $allCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
+        // --- ALL tab count (never default genre filter)
+        $allCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
-            ->when(
-                $explicitSelection && $this->activeMainTab === 'all',
-                fn($q) => $q->where(function ($query) {
-                    $query->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
-                })
-            )
             ->withoutSelf()
-            ->open()
-            ->count();
+            ->open();
+        if ($this->activeMainTab === 'all') {
+            if ($explicitSelection) {
+                $this->applyUserGenreFilter($allCountQuery);
+            }
+            if ($this->trackType !== 'all') {
+                $this->applyMusicTypeFilter($allCountQuery);
+            }
+        }
+        $allCount = $allCountQuery->count();
 
-        // RECOMMENDED PRO tab count
-        $recommendedProCount = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
+        // --- RECOMMENDED PRO count (never default genre filter)
+        $recommendedProQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('user', fn($q) => $q->isPro())
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
-            ->when(
-                $explicitSelection && $this->activeMainTab === 'recommendedPro',
-                fn($q) => $q->where(function ($query) {
-                    $query->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
-                })
-            )
             ->withoutSelf()
-            ->open()
-            ->count();
+            ->open();
+        if ($this->activeMainTab === 'recommendedPro') {
+            if ($explicitSelection) {
+                $this->applyUserGenreFilter($recommendedProQuery);
+            }
+            $this->applyMusicTypeFilter($recommendedProQuery);
+        }
+        $recommendedProCount = $recommendedProQuery->count();
 
-        // RECOMMENDED tab count
+        // --- RECOMMENDED count (always applies default genres, but user selection overrides)
         $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
             ->open();
 
-        if ($this->activeMainTab === 'recommended') {
-            if ($explicitSelection) {
-                $recommendedCountQuery->where(function ($query) {
-                    $query->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
-                });
-            } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
-                    $query->whereIn('target_genre', $userDefaultGenres)
-                        ->orWhere('target_genre', 'anyGenre');
-                });
-            }
-        } else {
-            if (!empty($userDefaultGenres)) {
-                $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
-                    $query->whereIn('target_genre', $userDefaultGenres)
-                        ->orWhere('target_genre', 'anyGenre');
-                });
+        if ($this->activeMainTab === 'recommended' && $explicitSelection) {
+            $this->applyUserGenreFilter($recommendedCountQuery);
+            $this->applyMusicTypeFilter($recommendedCountQuery); // <-- apply music type filter here too
+        } elseif (!$explicitSelection && !empty($userDefaultGenres)) {
+            $recommendedCountQuery->where(function ($q) use ($userDefaultGenres) {
+                $q->whereIn('target_genre', $userDefaultGenres)
+                    ->orWhere('target_genre', 'anyGenre');
+            });
+            // music type filter only affects active tab, not default recommended counts
+            if ($this->activeMainTab === 'recommended') {
+                $this->applyMusicTypeFilter($recommendedCountQuery);
             }
         }
-
         $recommendedCount = $recommendedCountQuery->count();
 
         $this->totalCounts = [
+            'all'            => $allCount,
             'recommendedPro' => $recommendedProCount,
             'recommended'    => $recommendedCount,
-            'all'            => $allCount,
         ];
 
-        // Build query for pagination
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Pagination query
+        |--------------------------------------------------------------------------
+        */
         $query = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->with(['music', 'user', 'reposts', 'user.starredUsers'])
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
             ->open();
 
-        switch ($this->activeMainTab) {
-            case 'recommendedPro':
-                $query->whereHas('user', fn($q) => $q->isPro())
-                    ->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
-                        $subQuery->whereIn('target_genre', $this->selectedGenres);
-                            // ->orWhere('target_genre', 'anyGenre');
-                    }));
-                break;
-
-            case 'recommended':
-                if ($explicitSelection) {
-                    $query->where(function ($subQuery) {
-                        $subQuery->whereIn('target_genre', $this->selectedGenres)
-                            ->orWhere('target_genre', 'anyGenre');
-                    });
-                } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
-                    $query->where(function ($subQuery) use ($userDefaultGenres) {
-                        $subQuery->whereIn('target_genre', $userDefaultGenres);
-                            // ->orWhere('target_genre', 'anyGenre');
-                    });
-                }
-                break;
-
-            case 'all':
-            default:
-                $query->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
-                    $subQuery->whereIn('target_genre', $this->selectedGenres);
-                        // ->orWhere('target_genre', 'anyGenre');
-                }));
-                break;
+        if ($explicitSelection) {
+            $this->applyUserGenreFilter($query);
+        } elseif ($this->activeMainTab === 'recommended' && !empty($userDefaultGenres)) {
+            $query->where(function ($q) use ($userDefaultGenres) {
+                $q->whereIn('target_genre', $userDefaultGenres)
+                    ->orWhere('target_genre', 'anyGenre');
+            });
         }
 
+        // --- Active tab music type filter
+        if ($this->trackType !== 'all') {
+            $this->applyMusicTypeFilter($query);
+        }
+
+        // --- Search filters
         if (!empty($this->search)) {
             $query->whereHas('music', function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%')
@@ -262,22 +396,19 @@ class RedesignCampaign extends Component
             });
         }
 
-        if (!empty($this->selectedTags) && $this->selectedTags != 'all') {
+        if (!empty($this->selectedTags) && $this->selectedTags !== 'all') {
             $query->whereHas('music', function ($q) {
                 $q->where(function ($tagQuery) {
                     foreach ($this->selectedTags as $tag) {
-                        $tagQuery->orWhere('tag_list', 'LIKE', "%$tag%");
+                        $tagQuery->orWhere('tag_list', 'LIKE', "%{$tag}%");
                     }
                 });
             });
         }
 
-        if (!empty($this->searchMusicType) && $this->searchMusicType != 'all') {
-            $query->where('music_type', 'like', "%{$this->searchMusicType}%");
-        }
-
         return $query->latest()->paginate(10, ['*'], $this->activeMainTab . 'Page');
     }
+
 
     #[On('starMarkUser')]
     public function starMarkUser($userUrn)
