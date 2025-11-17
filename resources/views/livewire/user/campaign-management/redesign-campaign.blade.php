@@ -7,8 +7,7 @@
         <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
             <div class="flex gap-1 sm:space-x-8">
                 @foreach (['recommendedPro' => 'Recommended Pro', 'recommended' => 'Recommended', 'all' => 'All'] as $tab => $label)
-                    <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" 
-                       wire:navigate
+                    <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" wire:navigate
                         @class([
                             'tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2',
                             'border-orange-500 text-orange-600' => $activeMainTab === $tab,
@@ -16,7 +15,8 @@
                                 $activeMainTab !== $tab,
                         ])>
                         {{ __($label) }}
-                        <span class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCounts[$tab] }}</span>
+                        <span
+                            class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCounts[$tab] }}</span>
                     </a>
                 @endforeach
             </div>
@@ -107,8 +107,10 @@
 
             {{-- Search box --}}
             <div x-data="{ showInput: false }" class="w-full flex-1 relative">
-                <div class="relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
-                    <x-lucide-search class="w-4 h-4 absolute left-2 text-gray-500 dark:text-slate-300 pointer-events-none" />
+                <div
+                    class="relative flex items-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded">
+                    <x-lucide-search
+                        class="w-4 h-4 absolute left-2 text-gray-500 dark:text-slate-300 pointer-events-none" />
 
                     <div x-show="!showInput" @click="showInput = true; $wire.call('getAllTags')"
                         class="w-full pl-8 pr-2 py-2 cursor-pointer dark:text-slate-300">
@@ -141,25 +143,28 @@
         <div class="flex flex-col space-y-4">
             @forelse ($campaigns as $campaign_)
                 <div class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
-                    data-campaign-id="{{ $campaign_->id }}"
-                    data-permalink="{{ $campaign_->music->permalink_url }}">
+                    data-campaign-id="{{ $campaign_->id }}" data-permalink="{{ $campaign_->music->permalink_url }}">
                     <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
                         <!-- Left Column - Track Info -->
-                        <div class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                        <div
+                            class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                             <div class="flex flex-col md:flex-row gap-4">
                                 <div class="flex-1 flex flex-col justify-between relative">
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
                                         data-campaign-id="{{ $campaign_->id }}" wire:ignore>
-                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166" :visual="false" />
+                                        <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
+                                            :visual="false" />
                                     </div>
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
-                                            <div class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                            <div
+                                                class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                                 FEATURED
                                             </div>
                                         @endif
                                         @if (!boostAgain($campaign_->id) && $campaign_->is_boost)
-                                            <div class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
+                                            <div
+                                                class="bg-orange-500 text-white text-xs font-semibold px-2 py-0.5 rounded shadow z-10 tracking-wide">
                                                 {{ __('Boosted') }}
                                             </div>
                                         @endif
@@ -171,14 +176,16 @@
                         <!-- Right Column - Campaign Info -->
                         <div class="w-full lg:w-1/2 p-4">
                             <div class="flex flex-col h-full justify-between">
-                                <div class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
+                                <div
+                                    class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
                                     <div class="flex items-center gap-3 w-full">
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
                                             alt="Avatar">
                                         <div x-data="{ open: false }" class="inline-block text-left">
                                             <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                                <span class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
+                                                <span
+                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -199,30 +206,36 @@
                                                 x-cloak>
                                                 <a href="{{ $campaign_?->music?->user?->soundcloud_permalink_url }}"
                                                     target="_blank"
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
+                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
+                                                    Profile</a>
                                                 @if ($campaign_->user)
                                                     <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
                                                         wire:navigate
-                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit RepostChain Profile</a>
+                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                                        RepostChain Profile</a>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="flex items-center justify-between gap-4 w-full">
-                                        <div class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
+                                        <div
+                                            class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
-                                                <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="26" height="18" viewBox="0 0 26 18"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="1" y="1" width="24" height="16" rx="3"
                                                         fill="none" stroke="currentColor" stroke-width="2" />
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
+                                                <span
+                                                    class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
                                             </div>
-                                            <span class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
+                                            <span
+                                                class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
-                                        
+
                                         <div class="relative" x-data="{ showReadyTooltip: false, justBecameEligible: false }" x-init="$watch('isEligibleForRepost(\'{{ $campaign_->id }}\')', (value, oldValue) => {
                                             if (value && !oldValue && !isReposted('{{ $campaign_->id }}')) {
                                                 justBecameEligible = true;
@@ -272,40 +285,47 @@
                                             </div>
 
                                             <!-- Repost Button with animated fill effect -->
-                                            <button
-                                                :data-campaign-id="{{ $campaign_->id }}"
-                                                x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}') || isReposted('{{ $campaign_->id }}')"
+                                            <button :data-campaign-id="{{ $campaign_->id }}"
+                                                x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}') || isReposted(
+                                                    '{{ $campaign_->id }}')"
                                                 @click="handleRepost('{{ $campaign_->id }}')"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
                                                 :class="{
-                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300': !isEligibleForRepost('{{ $campaign_->id }}') && !isReposted('{{ $campaign_->id }}'),
-                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost('{{ $campaign_->id }}') && !isReposted('{{ $campaign_->id }}'),
-                                                    'bg-green-500 text-white cursor-not-allowed': isReposted('{{ $campaign_->id }}'),
+                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300':
+                                                        !isEligibleForRepost('{{ $campaign_->id }}') && !isReposted(
+                                                            '{{ $campaign_->id }}'),
+                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost(
+                                                        '{{ $campaign_->id }}') && !isReposted(
+                                                        '{{ $campaign_->id }}'),
+                                                    'bg-green-500 text-white cursor-not-allowed': isReposted(
+                                                        '{{ $campaign_->id }}'),
                                                     'focus:ring-orange-500': !isReposted('{{ $campaign_->id }}'),
                                                     'focus:ring-green-500': isReposted('{{ $campaign_->id }}')
                                                 }">
-                                                
+
                                                 <!-- Animated orange fill background (only show if not reposted) -->
-                                                <div 
-                                                    x-show="!isReposted('{{ $campaign_->id }}')"
+                                                <div x-show="!isReposted('{{ $campaign_->id }}')"
                                                     class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out z-0"
                                                     :style="`width: ${getPlayTimePercentage('{{ $campaign_->id }}')}%`">
                                                 </div>
-                                                
+
                                                 <!-- Button content (stays on top) -->
                                                 <div class="relative z-10 flex items-center gap-2">
                                                     <template x-if="!isReposted('{{ $campaign_->id }}')">
                                                         <div class="flex items-center gap-2">
-                                                            <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <rect x="1" y="1" width="24" height="16" rx="3"
-                                                                    fill="none" stroke="currentColor" stroke-width="2" />
-                                                                <circle cx="8" cy="9" r="3" fill="none"
+                                                            <svg width="26" height="18" viewBox="0 0 26 18"
+                                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="1" y="1" width="24" height="16"
+                                                                    rx="3" fill="none"
                                                                     stroke="currentColor" stroke-width="2" />
+                                                                <circle cx="8" cy="9" r="3"
+                                                                    fill="none" stroke="currentColor"
+                                                                    stroke-width="2" />
                                                             </svg>
                                                             <span>{{ user()->repost_price }} Repost</span>
                                                         </div>
                                                     </template>
-                                                    
+
                                                     <template x-if="isReposted('{{ $campaign_->id }}')">
                                                         <div class="flex items-center gap-2">
                                                             <span>✔️</span>
@@ -319,8 +339,11 @@
                                 </div>
 
                                 <div class="mt-auto">
-                                    <span class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        {{ !empty($campaign_->music?->genre) ? $campaign_->music?->genre : 'Unknown Genre' }}
+                                    <span
+                                        class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
+                                        {{ $campaigns->links('components.pagination.wire-navigate', [
+                                            'keep' => ['tab' => $activeMainTab, 'selectedGenres' => $selectedGenres],
+                                        ]) }}
                                     </span>
                                 </div>
                             </div>
@@ -347,7 +370,7 @@
             @endif
         </div>
     </section>
-    
+
     @if ($showCampaignCreator)
         @livewire('user.campaign-management.campaign-creator')
     @endif
@@ -359,17 +382,17 @@
                 tracks: {},
                 updateInterval: null,
                 isInitialized: false,
-                
+
                 init() {
                     // Only load persisted data on first initialization (not on mount)
                     if (!this.isInitialized) {
                         this.loadPersistedTrackingData();
                         this.isInitialized = true;
                     }
-                    
+
                     this.initializeSoundCloudWidgets();
                     this.startUpdateLoop();
-                    
+
                     // Listen for repost success events
                     window.addEventListener('repost-success', (event) => {
                         const campaignId = event.detail.campaignId;
@@ -377,24 +400,30 @@
                             this.tracks[campaignId].reposted = true;
                         }
                     });
-                    
+
                     // Listen for Livewire navigation completed
-                    Livewire.hook('morph.updated', ({ component }) => {
+                    Livewire.hook('morph.updated', ({
+                        component
+                    }) => {
                         // Preserve current tracking state
                         const currentTracks = JSON.parse(JSON.stringify(this.tracks));
-                        
+
                         setTimeout(() => {
                             // Re-initialize widgets for new DOM elements
                             this.initializeSoundCloudWidgets();
-                            
+
                             // Restore ALL tracking data (even for campaigns not currently on page)
                             Object.keys(currentTracks).forEach(campaignId => {
                                 if (this.tracks[campaignId]) {
                                     // Campaign is on current page - merge data
-                                    this.tracks[campaignId].actualPlayTime = currentTracks[campaignId].actualPlayTime;
-                                    this.tracks[campaignId].isEligible = currentTracks[campaignId].isEligible;
-                                    this.tracks[campaignId].reposted = currentTracks[campaignId].reposted;
-                                    this.tracks[campaignId].lastPosition = currentTracks[campaignId].lastPosition;
+                                    this.tracks[campaignId].actualPlayTime = currentTracks[
+                                        campaignId].actualPlayTime;
+                                    this.tracks[campaignId].isEligible = currentTracks[campaignId]
+                                        .isEligible;
+                                    this.tracks[campaignId].reposted = currentTracks[campaignId]
+                                        .reposted;
+                                    this.tracks[campaignId].lastPosition = currentTracks[campaignId]
+                                        .lastPosition;
                                 } else {
                                     // Campaign not on page but preserve data
                                     this.tracks[campaignId] = currentTracks[campaignId];
@@ -403,7 +432,7 @@
                         }, 150);
                     });
                 },
-                
+
                 loadPersistedTrackingData() {
                     // Load from localStorage (browser-side persistence)
                     const stored = localStorage.getItem('campaign_tracking_data');
@@ -427,7 +456,7 @@
                         }
                     }
                 },
-                
+
                 saveTrackingData() {
                     // Save to localStorage
                     const dataToSave = {};
@@ -441,25 +470,25 @@
                     });
                     localStorage.setItem('campaign_tracking_data', JSON.stringify(dataToSave));
                 },
-                
+
                 startUpdateLoop() {
                     // Update UI every 100ms for smooth animation
                     if (this.updateInterval) {
                         clearInterval(this.updateInterval);
                     }
-                    
+
                     this.updateInterval = setInterval(() => {
                         this.updateAllTrackTimes();
                     }, 100);
                 },
-                
+
                 updateAllTrackTimes() {
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
-                        
+
                         if (track.isPlaying && track.playStartTime) {
                             const elapsed = (Date.now() - track.playStartTime) / 1000;
-                            
+
                             // Only update if increment is valid (not seeking)
                             if (elapsed > 0 && elapsed < 2 && !track.seekDetected) {
                                 // This is for smooth UI updates only
@@ -468,21 +497,21 @@
                         }
                     });
                 },
-                
+
                 initializeSoundCloudWidgets() {
                     if (typeof SC === 'undefined') {
                         setTimeout(() => this.initializeSoundCloudWidgets(), 500);
                         return;
                     }
-                    
+
                     const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                    
+
                     playerContainers.forEach(container => {
                         const campaignId = container.dataset.campaignId;
                         const currentCampaignCard = container.closest('.campaign-card');
-                        
+
                         if (!currentCampaignCard) return;
-                        
+
                         // Initialize tracking for this campaign (preserve existing data if available)
                         if (!this.tracks[campaignId]) {
                             this.tracks[campaignId] = {
@@ -496,11 +525,11 @@
                                 reposted: false,
                             };
                         }
-                        
+
                         // Skip re-binding if widget already exists
                         const iframe = container.querySelector('iframe');
                         if (!iframe || !campaignId) return;
-                        
+
                         // Check if widget is already bound
                         if (this.tracks[campaignId].widget) {
                             // Widget exists, just update reference
@@ -508,98 +537,99 @@
                             this.tracks[campaignId].widget = widget;
                             return;
                         }
-                        
+
                         const nextCampaignCard = currentCampaignCard.nextElementSibling;
                         let nextIframe = null;
                         let nextCampaignId = null;
-                        
+
                         if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
-                            const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+                            const nextPlayerContainer = nextCampaignCard.querySelector(
+                            '[id^="soundcloud-player-"]');
                             if (nextPlayerContainer) {
                                 nextIframe = nextPlayerContainer.querySelector('iframe');
                                 nextCampaignId = nextPlayerContainer.dataset.campaignId;
                             }
                         }
-                        
+
                         const widget = SC.Widget(iframe);
                         this.tracks[campaignId].widget = widget;
-                        
+
                         // PLAY event
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             const track = this.tracks[campaignId];
                             track.isPlaying = true;
                             track.playStartTime = Date.now();
-                            
+
                             this.syncToBackend(campaignId, 'play');
                         });
-                        
+
                         // PAUSE event
                         widget.bind(SC.Widget.Events.PAUSE, () => {
                             const track = this.tracks[campaignId];
                             track.isPlaying = false;
                             track.playStartTime = null;
-                            
+
                             this.syncToBackend(campaignId, 'pause');
                             this.saveTrackingData();
                         });
-                        
+
                         // FINISH event
                         widget.bind(SC.Widget.Events.FINISH, () => {
                             const track = this.tracks[campaignId];
                             track.isPlaying = false;
                             track.playStartTime = null;
-                            
+
                             this.syncToBackend(campaignId, 'finish');
                             this.saveTrackingData();
-                            
+
                             // Auto-play next track
                             if (nextCampaignId && nextIframe) {
                                 const nextWidget = SC.Widget(nextIframe);
                                 setTimeout(() => nextWidget.play(), 100);
                             }
                         });
-                        
+
                         // PLAY_PROGRESS event - Critical for accurate tracking
                         widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                             const currentPosition = data.currentPosition / 1000; // Convert to seconds
                             const track = this.tracks[campaignId];
-                            
+
                             // Detect seeking (user manually moved timeline)
                             const positionDiff = Math.abs(currentPosition - track.lastPosition);
-                            
+
                             if (positionDiff > 1.5 && track.lastPosition > 0) {
                                 // User seeked - mark as detected and don't count this time
                                 track.seekDetected = true;
                                 track.lastPosition = currentPosition;
                                 return;
                             }
-                            
+
                             if (track.isPlaying && !track.seekDetected) {
                                 // Valid continuous playback
                                 const increment = currentPosition - track.lastPosition;
-                                
+
                                 // Only count valid increments (between 0 and 2 seconds)
                                 if (increment > 0 && increment < 2) {
                                     track.actualPlayTime += increment;
-                                    
+
                                     // Check if eligible (15 seconds actual play time)
                                     if (track.actualPlayTime >= 15 && !track.isEligible) {
                                         track.isEligible = true;
                                         this.syncToBackend(campaignId, 'eligible');
                                         this.saveTrackingData();
                                     }
-                                    
+
                                     // Save periodically
                                     if (Math.floor(track.actualPlayTime) % 2 === 0) {
                                         this.saveTrackingData();
                                     }
                                 }
                             }
-                            
+
                             track.lastPosition = currentPosition;
                             track.seekDetected = false;
                         });
-                        
+
                         // SEEK event
                         widget.bind(SC.Widget.Events.SEEK, (data) => {
                             const track = this.tracks[campaignId];
@@ -608,11 +638,11 @@
                         });
                     });
                 },
-                
+
                 syncToBackend(campaignId, action) {
                     const track = this.tracks[campaignId];
                     if (!track) return;
-                    
+
                     // Use fetch to avoid Livewire re-render
                     fetch('/api/campaign/track-playback', {
                         method: 'POST',
@@ -630,34 +660,36 @@
                         console.error('Failed to sync tracking:', err);
                     });
                 },
-                
+
                 isEligibleForRepost(campaignId) {
                     return this.tracks[campaignId]?.isEligible || false;
                 },
-                
+
                 isReposted(campaignId) {
                     return this.tracks[campaignId]?.reposted || false;
                 },
-                
+
                 getPlayTime(campaignId) {
                     return this.tracks[campaignId]?.actualPlayTime || 0;
                 },
-                
+
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
                     const percentage = Math.min((playTime / 15) * 100, 100);
                     return percentage.toFixed(2);
                 },
-                
+
                 handleRepost(campaignId) {
                     if (!this.isEligibleForRepost(campaignId) || this.isReposted(campaignId)) {
                         return;
                     }
-                    
+
                     // Dispatch repost action using Livewire event
-                    Livewire.dispatch('confirmRepost', { campaignId: campaignId });
+                    Livewire.dispatch('confirmRepost', {
+                        campaignId: campaignId
+                    });
                 },
-                
+
                 clearAllTracking() {
                     // Stop all playing tracks
                     Object.keys(this.tracks).forEach(campaignId => {
@@ -666,11 +698,11 @@
                             track.widget.pause();
                         }
                     });
-                    
+
                     // Clear tracking data and localStorage
                     this.tracks = {};
                     localStorage.removeItem('campaign_tracking_data');
-                    
+
                     // Clear update interval
                     if (this.updateInterval) {
                         clearInterval(this.updateInterval);
@@ -678,12 +710,12 @@
                 }
             };
         }
-        
+
         // Initialize on Livewire events
         document.addEventListener('livewire:initialized', function() {
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
-        
+
         document.addEventListener('livewire:navigated', function() {
             // Reinitialize widgets after navigation
             setTimeout(() => {
@@ -696,7 +728,7 @@
                 }
             }, 100);
         });
-        
+
         // Clean up on page leave
         window.addEventListener('beforeunload', function() {
             const mainElement = document.querySelector('main[x-data*="trackPlaybackManager"]');
