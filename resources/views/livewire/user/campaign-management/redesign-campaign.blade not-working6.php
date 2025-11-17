@@ -426,8 +426,6 @@
 
                         // Wait for DOM to stabilize
                         setTimeout(() => {
-                            console.log('🔄 Restoring state and reinitializing widgets...');
-
                             // Restore all tracking data first
                             Object.keys(currentTracks).forEach(campaignId => {
                                 if (!this.tracks[campaignId]) {
@@ -442,9 +440,6 @@
                                         .reposted;
                                     this.tracks[campaignId].lastPosition = currentTracks[campaignId]
                                         .lastPosition;
-                                    // Don't preserve widget or widgetId - let them rebind
-                                    this.tracks[campaignId].widget = null;
-                                    this.tracks[campaignId].widgetId = null;
                                 }
                             });
 
@@ -452,7 +447,7 @@
                             this.initializeSoundCloudWidgets();
 
                             console.log('✅ State restored:', this.tracks);
-                        }, 250);
+                        }, 200);
                     });
 
                     // Handle component updates
@@ -553,7 +548,7 @@
                             return;
                         }
 
-                        // Initialize track data if not exists, preserve existing data
+                        // Initialize track data if not exists
                         if (!this.tracks[campaignId]) {
                             this.tracks[campaignId] = {
                                 isPlaying: false,
@@ -564,18 +559,15 @@
                                 seekDetected: false,
                                 widget: null,
                                 reposted: false,
-                                widgetId: null, // Track which iframe this widget is bound to
+                                boundEvents: false,
                             };
                         }
 
                         const track = this.tracks[campaignId];
-                        const currentIframeId = iframe.getAttribute('src'); // Use src as unique identifier
 
-                        // Check if widget is bound to THIS specific iframe
-                        if (track.widget && track.widgetId === currentIframeId) {
+                        // Check if widget already properly initialized
+                        if (track.widget && track.boundEvents) {
                             console.log(`✅ Widget already initialized for campaign ${campaignId}`);
-                            // Update widget reference to current iframe (in case it changed)
-                            track.widget = SC.Widget(iframe);
                             return;
                         }
 
@@ -587,20 +579,6 @@
                         }
 
                         try {
-                            // Unbind old events if widget exists
-                            if (track.widget) {
-                                console.log(`🔄 Unbinding old widget for campaign ${campaignId}`);
-                                try {
-                                    track.widget.unbind(SC.Widget.Events.PLAY);
-                                    track.widget.unbind(SC.Widget.Events.PAUSE);
-                                    track.widget.unbind(SC.Widget.Events.FINISH);
-                                    track.widget.unbind(SC.Widget.Events.PLAY_PROGRESS);
-                                    track.widget.unbind(SC.Widget.Events.SEEK);
-                                } catch (e) {
-                                    console.warn('Could not unbind old widget:', e);
-                                }
-                            }
-
                             const widget = SC.Widget(iframe);
 
                             // Wait for widget to be ready
@@ -608,11 +586,13 @@
                                 console.log(`✅ Widget ready for campaign ${campaignId}`);
 
                                 track.widget = widget;
-                                track.widgetId = currentIframeId;
 
-                                // Bind events
-                                this.bindWidgetEvents(campaignId, widget, container);
-                                console.log(`🔗 Events bound for campaign ${campaignId}`);
+                                // Only bind events once
+                                if (!track.boundEvents) {
+                                    this.bindWidgetEvents(campaignId, widget, container);
+                                    track.boundEvents = true;
+                                    console.log(`🔗 Events bound for campaign ${campaignId}`);
+                                }
                             });
                         } catch (error) {
                             console.error(`❌ Error initializing widget for campaign ${campaignId}:`, error);
@@ -628,16 +608,15 @@
                 bindWidgetEvents(campaignId, widget, container) {
                     const track = this.tracks[campaignId];
 
-                    // Function to find next campaign (will be called at FINISH time)
-                    const findNextCampaign = () => {
-                        const currentCampaignCard = document.querySelector(`[data-campaign-id="${campaignId}"]`);
-                        const nextCampaignCard = currentCampaignCard?.nextElementSibling;
+                    // Find next campaign for auto-play
+                    const currentCampaignCard = container.closest('.campaign-card');
+                    const nextCampaignCard = currentCampaignCard?.nextElementSibling;
+                    let nextCampaignId = null;
 
-                        if (nextCampaignCard?.classList.contains('campaign-card')) {
-                            return nextCampaignCard.dataset.campaignId;
-                        }
-                        return null;
-                    };
+                    if (nextCampaignCard?.classList.contains('campaign-card')) {
+                        const nextPlayerContainer = nextCampaignCard.querySelector('[id^="soundcloud-player-"]');
+                        nextCampaignId = nextPlayerContainer?.dataset.campaignId;
+                    }
 
                     // PLAY event
                     widget.bind(SC.Widget.Events.PLAY, () => {
@@ -664,29 +643,12 @@
                         this.syncToBackend(campaignId, 'finish');
                         this.saveTrackingData();
 
-                        // Find and auto-play next track (at finish time)
-                        const nextCampaignId = findNextCampaign();
-                        if (nextCampaignId) {
-                            console.log(`⏭️ Auto-playing next: ${nextCampaignId}`);
-
-                            // Wait a bit, then get fresh widget reference and play
+                        // Auto-play next track
+                        if (nextCampaignId && this.tracks[nextCampaignId]?.widget) {
                             setTimeout(() => {
-                                const nextPlayerContainer = document.querySelector(
-                                    `#soundcloud-player-${nextCampaignId}`);
-                                const nextIframe = nextPlayerContainer?.querySelector('iframe');
-
-                                if (nextIframe) {
-                                    try {
-                                        const nextWidget = SC.Widget(nextIframe);
-                                        nextWidget.play();
-                                        console.log(`✅ Started playing next: ${nextCampaignId}`);
-                                    } catch (e) {
-                                        console.error(`❌ Error auto-playing next track:`, e);
-                                    }
-                                } else {
-                                    console.warn(`⚠️ Next iframe not found for campaign ${nextCampaignId}`);
-                                }
-                            }, 500);
+                                console.log(`⏭️ Auto-playing next: ${nextCampaignId}`);
+                                this.tracks[nextCampaignId].widget.play();
+                            }, 100);
                         }
                     });
 
@@ -740,37 +702,21 @@
                     const track = this.tracks[campaignId];
                     if (!track) return;
 
-                    // Check if API endpoint exists before calling
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-                    if (!csrfToken) {
-                        console.warn('⚠️ CSRF token not found, skipping backend sync');
-                        return;
-                    }
-
                     fetch('/api/campaign/track-playback', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken,
-                            },
-                            body: JSON.stringify({
-                                campaignId: campaignId,
-                                actualPlayTime: track.actualPlayTime,
-                                isEligible: track.isEligible,
-                                action: action
-                            })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        },
+                        body: JSON.stringify({
+                            campaignId: campaignId,
+                            actualPlayTime: track.actualPlayTime,
+                            isEligible: track.isEligible,
+                            action: action
                         })
-                        .then(response => {
-                            if (!response.ok) {
-                                console.warn(
-                                    `⚠️ Backend sync failed (${response.status}), continuing with localStorage only`
-                                    );
-                            }
-                            return response.json().catch(() => null);
-                        })
-                        .catch(err => {
-                            console.warn('⚠️ Backend sync unavailable, using localStorage only:', err.message);
-                        });
+                    }).catch(err => {
+                        console.error('❌ Failed to sync tracking:', err);
+                    });
                 },
 
                 isEligibleForRepost(campaignId) {
