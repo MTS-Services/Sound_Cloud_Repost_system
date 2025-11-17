@@ -4,6 +4,8 @@
 namespace App\Livewire\User\CampaignManagement;
 
 use App\Models\Campaign as ModelsCampaign;
+use App\Models\Playlist;
+use App\Models\Track;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
@@ -31,7 +33,7 @@ class RedesignCampaign extends Component
     public string $activeMainTab = 'recommendedPro';
 
     //  #[Url(except: [])] 
-     #[Url(keep: true)] 
+    #[Url(keep: true)]
     public array $selectedGenres = [];
 
     public array $suggestedTags = [];
@@ -162,7 +164,6 @@ class RedesignCampaign extends Component
             )
             ->withoutSelf()
             ->open()
-            ->with(['music.user.userInfo', 'reposts', 'user.starredUsers'])
             ->count();
 
         // RECOMMENDED PRO tab count
@@ -178,15 +179,13 @@ class RedesignCampaign extends Component
             )
             ->withoutSelf()
             ->open()
-            ->with(['music.user.userInfo', 'reposts', 'user.starredUsers'])
             ->count();
 
         // RECOMMENDED tab count
         $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
-            ->open()
-            ->with(['music.user.userInfo', 'reposts', 'user.starredUsers']);
+            ->open();
 
         if ($this->activeMainTab === 'recommended') {
             if ($explicitSelection) {
@@ -228,8 +227,8 @@ class RedesignCampaign extends Component
             case 'recommendedPro':
                 $query->whereHas('user', fn($q) => $q->isPro())
                     ->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
-                        $subQuery->whereIn('target_genre', $this->selectedGenres)
-                            ->orWhere('target_genre', 'anyGenre');
+                        $subQuery->whereIn('target_genre', $this->selectedGenres);
+                            // ->orWhere('target_genre', 'anyGenre');
                     }));
                 break;
 
@@ -241,8 +240,8 @@ class RedesignCampaign extends Component
                     });
                 } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
                     $query->where(function ($subQuery) use ($userDefaultGenres) {
-                        $subQuery->whereIn('target_genre', $userDefaultGenres)
-                            ->orWhere('target_genre', 'anyGenre');
+                        $subQuery->whereIn('target_genre', $userDefaultGenres);
+                            // ->orWhere('target_genre', 'anyGenre');
                     });
                 }
                 break;
@@ -250,8 +249,8 @@ class RedesignCampaign extends Component
             case 'all':
             default:
                 $query->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
-                    $subQuery->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
+                    $subQuery->whereIn('target_genre', $this->selectedGenres);
+                        // ->orWhere('target_genre', 'anyGenre');
                 }));
                 break;
         }
