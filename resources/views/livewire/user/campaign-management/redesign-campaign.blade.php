@@ -1,5 +1,4 @@
-<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()"
-    @reInitializeTracking.window="trackPlaybackManager().init()">
+<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -735,6 +734,16 @@
                 const trackManager = mainElement.__x.$data;
                 if (trackManager && trackManager.saveTrackingData) {
                     trackManager.saveTrackingData();
+                }
+            }
+        });
+
+        window.addEventListener('reInitializeTracking', () => {
+            const mainElement = document.querySelector('main[x-data*="trackPlaybackManager"]');
+            if (mainElement && mainElement.__x) {
+                const trackManager = mainElement.__x.$data;
+                if (trackManager && trackManager.initializeSoundCloudWidgets) {
+                    trackManager.initializeSoundCloudWidgets();
                 }
             }
         });
