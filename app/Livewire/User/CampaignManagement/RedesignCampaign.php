@@ -91,6 +91,11 @@ class RedesignCampaign extends Component
         ]);
     }
 
+    public function updated()
+    {
+        $this->dispatch('reInitializeTracking');
+    }
+
     #[Computed]
     public function userTracks(): Collection
     {
