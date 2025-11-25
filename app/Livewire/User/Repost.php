@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Services\User\CampaignManagement\CampaignService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -9,6 +10,15 @@ class Repost extends Component
 {
 
     public $showRepostActionModal = false;
+
+    public $campaign;
+
+    protected CampaignService $campaignService;
+    public function boot(CampaignService $campaignService)
+    {
+        $this->campaignService = $campaignService;
+    }
+
     public function render()
     {
         return view('livewire.user.repost');
@@ -18,6 +28,7 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         $this->showRepostActionModal = true;
-        dd($campaignId);
+        $this->campaign = $this->campaignService->getCampaign($campaignId);
+        dd($this->campaign);
     }
 }
