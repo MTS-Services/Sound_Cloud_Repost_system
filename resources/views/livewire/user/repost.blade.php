@@ -5,7 +5,7 @@
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div>
         @if ($showRepostActionModal)
-            @dd($campaign)
+           {{ $campaing->target_genre ?? '' }}
         @endif
     </div>
 </div>

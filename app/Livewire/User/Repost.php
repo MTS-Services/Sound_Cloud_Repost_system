@@ -27,6 +27,7 @@ class Repost extends Component
     #[On('callRepostAction')]
     public function callRepostAction($campaignId)
     {
+        $this->reset(['campaign']);
         $this->showRepostActionModal = true;
         $this->campaign = $this->campaignService->getCampaign($campaignId);
         $this->campaign->load('music', 'user');
