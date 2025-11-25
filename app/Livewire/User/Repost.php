@@ -107,7 +107,6 @@ class Repost extends Component
         try {
             $this->reset(['campaign', 'liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
             // $this->reset();
-            dd(decrypt($campaignId));
 
             $this->campaign = $this->campaignService->getCampaign($campaignId);
             $this->campaign->load('music.user.userInfo', 'user');
@@ -244,6 +243,9 @@ class Repost extends Component
     public function repost()
     {
         $this->validate($this->commentedRules());
+        
+        $this->dispatch('alert', type: 'info', message: 'Processing your repost. Please wait...');
+        return;
 
         try {
             $currentUserUrn = user()->urn;
