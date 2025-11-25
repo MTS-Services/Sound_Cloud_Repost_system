@@ -107,7 +107,7 @@ class Repost extends Component
         try {
             // $this->reset(['campaign', 'liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
             $this->reset();
-            dd($campaignId);
+            dd(decrypt($campaignId));
 
             $this->campaign = $this->campaignService->getCampaign($campaignId);
             $this->campaign->load('music.user.userInfo', 'user');
