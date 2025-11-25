@@ -18,5 +18,6 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         $this->showRepostActionModal = true;
+        dd($campaignId);
     }
 }
