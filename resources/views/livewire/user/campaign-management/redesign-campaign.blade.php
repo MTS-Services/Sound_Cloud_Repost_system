@@ -268,7 +268,7 @@
                                                 x-transition:enter-end="opacity-100 transform scale-100"
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
-                                                    x-text="Math.max(0, Math.ceil(15 - getPlayTime(campaignId))).toString() + 's remaining'"></span>
+                                                    x-text="Math.max(0, Math.ceil(4 - getPlayTime(campaignId))).toString() + 's remaining'"></span>
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-gray-900"></div>
@@ -712,7 +712,7 @@
                                 track.actualPlayTime += increment;
 
                                 // Check eligibility
-                                if (track.actualPlayTime >= 15 && !track.isEligible) {
+                                if (track.actualPlayTime >= 4 && !track.isEligible) {
                                     console.log(`✅ ELIGIBLE: ${campaignId} (${track.actualPlayTime.toFixed(2)}s)`);
                                     track.isEligible = true;
                                     this.syncToBackend(campaignId, 'eligible');
@@ -789,7 +789,7 @@
 
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
-                    const percentage = Math.min((playTime / 15) * 100, 100);
+                    const percentage = Math.min((playTime / 4) * 100, 100);
                     return percentage.toFixed(2);
                 },
 
