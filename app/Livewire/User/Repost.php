@@ -244,7 +244,7 @@ class Repost extends Component
     {
         $this->validate($this->commentedRules());
         
-        $this->dispatch('alert', type: 'info', message: 'Processing your repost. Please wait...');
+        $this->dispatch('alert', type: 'info', message: 'Repost Functionality Under Construction...');
         return;
 
         try {
