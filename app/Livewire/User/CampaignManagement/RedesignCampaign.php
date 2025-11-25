@@ -504,7 +504,7 @@ class RedesignCampaign extends Component
             if (empty($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign ID is required.');
                 return;
-            }
+            } 
             dd($campaignId);
             $this->dispatch('open-repost-modal', campaignId: encrypt($campaignId));
             $this->dispatch('callRepostAction', campaignId: encrypt($campaignId));
