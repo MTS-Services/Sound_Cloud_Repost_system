@@ -29,6 +29,6 @@ class Repost extends Component
     {
         $this->showRepostActionModal = true;
         $this->campaign = $this->campaignService->getCampaign($campaignId);
-        dd($this->campaign);
+        $this->campaign->load('track', 'user');
     }
 }
