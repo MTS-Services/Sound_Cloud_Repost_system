@@ -105,7 +105,9 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         try {
-            $this->reset(['campaign', 'liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+            // $this->reset(['campaign', 'liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+            $this->reset();
+            dd($campaignId);
 
             $this->campaign = $this->campaignService->getCampaign($campaignId);
             $this->campaign->load('music.user.userInfo', 'user');
