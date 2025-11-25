@@ -505,7 +505,7 @@ class RedesignCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign ID is required.');
                 return;
             }
-            $this->dispatch('callRepostAction', campaignId: $campaignId);
+            $this->dispatch('callRepostAction', campaignId: encrypt($campaignId));
 
             // Log::info('Repost confirmed', [
             //     'campaign_id' => $campaignId,
