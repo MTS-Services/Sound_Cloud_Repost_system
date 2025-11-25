@@ -4,8 +4,6 @@
     x-transition:leave-end="opacity-0 scale-95"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div>
-        @if ($campaign)
-            {{ $campaign->target_genre ?? 'No Genre' }}
-        @endif
+        @dd($campaign)
     </div>
 </div>
