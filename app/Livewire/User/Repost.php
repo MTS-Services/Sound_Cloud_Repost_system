@@ -27,7 +27,7 @@ class Repost extends Component
 
     public $campaign;
     public $isLoading = true;
-
+    
     // Repost action properties
     public $liked = true;
     public $alreadyLiked = false;
@@ -106,11 +106,11 @@ class Repost extends Component
     {
         // Immediately set loading state
         $this->isLoading = true;
-
+        
         try {
             // Clear all previous data first
             $this->resetRepostData();
-
+            
             // Load campaign with optimized eager loading
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
@@ -123,13 +123,20 @@ class Repost extends Component
                 $this->resetRepostData();
                 return;
             }
-
+            
             $this->checkUserInteractions();
-
+            
             // Data loaded, ready to show
             $this->isLoading = false;
+            
+            // Dispatch browser event for Alpine to catch
+            $this->dispatch('repost-data-loaded');
+            
         } catch (\Exception $e) {
-            Log::error('Error loading repost modal: ' . $e->getMessage());
+            Log::error('Error loading repost modal: ' . $e->getMessage(), [
+                'campaign_id' => $campaignId,
+                'exception' => $e
+            ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to load repost details. Please try again.');
             $this->dispatch('closeRepostModal');
             $this->resetRepostData();
@@ -141,7 +148,7 @@ class Repost extends Component
         $this->reset([
             'campaign',
             'liked',
-            'alreadyLiked',
+            'alreadyLiked', 
             'commented',
             'followed',
             'alreadyFollowing',
@@ -156,7 +163,7 @@ class Repost extends Component
     private function checkRepostEligibility()
     {
         $userUrn = user()->urn;
-
+        
         // Check 24-hour limit using cache
         $todayRepostCount = Cache::remember(
             "user_reposts_today_{$userUrn}",
@@ -178,7 +185,7 @@ class Repost extends Component
         if (!$this->canRepost12Hours($userUrn)) {
             $now = Carbon::now();
             $diff = $now->diff($this->availableRepostTime);
-
+            
             $message = "You have reached your 12 hour repost limit. You can repost again in ";
             if ($diff->h > 0) {
                 $message .= "{$diff->h} hour" . ($diff->h > 1 ? "s" : "");
@@ -187,7 +194,7 @@ class Repost extends Component
             if ($diff->i > 0) {
                 $message .= "{$diff->i} minute" . ($diff->i > 1 ? "s" : "");
             }
-
+            
             $this->dispatch('alert', type: 'error', message: $message);
             $this->dispatch('closeRepostModal');
             return false;
@@ -199,7 +206,7 @@ class Repost extends Component
     private function canRepost12Hours($userUrn)
     {
         $twelveHoursAgo = Carbon::now()->subHours(12);
-
+        
         $reposts = Cache::remember(
             "user_reposts_12h_{$userUrn}",
             300, // 5 minutes cache
@@ -334,7 +341,7 @@ class Repost extends Component
                 $this->dispatch('repost-success', campaignId: $this->campaign->id);
                 $this->dispatch('refreshCampaigns');
                 $this->dispatch('closeRepostModal');
-
+                
                 // Clear all data after successful repost
                 $this->resetRepostData();
             } else {
@@ -358,17 +365,17 @@ class Repost extends Component
             ]);
 
             // Get initial counts
-            $endpoint = $this->campaign->music_type === Track::class
-                ? "/tracks/{$musicUrn}"
+            $endpoint = $this->campaign->music_type === Track::class 
+                ? "/tracks/{$musicUrn}" 
                 : "/playlists/{$musicUrn}";
-
+            
             $initialData = $this->soundCloudService->makeGetApiRequest(
                 endpoint: $endpoint,
                 errorMessage: 'Failed to fetch initial data'
             );
 
-            $countField = $this->campaign->music_type === Track::class
-                ? 'reposts_count'
+            $countField = $this->campaign->music_type === Track::class 
+                ? 'reposts_count' 
                 : 'repost_count';
             $previousReposts = $initialData['collection'][$countField] ?? 0;
 
@@ -376,9 +383,9 @@ class Repost extends Component
             $repostEndpoint = $this->campaign->music_type === Track::class
                 ? "{$this->baseUrl}/reposts/tracks/{$musicUrn}"
                 : "{$this->baseUrl}/reposts/playlists/{$musicUrn}";
-
+            
             $repostResponse = $httpClient->post($repostEndpoint);
-
+            
             if (!$repostResponse->successful()) {
                 return [
                     'success' => false,
@@ -412,7 +419,7 @@ class Repost extends Component
                 $likeEndpoint = $this->campaign->music_type === Track::class
                     ? "{$this->baseUrl}/likes/tracks/{$musicUrn}"
                     : "{$this->baseUrl}/likes/playlists/{$musicUrn}";
-
+                
                 $likeResponse = $httpClient->post($likeEndpoint);
                 $actions['likeable'] = $likeResponse->successful();
             }
