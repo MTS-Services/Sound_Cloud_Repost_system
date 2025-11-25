@@ -383,6 +383,8 @@
         @livewire('user.campaign-management.campaign-creator')
     @endif
 
+    <livewire:user.repost />
+
     <script>
         // Enhanced Alpine.js component for track playback management
         function trackPlaybackManager() {
@@ -764,7 +766,7 @@
                             if (!response.ok) {
                                 console.warn(
                                     `⚠️ Backend sync failed (${response.status}), continuing with localStorage only`
-                                    );
+                                );
                             }
                             return response.json().catch(() => null);
                         })

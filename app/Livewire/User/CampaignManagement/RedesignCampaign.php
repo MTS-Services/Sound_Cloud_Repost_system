@@ -500,7 +500,13 @@ class RedesignCampaign extends Component
     public function confirmRepost($campaignId)
     {
         try {
-            $campaignId = (string) $campaignId;
+
+            if (empty($campaignId)) {
+                $this->dispatch('alert', type: 'error', message: 'Campaign ID is required.');
+                return;
+            }
+            dd('here');
+            $this->dispatch('callRepostAction', campaignId: $campaignId);
 
             // TODO: Implement actual repost logic
             // Example: $this->campaignService->repostCampaign($campaignId, user()->urn);
