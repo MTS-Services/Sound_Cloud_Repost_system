@@ -39,7 +39,7 @@
                     <button @click="openFilterByTrack = !openFilterByTrack; openFilterByGenre = false"
                         @click.outside="openFilterByTrack = false"
                         class="w-full sm:w-auto bg-orange-100 hover:bg-orange-400 text-orange-600 px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
-                        Filter by track type / {{ $trackTypeFilter }}
+                        Filter by track type / {{ $trackType }}
                         <x-lucide-chevron-down class="w-4 h-4" />
                     </button>
 
@@ -47,12 +47,12 @@
                         class="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-slate-800 z-50">
                         <div class="py-1">
                             @foreach (['all' => 'All', Track::class => 'Tracks', Playlist::class => 'Playlists'] as $value => $label)
-                                <button wire:click="$set('trackTypeFilter', '{{ $value }}')"
+                                <button wire:click="$set('trackType', '{{ $value }}')"
                                     @class([
                                         'block w-full text-left px-4 py-2 text-sm border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700',
                                         'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' =>
-                                            $trackTypeFilter === $value,
-                                        'text-gray-700 dark:text-gray-300' => $trackTypeFilter !== $value,
+                                            $trackType === $value,
+                                        'text-gray-700 dark:text-gray-300' => $trackType !== $value,
                                     ])>
                                     {{ $label }}
                                 </button>
