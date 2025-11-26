@@ -262,11 +262,7 @@
                                                         class="font-semibold text-gray-900 dark:text-white truncate hover:text-orange-400 block w-full">
                                                         {{ Str::limit($source['source']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
-                                                    @if (empty($source['source']?->user?->name))
-                                                        @dd($source['source']?->user?->urn, 'No name found')
-                                                    @else
-                                                        @dd($source['source']?->user?->name)
-                                                    @endif
+                                                    {{ Log::info(json_encode($source['source'])) }}
                                                     <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}"
                                                         class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 block">
                                                         {{ $source['source']?->user?->name ?? 'Unknown' }}
