@@ -1,4 +1,4 @@
-<main x-data="trackPlaybackManager()">
+<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -140,21 +140,27 @@
             </div>
         </div>
 
+        <!-- Enhanced campaign cards section with proper wire:key -->
         <div class="flex flex-col space-y-4">
             @forelse ($campaigns as $campaign_)
                 <div class="campaign-card bg-white dark:bg-gray-800 border border-gray-200 mb-4 dark:border-gray-700 shadow-sm"
-                    data-campaign-id="{{ $campaign_->id }}" data-permalink="{{ $campaign_->music->permalink_url }}">
-                    <div class="flex flex-col lg:flex-row" wire:key="featured-{{ $campaign_->id }}">
+                    data-campaign-id="{{ $campaign_->id }}" data-permalink="{{ $campaign_->music->permalink_url }}"
+                    wire:key="campaign-{{ $campaign_->id }}-{{ $activeMainTab }}-{{ $trackType }}">
+
+                    <div class="flex flex-col lg:flex-row">
                         <!-- Left Column - Track Info -->
                         <div
                             class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
                             <div class="flex flex-col md:flex-row gap-4">
                                 <div class="flex-1 flex flex-col justify-between relative">
+                                    <!-- Unique wire:key for each player -->
                                     <div id="soundcloud-player-{{ $campaign_->id }}"
-                                        data-campaign-id="{{ $campaign_->id }}" wire:ignore>
+                                        data-campaign-id="{{ $campaign_->id }}" wire:ignore
+                                        wire:key="player-{{ $campaign_->id }}">
                                         <x-sound-cloud.sound-cloud-player :track="$campaign_->music" :height="166"
                                             :visual="false" />
                                     </div>
+
                                     <div class="absolute top-2 left-2 flex items-center space-x-2">
                                         @if (!featuredAgain($campaign_->id) && $campaign_->is_featured)
                                             <div
@@ -182,37 +188,39 @@
                                         <img class="w-14 h-14 rounded-full object-cover"
                                             src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
                                             alt="Avatar">
+
                                         <div x-data="{ open: false }" class="inline-block text-left">
                                             <div @click="open = !open" class="flex items-center gap-1 cursor-pointer">
-                                                <span
-                                                    class="text-slate-700 dark:text-gray-300 font-medium">{{ $campaign_?->music?->user?->name }}</span>
+                                                <span class="text-slate-700 dark:text-gray-300 font-medium">
+                                                    {{ $campaign_?->music?->user?->name }}
+                                                </span>
                                                 <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                                 </svg>
                                             </div>
+
                                             <button
                                                 x-on:click="Livewire.dispatch('starMarkUser', { userUrn: '{{ $campaign_?->music?->user?->urn }}' })">
                                                 <x-lucide-star
-                                                    class="w-5 h-5 mt-1 relative {{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn)
-                                                        ? 'text-orange-300 '
-                                                        : 'text-gray-400 dark:text-gray-500' }}"
-                                                    fill="{{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
+                                                    class="w-5 h-5 mt-1 relative {{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn) ? 'text-orange-300' : 'text-gray-400 dark:text-gray-500' }}"
+                                                    fill="{{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange' : 'none' }}" />
                                             </button>
 
-                                            <div x-show="open" x-transition.opacity
+                                            <div x-show="open" x-transition.opacity @click.outside="open = false"
                                                 class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                 x-cloak>
                                                 <a href="{{ $campaign_?->music?->user?->soundcloud_permalink_url }}"
-                                                    target="_blank"
-                                                    class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud
-                                                    Profile</a>
+                                                    target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">
+                                                    Visit SoundCloud Profile
+                                                </a>
                                                 @if ($campaign_->user)
                                                     <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
                                                         wire:navigate
-                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
-                                                        RepostChain Profile</a>
+                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">
+                                                        Visit RepostChain Profile
+                                                    </a>
                                                 @endif
                                             </div>
                                         </div>
@@ -229,15 +237,21 @@
                                                     <circle cx="8" cy="9" r="3" fill="none"
                                                         stroke="currentColor" stroke-width="2" />
                                                 </svg>
-                                                <span
-                                                    class="text-sm sm:text-base">{{ $campaign_->budget_credits - $campaign_->credits_spent }}</span>
+                                                <span class="text-sm sm:text-base">
+                                                    {{ $campaign_->budget_credits - $campaign_->credits_spent }}
+                                                </span>
                                             </div>
                                             <span
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
-                                        <div class="relative" x-data="{ showReadyTooltip: false, justBecameEligible: false }" x-init="$watch('isEligibleForRepost(\'{{ $campaign_->id }}\')', (value, oldValue) => {
-                                            if (value && !oldValue && !isReposted('{{ $campaign_->id }}')) {
+                                        <!-- Repost Button with Tracking -->
+                                        <div class="relative" x-data="{
+                                            showReadyTooltip: false,
+                                            justBecameEligible: false,
+                                            campaignId: '{{ $campaign_->id }}'
+                                        }" x-init="$watch('isEligibleForRepost(campaignId)', (value, oldValue) => {
+                                            if (value && !oldValue && !isReposted(campaignId)) {
                                                 justBecameEligible = true;
                                                 showReadyTooltip = true;
                                                 setTimeout(() => {
@@ -247,23 +261,22 @@
                                             }
                                         })">
 
-                                            <!-- Countdown Tooltip - Shows remaining time -->
-                                            <div x-show="!isReposted('{{ $campaign_->id }}') && !isEligibleForRepost('{{ $campaign_->id }}') && getPlayTime('{{ $campaign_->id }}') > 0"
+                                            <!-- Countdown Tooltip -->
+                                            <div x-show="!isReposted(campaignId) && !isEligibleForRepost(campaignId) && getPlayTime(campaignId) > 0"
                                                 x-transition:enter="transition ease-out duration-200"
                                                 x-transition:enter-start="opacity-0 transform scale-95"
                                                 x-transition:enter-end="opacity-100 transform scale-100"
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
-                                                    x-text="Math.max(0, Math.ceil(5 - getPlayTime('{{ $campaign_->id }}'))).toString() + 's remaining'"></span>
-                                                <!-- Tooltip arrow -->
+                                                    x-text="Math.max(0, Math.ceil(2 - getPlayTime(campaignId))).toString() + 's remaining'"></span>
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-gray-900"></div>
                                                 </div>
                                             </div>
 
-                                            <!-- Ready Tooltip - Shows when eligible (auto-hide after 3s, show on hover) -->
-                                            <div x-show="!isReposted('{{ $campaign_->id }}') && isEligibleForRepost('{{ $campaign_->id }}') && (showReadyTooltip || $el.parentElement.querySelector('.repost-button').matches(':hover'))"
+                                            <!-- Ready Tooltip -->
+                                            <div x-show="!isReposted(campaignId) && isEligibleForRepost(campaignId) && (showReadyTooltip || $el.parentElement.querySelector('.repost-button').matches(':hover'))"
                                                 x-transition:enter="transition ease-out duration-200"
                                                 x-transition:enter-start="opacity-0 transform scale-95"
                                                 x-transition:enter-end="opacity-100 transform scale-100"
@@ -277,41 +290,37 @@
                                                     </svg>
                                                     <span>Ready</span>
                                                 </div>
-                                                <!-- Tooltip arrow -->
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-green-600"></div>
                                                 </div>
                                             </div>
 
-                                            <!-- Repost Button with animated fill effect -->
-                                            <button :data-campaign-id="{{ $campaign_->id }}"
-                                                x-bind:disabled="!isEligibleForRepost('{{ $campaign_->id }}') || isReposted(
-                                                    '{{ $campaign_->id }}')"
-                                                @click="handleRepost('{{ $campaign_->id }}')"
+                                            <!-- Repost Button -->
+                                            <button :data-campaign-id="campaignId"
+                                                x-bind:disabled="!isEligibleForRepost(campaignId) || isReposted(campaignId)"
+                                                @click="handleRepost(campaignId)"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
                                                 :class="{
                                                     'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300':
-                                                        !isEligibleForRepost('{{ $campaign_->id }}') && !isReposted(
-                                                            '{{ $campaign_->id }}'),
+                                                        !isEligibleForRepost(campaignId) && !isReposted(campaignId),
                                                     'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost(
-                                                        '{{ $campaign_->id }}') && !isReposted(
-                                                        '{{ $campaign_->id }}'),
+                                                        campaignId) && !isReposted(campaignId),
                                                     'bg-green-500 text-white cursor-not-allowed': isReposted(
-                                                        '{{ $campaign_->id }}'),
-                                                    'focus:ring-orange-500': !isReposted('{{ $campaign_->id }}'),
-                                                    'focus:ring-green-500': isReposted('{{ $campaign_->id }}')
+                                                        campaignId),
+                                                    'focus:ring-orange-500': !isReposted(campaignId),
+                                                    'focus:ring-green-500': isReposted(campaignId)
                                                 }">
 
-                                                <!-- Animated orange fill background (only show if not reposted) -->
-                                                <div x-show="!isReposted('{{ $campaign_->id }}')"
+                                                <!-- Animated fill background -->
+                                                <div x-show="!isReposted(campaignId)"
                                                     class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out z-0"
-                                                    :style="`width: ${getPlayTimePercentage('{{ $campaign_->id }}')}%`">
+                                                    :style="`width: ${getPlayTimePercentage(campaignId)}%`">
                                                 </div>
 
-                                                <!-- Button content (stays on top) -->
+                                                <!-- Button content -->
                                                 <div class="relative z-10 flex items-center gap-2">
-                                                    <template x-if="!isReposted('{{ $campaign_->id }}')">
+                                                    <template x-if="!isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
                                                             <svg width="26" height="18" viewBox="0 0 26 18"
                                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -326,9 +335,9 @@
                                                         </div>
                                                     </template>
 
-                                                    <template x-if="isReposted('{{ $campaign_->id }}')">
+                                                    <template x-if="isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
-                                                            <span>✔️</span>
+                                                            <span>✓</span>
                                                             <span>Reposted</span>
                                                         </div>
                                                     </template>
@@ -341,7 +350,7 @@
                                 <div class="mt-auto">
                                     <span
                                         class="inline-block bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium px-3 py-1.5 rounded-md shadow-sm">
-                                        {{ !empty($campaign_->music?->genre) ? $campaign_->music?->genre : 'Unknown Genre' }}
+                                        {{ !empty($campaign_->target_genre) ? ($campaign_->target_genre != 'anyGenre' ? $campaign_->target_genre : 'Any Genre') : 'Unknown Genre' }}
                                     </span>
                                 </div>
                             </div>
@@ -356,12 +365,13 @@
 
             @if (isset($campaigns) && method_exists($campaigns, 'hasPages') && $campaigns->hasPages())
                 <div class="mt-6">
-                    {{ $campaigns->links('components.pagination.wire-navigate', [
+                    {{ $campaigns->links('components.pagination.wire-navigate2', [
                         'pageName' => $activeMainTab . 'Page',
                         'keep' => [
                             'tab' => $activeMainTab,
                             'selectedGenres' => $selectedGenres,
                             'search' => $search ?: null,
+                            'trackType' => $trackType,
                         ],
                     ]) }}
                 </div>
@@ -373,6 +383,7 @@
         @livewire('user.campaign-management.campaign-creator')
     @endif
 
+    <livewire:user.repost />
     <script>
         // Alpine.js component for track playback management
         function trackPlaybackManager() {
