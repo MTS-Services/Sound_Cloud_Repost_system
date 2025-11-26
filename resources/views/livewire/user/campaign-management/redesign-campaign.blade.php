@@ -267,6 +267,7 @@
                                                 x-transition:enter-start="opacity-0 transform scale-95"
                                                 x-transition:enter-end="opacity-100 transform scale-100"
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
+                                                {{-- Countdown Tooltip - Shows remaining time 15 seconds --}}
                                                 <span
                                                     x-text="Math.max(0, Math.ceil(2 - getPlayTime(campaignId))).toString() + 's remaining'"></span>
                                                 <div
@@ -610,8 +611,8 @@
                                 if (increment > 0 && increment < 2) {
                                     track.actualPlayTime += increment;
 
-                                    // Check if eligible (5 seconds actual play time)
-                                    if (track.actualPlayTime >= 5 && !track.isEligible) {
+                                    // Check if eligible (15 seconds actual play time)
+                                    if (track.actualPlayTime >= 2 && !track.isEligible) {
                                         track.isEligible = true;
                                         this.syncToBackend(campaignId, 'eligible');
                                         this.saveTrackingData();
@@ -673,7 +674,8 @@
 
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
-                    const percentage = Math.min((playTime / 5) * 100, 100);
+                    // Cap at 100% for 15 seconds
+                    const percentage = Math.min((playTime / 2) * 100, 100);
                     return percentage.toFixed(2);
                 },
 
