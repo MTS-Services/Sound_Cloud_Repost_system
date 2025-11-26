@@ -505,19 +505,19 @@ class RedesignCampaign extends Component
                 $this->dispatch('alert', type: 'error', message: 'Campaign ID is required.');
                 return;
             } 
-            $this->dispatch('open-repost-modal', campaignId: encrypt($campaignId));
-            $this->dispatch('callRepostAction', campaignId: encrypt($campaignId));
+            // $this->dispatch('open-repost-modal', campaignId: encrypt($campaignId));
+            // $this->dispatch('callRepostAction', campaignId: encrypt($campaignId));
 
-            // Log::info('Repost confirmed', [
-            //     'campaign_id' => $campaignId,
-            //     'user_urn' => user()->urn,
-            // ]);
+            Log::info('Repost confirmed', [
+                'campaign_id' => $campaignId,
+                'user_urn' => user()->urn,
+            ]);
 
-            // $this->dispatch('alert', type: 'success', message: 'Track reposted successfully!');
-            // $this->dispatch('repost-success', campaignId: $campaignId);
+            $this->dispatch('alert', type: 'success', message: 'Track reposted successfully!');
+            $this->dispatch('repost-success', campaignId: $campaignId);
 
             // // Refresh campaigns to update UI
-            // $this->dispatch('refreshCampaigns');
+            $this->dispatch('refreshCampaigns');
         } catch (\Exception $e) {
             Log::error('Error confirming repost: ' . $e->getMessage(), [
                 'campaign_id' => $campaignId,
