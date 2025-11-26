@@ -111,7 +111,7 @@ class Repost extends Component
             // Load campaign with optimized eager loading
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
-                'music.user.userInfo:id,user_id,followers_count',
+                'music.user.userInfo:id,user_urn,followers_count',
                 'user:id,urn,name,email'
             ])->findOrFail(decrypt($campaignId));
 
@@ -313,6 +313,7 @@ class Repost extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
+            $message = 'Repost functionality is currently disabled for testing purposes. Please try again later.';
             $this->dispatch('alert', type: 'success', message: $message);
             $this->dispatch('repost-success', campaignId: $this->campaign->id);
             $this->dispatch('refreshCampaigns');
