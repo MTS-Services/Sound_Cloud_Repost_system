@@ -105,70 +105,32 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         try {
-            // CRITICAL: Complete reset before loading new data
-            $this->resetModalState();
-            
-            // Load campaign with optimized eager loading
-            $this->campaign = ModelsCampaign::with([
-                'music.user:id,urn,name,email,avatar',
-                'music.user.userInfo:id,user_id,followers_count',
-                'user:id,urn,name,email'
-            ])->findOrFail(decrypt($campaignId));
+            $this->reset(['campaign', 'liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+            // $this->reset();
+
+            $this->campaign = $this->campaignService->getCampaign($campaignId);
+            $this->campaign->load('music.user.userInfo', 'user');
 
             // Fast parallel checks using cache
-            if (!$this->checkRepostEligibility()) {
-                $this->resetModalState();
-                return;
-            }
+            $this->checkRepostEligibility();
 
             if ($this->campaign) {
                 $this->checkUserInteractions();
                 $this->showRepostActionModal = true;
             }
         } catch (\Exception $e) {
-            Log::error('Error loading repost modal: ' . $e->getMessage(), [
-                'campaign_id' => $campaignId,
-                'exception' => $e
-            ]);
+            Log::error('Error loading repost modal: ' . $e->getMessage());
             $this->dispatch('alert', type: 'error', message: 'Failed to load repost details. Please try again.');
-            $this->resetModalState();
         }
-    }
-
-    private function resetModalState()
-    {
-        $this->reset([
-            'campaign',
-            'liked',
-            'alreadyLiked',
-            'commented',
-            'followed',
-            'alreadyFollowing',
-            'availableRepostTime'
-        ]);
-        
-        // Set default values
-        $this->liked = true;
-        $this->followed = true;
-        $this->alreadyLiked = false;
-        $this->alreadyFollowing = false;
-        $this->commented = null;
-        $this->availableRepostTime = null;
-        
-        // Clear validation errors
-        $this->resetValidation();
-        $this->resetErrorBag();
     }
 
     private function checkRepostEligibility()
     {
-        $userUrn = user()->urn;
-        
         // Check 24-hour limit using cache
         $todayRepostCount = Cache::remember(
-            "user_reposts_today_{$userUrn}",
-            60,
-            fn() => ModelsRepost::where('reposter_urn', $userUrn)
+            'user_reposts_today_' . user()->urn,
+            60, // 1 minute cache
+            fn() => ModelsRepost::where('reposter_urn', user()->urn)
                 ->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])
                 ->count()
         );
@@ -182,17 +144,23 @@ class Repost extends Component
         }
 
         // Check 12-hour limit
-        if (!$this->canRepost12Hours($userUrn)) {
+        if (!$this->canRepost12Hours(user()->urn)) {
             $now = Carbon::now();
-            $diff = $now->diff($this->availableRepostTime);
+            $availableTime = $this->availableRepostTime;
+            $diff = $now->diff($availableTime);
+
+            $hoursLeft = $diff->h;
+            $minutesLeft = $diff->i;
 
             $message = "You have reached your 12 hour repost limit. You can repost again in ";
-            if ($diff->h > 0) {
-                $message .= "{$diff->h} hour" . ($diff->h > 1 ? "s" : "");
-                if ($diff->i > 0) $message .= " ";
+            if ($hoursLeft > 0) {
+                $message .= "{$hoursLeft} hour" . ($hoursLeft > 1 ? "s" : "");
             }
-            if ($diff->i > 0) {
-                $message .= "{$diff->i} minute" . ($diff->i > 1 ? "s" : "");
+            if ($hoursLeft > 0 && $minutesLeft > 0) {
+                $message .= " ";
+            }
+            if ($minutesLeft > 0) {
+                $message .= "{$minutesLeft} minute" . ($minutesLeft > 1 ? "s" : "");
             }
 
             $this->dispatch('alert', type: 'error', message: $message);
@@ -209,7 +177,7 @@ class Repost extends Component
 
         $reposts = Cache::remember(
             "user_reposts_12h_{$userUrn}",
-            300,
+            300, // 5 minutes cache
             fn() => ModelsRepost::where('reposter_urn', $userUrn)
                 ->where('created_at', '>=', $twelveHoursAgo)
                 ->orderBy('created_at', 'asc')
@@ -229,11 +197,8 @@ class Repost extends Component
 
     private function checkUserInteractions()
     {
-        // Reset interaction states
-        $this->liked = true;
-        $this->followed = true;
-        $this->alreadyLiked = false;
-        $this->alreadyFollowing = false;
+        // Reset states
+        $this->reset(['liked', 'alreadyLiked', 'followed', 'alreadyFollowing']);
 
         try {
             $httpClient = Http::timeout(5)->withHeaders([
@@ -244,13 +209,12 @@ class Repost extends Component
             if ($this->campaign->likeable == 0) {
                 $this->liked = false;
             } else {
-                $likeAble = UserAnalytics::where([
-                    ['owner_user_urn', '=', $this->campaign->music->user->urn],
-                    ['act_user_urn', '=', user()->urn],
-                    ['type', '=', UserAnalytics::TYPE_LIKE],
-                    ['source_type', '=', get_class($this->campaign->music)],
-                    ['source_id', '=', $this->campaign->music->id]
-                ])->exists();
+                $likeAble = UserAnalytics::where('owner_user_urn', $this->campaign?->music?->user?->urn)
+                    ->where('act_user_urn', user()->urn)
+                    ->liked()
+                    ->where('source_type', get_class($this->campaign?->music))
+                    ->where('source_id', $this->campaign?->music?->id)
+                    ->exists();
 
                 if ($likeAble) {
                     $this->liked = false;
@@ -279,6 +243,9 @@ class Repost extends Component
     public function repost()
     {
         $this->validate($this->commentedRules());
+        
+        $this->dispatch('alert', type: 'info', message: 'Repost Functionality Under Construction...');
+        return;
 
         try {
             $currentUserUrn = user()->urn;
@@ -289,10 +256,10 @@ class Repost extends Component
                 return;
             }
 
-            if (ModelsRepost::where([
-                ['reposter_urn', '=', $currentUserUrn],
-                ['campaign_id', '=', $this->campaign->id]
-            ])->exists()) {
+            if (ModelsRepost::where('reposter_urn', $currentUserUrn)
+                ->where('campaign_id', $this->campaign->id)
+                ->exists()
+            ) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
                 return;
             }
@@ -336,8 +303,8 @@ class Repost extends Component
                 );
 
                 // Clear relevant caches
-                Cache::forget("user_reposts_today_{$currentUserUrn}");
-                Cache::forget("user_reposts_12h_{$currentUserUrn}");
+                Cache::forget('user_reposts_today_' . user()->urn);
+                Cache::forget('user_reposts_12h_' . user()->urn);
 
                 $message = 'Campaign music reposted successfully.';
                 if (!$result['actions']['likeable']) {
@@ -348,7 +315,6 @@ class Repost extends Component
                 $this->dispatch('repost-success', campaignId: $this->campaign->id);
                 $this->dispatch('refreshCampaigns');
 
-                // CRITICAL: Close modal and reset state
                 $this->closeConfirmModal();
             } else {
                 $this->dispatch('alert', type: 'error', message: $result['message']);
@@ -459,12 +425,15 @@ class Repost extends Component
 
     public function closeConfirmModal(): void
     {
+        $this->reset([
+            'campaign',
+            'liked',
+            'alreadyLiked',
+            'commented',
+            'followed',
+            'alreadyFollowing',
+            'availableRepostTime'
+        ]);
         $this->showRepostActionModal = false;
-        
-        // CRITICAL: Reset all state after modal closes
-        $this->resetModalState();
-        
-        // Dispatch event to ensure UI updates
-        $this->dispatch('modal-closed');
     }
 }
