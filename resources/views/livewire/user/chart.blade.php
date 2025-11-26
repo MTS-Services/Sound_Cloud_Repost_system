@@ -443,7 +443,8 @@
                                         <a href="{{ $source['source']?->permalink_url ?? '#' }}" target="_blank"
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
                                             {{ Str::limit($source['source']?->title ?? 'Unknown', 20, '...') }}</a>
-                                        <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}"
+                                        {{-- <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}" --}}
+                                        <a href="{{ $source['source'] ? route('user.my-account.user', $source['source']->user->name ?? $source['source']->user->urn) : '#' }}"
                                             class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
                                             {{ $source['source']?->user?->name ?? 'Unknown' }}</a>
                                         <span
@@ -616,7 +617,8 @@
                                                         class="font-bold text-black dark:text-white truncate text-lg hover:text-orange-400 transition-colors cursor-pointer block w-full">
                                                         {{ Str::limit($source['source']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
-                                                    <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}"
+                                                    {{-- <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}" --}}
+                                                    <a href="{{ $source['source'] ? route('user.my-account.user', $source['source']->user->name ?? $source['source']->user->urn) : '#' }}"
                                                         class="text-gray-600 dark:text-gray-300 truncate">
                                                         {{ $source['source']?->user?->name ?? 'Unknown' }}</a>
                                                     <span
