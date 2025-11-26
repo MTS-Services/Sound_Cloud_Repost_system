@@ -107,7 +107,7 @@ class Repost extends Component
         try {
             // CRITICAL: Complete reset before loading new data
             $this->resetModalState();
-            
+
             // Load campaign with optimized eager loading
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
@@ -146,7 +146,7 @@ class Repost extends Component
             'alreadyFollowing',
             'availableRepostTime'
         ]);
-        
+
         // Set default values
         $this->liked = true;
         $this->followed = true;
@@ -154,7 +154,7 @@ class Repost extends Component
         $this->alreadyFollowing = false;
         $this->commented = null;
         $this->availableRepostTime = null;
-        
+
         // Clear validation errors
         $this->resetValidation();
         $this->resetErrorBag();
@@ -163,7 +163,7 @@ class Repost extends Component
     private function checkRepostEligibility()
     {
         $userUrn = user()->urn;
-        
+
         // Check 24-hour limit using cache
         $todayRepostCount = Cache::remember(
             "user_reposts_today_{$userUrn}",
@@ -313,6 +313,13 @@ class Repost extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
+            $this->dispatch('alert', type: 'success', message: $message);
+            $this->dispatch('repost-success', campaignId: $this->campaign->id);
+            $this->dispatch('refreshCampaigns');
+
+            // CRITICAL: Close modal and reset state
+            $this->closeConfirmModal();
+            return;
             // Perform repost and interactions
             $result = $this->performRepostActions($httpClient, $musicUrn);
 
@@ -460,10 +467,10 @@ class Repost extends Component
     public function closeConfirmModal(): void
     {
         $this->showRepostActionModal = false;
-        
+
         // CRITICAL: Reset all state after modal closes
         $this->resetModalState();
-        
+
         // Dispatch event to ensure UI updates
         $this->dispatch('modal-closed');
     }
