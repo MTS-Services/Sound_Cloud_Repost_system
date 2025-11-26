@@ -39,7 +39,8 @@
                                                 <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                                                 <path d="M3 10h18"></path>
                                             </svg>
-                                            <span>Week of {{ isset($period['start']) ? $period['start']->format('M d, Y') : 'N/A' }}</span>
+                                            <span>Week of
+                                                {{ isset($period['start']) ? $period['start']->format('M d, Y') : 'N/A' }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -49,7 +50,8 @@
                                                 <circle cx="12" cy="12" r="10"></circle>
                                                 <polyline points="12 6 12 12 16 14"></polyline>
                                             </svg>
-                                            <span>Updated {{ isset($period['end']) ? $period['end']->format('M d, Y') : 'N/A' }}</span>
+                                            <span>Updated
+                                                {{ isset($period['end']) ? $period['end']->format('M d, Y') : 'N/A' }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -260,7 +262,11 @@
                                                         class="font-semibold text-gray-900 dark:text-white truncate hover:text-orange-400 block w-full">
                                                         {{ Str::limit($source['source']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
-                                                    @dd($source)
+                                                    @if (empty($source['source']?->user?->name))
+                                                        @dd($source['source']?->user?->urn, 'No name found')
+                                                    @else
+                                                        @dd($source['source']?->user?->name)
+                                                    @endif
                                                     <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}"
                                                         class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 block">
                                                         {{ $source['source']?->user?->name ?? 'Unknown' }}
