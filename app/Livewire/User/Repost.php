@@ -313,14 +313,14 @@ class Repost extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
-            $message = 'Repost functionality is currently disabled for testing purposes. Please try again later.';
-            $this->dispatch('alert', type: 'success', message: $message);
-            $this->dispatch('repost-success', campaignId: $this->campaign->id);
-            $this->dispatch('refreshCampaigns');
+            // $message = 'Repost functionality is currently disabled for testing purposes. Please try again later.';
+            // $this->dispatch('alert', type: 'success', message: $message);
+            // $this->dispatch('repost-success', campaignId: $this->campaign->id);
+            // $this->dispatch('refreshCampaigns');
 
-            // CRITICAL: Close modal and reset state
-            $this->closeConfirmModal();
-            return;
+            // // CRITICAL: Close modal and reset state
+            // $this->closeConfirmModal();
+            // return;
             // Perform repost and interactions
             $result = $this->performRepostActions($httpClient, $musicUrn);
 
