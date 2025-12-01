@@ -34,10 +34,6 @@ class RedesignCampaign extends Component
     #[Url(keep: true)]
     public array $selectedGenres = [];
 
-    protected $queryString = [
-        'selectedGenres' => ['except' => []],
-    ];
-
     public array $suggestedTags = [];
 
     #[Url(keep: true)]
@@ -121,13 +117,6 @@ class RedesignCampaign extends Component
         $this->resetPage($this->activeMainTab . 'Page');
     }
 
-    public function updatedSelectedGenres()
-    {
-        dd($this->selectedGenres);
-        // Reset to page 1 when genres change
-        $this->resetPage($this->activeMainTab . 'Page');
-    }
-
     #[Computed]
     public function userTracks(): Collection
     {
@@ -180,6 +169,7 @@ class RedesignCampaign extends Component
 
         // Reset to page 1 when filter changes
         $this->resetPage($this->activeMainTab . 'Page');
+        dd($this->selectedGenres);
     }
 
     public function updatedSearch(): void
