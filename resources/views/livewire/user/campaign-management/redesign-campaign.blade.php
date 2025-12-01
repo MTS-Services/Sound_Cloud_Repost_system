@@ -104,7 +104,7 @@
                                         );
                                 @endphp
 
-                                <a href="{{ $url }}" @class([
+                                <a href="{{ $url }}" wire:navigate @class([
                                     'inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-md transition-all duration-200',
                                     'bg-orange-500 text-white' => in_array($genre, $selectedGenres),
                                     'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' => !in_array(
