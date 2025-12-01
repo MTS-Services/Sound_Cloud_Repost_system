@@ -34,6 +34,10 @@ class RedesignCampaign extends Component
     #[Url(keep: true)]
     public array $selectedGenres = [];
 
+    protected $queryString = [
+        'selectedGenres' => ['except' => []],
+    ];
+
     public array $suggestedTags = [];
 
     #[Url(keep: true)]
