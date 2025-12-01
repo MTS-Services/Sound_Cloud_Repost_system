@@ -347,10 +347,19 @@ class RedesignCampaign extends Component
                 })
             )
             ->withoutSelf()
-            ->open()
-            ->whereDoesntHave('reposts', function ($query) {
+            ->open();
+        if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            $allCountQuery->where(function ($query) {
+                $query->whereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn)
+                        ->where('campaign_id', '!=', session()->get('repostedId'));
+                });
+            });
+        } else {
+            $allCountQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             });
+        }
 
         if ($this->activeMainTab === 'all' && $this->trackType !== 'all') {
             $this->applyMusicTypeFilter($allCountQuery);
@@ -369,10 +378,20 @@ class RedesignCampaign extends Component
                 })
             )
             ->withoutSelf()
-            ->open()
-            ->whereDoesntHave('reposts', function ($query) {
+            ->open();
+
+        if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            $recommendedProQuery->where(function ($query) {
+                $query->whereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn)
+                        ->where('campaign_id', '!=', session()->get('repostedId'));
+                });
+            });
+        } else {
+            $recommendedProQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             });
+        }
 
         if ($this->activeMainTab === 'recommendedPro' && $this->trackType !== 'all') {
             $this->applyMusicTypeFilter($recommendedProQuery);
@@ -383,10 +402,20 @@ class RedesignCampaign extends Component
         $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
-            ->open()
-            ->whereDoesntHave('reposts', function ($query) {
+            ->open();
+
+        if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            $recommendedCountQuery->where(function ($query) {
+                $query->whereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn)
+                        ->where('campaign_id', '!=', session()->get('repostedId'));
+                });
+            });
+        } else {
+            $recommendedCountQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             });
+        }
 
         if ($this->activeMainTab === 'recommended') {
             if ($explicitSelection) {
@@ -426,10 +455,19 @@ class RedesignCampaign extends Component
             ->with(['music', 'user', 'reposts', 'user.starredUsers'])
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
-            ->open()
-            ->whereDoesntHave('reposts', function ($query) {
-                $query->where('reposter_urn', user()->urn);
+            ->open();
+        if (session()->has('repostedId') && session()->get('repostedId') != null) {
+            $query->where(function ($que) {
+                $que->whereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn)
+                        ->where('campaign_id', '!=', session()->get('repostedId'));
+                });
             });
+        } else {
+            $query->whereDoesntHave('reposts', function ($que) {
+                $que->where('reposter_urn', user()->urn);
+            });
+        }
 
         switch ($this->activeMainTab) {
             case 'recommendedPro':
