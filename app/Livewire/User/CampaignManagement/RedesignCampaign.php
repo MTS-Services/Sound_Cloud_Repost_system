@@ -169,7 +169,7 @@ class RedesignCampaign extends Component
 
         // Reset to page 1 when filter changes
         $this->resetPage($this->activeMainTab . 'Page');
-        dd($this->selectedGenres);
+        $this->dispatch('reset-widget-initiallized');
     }
 
     public function updatedSearch(): void
