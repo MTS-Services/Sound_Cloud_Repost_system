@@ -1,5 +1,6 @@
-<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="clearAllTracking()"
+<div x-data="trackPlaybackManager()" @clearCampaignTracking.window="clearAllTracking()"
     @reset-widget-initiallized.window="resetForFilterChange()">
+
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -285,7 +286,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center justify-between gap-4 w-full">
+                                    {{-- Bottom section with button --}}
+                                    <div class="flex items-center justify-between gap-4 w-full mt-4">
+                                        <!-- Credits remaining -->
                                         <div
                                             class="flex flex-col items-center sm:items-start text-gray-600 dark:text-gray-400">
                                             <div class="flex items-center gap-1.5">
@@ -304,52 +307,61 @@
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
-                                        <!-- Fixed Repost Button - No Alpine errors -->
+                                        <!-- Repost Button Container -->
                                         <div class="relative" x-data="{
+                                            campaignId: '{{ $campaign_->id }}',
                                             showReadyTooltip: false,
                                             justBecameEligible: false,
-                                            campaignId: '{{ $campaign_->id }}',
-                                            wasEligible: false,
-                                            watchEligibility() {
-                                                const nowEligible = this.isEligibleForRepost(this.campaignId);
-                                                if (nowEligible && !this.wasEligible && !this.isReposted(this.campaignId)) {
-                                                    this.justBecameEligible = true;
-                                                    this.showReadyTooltip = true;
-                                                    setTimeout(() => {
-                                                        this.showReadyTooltip = false;
-                                                        this.justBecameEligible = false;
-                                                    }, 3000);
-                                                }
-                                                this.wasEligible = nowEligible;
+                                            wasEligible: false
+                                        }" x-init="setInterval(() => {
+                                            const nowEligible = $root.closest('[x-data*=trackPlaybackManager]').__x.$data.isEligibleForRepost(campaignId);
+                                            const isAlreadyReposted = $root.closest('[x-data*=trackPlaybackManager]').__x.$data.isReposted(campaignId);
+                                        
+                                            if (nowEligible && !wasEligible && !isAlreadyReposted) {
+                                                justBecameEligible = true;
+                                                showReadyTooltip = true;
+                                                setTimeout(() => {
+                                                    showReadyTooltip = false;
+                                                    justBecameEligible = false;
+                                                }, 3000);
                                             }
-                                        }" x-init="setInterval(() => watchEligibility(), 500)">
+                                            wasEligible = nowEligible;
+                                        }, 500);">
 
-                                            <!-- Debug Section (temporary - remove after testing) -->
-                                            <div
-                                                class="text-xs bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded mb-2 border border-yellow-200 dark:border-yellow-800">
-                                                <div class="font-mono">
-                                                    <div>Campaign: {{ $campaign_->id }}</div>
-                                                    <div>PlayTime: <span
-                                                            x-text="getPlayTime(campaignId).toFixed(2)"></span>s</div>
-                                                    <div>Percentage: <span
-                                                            x-text="getPlayTimePercentage(campaignId)"></span>%</div>
-                                                    <div>Eligible: <span
-                                                            x-text="isEligibleForRepost(campaignId) ? '✅ YES' : '❌ NO'"></span>
+                                            <!-- Debug info (REMOVE AFTER TESTING) -->
+                                            <div class="absolute -top-24 left-0 bg-yellow-100 dark:bg-yellow-900 p-2 rounded text-xs z-50 w-48"
+                                                x-data="{
+                                                    manager: $root.closest('[x-data*=trackPlaybackManager]').__x?.$data
+                                                }">
+                                                <template x-if="manager">
+                                                    <div class="font-mono space-y-1">
+                                                        <div>ID: {{ $campaign_->id }}</div>
+                                                        <div>Time: <span
+                                                                x-text="(manager.getPlayTime(campaignId) || 0).toFixed(2)"></span>s
+                                                        </div>
+                                                        <div>%: <span
+                                                                x-text="(manager.getPlayTimePercentage(campaignId) || 0)"></span>%
+                                                        </div>
+                                                        <div>Eligible: <span
+                                                                x-text="manager.isEligibleForRepost(campaignId) ? '✅' : '❌'"></span>
+                                                        </div>
+                                                        <div>Reposted: <span
+                                                                x-text="manager.isReposted(campaignId) ? '✅' : '❌'"></span>
+                                                        </div>
                                                     </div>
-                                                    <div>Reposted: <span
-                                                            x-text="isReposted(campaignId) ? '✅ YES' : '❌ NO'"></span>
-                                                    </div>
-                                                </div>
+                                                </template>
+                                                <template x-if="!manager">
+                                                    <div class="text-red-600">Manager not found!</div>
+                                                </template>
                                             </div>
 
                                             <!-- Countdown Tooltip -->
-                                            <div x-show="!isReposted(campaignId) && !isEligibleForRepost(campaignId) && getPlayTime(campaignId) > 0"
-                                                x-transition:enter="transition ease-out duration-200"
-                                                x-transition:enter-start="opacity-0 transform scale-95"
-                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                            <div x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
+                                                x-show="manager && !manager.isReposted(campaignId) && !manager.isEligibleForRepost(campaignId) && manager.getPlayTime(campaignId) > 0"
+                                                x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
-                                                    x-text="Math.max(0, Math.ceil(2 - getPlayTime(campaignId))).toString() + 's remaining'"></span>
+                                                    x-text="Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining'"></span>
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-gray-900"></div>
@@ -357,10 +369,9 @@
                                             </div>
 
                                             <!-- Ready Tooltip -->
-                                            <div x-show="!isReposted(campaignId) && isEligibleForRepost(campaignId) && (showReadyTooltip || $el.parentElement?.querySelector('.repost-button')?.matches(':hover'))"
-                                                x-transition:enter="transition ease-out duration-200"
-                                                x-transition:enter-start="opacity-0 transform scale-95"
-                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                            <div x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
+                                                x-show="manager && !manager.isReposted(campaignId) && manager.isEligibleForRepost(campaignId) && showReadyTooltip"
+                                                x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none"
                                                 :class="{ 'animate-pulse': justBecameEligible }">
                                                 <div class="flex items-center gap-1.5">
@@ -378,30 +389,32 @@
                                             </div>
 
                                             <!-- Repost Button -->
-                                            <button type="button" x-bind:data-campaign-id="campaignId"
-                                                x-bind:disabled="!isEligibleForRepost(campaignId) || isReposted(campaignId)"
-                                                @click="handleRepost(campaignId)"
-                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
-                                                :class="{
-                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300':
-                                                        !isEligibleForRepost(campaignId) && !isReposted(campaignId),
-                                                    'cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-500': isEligibleForRepost(
-                                                        campaignId) && !isReposted(campaignId),
-                                                    'bg-green-500 text-white cursor-not-allowed': isReposted(
-                                                        campaignId),
-                                                    'focus:ring-orange-500': !isReposted(campaignId),
-                                                    'focus:ring-green-500': isReposted(campaignId)
-                                                }">
+                                            <button type="button" x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
+                                                :disabled="!manager || (!manager.isEligibleForRepost(campaignId) || manager
+                                                    .isReposted(campaignId))"
+                                                @click="manager && manager.handleRepost(campaignId)"
+                                                class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
+                                                :class="manager ? {
+                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white': !
+                                                        manager.isEligibleForRepost(campaignId) && !manager
+                                                        .isReposted(campaignId),
+                                                    'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500': manager
+                                                        .isEligibleForRepost(campaignId) && !manager.isReposted(
+                                                            campaignId),
+                                                    'bg-green-500 text-white cursor-not-allowed': manager
+                                                        .isReposted(campaignId)
+                                                } : 'bg-gray-300 cursor-not-allowed text-white'">
 
-                                                <!-- Animated fill background -->
-                                                <div x-show="!isReposted(campaignId)"
-                                                    class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out z-0"
-                                                    :style="`width: ${getPlayTimePercentage(campaignId)}%`">
-                                                </div>
+                                                <!-- Fill animation -->
+                                                <template x-if="manager && !manager.isReposted(campaignId)">
+                                                    <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 z-0"
+                                                        :style="`width: ${manager.getPlayTimePercentage(campaignId)}%`">
+                                                    </div>
+                                                </template>
 
                                                 <!-- Button content -->
                                                 <div class="relative z-10 flex items-center gap-2">
-                                                    <template x-if="!isReposted(campaignId)">
+                                                    <template x-if="!manager || !manager.isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
                                                             <svg width="26" height="18" viewBox="0 0 26 18"
                                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -416,7 +429,7 @@
                                                         </div>
                                                     </template>
 
-                                                    <template x-if="isReposted(campaignId)">
+                                                    <template x-if="manager && manager.isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
                                                             <svg class="w-5 h-5" fill="currentColor"
                                                                 viewBox="0 0 20 20">
@@ -1006,6 +1019,7 @@
         window.trackPlaybackRoute = "{{ route('user.api.campaign.track-playback') }}";
         window.clearSessionRoute = "{{ route('user.api.campaign.clear-tracking') }}";
 
+
         // Optimized Alpine.js component for track playback management
         function trackPlaybackManager() {
             return {
@@ -1507,4 +1521,4 @@
             }
         });
     </script>
-</main>
+</div>
