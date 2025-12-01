@@ -475,14 +475,14 @@ class RedesignCampaign extends Component
             ->withoutSelf()
             ->open();
         if (!empty($repostedIds)) {
-            $query->where(function ($query) use ($repostedIds) {
+            $query->where(function ($que) use ($repostedIds) {
                 // Show campaigns included in session override
                 if (!empty($repostedIds)) {
-                    $query->whereIn('id', $repostedIds);
+                    $que->whereIn('id', $repostedIds);
                 }
 
                 // Or show campaigns that user has NOT reposted
-                $query->orWhereDoesntHave('reposts', function ($q) {
+                $que->orWhereDoesntHave('reposts', function ($q) {
                     $q->where('reposter_urn', user()->urn);
                 });
             });
