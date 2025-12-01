@@ -321,25 +321,43 @@
                                             </div>
                                         </div>
 
-                                        <!-- Fixed Repost Button with proper x-bind -->
+                                        <!-- Fixed Repost Button - No Alpine errors -->
                                         <div class="relative" x-data="{
                                             showReadyTooltip: false,
                                             justBecameEligible: false,
-                                            campaignId: '{{ $campaign_->id }}'
-                                        }" x-init="// Watch for eligibility changes
-                                        let wasEligible = false;
-                                        setInterval(() => {
-                                            const nowEligible = isEligibleForRepost(campaignId);
-                                            if (nowEligible && !wasEligible && !isReposted(campaignId)) {
-                                                justBecameEligible = true;
-                                                showReadyTooltip = true;
-                                                setTimeout(() => {
-                                                    showReadyTooltip = false;
-                                                    justBecameEligible = false;
-                                                }, 3000);
+                                            campaignId: '{{ $campaign_->id }}',
+                                            wasEligible: false,
+                                            watchEligibility() {
+                                                const nowEligible = this.isEligibleForRepost(this.campaignId);
+                                                if (nowEligible && !this.wasEligible && !this.isReposted(this.campaignId)) {
+                                                    this.justBecameEligible = true;
+                                                    this.showReadyTooltip = true;
+                                                    setTimeout(() => {
+                                                        this.showReadyTooltip = false;
+                                                        this.justBecameEligible = false;
+                                                    }, 3000);
+                                                }
+                                                this.wasEligible = nowEligible;
                                             }
-                                            wasEligible = nowEligible;
-                                        }, 500);">
+                                        }" x-init="setInterval(() => watchEligibility(), 500)">
+
+                                            <!-- Debug Section (temporary - remove after testing) -->
+                                            <div
+                                                class="text-xs bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded mb-2 border border-yellow-200 dark:border-yellow-800">
+                                                <div class="font-mono">
+                                                    <div>Campaign: {{ $campaign_->id }}</div>
+                                                    <div>PlayTime: <span
+                                                            x-text="getPlayTime(campaignId).toFixed(2)"></span>s</div>
+                                                    <div>Percentage: <span
+                                                            x-text="getPlayTimePercentage(campaignId)"></span>%</div>
+                                                    <div>Eligible: <span
+                                                            x-text="isEligibleForRepost(campaignId) ? '✅ YES' : '❌ NO'"></span>
+                                                    </div>
+                                                    <div>Reposted: <span
+                                                            x-text="isReposted(campaignId) ? '✅ YES' : '❌ NO'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <!-- Countdown Tooltip -->
                                             <div x-show="!isReposted(campaignId) && !isEligibleForRepost(campaignId) && getPlayTime(campaignId) > 0"
@@ -356,7 +374,7 @@
                                             </div>
 
                                             <!-- Ready Tooltip -->
-                                            <div x-show="!isReposted(campaignId) && isEligibleForRepost(campaignId) && (showReadyTooltip || $el.parentElement.querySelector('.repost-button').matches(':hover'))"
+                                            <div x-show="!isReposted(campaignId) && isEligibleForRepost(campaignId) && (showReadyTooltip || $el.parentElement?.querySelector('.repost-button')?.matches(':hover'))"
                                                 x-transition:enter="transition ease-out duration-200"
                                                 x-transition:enter-start="opacity-0 transform scale-95"
                                                 x-transition:enter-end="opacity-100 transform scale-100"
