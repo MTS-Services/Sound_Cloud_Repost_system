@@ -352,7 +352,7 @@ class RedesignCampaign extends Component
 
         // RepostedIds return array of campaign ids
         if (!empty($repostedIds)) {
-            $$allCountQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+            $allCountQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
                 $q->where('reposter_urn', user()->urn)
                     ->whereIn('campaign_id', $repostedIds);
             });
