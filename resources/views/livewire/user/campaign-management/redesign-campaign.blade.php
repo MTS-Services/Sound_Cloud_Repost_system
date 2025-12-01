@@ -304,13 +304,33 @@
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
-                                        <!-- Repost Button with Tracking -->
+                                        <!-- Add this temporary debug section ABOVE your repost button to see values -->
+                                        <div class="text-xs text-gray-500 mb-2" x-data="{ debug: true }"
+                                            x-show="debug">
+                                            <div>PlayTime: <span
+                                                    x-text="getPlayTime('{{ $campaign_->id }}').toFixed(2)"></span>s
+                                            </div>
+                                            <div>Percentage: <span
+                                                    x-text="getPlayTimePercentage('{{ $campaign_->id }}')"></span>%
+                                            </div>
+                                            <div>Eligible: <span
+                                                    x-text="isEligibleForRepost('{{ $campaign_->id }}') ? 'YES' : 'NO'"></span>
+                                            </div>
+                                            <div>Reposted: <span
+                                                    x-text="isReposted('{{ $campaign_->id }}') ? 'YES' : 'NO'"></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fixed Repost Button with proper x-bind -->
                                         <div class="relative" x-data="{
                                             showReadyTooltip: false,
                                             justBecameEligible: false,
                                             campaignId: '{{ $campaign_->id }}'
-                                        }" x-init="$watch('isEligibleForRepost(campaignId)', (value, oldValue) => {
-                                            if (value && !oldValue && !isReposted(campaignId)) {
+                                        }" x-init="// Watch for eligibility changes
+                                        let wasEligible = false;
+                                        setInterval(() => {
+                                            const nowEligible = isEligibleForRepost(campaignId);
+                                            if (nowEligible && !wasEligible && !isReposted(campaignId)) {
                                                 justBecameEligible = true;
                                                 showReadyTooltip = true;
                                                 setTimeout(() => {
@@ -318,7 +338,8 @@
                                                     justBecameEligible = false;
                                                 }, 3000);
                                             }
-                                        })">
+                                            wasEligible = nowEligible;
+                                        }, 500);">
 
                                             <!-- Countdown Tooltip -->
                                             <div x-show="!isReposted(campaignId) && !isEligibleForRepost(campaignId) && getPlayTime(campaignId) > 0"
@@ -326,7 +347,6 @@
                                                 x-transition:enter-start="opacity-0 transform scale-95"
                                                 x-transition:enter-end="opacity-100 transform scale-100"
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
-                                                {{-- Countdown Tooltip - Shows remaining time 15 seconds --}}
                                                 <span
                                                     x-text="Math.max(0, Math.ceil(2 - getPlayTime(campaignId))).toString() + 's remaining'"></span>
                                                 <div
@@ -357,14 +377,14 @@
                                             </div>
 
                                             <!-- Repost Button -->
-                                            <button :data-campaign-id="campaignId"
+                                            <button type="button" x-bind:data-campaign-id="campaignId"
                                                 x-bind:disabled="!isEligibleForRepost(campaignId) || isReposted(campaignId)"
                                                 @click="handleRepost(campaignId)"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 sm:pl-8 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
                                                 :class="{
                                                     'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300':
                                                         !isEligibleForRepost(campaignId) && !isReposted(campaignId),
-                                                    'cursor-pointer hover:shadow-lg bg-gray-300 dark:bg-gray-600 text-white': isEligibleForRepost(
+                                                    'cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-500': isEligibleForRepost(
                                                         campaignId) && !isReposted(campaignId),
                                                     'bg-green-500 text-white cursor-not-allowed': isReposted(
                                                         campaignId),
@@ -397,7 +417,12 @@
 
                                                     <template x-if="isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
-                                                            <span>✓</span>
+                                                            <svg class="w-5 h-5" fill="currentColor"
+                                                                viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
                                                             <span>Reposted</span>
                                                         </div>
                                                     </template>
