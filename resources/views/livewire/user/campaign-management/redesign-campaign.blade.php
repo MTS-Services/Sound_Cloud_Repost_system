@@ -1,5 +1,5 @@
 <main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()"
-    @reset-widget-initiallized.window="$data.init()">
+    @reset-widget-initiallized.window="$data.clearAllTracking(); $data.initializeSoundCloudWidgets(); $data.init()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -681,20 +681,26 @@
 
                     // Use fetch to avoid Livewire re-render
                     fetch('/api/campaign/track-playback', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                        body: JSON.stringify({
-                            campaignId: campaignId,
-                            actualPlayTime: track.actualPlayTime,
-                            isEligible: track.isEligible,
-                            action: action
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({
+                                campaignId: campaignId,
+                                actualPlayTime: track.actualPlayTime,
+                                isEligible: track.isEligible,
+                                action: action
+                            })
                         })
-                    }).catch(err => {
-                        console.error('Failed to sync tracking:', err);
-                    });
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Tracking synced successfully');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Failed to sync tracking:', err);
+                        });
                 },
 
                 isEligibleForRepost(campaignId) {
