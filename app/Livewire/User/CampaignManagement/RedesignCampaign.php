@@ -117,6 +117,7 @@ class RedesignCampaign extends Component
     public function updated()
     {
         $this->dispatch('reset-initialize'); //@file-input-reset.window="init()"
+        Log::info('Reset initialize');
     }
 
     public function updatedTrackType()
