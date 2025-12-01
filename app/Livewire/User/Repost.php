@@ -116,10 +116,10 @@ class Repost extends Component
             ])->findOrFail(decrypt($campaignId));
 
             // Fast parallel checks using cache
-            if (!$this->checkRepostEligibility()) {
-                $this->resetModalState();
-                return;
-            }
+            // if (!$this->checkRepostEligibility()) {
+            //     $this->resetModalState();
+            //     return;
+            // }
 
             if ($this->campaign) {
                 $this->checkUserInteractions();
