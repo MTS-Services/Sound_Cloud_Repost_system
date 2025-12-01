@@ -352,9 +352,16 @@ class RedesignCampaign extends Component
 
         // RepostedIds return array of campaign ids
         if (!empty($repostedIds)) {
-            $allCountQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
-                $q->where('reposter_urn', user()->urn)
-                    ->whereIn('campaign_id', $repostedIds);
+            $allCountQuery->where(function ($query) use ($repostedIds) {
+                // Show campaigns included in session override
+                if (!empty($repostedIds)) {
+                    $query->whereIn('id', $repostedIds);
+                }
+
+                // Or show campaigns that user has NOT reposted
+                $query->orWhereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn);
+                });
             });
         } else {
             $allCountQuery->whereDoesntHave('reposts', function ($query) {
@@ -382,9 +389,16 @@ class RedesignCampaign extends Component
             ->open();
 
         if (!empty($repostedIds)) {
-            $recommendedProQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
-                $q->where('reposter_urn', user()->urn)
-                    ->whereIn('campaign_id', $repostedIds);
+            $recommendedProQuery->where(function ($query) use ($repostedIds) {
+                // Show campaigns included in session override
+                if (!empty($repostedIds)) {
+                    $query->whereIn('id', $repostedIds);
+                }
+
+                // Or show campaigns that user has NOT reposted
+                $query->orWhereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn);
+                });
             });
         } else {
             $recommendedProQuery->whereDoesntHave('reposts', function ($query) {
@@ -404,9 +418,16 @@ class RedesignCampaign extends Component
             ->open();
 
         if (!empty($repostedIds)) {
-            $recommendedCountQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
-                $q->where('reposter_urn', user()->urn)
-                    ->whereIn('campaign_id', $repostedIds);
+            $recommendedCountQuery->where(function ($query) use ($repostedIds) {
+                // Show campaigns included in session override
+                if (!empty($repostedIds)) {
+                    $query->whereIn('id', $repostedIds);
+                }
+
+                // Or show campaigns that user has NOT reposted
+                $query->orWhereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn);
+                });
             });
         } else {
             $recommendedCountQuery->whereDoesntHave('reposts', function ($query) {
@@ -454,9 +475,16 @@ class RedesignCampaign extends Component
             ->withoutSelf()
             ->open();
         if (!empty($repostedIds)) {
-            $query->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
-                $q->where('reposter_urn', user()->urn)
-                    ->whereIn('campaign_id', $repostedIds);
+            $query->where(function ($query) use ($repostedIds) {
+                // Show campaigns included in session override
+                if (!empty($repostedIds)) {
+                    $query->whereIn('id', $repostedIds);
+                }
+
+                // Or show campaigns that user has NOT reposted
+                $query->orWhereDoesntHave('reposts', function ($q) {
+                    $q->where('reposter_urn', user()->urn);
+                });
             });
         } else {
             $query->whereDoesntHave('reposts', function ($q) {
