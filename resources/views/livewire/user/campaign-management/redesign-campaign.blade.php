@@ -305,15 +305,28 @@
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
-                                        <!-- Fixed Repost Button - No Alpine errors -->
+                                        <!-- Repost Button Section -->
                                         <div class="relative" x-data="{
                                             campaignId: '{{ $campaign_->id }}',
                                             showReadyTooltip: false,
                                             justBecameEligible: false,
-                                            wasEligible: false
-                                        }" x-init="setInterval(() => {
-                                            const nowEligible = $root.closest('[x-data*=trackPlaybackManager]').__x.$data.isEligibleForRepost(campaignId);
-                                            const isAlreadyReposted = $root.closest('[x-data*=trackPlaybackManager]').__x.$data.isReposted(campaignId);
+                                            wasEligible: false,
+                                            getManager() {
+                                                let el = this.$root;
+                                                while (el) {
+                                                    if (el.__x && el.__x.$data && typeof el.__x.$data.isEligibleForRepost === 'function') {
+                                                        return el.__x.$data;
+                                                    }
+                                                    el = el.parentElement;
+                                                }
+                                                return null;
+                                            }
+                                        }" x-init="const checkInterval = setInterval(() => {
+                                            const manager = getManager();
+                                            if (!manager) return;
+                                        
+                                            const nowEligible = manager.isEligibleForRepost(campaignId);
+                                            const isAlreadyReposted = manager.isReposted(campaignId);
                                         
                                             if (nowEligible && !wasEligible && !isAlreadyReposted) {
                                                 justBecameEligible = true;
@@ -324,7 +337,9 @@
                                                 }, 3000);
                                             }
                                             wasEligible = nowEligible;
-                                        }, 500);">
+                                        }, 500);
+                                        
+                                        $watch('$root', () => clearInterval(checkInterval));">
 
                                             <!-- Debug info (REMOVE AFTER TESTING) -->
                                             <div class="absolute -top-24 left-0 bg-yellow-100 dark:bg-yellow-900 p-2 rounded text-xs z-50 w-48"
@@ -354,12 +369,18 @@
                                             </div>
 
                                             <!-- Countdown Tooltip -->
-                                            <div x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
-                                                x-show="manager && !manager.isReposted(campaignId) && !manager.isEligibleForRepost(campaignId) && manager.getPlayTime(campaignId) > 0"
+                                            <div x-show="(() => {
+                                                    const manager = getManager();
+                                                    return manager && !manager.isReposted(campaignId) && !manager.isEligibleForRepost(campaignId) && manager.getPlayTime(campaignId) > 0;
+                                                })()"
                                                 x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
-                                                    x-text="Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining'"></span>
+                                                    x-text="(() => {
+                                                    const manager = getManager();
+                                                    if (!manager) return '0s';
+                                                    return Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining';
+                                                })()"></span>
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-gray-900"></div>
@@ -367,8 +388,10 @@
                                             </div>
 
                                             <!-- Ready Tooltip -->
-                                            <div x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
-                                                x-show="manager && !manager.isReposted(campaignId) && manager.isEligibleForRepost(campaignId) && showReadyTooltip"
+                                            <div x-show="(() => {
+                                                    const manager = getManager();
+                                                    return manager && !manager.isReposted(campaignId) && manager.isEligibleForRepost(campaignId) && showReadyTooltip;
+                                                })()"
                                                 x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none"
                                                 :class="{ 'animate-pulse': justBecameEligible }">
@@ -387,32 +410,52 @@
                                             </div>
 
                                             <!-- Repost Button -->
-                                            <button type="button" x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
-                                                :disabled="!manager || (!manager.isEligibleForRepost(campaignId) || manager
-                                                    .isReposted(campaignId))"
-                                                @click="manager && manager.handleRepost(campaignId)"
+                                            <button type="button"
+                                                :disabled="(() => {
+                                                    const manager = getManager();
+                                                    return !manager || (!manager.isEligibleForRepost(campaignId) ||
+                                                        manager.isReposted(campaignId));
+                                                })()"
+                                                @click="(() => {
+                                                    const manager = getManager();
+                                                    if (manager) manager.handleRepost(campaignId);
+                                                })()"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
-                                                :class="manager ? {
-                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white': !
-                                                        manager.isEligibleForRepost(campaignId) && !manager
-                                                        .isReposted(campaignId),
-                                                    'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500': manager
-                                                        .isEligibleForRepost(campaignId) && !manager.isReposted(
-                                                            campaignId),
-                                                    'bg-green-500 text-white cursor-not-allowed': manager
-                                                        .isReposted(campaignId)
-                                                } : 'bg-gray-300 cursor-not-allowed text-white'">
+                                                :class="(() => {
+                                                    const manager = getManager();
+                                                    if (!manager)
+                                                        return 'bg-gray-300 cursor-not-allowed text-white';
+                                                
+                                                    if (manager.isReposted(campaignId)) {
+                                                        return 'bg-green-500 text-white cursor-not-allowed';
+                                                    }
+                                                    if (manager.isEligibleForRepost(campaignId)) {
+                                                        return 'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500';
+                                                    }
+                                                    return 'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white';
+                                                })()">
 
                                                 <!-- Fill animation -->
-                                                <template x-if="manager && !manager.isReposted(campaignId)">
+                                                <template
+                                                    x-if="(() => {
+                                                        const manager = getManager();
+                                                        return manager && !manager.isReposted(campaignId);
+                                                    })()">
                                                     <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 z-0"
-                                                        :style="`width: ${manager.getPlayTimePercentage(campaignId)}%`">
+                                                        :style="`width: ${(() => {
+                                                                                                                    const manager = getManager();
+                                                                                                                    return manager ? manager.getPlayTimePercentage(campaignId) : 0;
+                                                                                                                })()}%`">
                                                     </div>
                                                 </template>
 
                                                 <!-- Button content -->
                                                 <div class="relative z-10 flex items-center gap-2">
-                                                    <template x-if="!manager || !manager.isReposted(campaignId)">
+                                                    <template
+                                                        x-if="(() => {
+                                                            const manager = getManager();
+                                                            return !manager || !manager.isReposted(campaignId);
+                                                        })()">
                                                         <div class="flex items-center gap-2">
                                                             <svg width="26" height="18" viewBox="0 0 26 18"
                                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -427,7 +470,11 @@
                                                         </div>
                                                     </template>
 
-                                                    <template x-if="manager && manager.isReposted(campaignId)">
+                                                    <template
+                                                        x-if="(() => {
+                                                            const manager = getManager();
+                                                            return manager && manager.isReposted(campaignId);
+                                                        })()">
                                                         <div class="flex items-center gap-2">
                                                             <svg class="w-5 h-5" fill="currentColor"
                                                                 viewBox="0 0 20 20">
@@ -1012,7 +1059,7 @@
         });
     </script> --}}
 
-    <script>
+    {{-- <script>
         window.sessionData = @json(session('campaign_playback_tracking', []));
         window.trackPlaybackRoute = "{{ route('user.api.campaign.track-playback') }}";
         window.clearSessionRoute = "{{ route('user.api.campaign.clear-tracking') }}";
@@ -1515,6 +1562,485 @@
                     manager.processSyncQueue();
                 }
                 manager.saveToLocalStorage();
+            }
+        });
+    </script> --}}
+
+    <script>
+        window.sessionData = @json(session('campaign_playback_tracking', []));
+        window.trackPlaybackRoute = "{{ route('user.api.campaign.track-playback') }}";
+        window.clearSessionRoute = "{{ route('user.api.campaign.clear-tracking') }}";
+
+        function trackPlaybackManager() {
+            return {
+                tracks: {},
+                updateInterval: null,
+                isInitialized: false,
+                syncQueue: [],
+                isSyncing: false,
+                visibleCampaigns: new Set(),
+                isNavigating: false,
+
+                init() {
+                    console.log('🎵 Initializing trackPlaybackManager');
+
+                    // Only clear on fresh page load (not Livewire navigation)
+                    const isLivewireNav = window.Livewire && window.Livewire.navigate;
+
+                    if (!this.isInitialized && !isLivewireNav) {
+                        console.log('🆕 Fresh page load - clearing all data');
+                        this.clearSessionData();
+                        localStorage.removeItem('campaign_tracking_data');
+                        this.isInitialized = true;
+                    }
+
+                    // Load data
+                    this.loadEssentialData();
+                    this.initializeSoundCloudWidgets();
+                    this.startUpdateLoop();
+
+                    // Cleanup interval
+                    setInterval(() => this.cleanupOldData(), 30000);
+
+                    // Listen for repost success
+                    window.addEventListener('repost-success', (event) => {
+                        const campaignId = event.detail.campaignId;
+                        if (this.tracks[campaignId]) {
+                            this.tracks[campaignId].reposted = true;
+                            this.queueSync(campaignId, 'repost');
+                            this.saveToLocalStorage();
+                        }
+                    });
+
+                    // Handle Livewire morph
+                    Livewire.hook('morph.updated', () => {
+                        console.log('🔄 DOM morphed - preserving state');
+
+                        const activeCampaigns = {};
+                        Object.keys(this.tracks).forEach(id => {
+                            if (this.tracks[id].actualPlayTime > 0 || this.tracks[id].isPlaying || this
+                                .tracks[id].reposted) {
+                                activeCampaigns[id] = {
+                                    actualPlayTime: this.tracks[id].actualPlayTime,
+                                    isEligible: this.tracks[id].isEligible,
+                                    reposted: this.tracks[id].reposted,
+                                    lastPosition: this.tracks[id].lastPosition
+                                };
+                            }
+                        });
+
+                        setTimeout(() => {
+                            this.initializeSoundCloudWidgets();
+
+                            Object.keys(activeCampaigns).forEach(id => {
+                                if (this.tracks[id]) {
+                                    Object.assign(this.tracks[id], activeCampaigns[id]);
+                                } else {
+                                    this.tracks[id] = {
+                                        ...this.createEmptyTrack(),
+                                        ...activeCampaigns[id]
+                                    };
+                                }
+                            });
+
+                            this.saveToLocalStorage();
+                        }, 100);
+                    });
+                },
+
+                createEmptyTrack() {
+                    return {
+                        isPlaying: false,
+                        actualPlayTime: 0,
+                        isEligible: false,
+                        lastPosition: 0,
+                        playStartTime: null,
+                        seekDetected: false,
+                        widget: null,
+                        reposted: false,
+                        lastSync: 0
+                    };
+                },
+
+                updateVisibleCampaigns() {
+                    this.visibleCampaigns.clear();
+                    document.querySelectorAll('[data-campaign-id]').forEach(el => {
+                        const id = el.dataset.campaignId;
+                        if (id) this.visibleCampaigns.add(id);
+                    });
+                },
+
+                loadEssentialData() {
+                    console.log('📥 Loading essential data');
+                    this.updateVisibleCampaigns();
+
+                    // Load from session (priority)
+                    const sessionData = window.sessionData || {};
+
+                    // Load from localStorage
+                    let localData = {};
+                    try {
+                        const stored = localStorage.getItem('campaign_tracking_data');
+                        if (stored) localData = JSON.parse(stored);
+                    } catch (e) {
+                        console.error('Error parsing localStorage:', e);
+                        localStorage.removeItem('campaign_tracking_data');
+                    }
+
+                    // Merge data for visible campaigns
+                    this.visibleCampaigns.forEach(campaignId => {
+                        if (!this.tracks[campaignId]) {
+                            this.tracks[campaignId] = this.createEmptyTrack();
+                        }
+
+                        // Session data has priority
+                        if (sessionData[campaignId]) {
+                            this.tracks[campaignId].actualPlayTime = parseFloat(sessionData[campaignId]
+                                .actual_play_time) || 0;
+                            this.tracks[campaignId].isEligible = sessionData[campaignId].is_eligible || false;
+                            this.tracks[campaignId].reposted = sessionData[campaignId].reposted || false;
+                        } else if (localData[campaignId]) {
+                            this.tracks[campaignId].actualPlayTime = parseFloat(localData[campaignId]
+                                .actualPlayTime) || 0;
+                            this.tracks[campaignId].isEligible = localData[campaignId].isEligible || false;
+                            this.tracks[campaignId].reposted = localData[campaignId].reposted || false;
+                            this.tracks[campaignId].lastPosition = parseFloat(localData[campaignId].lastPosition) ||
+                                0;
+                        }
+                    });
+
+                    console.log('✅ Loaded', Object.keys(this.tracks).length, 'campaigns');
+                },
+
+                cleanupOldData() {
+                    const now = Date.now();
+                    const keysToDelete = [];
+
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        if (!this.visibleCampaigns.has(campaignId) &&
+                            !track.isPlaying &&
+                            track.actualPlayTime === 0 &&
+                            (now - track.lastSync) > 60000) {
+                            keysToDelete.push(campaignId);
+                        }
+                    });
+
+                    keysToDelete.forEach(id => delete this.tracks[id]);
+                    if (keysToDelete.length > 0) {
+                        console.log('🧹 Cleaned up', keysToDelete.length, 'old campaigns');
+                        this.saveToLocalStorage();
+                    }
+                },
+
+                saveToLocalStorage() {
+                    const essentialData = {};
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        if (track.actualPlayTime > 0 || track.isEligible || track.reposted) {
+                            essentialData[campaignId] = {
+                                actualPlayTime: track.actualPlayTime,
+                                isEligible: track.isEligible,
+                                lastPosition: track.lastPosition,
+                                reposted: track.reposted
+                            };
+                        }
+                    });
+                    localStorage.setItem('campaign_tracking_data', JSON.stringify(essentialData));
+                },
+
+                startUpdateLoop() {
+                    if (this.updateInterval) clearInterval(this.updateInterval);
+                    this.updateInterval = setInterval(() => {
+                        this.processSyncQueue();
+                        if (Object.keys(this.tracks).length > 0) {
+                            this.$nextTick();
+                        }
+                    }, 1000);
+                },
+
+                queueSync(campaignId, action) {
+                    const track = this.tracks[campaignId];
+                    if (!track) return;
+
+                    const existingIndex = this.syncQueue.findIndex(item => item.campaignId === campaignId);
+                    const syncData = {
+                        campaignId,
+                        actualPlayTime: track.actualPlayTime,
+                        isEligible: track.isEligible,
+                        reposted: track.reposted,
+                        action
+                    };
+
+                    if (existingIndex >= 0) {
+                        this.syncQueue[existingIndex] = syncData;
+                    } else {
+                        this.syncQueue.push(syncData);
+                    }
+                },
+
+                processSyncQueue() {
+                    if (this.isSyncing || this.syncQueue.length === 0) return;
+
+                    this.isSyncing = true;
+                    const batch = this.syncQueue.splice(0, 5);
+
+                    Promise.all(batch.map(data => this.syncToBackend(data)))
+                        .finally(() => {
+                            this.isSyncing = false;
+                            if (batch.length > 0) {
+                                this.saveToLocalStorage();
+                            }
+                        });
+                },
+
+                syncToBackend(data) {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (!csrfToken) return Promise.reject('No CSRF token');
+
+                    return fetch(window.trackPlaybackRoute, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken.content,
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success && this.tracks[data.campaignId]) {
+                                this.tracks[data.campaignId].lastSync = Date.now();
+                            }
+                            return result;
+                        })
+                        .catch(err => console.error('Sync failed:', err));
+                },
+
+                initializeSoundCloudWidgets() {
+                    if (typeof SC === 'undefined') {
+                        setTimeout(() => this.initializeSoundCloudWidgets(), 500);
+                        return;
+                    }
+
+                    this.updateVisibleCampaigns();
+                    const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+                    playerContainers.forEach(container => {
+                        const campaignId = container.dataset.campaignId;
+                        const iframe = container.querySelector('iframe');
+
+                        if (!iframe || !campaignId) return;
+
+                        if (!this.tracks[campaignId]) {
+                            this.tracks[campaignId] = this.createEmptyTrack();
+                        }
+
+                        // Check if widget is still valid
+                        if (this.tracks[campaignId].widget) {
+                            try {
+                                this.tracks[campaignId].widget.getVolume(() => {});
+                                return;
+                            } catch (e) {
+                                // Widget stale, rebind
+                            }
+                        }
+
+                        const widget = SC.Widget(iframe);
+                        this.tracks[campaignId].widget = widget;
+
+                        // Get next campaign for auto-play
+                        const currentCard = container.closest('.campaign-card');
+                        const nextCard = currentCard?.nextElementSibling;
+                        let nextCampaignId = null;
+
+                        if (nextCard?.classList.contains('campaign-card')) {
+                            const nextContainer = nextCard.querySelector('[id^="soundcloud-player-"]');
+                            nextCampaignId = nextContainer?.dataset.campaignId;
+                        }
+
+                        // Bind events
+                        widget.bind(SC.Widget.Events.PLAY, () => {
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = true;
+                            track.playStartTime = Date.now();
+                            this.queueSync(campaignId, 'play');
+                        });
+
+                        widget.bind(SC.Widget.Events.PAUSE, () => {
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = false;
+                            track.playStartTime = null;
+                            this.queueSync(campaignId, 'pause');
+                        });
+
+                        widget.bind(SC.Widget.Events.FINISH, () => {
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = false;
+                            track.playStartTime = null;
+                            this.queueSync(campaignId, 'finish');
+
+                            // Auto-play next
+                            if (nextCampaignId && this.tracks[nextCampaignId]?.widget) {
+                                setTimeout(() => this.tracks[nextCampaignId].widget.play(), 100);
+                            }
+                        });
+
+                        let progressTimeout = null;
+                        widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                            if (progressTimeout) clearTimeout(progressTimeout);
+
+                            progressTimeout = setTimeout(() => {
+                                const currentPosition = data.currentPosition / 1000;
+                                const track = this.tracks[campaignId];
+                                const positionDiff = Math.abs(currentPosition - track.lastPosition);
+
+                                if (positionDiff > 1.5 && track.lastPosition > 0) {
+                                    track.seekDetected = true;
+                                    track.lastPosition = currentPosition;
+                                    return;
+                                }
+
+                                if (track.isPlaying && !track.seekDetected) {
+                                    const increment = currentPosition - track.lastPosition;
+
+                                    if (increment > 0 && increment < 2) {
+                                        track.actualPlayTime += increment;
+
+                                        if (track.actualPlayTime >= 2 && !track.isEligible) {
+                                            track.isEligible = true;
+                                            this.queueSync(campaignId, 'eligible');
+                                        }
+
+                                        if (Math.floor(track.actualPlayTime) % 5 === 0) {
+                                            this.queueSync(campaignId, 'progress');
+                                        }
+                                    }
+                                }
+
+                                track.lastPosition = currentPosition;
+                                track.seekDetected = false;
+                            }, 100);
+                        });
+
+                        widget.bind(SC.Widget.Events.SEEK, (data) => {
+                            const track = this.tracks[campaignId];
+                            track.seekDetected = true;
+                            track.lastPosition = data.currentPosition / 1000;
+                        });
+                    });
+                },
+
+                resetForFilterChange() {
+                    console.log('🔄 Filter change reset');
+
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        if (track.widget && track.isPlaying) {
+                            track.widget.pause();
+                        }
+                        track.widget = null;
+                        track.isPlaying = false;
+                    });
+
+                    while (this.syncQueue.length > 0) {
+                        this.processSyncQueue();
+                    }
+
+                    this.saveToLocalStorage();
+
+                    setTimeout(() => {
+                        this.loadEssentialData();
+                        this.initializeSoundCloudWidgets();
+                    }, 150);
+                },
+
+                clearSessionData() {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (!csrfToken) return;
+
+                    fetch(window.clearSessionRoute, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken.content,
+                        }
+                    }).catch(err => console.error('Failed to clear session:', err));
+                },
+
+                // UI Helper methods
+                isEligibleForRepost(campaignId) {
+                    return this.tracks[campaignId]?.isEligible || false;
+                },
+
+                isReposted(campaignId) {
+                    return this.tracks[campaignId]?.reposted || false;
+                },
+
+                getPlayTime(campaignId) {
+                    return this.tracks[campaignId]?.actualPlayTime || 0;
+                },
+
+                getPlayTimePercentage(campaignId) {
+                    const playTime = this.getPlayTime(campaignId);
+                    return Math.min((playTime / 2) * 100, 100).toFixed(1);
+                },
+
+                handleRepost(campaignId) {
+                    if (!this.isEligibleForRepost(campaignId) || this.isReposted(campaignId)) {
+                        return;
+                    }
+                    Livewire.dispatch('confirmRepost', {
+                        campaignId
+                    });
+                },
+
+                clearAllTracking() {
+                    console.log('🧹 Complete cleanup');
+
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        if (this.tracks[campaignId].widget) {
+                            try {
+                                this.tracks[campaignId].widget.pause();
+                            } catch (e) {}
+                        }
+                    });
+
+                    this.tracks = {};
+                    this.syncQueue = [];
+                    localStorage.removeItem('campaign_tracking_data');
+
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                    }
+
+                    this.clearSessionData();
+                }
+            };
+        }
+
+        // Initialize
+        document.addEventListener('livewire:initialized', () => {
+            window.sessionData = window.sessionData || {};
+            Alpine.data('trackPlaybackManager', trackPlaybackManager);
+        });
+
+        // Save on page leave
+        window.addEventListener('beforeunload', () => {
+            const mainEl = document.querySelector('main[x-data*="trackPlaybackManager"]');
+            if (mainEl?.__x?.$data) {
+                const manager = mainEl.__x.$data;
+                while (manager.syncQueue.length > 0) {
+                    manager.processSyncQueue();
+                }
+                manager.saveToLocalStorage();
+            }
+        });
+
+        // Handle Livewire navigation
+        document.addEventListener('livewire:navigating', () => {
+            const mainEl = document.querySelector('main[x-data*="trackPlaybackManager"]');
+            if (mainEl?.__x?.$data) {
+                mainEl.__x.$data.isNavigating = true;
             }
         });
     </script>
