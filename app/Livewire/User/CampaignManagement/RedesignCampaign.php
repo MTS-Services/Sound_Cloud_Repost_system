@@ -347,7 +347,10 @@ class RedesignCampaign extends Component
                 })
             )
             ->withoutSelf()
-            ->open();
+            ->open()
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
         if ($this->activeMainTab === 'all' && $this->trackType !== 'all') {
             $this->applyMusicTypeFilter($allCountQuery);
         }
@@ -504,7 +507,7 @@ class RedesignCampaign extends Component
             if (empty($campaignId)) {
                 $this->dispatch('alert', type: 'error', message: 'Campaign ID is required.');
                 return;
-            } 
+            }
             $this->dispatch('open-repost-modal', campaignId: encrypt($campaignId));
             $this->dispatch('callRepostAction', campaignId: encrypt($campaignId));
 
