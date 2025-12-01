@@ -1,5 +1,5 @@
 <main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()"
-    @reset-widget-initiallized.window="$data.clearAllTracking(); $data.init()">
+    @reset-widget-initiallized.window="$data.init()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
