@@ -351,6 +351,7 @@ class RedesignCampaign extends Component
             ->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
             });
+
         if ($this->activeMainTab === 'all' && $this->trackType !== 'all') {
             $this->applyMusicTypeFilter($allCountQuery);
         }
