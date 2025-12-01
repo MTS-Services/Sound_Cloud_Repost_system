@@ -493,7 +493,7 @@
                         });
                         this.saveTrackingData();
                     }
-                }
+                },
 
                 loadPersistedTrackingData() {
                     // Load from localStorage (browser-side persistence)
