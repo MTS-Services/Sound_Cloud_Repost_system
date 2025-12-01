@@ -114,12 +114,6 @@ class RedesignCampaign extends Component
         ]);
     }
 
-    public function updated($property)
-    {
-        dd($property);
-        // $this->dispatch('reset-initialize'); //@file-input-reset.window="init()"
-        // Log::info('Reset initialize');
-    }
 
     public function updatedTrackType()
     {
@@ -129,6 +123,7 @@ class RedesignCampaign extends Component
 
     public function updatedSelectedGenres()
     {
+        dd($this->selectedGenres);
         // Reset to page 1 when genres change
         $this->resetPage($this->activeMainTab . 'Page');
     }
