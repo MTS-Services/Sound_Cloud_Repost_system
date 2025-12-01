@@ -114,6 +114,11 @@ class RedesignCampaign extends Component
         ]);
     }
 
+    public function updated()
+    {
+        $this->dispatch('reset-initialize'); //@file-input-reset.window="init()"
+    }
+
     public function updatedTrackType()
     {
         // Reset to page 1 when filter changes
@@ -505,7 +510,7 @@ class RedesignCampaign extends Component
                 $query->whereHas('user', fn($q) => $q->isPro())
                     ->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
                         $subQuery->whereIn('target_genre', $this->selectedGenres);
-                            // ->orWhere('target_genre', 'anyGenre');
+                        // ->orWhere('target_genre', 'anyGenre');
                     }));
                 break;
 
