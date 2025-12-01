@@ -1,5 +1,5 @@
 <main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()"
-    @reset-widget-initiallized.window="$data.clearAllTracking(); $data.initializeSoundCloudWidgets(); $data.init()">
+    @reset-widget-initiallized.window="$data.clearAllTracking(); $data.init()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -437,6 +437,8 @@
                         this.isInitialized = true;
                     }
 
+                    // Merge session data every time
+                    this.loadFromSession();
                     this.initializeSoundCloudWidgets();
                     this.startUpdateLoop();
 
@@ -479,6 +481,19 @@
                         }, 150);
                     });
                 },
+
+                loadFromSession() {
+                    const sessionData = @json(session('campaign_playback_tracking', []));
+                    if (sessionData) {
+                        Object.keys(sessionData).forEach(campaignId => {
+                            this.tracks[campaignId] = {
+                                ...this.tracks[campaignId],
+                                ...sessionData[campaignId],
+                            };
+                        });
+                        this.saveTrackingData();
+                    }
+                }
 
                 loadPersistedTrackingData() {
                     // Load from localStorage (browser-side persistence)
