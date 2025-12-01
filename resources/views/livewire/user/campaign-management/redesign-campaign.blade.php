@@ -80,9 +80,31 @@
                         class="absolute left-0 mt-2 w-96 rounded-md shadow-lg bg-white dark:bg-slate-800 z-50">
                         <div class="flex flex-wrap gap-2 p-2">
                             @foreach (AllGenres() as $genre)
-                                <button wire:click="toggleGenre('{{ $genre }}')"
+                                {{-- <button wire:click="toggleGenre('{{ $genre }}')"
                                     wire:loading.class="opacity-50 cursor-wait" wire:loading.attr="disabled"
                                     wire:target="toggleGenre('{{ $genre }}')" @class([
+                                        'inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-md transition-all duration-200',
+                                        'bg-orange-500 text-white' => in_array($genre, $selectedGenres),
+                                        'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' => !in_array(
+                                            $genre,
+                                            $selectedGenres),
+                                    ])>
+                                    <span>{{ $genre }}</span>
+                                    <svg wire:loading wire:target="toggleGenre('{{ $genre }}')"
+                                        class="animate-spin h-3.5 w-3.5 ml-1" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                            stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                </button> --}}
+                                <button wire:click="toggleGenre('{{ $genre }}')"
+                                    wire:loading.class="opacity-50 cursor-wait" wire:loading.attr="disabled"
+                                    wire:target="toggleGenre" x-data="{ clicked: false }"
+                                    @click="if (clicked) return; clicked = true; setTimeout(() => clicked = false, 1000)"
+                                    :disabled="clicked" @class([
                                         'inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-md transition-all duration-200',
                                         'bg-orange-500 text-white' => in_array($genre, $selectedGenres),
                                         'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' => !in_array(
@@ -422,7 +444,7 @@
     @endif
 
     <livewire:user.repost />
-    <script>
+    {{-- <script>
         // Alpine.js component for track playback management
         function trackPlaybackManager() {
             return {
@@ -949,6 +971,513 @@
                     trackManager.syncAllTracksToBackend();
                     trackManager.saveTrackingData();
                 }
+            }
+        });
+    </script> --}}
+
+    <script>
+        window.sessionData = @json(session('campaign_playback_tracking', []));
+        window.trackPlaybackRoute = "{{ route('user.api.campaign.track-playback') }}";
+        window.clearSessionRoute = "{{ route('user.api.campaign.clear-tracking') }}";
+
+        // Optimized Alpine.js component for track playback management
+        function trackPlaybackManager() {
+            return {
+                tracks: {},
+                updateInterval: null,
+                isInitialized: false,
+                syncQueue: [],
+                isSyncing: false,
+                visibleCampaigns: new Set(),
+
+                init() {
+                    console.log('🎵 Initializing trackPlaybackManager');
+
+                    // First initialization only
+                    if (!this.isInitialized) {
+                        console.log('🆕 First load - clearing old data');
+                        this.clearSessionData();
+                        localStorage.removeItem('campaign_tracking_data');
+                        this.isInitialized = true;
+                    }
+
+                    // Load data efficiently
+                    this.loadEssentialData();
+
+                    // Initialize widgets
+                    this.initializeSoundCloudWidgets();
+
+                    // Start lightweight update loop
+                    this.startUpdateLoop();
+
+                    // Cleanup old data every 30 seconds
+                    setInterval(() => this.cleanupOldData(), 30000);
+
+                    // Listen for repost success
+                    window.addEventListener('repost-success', (event) => {
+                        const campaignId = event.detail.campaignId;
+                        if (this.tracks[campaignId]) {
+                            this.tracks[campaignId].reposted = true;
+                            this.queueSync(campaignId, 'repost');
+                        }
+                    });
+
+                    // Handle Livewire updates
+                    Livewire.hook('morph.updated', () => {
+                        console.log('🔄 DOM updated');
+
+                        // Only preserve visible + active campaigns
+                        const activeCampaigns = {};
+                        Object.keys(this.tracks).forEach(id => {
+                            if (this.tracks[id].isPlaying ||
+                                this.tracks[id].actualPlayTime > 0 ||
+                                this.visibleCampaigns.has(id)) {
+                                activeCampaigns[id] = {
+                                    actualPlayTime: this.tracks[id].actualPlayTime,
+                                    isEligible: this.tracks[id].isEligible,
+                                    reposted: this.tracks[id].reposted,
+                                    lastPosition: this.tracks[id].lastPosition
+                                };
+                            }
+                        });
+
+                        setTimeout(() => {
+                            this.initializeSoundCloudWidgets();
+
+                            // Restore only active campaigns
+                            Object.keys(activeCampaigns).forEach(id => {
+                                if (this.tracks[id]) {
+                                    Object.assign(this.tracks[id], activeCampaigns[id]);
+                                }
+                            });
+                        }, 100);
+                    });
+                },
+
+                // Load only essential data
+                loadEssentialData() {
+                    console.log('📥 Loading essential data');
+
+                    // Get current visible campaigns
+                    this.updateVisibleCampaigns();
+
+                    // Load from session (backend has priority)
+                    const sessionData = window.sessionData || {};
+
+                    // Load from localStorage
+                    const stored = localStorage.getItem('campaign_tracking_data');
+                    let localData = {};
+
+                    if (stored) {
+                        try {
+                            localData = JSON.parse(stored);
+                        } catch (e) {
+                            console.error('Error parsing localStorage:', e);
+                            localStorage.removeItem('campaign_tracking_data');
+                        }
+                    }
+
+                    // Only load visible campaigns + those with progress
+                    this.visibleCampaigns.forEach(campaignId => {
+                        if (!this.tracks[campaignId]) {
+                            this.tracks[campaignId] = this.createEmptyTrack();
+                        }
+
+                        // Merge data (session > localStorage)
+                        if (sessionData[campaignId]) {
+                            this.tracks[campaignId].actualPlayTime = parseFloat(sessionData[campaignId]
+                                .actual_play_time) || 0;
+                            this.tracks[campaignId].isEligible = sessionData[campaignId].is_eligible || false;
+                            this.tracks[campaignId].reposted = sessionData[campaignId].reposted || false;
+                        } else if (localData[campaignId]) {
+                            this.tracks[campaignId].actualPlayTime = parseFloat(localData[campaignId]
+                                .actualPlayTime) || 0;
+                            this.tracks[campaignId].isEligible = localData[campaignId].isEligible || false;
+                            this.tracks[campaignId].reposted = localData[campaignId].reposted || false;
+                            this.tracks[campaignId].lastPosition = parseFloat(localData[campaignId].lastPosition) ||
+                                0;
+                        }
+                    });
+
+                    console.log('✅ Loaded', Object.keys(this.tracks).length, 'campaigns');
+                },
+
+                createEmptyTrack() {
+                    return {
+                        isPlaying: false,
+                        actualPlayTime: 0,
+                        isEligible: false,
+                        lastPosition: 0,
+                        playStartTime: null,
+                        seekDetected: false,
+                        widget: null,
+                        reposted: false,
+                        lastSync: 0
+                    };
+                },
+
+                updateVisibleCampaigns() {
+                    this.visibleCampaigns.clear();
+                    document.querySelectorAll('[data-campaign-id]').forEach(el => {
+                        const id = el.dataset.campaignId;
+                        if (id) this.visibleCampaigns.add(id);
+                    });
+                },
+
+                // Cleanup old unused data
+                cleanupOldData() {
+                    const now = Date.now();
+                    const keysToDelete = [];
+
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+
+                        // Remove if: not visible, not playing, no progress, and not synced recently
+                        if (!this.visibleCampaigns.has(campaignId) &&
+                            !track.isPlaying &&
+                            track.actualPlayTime === 0 &&
+                            (now - track.lastSync) > 60000) {
+                            keysToDelete.push(campaignId);
+                        }
+                    });
+
+                    keysToDelete.forEach(id => delete this.tracks[id]);
+
+                    if (keysToDelete.length > 0) {
+                        console.log('🧹 Cleaned up', keysToDelete.length, 'old campaigns');
+                        this.saveToLocalStorage();
+                    }
+                },
+
+                // Save only essential data to localStorage
+                saveToLocalStorage() {
+                    const essentialData = {};
+
+                    // Only save campaigns with progress or recently played
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        if (track.actualPlayTime > 0 || track.isEligible || track.reposted) {
+                            essentialData[campaignId] = {
+                                actualPlayTime: track.actualPlayTime,
+                                isEligible: track.isEligible,
+                                lastPosition: track.lastPosition,
+                                reposted: track.reposted
+                            };
+                        }
+                    });
+
+                    localStorage.setItem('campaign_tracking_data', JSON.stringify(essentialData));
+                },
+
+                // Lightweight update loop
+                startUpdateLoop() {
+                    if (this.updateInterval) clearInterval(this.updateInterval);
+
+                    // Update every 1 second (reduced from 500ms)
+                    this.updateInterval = setInterval(() => {
+                        // Process sync queue
+                        this.processSyncQueue();
+
+                        // Force minimal reactivity update
+                        if (Object.keys(this.tracks).length > 0) {
+                            this.$nextTick();
+                        }
+                    }, 1000);
+                },
+
+                // Queue sync instead of immediate API call
+                queueSync(campaignId, action) {
+                    const track = this.tracks[campaignId];
+                    if (!track) return;
+
+                    // Add to queue (replace if already queued)
+                    const existingIndex = this.syncQueue.findIndex(item => item.campaignId === campaignId);
+
+                    const syncData = {
+                        campaignId,
+                        actualPlayTime: track.actualPlayTime,
+                        isEligible: track.isEligible,
+                        reposted: track.reposted,
+                        action
+                    };
+
+                    if (existingIndex >= 0) {
+                        this.syncQueue[existingIndex] = syncData;
+                    } else {
+                        this.syncQueue.push(syncData);
+                    }
+                },
+
+                // Process sync queue in batches
+                processSyncQueue() {
+                    if (this.isSyncing || this.syncQueue.length === 0) return;
+
+                    this.isSyncing = true;
+                    const batch = this.syncQueue.splice(0, 5); // Process 5 at a time
+
+                    Promise.all(batch.map(data => this.syncToBackend(data)))
+                        .finally(() => {
+                            this.isSyncing = false;
+
+                            // Save to localStorage after successful sync
+                            if (batch.length > 0) {
+                                this.saveToLocalStorage();
+                            }
+                        });
+                },
+
+                syncToBackend(data) {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (!csrfToken) return Promise.reject('No CSRF token');
+
+                    return fetch(window.trackPlaybackRoute, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken.content,
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success && this.tracks[data.campaignId]) {
+                                this.tracks[data.campaignId].lastSync = Date.now();
+                            }
+                            return result;
+                        })
+                        .catch(err => console.error('Sync failed:', err));
+                },
+
+                initializeSoundCloudWidgets() {
+                    if (typeof SC === 'undefined') {
+                        setTimeout(() => this.initializeSoundCloudWidgets(), 500);
+                        return;
+                    }
+
+                    this.updateVisibleCampaigns();
+                    const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
+
+                    playerContainers.forEach(container => {
+                        const campaignId = container.dataset.campaignId;
+                        const iframe = container.querySelector('iframe');
+
+                        if (!iframe || !campaignId) return;
+
+                        // Initialize track if needed
+                        if (!this.tracks[campaignId]) {
+                            this.tracks[campaignId] = this.createEmptyTrack();
+                        }
+
+                        // Skip if widget already valid
+                        if (this.tracks[campaignId].widget) {
+                            try {
+                                this.tracks[campaignId].widget.getVolume(() => {});
+                                return;
+                            } catch (e) {
+                                // Widget stale, rebind
+                            }
+                        }
+
+                        const widget = SC.Widget(iframe);
+                        this.tracks[campaignId].widget = widget;
+
+                        // Get next campaign for auto-play
+                        const currentCard = container.closest('.campaign-card');
+                        const nextCard = currentCard?.nextElementSibling;
+                        let nextCampaignId = null;
+
+                        if (nextCard?.classList.contains('campaign-card')) {
+                            const nextContainer = nextCard.querySelector('[id^="soundcloud-player-"]');
+                            nextCampaignId = nextContainer?.dataset.campaignId;
+                        }
+
+                        // Bind events (debounced where possible)
+                        let progressTimeout = null;
+
+                        widget.bind(SC.Widget.Events.PLAY, () => {
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = true;
+                            track.playStartTime = Date.now();
+                            this.queueSync(campaignId, 'play');
+                        });
+
+                        widget.bind(SC.Widget.Events.PAUSE, () => {
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = false;
+                            track.playStartTime = null;
+                            this.queueSync(campaignId, 'pause');
+                        });
+
+                        widget.bind(SC.Widget.Events.FINISH, () => {
+                            const track = this.tracks[campaignId];
+                            track.isPlaying = false;
+                            track.playStartTime = null;
+                            this.queueSync(campaignId, 'finish');
+
+                            // Auto-play next
+                            if (nextCampaignId && this.tracks[nextCampaignId]?.widget) {
+                                setTimeout(() => this.tracks[nextCampaignId].widget.play(), 100);
+                            }
+                        });
+
+                        widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
+                            if (progressTimeout) clearTimeout(progressTimeout);
+
+                            progressTimeout = setTimeout(() => {
+                                const currentPosition = data.currentPosition / 1000;
+                                const track = this.tracks[campaignId];
+                                const positionDiff = Math.abs(currentPosition - track.lastPosition);
+
+                                // Detect seeking
+                                if (positionDiff > 1.5 && track.lastPosition > 0) {
+                                    track.seekDetected = true;
+                                    track.lastPosition = currentPosition;
+                                    return;
+                                }
+
+                                if (track.isPlaying && !track.seekDetected) {
+                                    const increment = currentPosition - track.lastPosition;
+
+                                    if (increment > 0 && increment < 2) {
+                                        track.actualPlayTime += increment;
+
+                                        // Check eligibility at 2 seconds
+                                        if (track.actualPlayTime >= 2 && !track.isEligible) {
+                                            track.isEligible = true;
+                                            this.queueSync(campaignId, 'eligible');
+                                        }
+
+                                        // Queue sync every 5 seconds of play
+                                        if (Math.floor(track.actualPlayTime) % 5 === 0) {
+                                            this.queueSync(campaignId, 'progress');
+                                        }
+                                    }
+                                }
+
+                                track.lastPosition = currentPosition;
+                                track.seekDetected = false;
+                            }, 100); // Debounce by 100ms
+                        });
+
+                        widget.bind(SC.Widget.Events.SEEK, (data) => {
+                            const track = this.tracks[campaignId];
+                            track.seekDetected = true;
+                            track.lastPosition = data.currentPosition / 1000;
+                        });
+                    });
+                },
+
+                // Reset for filter changes
+                resetForFilterChange() {
+                    console.log('🔁 Filter change reset');
+
+                    // Stop playing tracks
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        const track = this.tracks[campaignId];
+                        if (track.widget && track.isPlaying) {
+                            track.widget.pause();
+                        }
+                        track.widget = null;
+                        track.isPlaying = false;
+                    });
+
+                    // Process any pending syncs
+                    while (this.syncQueue.length > 0) {
+                        this.processSyncQueue();
+                    }
+
+                    // Save current state
+                    this.saveToLocalStorage();
+
+                    // Reinitialize after a short delay
+                    setTimeout(() => {
+                        this.loadEssentialData();
+                        this.initializeSoundCloudWidgets();
+                    }, 150);
+                },
+
+                clearSessionData() {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (!csrfToken) return;
+
+                    fetch(window.clearSessionRoute, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken.content,
+                        }
+                    }).catch(err => console.error('Failed to clear session:', err));
+                },
+
+                // UI Helper methods
+                isEligibleForRepost(campaignId) {
+                    return this.tracks[campaignId]?.isEligible || false;
+                },
+
+                isReposted(campaignId) {
+                    return this.tracks[campaignId]?.reposted || false;
+                },
+
+                getPlayTime(campaignId) {
+                    return this.tracks[campaignId]?.actualPlayTime || 0;
+                },
+
+                getPlayTimePercentage(campaignId) {
+                    const playTime = this.getPlayTime(campaignId);
+                    return Math.min((playTime / 2) * 100, 100).toFixed(1);
+                },
+
+                handleRepost(campaignId) {
+                    if (!this.isEligibleForRepost(campaignId) || this.isReposted(campaignId)) {
+                        return;
+                    }
+                    Livewire.dispatch('confirmRepost', {
+                        campaignId
+                    });
+                },
+
+                clearAllTracking() {
+                    console.log('🧹 Complete cleanup');
+
+                    // Stop all tracks
+                    Object.keys(this.tracks).forEach(campaignId => {
+                        if (this.tracks[campaignId].widget) {
+                            try {
+                                this.tracks[campaignId].widget.pause();
+                            } catch (e) {}
+                        }
+                    });
+
+                    // Clear everything
+                    this.tracks = {};
+                    this.syncQueue = [];
+                    localStorage.removeItem('campaign_tracking_data');
+
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                    }
+
+                    this.clearSessionData();
+                }
+            };
+        }
+
+        // Initialize on Livewire
+        document.addEventListener('livewire:initialized', () => {
+            window.sessionData = window.sessionData || {};
+            Alpine.data('trackPlaybackManager', trackPlaybackManager);
+        });
+
+        // Cleanup on page leave
+        window.addEventListener('beforeunload', () => {
+            const mainEl = document.querySelector('main[x-data*="trackPlaybackManager"]');
+            if (mainEl?.__x?.$data) {
+                const manager = mainEl.__x.$data;
+                // Process any pending syncs
+                while (manager.syncQueue.length > 0) {
+                    manager.processSyncQueue();
+                }
+                manager.saveToLocalStorage();
             }
         });
     </script>

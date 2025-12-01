@@ -46,6 +46,7 @@ class RedesignCampaign extends Component
     ];
 
     public bool $showCampaignCreator = false;
+    public bool $pendingToggle = false;
 
     protected ?CampaignService $campaignService = null;
     protected ?TrackService $trackService = null;
@@ -154,23 +155,40 @@ class RedesignCampaign extends Component
 
     public function toggleGenre(string $genre): void
     {
-        $key = array_search($genre, $this->selectedGenres, true);
-
-        if ($key !== false) {
-            unset($this->selectedGenres[$key]);
-            $this->selectedGenres = array_values($this->selectedGenres);
-        } else {
-            $this->selectedGenres[] = $genre;
-            $this->selectedGenres = array_diff($this->selectedGenres, ['all']);
+        // Prevent double-click stacking
+        if ($this->pendingToggle ?? false) {
+            return;
         }
 
-        if (empty($this->selectedGenres)) {
-            $this->selectedGenres = ['all'];
-        }
+        $this->pendingToggle = true;
 
-        // Reset to page 1 when filter changes
-        $this->resetPage($this->activeMainTab . 'Page');
-        $this->dispatch('reset-widget-initiallized');
+        try {
+            $key = array_search($genre, $this->selectedGenres, true);
+
+            if ($key !== false) {
+                // Remove genre
+                unset($this->selectedGenres[$key]);
+                $this->selectedGenres = array_values($this->selectedGenres);
+            } else {
+                // Add genre
+                $this->selectedGenres[] = $genre;
+                // Remove 'all' if it exists when adding specific genres
+                $this->selectedGenres = array_diff($this->selectedGenres, ['all']);
+            }
+
+            // If empty, set to 'all'
+            if (empty($this->selectedGenres)) {
+                $this->selectedGenres = ['all'];
+            }
+
+            // Reset to page 1
+            $this->resetPage($this->activeMainTab . 'Page');
+
+            // Dispatch reset event
+            $this->dispatch('reset-widget-initiallized');
+        } finally {
+            $this->pendingToggle = false;
+        }
     }
 
     public function updatedSearch(): void
