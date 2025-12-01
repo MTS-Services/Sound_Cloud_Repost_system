@@ -355,7 +355,7 @@ class Repost extends Component
                 $this->dispatch('alert', type: 'success', message: $message);
                 $this->dispatch('repost-success', campaignId: $this->campaign->id);
                 $this->dispatch('refreshCampaigns');
-                session()->put('repostedId', $this->campaign->id);
+                session()->put('repostedIds', [$this->campaign->id]);
 
                 // CRITICAL: Close modal and reset state
                 $this->closeConfirmModal();
