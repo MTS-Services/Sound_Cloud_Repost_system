@@ -79,27 +79,42 @@
                         class="absolute left-0 mt-2 w-96 rounded-md shadow-lg bg-white dark:bg-slate-800 z-50">
                         <div class="flex flex-wrap gap-2 p-2">
                             @foreach (AllGenres() as $genre)
-                                <button wire:click="toggleGenre('{{ $genre }}')"
-                                    wire:loading.class="opacity-50 cursor-wait" wire:loading.attr="disabled"
-                                    wire:target="toggleGenre('{{ $genre }}')" @class([
-                                        'inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-md transition-all duration-200',
-                                        'bg-orange-500 text-white' => in_array($genre, $selectedGenres),
-                                        'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' => !in_array(
-                                            $genre,
-                                            $selectedGenres),
-                                    ])>
-                                    <span>{{ $genre }}</span>
-                                    <svg wire:loading wire:target="toggleGenre('{{ $genre }}')"
-                                        class="animate-spin h-3.5 w-3.5 ml-1" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10"
-                                            stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                        </path>
-                                    </svg>
-                                </button>
+                                @php
+                                    // Get current URL query params
+                                    $currentQuery = request()->query();
+
+                                    // Get existing selectedGenres array or empty
+                                    $selectedGenres = $currentQuery['selectedGenres'] ?? [];
+
+                                    // Toggle genre in the array
+                                    if (in_array($genre, $selectedGenres)) {
+                                        // Remove genre if already selected
+                                        $newSelected = array_values(array_diff($selectedGenres, [$genre]));
+                                    } else {
+                                        // Add genre if not selected
+                                        $newSelected = array_merge($selectedGenres, [$genre]);
+                                    }
+
+                                    // Build the new URL with merged query
+                                    $url =
+                                        request()->url() .
+                                        '?' .
+                                        http_build_query(
+                                            array_merge($currentQuery, ['selectedGenres' => $newSelected]),
+                                        );
+                                @endphp
+
+                                <a href="{{ $url }}" @class([
+                                    'inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-md transition-all duration-200',
+                                    'bg-orange-500 text-white' => in_array($genre, $selectedGenres),
+                                    'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' => !in_array(
+                                        $genre,
+                                        $selectedGenres),
+                                ])>
+                                    {{ $genre }}
+                                </a>
                             @endforeach
+
                         </div>
                     </div>
                 </div>
@@ -217,8 +232,7 @@
                                                 </a>
                                                 @if ($campaign_->user)
                                                     <a href="{{ route('user.my-account.user', !empty($campaign_->user?->name) ? $campaign_->user?->name : $campaign_->user?->urn) }}"
-                                                        wire:navigate
-                                                        class="block hover:bg-gray-800 px-3 py-1 rounded">
+                                                        wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">
                                                         Visit RepostChain Profile
                                                     </a>
                                                 @endif
