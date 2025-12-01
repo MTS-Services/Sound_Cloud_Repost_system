@@ -504,8 +504,8 @@ class RedesignCampaign extends Component
             case 'recommendedPro':
                 $query->whereHas('user', fn($q) => $q->isPro())
                     ->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
-                        $subQuery->whereIn('target_genre', $this->selectedGenres)
-                            ->orWhere('target_genre', 'anyGenre');
+                        $subQuery->whereIn('target_genre', $this->selectedGenres);
+                            // ->orWhere('target_genre', 'anyGenre');
                     }));
                 break;
 
