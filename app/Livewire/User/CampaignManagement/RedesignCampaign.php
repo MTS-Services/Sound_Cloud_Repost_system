@@ -369,7 +369,11 @@ class RedesignCampaign extends Component
                 })
             )
             ->withoutSelf()
-            ->open();
+            ->open()
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
+
         if ($this->activeMainTab === 'recommendedPro' && $this->trackType !== 'all') {
             $this->applyMusicTypeFilter($recommendedProQuery);
         }
@@ -379,7 +383,10 @@ class RedesignCampaign extends Component
         $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
-            ->open();
+            ->open()
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
 
         if ($this->activeMainTab === 'recommended') {
             if ($explicitSelection) {
@@ -419,7 +426,10 @@ class RedesignCampaign extends Component
             ->with(['music', 'user', 'reposts', 'user.starredUsers'])
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
-            ->open();
+            ->open()
+            ->whereDoesntHave('reposts', function ($query) {
+                $query->where('reposter_urn', user()->urn);
+            });
 
         switch ($this->activeMainTab) {
             case 'recommendedPro':
