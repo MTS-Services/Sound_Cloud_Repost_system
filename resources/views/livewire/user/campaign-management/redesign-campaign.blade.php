@@ -680,7 +680,7 @@
                     if (!track) return;
 
                     // Use fetch to avoid Livewire re-render
-                    fetch('/api/campaign/track-playback', {
+                    fetch("{{ route('user.api.campaign.track-playback') }}", {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
