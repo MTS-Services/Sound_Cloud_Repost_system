@@ -352,7 +352,10 @@ class RedesignCampaign extends Component
 
         // RepostedIds return array of campaign ids
         if (!empty($repostedIds)) {
-            $allCountQuery->whereNotIn('id', $repostedIds);
+            $$allCountQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+                $q->where('reposter_urn', user()->urn)
+                    ->whereIn('campaign_id', $repostedIds);
+            });
         } else {
             $allCountQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
@@ -379,7 +382,10 @@ class RedesignCampaign extends Component
             ->open();
 
         if (!empty($repostedIds)) {
-            $recommendedProQuery->whereNotIn('id', $repostedIds);
+            $recommendedProQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+                $q->where('reposter_urn', user()->urn)
+                    ->whereIn('campaign_id', $repostedIds);
+            });
         } else {
             $recommendedProQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
@@ -398,7 +404,10 @@ class RedesignCampaign extends Component
             ->open();
 
         if (!empty($repostedIds)) {
-            $recommendedCountQuery->whereNotIn('id', $repostedIds);
+            $recommendedCountQuery->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+                $q->where('reposter_urn', user()->urn)
+                    ->whereIn('campaign_id', $repostedIds);
+            });
         } else {
             $recommendedCountQuery->whereDoesntHave('reposts', function ($query) {
                 $query->where('reposter_urn', user()->urn);
@@ -445,7 +454,10 @@ class RedesignCampaign extends Component
             ->withoutSelf()
             ->open();
         if (!empty($repostedIds)) {
-            $query->whereNotIn('id', $repostedIds);
+            $query->whereDoesntHave('reposts', function ($q) use ($repostedIds) {
+                $q->where('reposter_urn', user()->urn)
+                    ->whereIn('campaign_id', $repostedIds);
+            });
         } else {
             $query->whereDoesntHave('reposts', function ($q) {
                 $q->where('reposter_urn', user()->urn);
