@@ -47,7 +47,7 @@
                         class="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-slate-800 z-50">
                         <div class="py-1">
                             @foreach (['all' => 'All', Track::class => 'Tracks', Playlist::class => 'Playlists'] as $value => $label)
-                                <button wire:click="$set('trackType', '{{ $value }}')"
+                                <a wire:navigate href="{{ request()->fullUrlWithQuery(['trackType' => $value]) }}"
                                     @class([
                                         'block w-full text-left px-4 py-2 text-sm border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700',
                                         'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' =>
@@ -55,7 +55,7 @@
                                         'text-gray-700 dark:text-gray-300' => $trackType !== $value,
                                     ])>
                                     {{ $label }}
-                                </button>
+                                </a>
                             @endforeach
                         </div>
                     </div>
