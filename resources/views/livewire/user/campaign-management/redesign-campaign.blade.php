@@ -310,36 +310,42 @@
                                             campaignId: '{{ $campaign_->id }}',
                                             showReadyTooltip: false,
                                             justBecameEligible: false,
-                                            wasEligible: false,
-                                            getManager() {
-                                                let el = this.$root;
-                                                while (el) {
-                                                    if (el.__x && el.__x.$data && typeof el.__x.$data.isEligibleForRepost === 'function') {
-                                                        return el.__x.$data;
+                                            wasEligible: false
+                                        }" x-init="$watch('$root', (value) => {
+                                            if (!value) return;
+                                        
+                                            const checkEligibility = setInterval(() => {
+                                                // Find parent manager
+                                                let parentEl = $el;
+                                                let manager = null;
+                                        
+                                                while (parentEl && !manager) {
+                                                    if (parentEl.__x?.$data?.isEligibleForRepost) {
+                                                        manager = parentEl.__x.$data;
+                                                        break;
                                                     }
-                                                    el = el.parentElement;
+                                                    parentEl = parentEl.parentElement;
                                                 }
-                                                return null;
-                                            }
-                                        }" x-init="const checkInterval = setInterval(() => {
-                                            const manager = getManager();
-                                            if (!manager) return;
                                         
-                                            const nowEligible = manager.isEligibleForRepost(campaignId);
-                                            const isAlreadyReposted = manager.isReposted(campaignId);
+                                                if (!manager) {
+                                                    console.warn('Manager not found for campaign:', campaignId);
+                                                    return;
+                                                }
                                         
-                                            if (nowEligible && !wasEligible && !isAlreadyReposted) {
-                                                justBecameEligible = true;
-                                                showReadyTooltip = true;
-                                                setTimeout(() => {
-                                                    showReadyTooltip = false;
-                                                    justBecameEligible = false;
-                                                }, 3000);
-                                            }
-                                            wasEligible = nowEligible;
-                                        }, 500);
+                                                const nowEligible = manager.isEligibleForRepost(campaignId);
+                                                const isAlreadyReposted = manager.isReposted(campaignId);
                                         
-                                        $watch('$root', () => clearInterval(checkInterval));">
+                                                if (nowEligible && !wasEligible && !isAlreadyReposted) {
+                                                    justBecameEligible = true;
+                                                    showReadyTooltip = true;
+                                                    setTimeout(() => {
+                                                        showReadyTooltip = false;
+                                                        justBecameEligible = false;
+                                                    }, 3000);
+                                                }
+                                                wasEligible = nowEligible;
+                                            }, 500);
+                                        });">
 
                                             <!-- Debug info (REMOVE AFTER TESTING) -->
                                             <div class="absolute -top-24 left-0 bg-yellow-100 dark:bg-yellow-900 p-2 rounded text-xs z-50 w-48"
@@ -369,18 +375,21 @@
                                             </div>
 
                                             <!-- Countdown Tooltip -->
-                                            <div x-show="(() => {
-                                                    const manager = getManager();
-                                                    return manager && !manager.isReposted(campaignId) && !manager.isEligibleForRepost(campaignId) && manager.getPlayTime(campaignId) > 0;
-                                                })()"
+                                            <div x-data="{
+                                                get manager() {
+                                                    let el = $root;
+                                                    while (el) {
+                                                        if (el.__x?.$data?.getPlayTime) return el.__x.$data;
+                                                        el = el.parentElement;
+                                                    }
+                                                    return null;
+                                                }
+                                            }"
+                                                x-show="manager && !manager.isReposted(campaignId) && !manager.isEligibleForRepost(campaignId) && manager.getPlayTime(campaignId) > 0"
                                                 x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
-                                                    x-text="(() => {
-                                                    const manager = getManager();
-                                                    if (!manager) return '0s';
-                                                    return Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining';
-                                                })()"></span>
+                                                    x-text="manager ? (Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining') : ''"></span>
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-gray-900"></div>
@@ -388,10 +397,17 @@
                                             </div>
 
                                             <!-- Ready Tooltip -->
-                                            <div x-show="(() => {
-                                                    const manager = getManager();
-                                                    return manager && !manager.isReposted(campaignId) && manager.isEligibleForRepost(campaignId) && showReadyTooltip;
-                                                })()"
+                                            <div x-data="{
+                                                get manager() {
+                                                    let el = $root;
+                                                    while (el) {
+                                                        if (el.__x?.$data?.isEligibleForRepost) return el.__x.$data;
+                                                        el = el.parentElement;
+                                                    }
+                                                    return null;
+                                                }
+                                            }"
+                                                x-show="manager && !manager.isReposted(campaignId) && manager.isEligibleForRepost(campaignId) && showReadyTooltip"
                                                 x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none"
                                                 :class="{ 'animate-pulse': justBecameEligible }">
@@ -410,52 +426,41 @@
                                             </div>
 
                                             <!-- Repost Button -->
-                                            <button type="button"
-                                                :disabled="(() => {
-                                                    const manager = getManager();
-                                                    return !manager || (!manager.isEligibleForRepost(campaignId) ||
-                                                        manager.isReposted(campaignId));
-                                                })()"
-                                                @click="(() => {
-                                                    const manager = getManager();
-                                                    if (manager) manager.handleRepost(campaignId);
-                                                })()"
+                                            <button type="button" x-data="{
+                                                get manager() {
+                                                    let el = $root;
+                                                    while (el) {
+                                                        if (el.__x?.$data?.handleRepost) return el.__x.$data;
+                                                        el = el.parentElement;
+                                                    }
+                                                    return null;
+                                                }
+                                            }"
+                                                :disabled="!manager || (!manager.isEligibleForRepost(campaignId) || manager
+                                                    .isReposted(campaignId))"
+                                                @click="if (manager) manager.handleRepost(campaignId)"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
-                                                :class="(() => {
-                                                    const manager = getManager();
-                                                    if (!manager)
-                                                        return 'bg-gray-300 cursor-not-allowed text-white';
-                                                
-                                                    if (manager.isReposted(campaignId)) {
-                                                        return 'bg-green-500 text-white cursor-not-allowed';
-                                                    }
-                                                    if (manager.isEligibleForRepost(campaignId)) {
-                                                        return 'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500';
-                                                    }
-                                                    return 'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white';
-                                                })()">
+                                                :class="{
+                                                    'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white': !
+                                                        manager || (!manager.isEligibleForRepost(campaignId) && !manager
+                                                            .isReposted(campaignId)),
+                                                    'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500': manager &&
+                                                        manager.isEligibleForRepost(campaignId) && !manager.isReposted(
+                                                            campaignId),
+                                                    'bg-green-500 text-white cursor-not-allowed': manager && manager
+                                                        .isReposted(campaignId)
+                                                }">
 
                                                 <!-- Fill animation -->
-                                                <template
-                                                    x-if="(() => {
-                                                        const manager = getManager();
-                                                        return manager && !manager.isReposted(campaignId);
-                                                    })()">
+                                                <template x-if="manager && !manager.isReposted(campaignId)">
                                                     <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 z-0"
-                                                        :style="`width: ${(() => {
-                                                                                                                    const manager = getManager();
-                                                                                                                    return manager ? manager.getPlayTimePercentage(campaignId) : 0;
-                                                                                                                })()}%`">
+                                                        :style="`width: ${manager.getPlayTimePercentage(campaignId)}%`">
                                                     </div>
                                                 </template>
 
                                                 <!-- Button content -->
                                                 <div class="relative z-10 flex items-center gap-2">
-                                                    <template
-                                                        x-if="(() => {
-                                                            const manager = getManager();
-                                                            return !manager || !manager.isReposted(campaignId);
-                                                        })()">
+                                                    <template x-if="!manager || !manager.isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
                                                             <svg width="26" height="18" viewBox="0 0 26 18"
                                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -470,11 +475,7 @@
                                                         </div>
                                                     </template>
 
-                                                    <template
-                                                        x-if="(() => {
-                                                            const manager = getManager();
-                                                            return manager && manager.isReposted(campaignId);
-                                                        })()">
+                                                    <template x-if="manager && manager.isReposted(campaignId)">
                                                         <div class="flex items-center gap-2">
                                                             <svg class="w-5 h-5" fill="currentColor"
                                                                 viewBox="0 0 20 20">
@@ -1579,20 +1580,21 @@
                 syncQueue: [],
                 isSyncing: false,
                 visibleCampaigns: new Set(),
-                isNavigating: false,
 
                 init() {
-                    console.log('🎵 Initializing trackPlaybackManager');
+                    console.log('🎵 trackPlaybackManager INITIALIZED');
+                    console.log('📍 Component ID:', this.$el.id || 'no-id');
 
-                    // Only clear on fresh page load (not Livewire navigation)
-                    const isLivewireNav = window.Livewire && window.Livewire.navigate;
+                    // Only clear on fresh page load
+                    const isLivewireNav = document.querySelector('[wire\\:id]') !== null;
 
                     if (!this.isInitialized && !isLivewireNav) {
                         console.log('🆕 Fresh page load - clearing all data');
                         this.clearSessionData();
                         localStorage.removeItem('campaign_tracking_data');
-                        this.isInitialized = true;
                     }
+
+                    this.isInitialized = true;
 
                     // Load data
                     this.loadEssentialData();
@@ -1674,10 +1676,8 @@
                     console.log('📥 Loading essential data');
                     this.updateVisibleCampaigns();
 
-                    // Load from session (priority)
                     const sessionData = window.sessionData || {};
 
-                    // Load from localStorage
                     let localData = {};
                     try {
                         const stored = localStorage.getItem('campaign_tracking_data');
@@ -1687,13 +1687,11 @@
                         localStorage.removeItem('campaign_tracking_data');
                     }
 
-                    // Merge data for visible campaigns
                     this.visibleCampaigns.forEach(campaignId => {
                         if (!this.tracks[campaignId]) {
                             this.tracks[campaignId] = this.createEmptyTrack();
                         }
 
-                        // Session data has priority
                         if (sessionData[campaignId]) {
                             this.tracks[campaignId].actualPlayTime = parseFloat(sessionData[campaignId]
                                 .actual_play_time) || 0;
@@ -1753,9 +1751,6 @@
                     if (this.updateInterval) clearInterval(this.updateInterval);
                     this.updateInterval = setInterval(() => {
                         this.processSyncQueue();
-                        if (Object.keys(this.tracks).length > 0) {
-                            this.$nextTick();
-                        }
                     }, 1000);
                 },
 
@@ -1835,20 +1830,16 @@
                             this.tracks[campaignId] = this.createEmptyTrack();
                         }
 
-                        // Check if widget is still valid
                         if (this.tracks[campaignId].widget) {
                             try {
                                 this.tracks[campaignId].widget.getVolume(() => {});
                                 return;
-                            } catch (e) {
-                                // Widget stale, rebind
-                            }
+                            } catch (e) {}
                         }
 
                         const widget = SC.Widget(iframe);
                         this.tracks[campaignId].widget = widget;
 
-                        // Get next campaign for auto-play
                         const currentCard = container.closest('.campaign-card');
                         const nextCard = currentCard?.nextElementSibling;
                         let nextCampaignId = null;
@@ -1858,7 +1849,6 @@
                             nextCampaignId = nextContainer?.dataset.campaignId;
                         }
 
-                        // Bind events
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             const track = this.tracks[campaignId];
                             track.isPlaying = true;
@@ -1879,7 +1869,6 @@
                             track.playStartTime = null;
                             this.queueSync(campaignId, 'finish');
 
-                            // Auto-play next
                             if (nextCampaignId && this.tracks[nextCampaignId]?.widget) {
                                 setTimeout(() => this.tracks[nextCampaignId].widget.play(), 100);
                             }
@@ -1936,7 +1925,9 @@
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
                         if (track.widget && track.isPlaying) {
-                            track.widget.pause();
+                            try {
+                                track.widget.pause();
+                            } catch (e) {}
                         }
                         track.widget = null;
                         track.isPlaying = false;
@@ -1967,7 +1958,6 @@
                     }).catch(err => console.error('Failed to clear session:', err));
                 },
 
-                // UI Helper methods
                 isEligibleForRepost(campaignId) {
                     return this.tracks[campaignId]?.isEligible || false;
                 },
@@ -2018,29 +2008,27 @@
             };
         }
 
-        // Initialize
-        document.addEventListener('livewire:initialized', () => {
-            window.sessionData = window.sessionData || {};
+        // Initialize Alpine data BEFORE Livewire
+        document.addEventListener('alpine:init', () => {
+            console.log('🏔️ Alpine initializing...');
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
+        });
+
+        // Livewire initialization
+        document.addEventListener('livewire:initialized', () => {
+            console.log('⚡ Livewire initialized');
+            window.sessionData = window.sessionData || {};
         });
 
         // Save on page leave
         window.addEventListener('beforeunload', () => {
-            const mainEl = document.querySelector('main[x-data*="trackPlaybackManager"]');
+            const mainEl = document.querySelector('[x-data*="trackPlaybackManager"]');
             if (mainEl?.__x?.$data) {
                 const manager = mainEl.__x.$data;
-                while (manager.syncQueue.length > 0) {
+                while (manager.syncQueue?.length > 0) {
                     manager.processSyncQueue();
                 }
                 manager.saveToLocalStorage();
-            }
-        });
-
-        // Handle Livewire navigation
-        document.addEventListener('livewire:navigating', () => {
-            const mainEl = document.querySelector('main[x-data*="trackPlaybackManager"]');
-            if (mainEl?.__x?.$data) {
-                mainEl.__x.$data.isNavigating = true;
             }
         });
     </script>
