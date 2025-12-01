@@ -304,23 +304,6 @@
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
-                                        <!-- Add this temporary debug section ABOVE your repost button to see values -->
-                                        <div class="text-xs text-gray-500 mb-2" x-data="{ debug: true }"
-                                            x-show="debug">
-                                            <div>PlayTime: <span
-                                                    x-text="getPlayTime('{{ $campaign_->id }}').toFixed(2)"></span>s
-                                            </div>
-                                            <div>Percentage: <span
-                                                    x-text="getPlayTimePercentage('{{ $campaign_->id }}')"></span>%
-                                            </div>
-                                            <div>Eligible: <span
-                                                    x-text="isEligibleForRepost('{{ $campaign_->id }}') ? 'YES' : 'NO'"></span>
-                                            </div>
-                                            <div>Reposted: <span
-                                                    x-text="isReposted('{{ $campaign_->id }}') ? 'YES' : 'NO'"></span>
-                                            </div>
-                                        </div>
-
                                         <!-- Fixed Repost Button - No Alpine errors -->
                                         <div class="relative" x-data="{
                                             showReadyTooltip: false,
