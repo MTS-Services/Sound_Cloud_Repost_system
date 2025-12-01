@@ -83,6 +83,7 @@ class RedesignCampaign extends Component
         // Clear session tracking on fresh page load only
         if (!request()->hasHeader('X-Livewire')) {
             session()->forget('campaign_playback_tracking');
+            Log::info('Campaign tracking cleared on fresh page load');
         }
 
         if (session()->get('repostedIds')) {

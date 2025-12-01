@@ -17,12 +17,14 @@ class CampaignPlaybackController extends Controller
             'campaignId' => 'required|string',
             'actualPlayTime' => 'required|numeric|min:0',
             'isEligible' => 'required|boolean',
-            'action' => 'required|string|in:play,pause,progress,eligible,finish',
+            'reposted' => 'nullable|boolean',
+            'action' => 'required|string|in:play,pause,progress,eligible,finish,sync',
         ]);
 
         $campaignId = $validated['campaignId'];
         $actualPlayTime = $validated['actualPlayTime'];
         $isEligible = $validated['isEligible'];
+        $reposted = $validated['reposted'] ?? false;
         $action = $validated['action'];
 
         // Get or create tracking data in session
@@ -33,6 +35,7 @@ class CampaignPlaybackController extends Controller
                 'campaign_id' => $campaignId,
                 'actual_play_time' => 0,
                 'is_eligible' => false,
+                'reposted' => false,
                 'play_started_at' => now()->toDateTimeString(),
                 'last_updated_at' => now()->toDateTimeString(),
                 'actions' => [],
@@ -42,12 +45,21 @@ class CampaignPlaybackController extends Controller
         // Update tracking data
         $trackingData[$campaignId]['actual_play_time'] = $actualPlayTime;
         $trackingData[$campaignId]['is_eligible'] = $isEligible;
+        $trackingData[$campaignId]['reposted'] = $reposted;
         $trackingData[$campaignId]['last_updated_at'] = now()->toDateTimeString();
         $trackingData[$campaignId]['actions'][] = [
             'action' => $action,
             'time' => $actualPlayTime,
             'timestamp' => now()->toDateTimeString(),
         ];
+
+        // Keep only last 20 actions to prevent session bloat
+        if (count($trackingData[$campaignId]['actions']) > 20) {
+            $trackingData[$campaignId]['actions'] = array_slice(
+                $trackingData[$campaignId]['actions'],
+                -20
+            );
+        }
 
         // Save to session
         session()->put('campaign_playback_tracking', $trackingData);
@@ -56,6 +68,7 @@ class CampaignPlaybackController extends Controller
             'campaign_id' => $campaignId,
             'actual_play_time' => $actualPlayTime,
             'is_eligible' => $isEligible,
+            'reposted' => $reposted,
             'action' => $action,
         ]);
 
@@ -66,7 +79,23 @@ class CampaignPlaybackController extends Controller
                 'campaignId' => $campaignId,
                 'actualPlayTime' => $actualPlayTime,
                 'isEligible' => $isEligible,
+                'reposted' => $reposted,
             ]
+        ]);
+    }
+
+    /**
+     * Clear all tracking data from session
+     */
+    public function clearTracking(Request $request)
+    {
+        session()->forget('campaign_playback_tracking');
+
+        Log::info('Campaign tracking cleared from session');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tracking cleared successfully'
         ]);
     }
 }

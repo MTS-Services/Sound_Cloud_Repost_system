@@ -1,5 +1,5 @@
-<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="clearAllTracking()"
-    @reset-widget-initiallized.window="resetForFilterChange()">
+<main x-data="trackPlaybackManager()" @clearCampaignTracking.window="trackPlaybackManager().clearAllTracking()"
+    @reset-widget-initiallized.window="$data.clearAllTracking(); $data.init()">
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
 
@@ -429,29 +429,17 @@
                 tracks: {},
                 updateInterval: null,
                 isInitialized: false,
-                sessionSyncInProgress: false,
 
                 init() {
-                    console.log('🎵 Initializing trackPlaybackManager');
-
-                    // On first initialization, clear everything from session/localStorage
+                    // Only load persisted data on first initialization (not on mount)
                     if (!this.isInitialized) {
-                        console.log('🆕 First initialization - clearing old data');
-                        this.clearSessionData();
-                        localStorage.removeItem('campaign_tracking_data');
+                        this.loadPersistedTrackingData();
                         this.isInitialized = true;
                     }
 
-                    // Always load from session first (has priority)
+                    // Merge session data every time
                     this.loadFromSession();
-
-                    // Then merge with localStorage (for persistent data across filters)
-                    this.loadPersistedTrackingData();
-
-                    // Initialize widgets
                     this.initializeSoundCloudWidgets();
-
-                    // Start update loop
                     this.startUpdateLoop();
 
                     // Listen for repost success events
@@ -459,17 +447,14 @@
                         const campaignId = event.detail.campaignId;
                         if (this.tracks[campaignId]) {
                             this.tracks[campaignId].reposted = true;
-                            this.saveTrackingData();
                         }
                     });
 
-                    // Listen for Livewire morph updates (after filter changes)
+                    // Listen for Livewire navigation completed
                     Livewire.hook('morph.updated', ({
                         component
                     }) => {
-                        console.log('🔄 Livewire morphed - preserving tracking state');
-
-                        // Preserve current tracking state before DOM changes
+                        // Preserve current tracking state
                         const currentTracks = JSON.parse(JSON.stringify(this.tracks));
 
                         setTimeout(() => {
@@ -478,12 +463,7 @@
 
                             // Restore ALL tracking data (even for campaigns not currently on page)
                             Object.keys(currentTracks).forEach(campaignId => {
-                                if (!this.tracks[campaignId]) {
-                                    // Campaign not on current page but preserve data
-                                    this.tracks[campaignId] = currentTracks[campaignId];
-                                    this.tracks[campaignId].widget = null; // Clear widget reference
-                                    this.tracks[campaignId].isPlaying = false;
-                                } else {
+                                if (this.tracks[campaignId]) {
                                     // Campaign is on current page - merge data
                                     this.tracks[campaignId].actualPlayTime = currentTracks[
                                         campaignId].actualPlayTime;
@@ -493,139 +473,54 @@
                                         .reposted;
                                     this.tracks[campaignId].lastPosition = currentTracks[campaignId]
                                         .lastPosition;
+                                } else {
+                                    // Campaign not on page but preserve data
+                                    this.tracks[campaignId] = currentTracks[campaignId];
                                 }
                             });
-
-                            // Save restored state
-                            this.saveTrackingData();
                         }, 150);
                     });
                 },
 
-                // NEW METHOD: Reset for filter changes (preserves tracking data)
-                resetForFilterChange() {
-                    console.log('🔁 Resetting for filter change');
-
-                    // Step 1: Sync current state to backend first
-                    this.syncAllTracksToBackend();
-
-                    // Step 2: Stop all playing tracks
-                    Object.keys(this.tracks).forEach(campaignId => {
-                        const track = this.tracks[campaignId];
-                        if (track.widget && track.isPlaying) {
-                            track.widget.pause();
-                        }
-                        // Clear widget reference but keep tracking data
-                        if (track.widget) {
-                            track.widget = null;
-                        }
-                        track.isPlaying = false;
-                        track.playStartTime = null;
-                    });
-
-                    // Step 3: Save current state to localStorage
-                    this.saveTrackingData();
-
-                    // Step 4: Reload from session (has latest backend data)
-                    setTimeout(() => {
-                        this.loadFromSession();
-                        this.initializeSoundCloudWidgets();
-                    }, 100);
-                },
-
-                // Sync all tracked campaigns to backend
-                syncAllTracksToBackend() {
-                    if (this.sessionSyncInProgress) return;
-
-                    this.sessionSyncInProgress = true;
-
-                    Object.keys(this.tracks).forEach(campaignId => {
-                        const track = this.tracks[campaignId];
-                        if (track.actualPlayTime > 0) {
-                            this.syncToBackend(campaignId, 'sync');
-                        }
-                    });
-
-                    setTimeout(() => {
-                        this.sessionSyncInProgress = false;
-                    }, 500);
-                },
-
                 loadFromSession() {
-                    console.log('📥 Loading from session');
-                    const sessionData = typeof window.sessionData !== 'undefined' ? window.sessionData : {};
-
-                    if (sessionData && Object.keys(sessionData).length > 0) {
-                        console.log('✅ Session data found:', Object.keys(sessionData).length, 'campaigns');
-
+                    const sessionData = @json(session('campaign_playback_tracking', []));
+                    if (sessionData) {
                         Object.keys(sessionData).forEach(campaignId => {
-                            if (!this.tracks[campaignId]) {
-                                this.tracks[campaignId] = {
-                                    isPlaying: false,
-                                    actualPlayTime: 0,
-                                    isEligible: false,
-                                    lastPosition: 0,
-                                    playStartTime: null,
-                                    seekDetected: false,
-                                    widget: null,
-                                    reposted: false,
-                                };
-                            }
-
-                            // Merge session data
-                            this.tracks[campaignId].actualPlayTime = parseFloat(sessionData[campaignId]
-                                .actual_play_time) || 0;
-                            this.tracks[campaignId].isEligible = sessionData[campaignId].is_eligible || false;
-                            this.tracks[campaignId].reposted = sessionData[campaignId].reposted || false;
+                            this.tracks[campaignId] = {
+                                ...this.tracks[campaignId],
+                                ...sessionData[campaignId],
+                            };
                         });
-
-                        // Save merged data to localStorage
                         this.saveTrackingData();
                     }
                 },
 
                 loadPersistedTrackingData() {
-                    console.log('💾 Loading from localStorage');
+                    // Load from localStorage (browser-side persistence)
                     const stored = localStorage.getItem('campaign_tracking_data');
-
                     if (stored) {
                         try {
                             const data = JSON.parse(stored);
-                            console.log('✅ localStorage data found:', Object.keys(data).length, 'campaigns');
-
                             Object.keys(data).forEach(campaignId => {
-                                if (!this.tracks[campaignId]) {
-                                    this.tracks[campaignId] = {
-                                        isPlaying: false,
-                                        actualPlayTime: 0,
-                                        isEligible: false,
-                                        lastPosition: 0,
-                                        playStartTime: null,
-                                        seekDetected: false,
-                                        widget: null,
-                                        reposted: false,
-                                    };
-                                }
-
-                                // Only update if localStorage has more recent data
-                                if (data[campaignId].actualPlayTime > this.tracks[campaignId].actualPlayTime) {
-                                    this.tracks[campaignId].actualPlayTime = parseFloat(data[campaignId]
-                                        .actualPlayTime) || 0;
-                                    this.tracks[campaignId].isEligible = data[campaignId].isEligible || false;
-                                    this.tracks[campaignId].lastPosition = parseFloat(data[campaignId]
-                                        .lastPosition) || 0;
-                                }
-
-                                this.tracks[campaignId].reposted = data[campaignId].reposted || this.tracks[
-                                    campaignId].reposted;
+                                this.tracks[campaignId] = {
+                                    isPlaying: false,
+                                    actualPlayTime: parseFloat(data[campaignId].actualPlayTime) || 0,
+                                    isEligible: data[campaignId].isEligible || false,
+                                    lastPosition: parseFloat(data[campaignId].lastPosition) || 0,
+                                    playStartTime: null,
+                                    seekDetected: false,
+                                    widget: null,
+                                    reposted: data[campaignId].reposted || false,
+                                };
                             });
                         } catch (e) {
-                            console.error('❌ Error loading tracking data:', e);
+                            console.error('Error loading tracking data:', e);
                         }
                     }
                 },
 
                 saveTrackingData() {
+                    // Save to localStorage
                     const dataToSave = {};
                     Object.keys(this.tracks).forEach(campaignId => {
                         dataToSave[campaignId] = {
@@ -635,37 +530,32 @@
                             reposted: this.tracks[campaignId].reposted,
                         };
                     });
-
                     localStorage.setItem('campaign_tracking_data', JSON.stringify(dataToSave));
-                    console.log('💾 Saved to localStorage:', Object.keys(dataToSave).length, 'campaigns');
                 },
 
                 startUpdateLoop() {
+                    // Update UI every 500ms for smooth animation (reduced from 100ms)
                     if (this.updateInterval) {
                         clearInterval(this.updateInterval);
                     }
 
-                    // Update every 500ms for smooth UI
                     this.updateInterval = setInterval(() => {
-                        // Force Alpine reactivity update
-                        this.$nextTick(() => {
-                            this.tracks = {
-                                ...this.tracks
-                            };
-                        });
+                        this.updateAllTrackTimes();
                     }, 500);
+                },
+
+                updateAllTrackTimes() {
+                    // This function is now only for visual updates, not triggering API calls
+                    // Do nothing here - updates happen in PLAY_PROGRESS event
                 },
 
                 initializeSoundCloudWidgets() {
                     if (typeof SC === 'undefined') {
-                        console.log('⏳ Waiting for SoundCloud SDK...');
                         setTimeout(() => this.initializeSoundCloudWidgets(), 500);
                         return;
                     }
 
-                    console.log('🎧 Initializing SoundCloud widgets');
                     const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                    console.log('🔍 Found', playerContainers.length, 'player containers');
 
                     playerContainers.forEach(container => {
                         const campaignId = container.dataset.campaignId;
@@ -673,7 +563,7 @@
 
                         if (!currentCampaignCard) return;
 
-                        // Initialize tracking for this campaign if not exists
+                        // Initialize tracking for this campaign (preserve existing data if available)
                         if (!this.tracks[campaignId]) {
                             this.tracks[campaignId] = {
                                 isPlaying: false,
@@ -687,25 +577,18 @@
                             };
                         }
 
+                        // Skip re-binding if widget already exists
                         const iframe = container.querySelector('iframe');
                         if (!iframe || !campaignId) return;
 
-                        // Skip if widget already bound and still valid
+                        // Check if widget is already bound
                         if (this.tracks[campaignId].widget) {
-                            try {
-                                // Test if widget is still valid
-                                this.tracks[campaignId].widget.isPaused((isPaused) => {
-                                    // Widget is valid, just update reference
-                                    console.log('✅ Widget already bound for campaign:', campaignId);
-                                });
-                                return;
-                            } catch (e) {
-                                // Widget is stale, rebind
-                                console.log('🔄 Rebinding stale widget for campaign:', campaignId);
-                            }
+                            // Widget exists, just update reference
+                            const widget = SC.Widget(iframe);
+                            this.tracks[campaignId].widget = widget;
+                            return;
                         }
 
-                        // Get next campaign for auto-play
                         const nextCampaignCard = currentCampaignCard.nextElementSibling;
                         let nextIframe = null;
                         let nextCampaignId = null;
@@ -721,14 +604,13 @@
 
                         const widget = SC.Widget(iframe);
                         this.tracks[campaignId].widget = widget;
-                        console.log('🎵 Widget bound for campaign:', campaignId);
 
                         // PLAY event
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             const track = this.tracks[campaignId];
                             track.isPlaying = true;
                             track.playStartTime = Date.now();
-                            console.log('▶️ Play started:', campaignId);
+
                             this.syncToBackend(campaignId, 'play');
                         });
 
@@ -737,7 +619,7 @@
                             const track = this.tracks[campaignId];
                             track.isPlaying = false;
                             track.playStartTime = null;
-                            console.log('⏸️ Paused:', campaignId);
+
                             this.syncToBackend(campaignId, 'pause');
                             this.saveTrackingData();
                         });
@@ -747,13 +629,12 @@
                             const track = this.tracks[campaignId];
                             track.isPlaying = false;
                             track.playStartTime = null;
-                            console.log('✅ Finished:', campaignId);
+
                             this.syncToBackend(campaignId, 'finish');
                             this.saveTrackingData();
 
                             // Auto-play next track
                             if (nextCampaignId && nextIframe) {
-                                console.log('⏭️ Auto-playing next:', nextCampaignId);
                                 const nextWidget = SC.Widget(nextIframe);
                                 setTimeout(() => nextWidget.play(), 100);
                             }
@@ -761,35 +642,35 @@
 
                         // PLAY_PROGRESS event - Critical for accurate tracking
                         widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-                            const currentPosition = data.currentPosition / 1000;
+                            const currentPosition = data.currentPosition / 1000; // Convert to seconds
                             const track = this.tracks[campaignId];
 
-                            // Detect seeking
+                            // Detect seeking (user manually moved timeline)
                             const positionDiff = Math.abs(currentPosition - track.lastPosition);
 
                             if (positionDiff > 1.5 && track.lastPosition > 0) {
+                                // User seeked - mark as detected and don't count this time
                                 track.seekDetected = true;
                                 track.lastPosition = currentPosition;
                                 return;
                             }
 
                             if (track.isPlaying && !track.seekDetected) {
+                                // Valid continuous playback
                                 const increment = currentPosition - track.lastPosition;
 
-                                // Only count valid increments
+                                // Only count valid increments (between 0 and 2 seconds)
                                 if (increment > 0 && increment < 2) {
                                     track.actualPlayTime += increment;
 
-                                    // Check eligibility (2 seconds for testing, change to 15 for production)
+                                    // Check if eligible (15 seconds actual play time)
                                     if (track.actualPlayTime >= 2 && !track.isEligible) {
                                         track.isEligible = true;
-                                        console.log('✅ Eligible for repost:', campaignId, 'at', track
-                                            .actualPlayTime, 's');
                                         this.syncToBackend(campaignId, 'eligible');
                                         this.saveTrackingData();
                                     }
 
-                                    // Periodic save
+                                    // Save periodically
                                     if (Math.floor(track.actualPlayTime) % 2 === 0) {
                                         this.saveTrackingData();
                                     }
@@ -813,54 +694,30 @@
                     const track = this.tracks[campaignId];
                     if (!track) return;
 
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                    if (!csrfToken) {
-                        console.error('❌ CSRF token not found');
-                        return;
-                    }
-
-                    fetch(window.trackPlaybackRoute || '/api/campaign/track-playback', {
+                    // Use fetch to avoid Livewire re-render
+                    fetch("{{ route('user.api.campaign.track-playback') }}", {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken.content,
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             },
                             body: JSON.stringify({
                                 campaignId: campaignId,
                                 actualPlayTime: track.actualPlayTime,
                                 isEligible: track.isEligible,
-                                reposted: track.reposted,
                                 action: action
                             })
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                console.log('✅ Synced to backend:', action, campaignId);
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Tracking synced successfully');
                             }
                         })
                         .catch(err => {
-                            console.error('❌ Failed to sync:', err);
+                            console.error('Failed to sync tracking:', err);
                         });
                 },
 
-                // Clear session data via backend
-                clearSessionData() {
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                    if (!csrfToken) return;
-
-                    fetch(window.clearSessionRoute || '/api/campaign/clear-tracking', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken.content,
-                            }
-                        })
-                        .then(() => console.log('✅ Session cleared'))
-                        .catch(err => console.error('❌ Failed to clear session:', err));
-                },
-
-                // Helper methods for UI
                 isEligibleForRepost(campaignId) {
                     return this.tracks[campaignId]?.isEligible || false;
                 },
@@ -875,6 +732,7 @@
 
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
+                    // Cap at 100% for 15 seconds
                     const percentage = Math.min((playTime / 2) * 100, 100);
                     return percentage.toFixed(2);
                 },
@@ -884,17 +742,14 @@
                         return;
                     }
 
-                    console.log('🔄 Initiating repost for:', campaignId);
+                    // Dispatch repost action using Livewire event
                     Livewire.dispatch('confirmRepost', {
                         campaignId: campaignId
                     });
                 },
 
-                // Complete cleanup (only for navigation away)
                 clearAllTracking() {
-                    console.log('🧹 Complete cleanup');
-
-                    // Stop all tracks
+                    // Stop all playing tracks
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
                         if (track.widget && track.isPlaying) {
@@ -902,33 +757,25 @@
                         }
                     });
 
-                    // Clear everything
+                    // Clear tracking data and localStorage
                     this.tracks = {};
                     localStorage.removeItem('campaign_tracking_data');
 
+                    // Clear update interval
                     if (this.updateInterval) {
                         clearInterval(this.updateInterval);
                     }
-
-                    // Clear backend session
-                    this.clearSessionData();
                 }
             };
         }
 
-        // Make session data available globally
-        window.sessionData = @json(session('campaign_playback_tracking', []));
-        window.trackPlaybackRoute = "{{ route('user.api.campaign.track-playback') }}";
-        window.clearSessionRoute = "{{ route('user.api.campaign.clear-tracking') }}";
-
         // Initialize on Livewire events
         document.addEventListener('livewire:initialized', function() {
-            console.log('🚀 Livewire initialized');
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
 
         document.addEventListener('livewire:navigated', function() {
-            console.log('🔄 Livewire navigated');
+            // Reinitialize widgets after navigation
             setTimeout(() => {
                 const mainElement = document.querySelector('main[x-data*="trackPlaybackManager"]');
                 if (mainElement && mainElement.__x) {
@@ -940,13 +787,12 @@
             }, 100);
         });
 
-        // Save before leaving page
+        // Clean up on page leave
         window.addEventListener('beforeunload', function() {
             const mainElement = document.querySelector('main[x-data*="trackPlaybackManager"]');
             if (mainElement && mainElement.__x) {
                 const trackManager = mainElement.__x.$data;
-                if (trackManager) {
-                    trackManager.syncAllTracksToBackend();
+                if (trackManager && trackManager.saveTrackingData) {
                     trackManager.saveTrackingData();
                 }
             }

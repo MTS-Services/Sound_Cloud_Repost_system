@@ -95,4 +95,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 
     Route::post('/campaign/track-playback', [CampaignPlaybackController::class, 'trackPlayback'])
         ->name('api.campaign.track-playback');
+    Route::post('/campaign/clear-tracking', [CampaignPlaybackController::class, 'trackPlayback'])
+        ->name('api.campaign.clear-tracking');
 });
