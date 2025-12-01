@@ -114,7 +114,7 @@ class RedesignCampaign extends Component
         ]);
     }
 
-    public function updated()
+    public function updated($property)
     {
         $this->dispatch('reset-initialize'); //@file-input-reset.window="init()"
         Log::info('Reset initialize');
