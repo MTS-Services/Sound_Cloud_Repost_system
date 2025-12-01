@@ -85,12 +85,8 @@ class RedesignCampaign extends Component
             session()->forget('campaign_playback_tracking');
         }
 
-        $ids = session()->get('repostedIds');
-        if (!empty($ids)) {
-            $this->dispatch('repost-success', ['campaignId' => $ids]);
-            // foreach ($ids as $id) {                
-            //     $this->dispatch('repost-success', campaignId: $id);
-            // }
+        if (session()->get('repostedIds')) {
+            session()->forget('repostedIds');
         }
     }
 
