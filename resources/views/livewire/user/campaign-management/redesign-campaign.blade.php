@@ -500,14 +500,12 @@
             </div>
         </div>
 
-         <div class="max-w-[400px] hidden 3xl:block" x-cloak x-transition>
-           <livewire:user.dashboard-summary />
+        <div class="max-w-[400px] hidden 3xl:block" x-cloak x-transition>
+            <livewire:user.dashboard-summary />
         </div>
     </section>
 
-    @if ($showCampaignCreator)
-        @livewire('user.campaign-management.campaign-creator')
-    @endif
+    <livewire:user.campaign-management.campaign-creator />
 
     <livewire:user.repost />
 

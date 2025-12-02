@@ -25,7 +25,7 @@ class CampaignCreator extends Component
     protected string $baseUrl = 'https://api.soundcloud.com';
 
     // Properties for track/playlist selection
-    public $tracks = null;
+    public $tracks = [];
     public $playlists = null;
     public $playlistTracks = [];
     public $activeTab = 'tracks';
