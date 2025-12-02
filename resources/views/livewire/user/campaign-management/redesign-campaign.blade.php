@@ -406,7 +406,7 @@
                                                 <!-- Button content -->
                                                 <div class="relative z-10 flex items-center gap-2">
                                                     <template x-if="!isReposted(campaignId)">
-                                                        <div class="flex items-center gap-2">
+                                                        <div class="flex items-center gap-2 text-white!">
                                                             <svg width="26" height="18" viewBox="0 0 26 18"
                                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <rect x="1" y="1" width="24" height="16"
@@ -421,7 +421,7 @@
                                                     </template>
 
                                                     <template x-if="isReposted(campaignId)">
-                                                        <div class="flex items-center gap-2">
+                                                        <div class="flex items-center gap-2 text-white!">
                                                             <svg class="w-5 h-5" fill="currentColor"
                                                                 viewBox="0 0 20 20">
                                                                 <path fill-rule="evenodd"
