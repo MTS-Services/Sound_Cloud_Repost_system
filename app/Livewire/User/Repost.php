@@ -376,5 +376,6 @@ class Repost extends Component
         $this->resetModalState();
         $this->dispatch('modal-closed');
         $this->dispatch('reset-submission');
+        $this->dispatch('reset-widget-initiallized');
     }
 }
