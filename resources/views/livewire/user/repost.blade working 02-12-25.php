@@ -168,167 +168,103 @@
                     </div>
                 </div>
             @elseif (!$campaign && !$isLoading)
-                <!-- Modern Error State -->
-                <div class="px-6 py-8">
-                    <div class="flex flex-col items-center justify-center text-center space-y-4">
-                        <!-- Error Icon with Animation -->
-                        <div class="relative">
-                            <div class="absolute inset-0 bg-red-100 dark:bg-red-900/20 rounded-full animate-ping opacity-75"></div>
-                            <div class="relative bg-red-50 dark:bg-red-900/30 p-4 rounded-full border-2 border-red-200 dark:border-red-800">
-                                <svg class="w-12 h-12 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <!-- Error Message -->
-                        <div class="space-y-2">
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                                Oops! Something Went Wrong
-                            </h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 max-w-sm">
-                                We couldn't load the repost information. Please try again or contact support if the problem persists.
-                            </p>
-                        </div>
-
-                        <!-- Action Button -->
-                        <button @click="$wire.closeConfirmModal()" 
-                            class="mt-4 px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg font-medium transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
-                            Try Again
-                        </button>
+                <div class="px-6 py-6">
+                    <div class="flex items-center justify-center gap-3 text-red-500">
+                        <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                                stroke="currentColor" stroke-width="2" />
+                            <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                                stroke-width="2" />
+                        </svg>
+                        <span class="text-sm font-medium">Something went wrong! Please try again.</span>
                     </div>
                 </div>
             @else
-                <!-- Modern Loading State with Audio Wave -->
-                <div class="px-6 py-12">
-                    <div class="flex flex-col items-center justify-center text-center space-y-6">
-                        <!-- Audio Wave Animation -->
-                        <div class="flex items-end justify-center gap-1.5 h-24">
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-5"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
+                <div class="p-4 bg-gray-100 flex flex-col items-center justify-center w-full min-h-[500px]">
+                    <div
+                        class="text-center">
+
+                        <!-- Music Wave Visualizer Style -->
+                        <div class="flex items-end justify-center gap-1.5 h-20 mb-6">
+                            <!-- Bars now use the more complex 'animate-music-wave' -->
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.0s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.1s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.2s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.3s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.4s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.5s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.6s;"></div>
+                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                                style="animation-delay: 0.7s;"></div>
                         </div>
 
-                        <!-- Loading Text -->
-                        <div class="space-y-2">
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                Preparing Your Repost
-                            </h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                                Please wait while we set everything up...
-                            </p>
-                        </div>
-
-                        <!-- Progress Dots -->
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
-                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 tracking-tight">
+                            Preparing for Repost
+                        </h3>
+                        <p class="text-md text-gray-500 mt-2">
+                            Please wait while we prepare your repost.
+                        </p>
                     </div>
                 </div>
             @endif
         @else
-            <!-- Initial Loading State -->
-            <div class="px-6 py-12">
-                <div class="flex flex-col items-center justify-center text-center space-y-6">
-                    <!-- Audio Wave Animation -->
-                    <div class="flex items-end justify-center gap-1.5 h-24">
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-5"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
+            <div class="p-4 bg-gray-100 flex flex-col items-center justify-center w-full min-h-[500px]">
+                <div
+                    class="text-center">
+
+                    <!-- Music Wave Visualizer Style -->
+                    <div class="flex items-end justify-center gap-1.5 h-20 mb-6">
+                        <!-- Bars now use the more complex 'animate-music-wave' -->
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.0s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.1s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.2s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.3s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.4s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.5s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.6s;"></div>
+                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
+                            style="animation-delay: 0.7s;"></div>
                     </div>
 
-                    <!-- Loading Text -->
-                    <div class="space-y-2">
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                            Preparing Your Repost
-                        </h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            Please wait while we set everything up...
-                        </p>
-                    </div>
-
-                    <!-- Progress Dots -->
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
-                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 tracking-tight">
+                        Preparing for Repost
+                    </h3>
+                    <p class="text-md text-gray-500 mt-2">
+                        Please wait while we prepare your repost.
+                    </p>
                 </div>
             </div>
         @endif
     </div>
-
     <style>
-        /* Audio Wave Animations */
-        @keyframes audio-wave-1 {
-            0%, 100% { height: 1.5rem; }
-            25% { height: 3rem; }
-            50% { height: 2rem; }
-            75% { height: 4rem; }
-        }
+        @keyframes wave {
 
-        @keyframes audio-wave-2 {
-            0%, 100% { height: 2rem; }
-            25% { height: 4.5rem; }
-            50% { height: 1.5rem; }
-            75% { height: 3.5rem; }
-        }
+            0%,
+            100% {
+                transform: scaleY(0.4);
+            }
 
-        @keyframes audio-wave-3 {
-            0%, 100% { height: 3rem; }
-            25% { height: 2rem; }
-            50% { height: 5rem; }
-            75% { height: 2.5rem; }
-        }
-
-        @keyframes audio-wave-4 {
-            0%, 100% { height: 2.5rem; }
-            25% { height: 5.5rem; }
-            50% { height: 3rem; }
-            75% { height: 4.5rem; }
-        }
-
-        @keyframes audio-wave-5 {
-            0%, 100% { height: 4rem; }
-            25% { height: 3rem; }
-            50% { height: 6rem; }
-            75% { height: 3.5rem; }
-        }
-
-        .animate-audio-wave-1 {
-            animation: audio-wave-1 1.2s ease-in-out infinite;
-        }
-
-        .animate-audio-wave-2 {
-            animation: audio-wave-2 1s ease-in-out infinite;
-        }
-
-        .animate-audio-wave-3 {
-            animation: audio-wave-3 1.4s ease-in-out infinite;
-        }
-
-        .animate-audio-wave-4 {
-            animation: audio-wave-4 1.1s ease-in-out infinite;
-        }
-
-        .animate-audio-wave-5 {
-            animation: audio-wave-5 1.3s ease-in-out infinite;
+            50% {
+                transform: scaleY(1);
+            }
         }
     </style>
+
 </div>
 
 <script>
