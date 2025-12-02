@@ -99,6 +99,7 @@ class Repost extends Component
     #[On('callRepostAction')]
     public function callRepostAction($campaignId)
     {
+        dd($campaignId);
         try {
             // Decrypt if encrypted
             if (is_string($campaignId) && strpos($campaignId, 'eyJpdiI6') === 0) {
