@@ -1,5 +1,5 @@
-<div x-data="trackPlaybackManager()" @clearCampaignTracking.window="clearAllTracking()"
-    @reset-widget-initiallized.window="resetForFilterChange()">
+<div x-data="trackPlaybackManager()" @clearCampaignTracking.window="clearAllTracking()" {{-- @reset-widget-initiallized.window="resetForFilterChange()"> --}}
+    @reset-widget-initiallized.window="$data.init()">
 
     <x-slot name="page_slug">campaign-feed</x-slot>
     <x-slot name="title">Campaign Feed</x-slot>
@@ -456,7 +456,7 @@
     </section>
 
     @if ($showCampaignCreator)
-        @livewire('user.campaign-management.campaign-creator') 
+        @livewire('user.campaign-management.campaign-creator')
     @endif
 
     <livewire:user.repost />
@@ -718,7 +718,7 @@
 
                         if (nextCampaignCard && nextCampaignCard.classList.contains('campaign-card')) {
                             const nextPlayerContainer = nextCampaignCard.querySelector(
-                            '[id^="soundcloud-player-"]');
+                                '[id^="soundcloud-player-"]');
                             if (nextPlayerContainer) {
                                 nextIframe = nextPlayerContainer.querySelector('iframe');
                                 nextCampaignId = nextPlayerContainer.dataset.campaignId;
@@ -879,9 +879,12 @@
                     }
 
                     console.log('🔄 Initiating repost for:', campaignId);
-                    Livewire.dispatch('confirmRepost', {
-                        campaignId: campaignId
-                    });
+                    // called init() again
+                    this.init();
+
+                    // Livewire.dispatch('confirmRepost', {
+                    //     campaignId: campaignId
+                    // });
                 },
 
                 clearAllTracking() {
