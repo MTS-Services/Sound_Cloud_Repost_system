@@ -1,4 +1,4 @@
-<div x-data="trackPlaybackManager()" @clearCampaignTracking.window="clearAllTracking()" {{-- @reset-widget-initiallized.window="resetForFilterChange()"> --}}
+<div x-data="trackPlaybackManager();" @clearCampaignTracking.window="clearAllTracking()" {{-- @reset-widget-initiallized.window="resetForFilterChange()"> --}}
     @reset-widget-initiallized.window="$data.init()">
 
     <x-slot name="page_slug">campaign-feed</x-slot>
@@ -473,6 +473,7 @@
                 updateInterval: null,
                 isInitialized: false,
                 sessionSyncInProgress: false,
+                showRepostActionModal: false,
 
                 init() {
                     console.log('🎵 Initializing trackPlaybackManager');
@@ -881,6 +882,8 @@
                     console.log('🔄 Initiating repost for:', campaignId);
                     // called init() again
                     this.init();
+
+                    showRepostActionModal = true;
 
                     // Livewire.dispatch('confirmRepost', {
                     //     campaignId: campaignId

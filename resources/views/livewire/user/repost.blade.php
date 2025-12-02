@@ -1,5 +1,5 @@
 <div x-data="{
-    showRepostActionModal: @entangle('showRepostActionModal').live,
+    {{-- showRepostActionModal: @entangle('showRepostActionModal').live, --}}
     isSubmitting: false,
     reset() {
         this.isSubmitting = false;
