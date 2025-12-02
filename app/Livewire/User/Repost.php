@@ -99,6 +99,7 @@ class Repost extends Component
     #[On('callRepostAction')]
     public function callRepostAction($campaignId)
     {
+        dd($campaignId);
         try {
             $this->resetModalState();
 
