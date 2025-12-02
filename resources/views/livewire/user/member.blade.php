@@ -111,7 +111,7 @@
             <!-- Member Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
-                    <div wire:loading.remove wire:target="search"
+                    <div wire:loading.remove wire:target="search" 
                         class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex flex-col">
                         <div class="flex-1">
                             <!-- Profile Header -->
