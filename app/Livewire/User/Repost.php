@@ -34,6 +34,7 @@ class Repost extends Component
     public $followed = true;
     public $alreadyFollowing = false;
     public $availableRepostTime = null;
+    public $isLoading = true;
 
     protected CampaignService $campaignService;
     protected SoundCloudService $soundCloudService;
@@ -111,6 +112,7 @@ class Repost extends Component
             if ($this->campaign) {
                 $this->checkUserInteractions();
                 $this->showRepostActionModal = true;
+                $this->isLoading = false;
             }
         } catch (\Exception $e) {
             Log::error('Error loading repost modal: ' . $e->getMessage(), [
@@ -141,6 +143,8 @@ class Repost extends Component
         $this->alreadyFollowing = false;
         $this->commented = null;
         $this->availableRepostTime = null;
+
+        $this->isLoading = true;
 
         $this->resetValidation();
         $this->resetErrorBag();
