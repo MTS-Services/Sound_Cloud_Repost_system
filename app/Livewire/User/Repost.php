@@ -28,7 +28,6 @@ class Repost extends Component
     public $showRepostActionModal = false;
     public $campaign;
 
-    // Repost action properties
     public $liked = true;
     public $alreadyLiked = false;
     public $commented = null;
@@ -105,10 +104,8 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         try {
-            // CRITICAL: Complete reset before loading new data
             $this->resetModalState();
 
-            // Load campaign with optimized eager loading
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
                 'music.user.userInfo:id,user_urn,followers_count',
@@ -126,7 +123,7 @@ class Repost extends Component
             ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to load repost details. Please try again.');
             $this->resetModalState();
-            $this->dispatch('reset-submission-state'); // NEW: Force reset Alpine state
+            $this->dispatch('reset-submission');
         }
     }
 
@@ -142,7 +139,6 @@ class Repost extends Component
             'availableRepostTime'
         ]);
 
-        // Set default values
         $this->liked = true;
         $this->followed = true;
         $this->alreadyLiked = false;
@@ -150,14 +146,12 @@ class Repost extends Component
         $this->commented = null;
         $this->availableRepostTime = null;
 
-        // Clear validation errors
         $this->resetValidation();
         $this->resetErrorBag();
     }
 
     private function checkUserInteractions()
     {
-        // Reset interaction states
         $this->liked = true;
         $this->followed = true;
         $this->alreadyLiked = false;
@@ -168,7 +162,6 @@ class Repost extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
-            // Check like status
             if ($this->campaign->likeable == 0) {
                 $this->liked = false;
             } else {
@@ -186,7 +179,6 @@ class Repost extends Component
                 }
             }
 
-            // Check follow status
             $userUrn = $this->campaign->user?->urn;
             $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
@@ -195,7 +187,6 @@ class Repost extends Component
                 $this->alreadyFollowing = true;
             }
 
-            // Disable comment if not allowed
             if ($this->campaign->commentable == 0) {
                 $this->commented = null;
             }
@@ -206,16 +197,17 @@ class Repost extends Component
 
     public function repost()
     {
+        // CRITICAL: Dispatch reset event at the start
+        $this->dispatch('reset-submission');
+
         try {
-            // Validate first
             $this->validate($this->commentedRules());
 
             $currentUserUrn = user()->urn;
 
-            // Quick validation checks
             if ($this->campaign->user_urn === $currentUserUrn) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost your own campaign.');
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
+                $this->dispatch('reset-submission');
                 return;
             }
 
@@ -224,11 +216,10 @@ class Repost extends Component
                 ['campaign_id', '=', $this->campaign->id]
             ])->exists()) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
+                $this->dispatch('reset-submission');
                 return;
             }
 
-            // Determine music URN
             $musicUrn = match ($this->campaign->music_type) {
                 Track::class => $this->campaign->music->urn,
                 Playlist::class => $this->campaign->music->soundcloud_urn,
@@ -237,7 +228,7 @@ class Repost extends Component
 
             if (!$musicUrn) {
                 $this->dispatch('alert', type: 'error', message: 'Invalid music type.');
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
+                $this->dispatch('reset-submission');
                 return;
             }
 
@@ -245,11 +236,9 @@ class Repost extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
-            // Perform repost and interactions
             $result = $this->performRepostActions($httpClient, $musicUrn);
 
             if ($result['success']) {
-                // Send notification email
                 if (hasEmailSentPermission('em_repost_accepted', $this->campaign->user->urn)) {
                     NotificationMailSent::dispatch([[
                         'email' => $this->campaign->user->email,
@@ -259,7 +248,6 @@ class Repost extends Component
                     ]]);
                 }
 
-                // Save repost to database
                 $this->campaignService->syncReposts(
                     $this->campaign,
                     user(),
@@ -267,7 +255,6 @@ class Repost extends Component
                     $result['actions']
                 );
 
-                // Clear relevant caches
                 Cache::forget("user_reposts_today_{$currentUserUrn}");
                 Cache::forget("user_reposts_12h_{$currentUserUrn}");
 
@@ -281,15 +268,13 @@ class Repost extends Component
                 $this->dispatch('refreshCampaigns');
                 session()->push('repostedIds', $this->campaign->id);
 
-                // CRITICAL: Close modal and reset state
                 $this->closeConfirmModal();
             } else {
                 $this->dispatch('alert', type: 'error', message: $result['message']);
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
+                $this->dispatch('reset-submission');
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Validation errors - let Livewire handle them normally
-            $this->dispatch('reset-submission-state'); // NEW: Reset on validation error
+            $this->dispatch('reset-submission');
             throw $e;
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
@@ -298,14 +283,13 @@ class Repost extends Component
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
             $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
-            $this->dispatch('reset-submission-state'); // NEW: Reset on error
+            $this->dispatch('reset-submission');
         }
     }
 
     private function performRepostActions($httpClient, $musicUrn)
     {
         try {
-            // Get initial counts
             $endpoint = $this->campaign->music_type === Track::class
                 ? "/tracks/{$musicUrn}"
                 : "/playlists/{$musicUrn}";
@@ -320,7 +304,6 @@ class Repost extends Component
                 : 'repost_count';
             $previousReposts = $initialData['collection'][$countField] ?? 0;
 
-            // Perform repost
             $repostEndpoint = $this->campaign->music_type === Track::class
                 ? "{$this->baseUrl}/reposts/tracks/{$musicUrn}"
                 : "{$this->baseUrl}/reposts/playlists/{$musicUrn}";
@@ -334,7 +317,6 @@ class Repost extends Component
                 ];
             }
 
-            // Verify repost count increased
             $newData = $this->soundCloudService->makeGetApiRequest(
                 endpoint: $endpoint,
                 errorMessage: 'Failed to verify repost'
@@ -348,14 +330,12 @@ class Repost extends Component
                 ];
             }
 
-            // Perform additional actions in parallel
             $actions = [
                 'likeable' => false,
                 'comment' => false,
                 'follow' => true
             ];
 
-            // Like action
             if ($this->liked && $this->campaign->likeable) {
                 $likeEndpoint = $this->campaign->music_type === Track::class
                     ? "{$this->baseUrl}/likes/tracks/{$musicUrn}"
@@ -365,7 +345,6 @@ class Repost extends Component
                 $actions['likeable'] = $likeResponse->successful();
             }
 
-            // Comment action
             if ($this->commented && $this->campaign->music_type === Track::class && $this->campaign->music->commentable) {
                 $commentData = [
                     'comment' => [
@@ -377,7 +356,6 @@ class Repost extends Component
                 $actions['comment'] = $commentResponse->successful();
             }
 
-            // Follow action
             if ($this->followed && !$this->alreadyFollowing) {
                 $followResponse = $httpClient->put("{$this->baseUrl}/me/followings/{$this->campaign->user->urn}");
                 $actions['follow'] = $followResponse->successful();
@@ -399,12 +377,8 @@ class Repost extends Component
     public function closeConfirmModal(): void
     {
         $this->showRepostActionModal = false;
-
-        // CRITICAL: Reset all state after modal closes
         $this->resetModalState();
-
-        // Dispatch events to ensure UI updates
         $this->dispatch('modal-closed');
-        $this->dispatch('reset-submission-state'); // NEW: Force reset Alpine state
+        $this->dispatch('reset-submission');
     }
 }

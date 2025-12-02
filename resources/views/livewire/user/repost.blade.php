@@ -4,29 +4,35 @@
     reset() {
         this.isSubmitting = false;
     }
-}" 
-x-init="
-    $watch('showRepostActionModal', value => {
-        if (!value) {
-            reset();
-        }
-    });
-"
-x-show="showRepostActionModal" 
-x-cloak 
-x-transition:enter="transition ease-out duration-200"
-x-transition:enter-start="opacity-0 scale-95" 
-x-transition:enter-end="opacity-100 scale-100"
-x-transition:leave="transition ease-in duration-150" 
-x-transition:leave-start="opacity-100 scale-100"
-x-transition:leave-end="opacity-0 scale-95"
-class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-@keydown.escape.window="!isSubmitting && $wire.closeConfirmModal()"
-@modal-closed.window="reset()">
+}" x-init="$watch('showRepostActionModal', value => {
+    if (!value) {
+        reset();
+    }
+});
+
+// CRITICAL FIX: Reset on any Livewire request completion
+Livewire.hook('morph.updated', ({ component }) => {
+    if (component.fingerprint.name === 'user.repost') {
+        this.isSubmitting = false;
+    }
+});
+
+// CRITICAL FIX: Reset on commit (after any Livewire action completes)
+Livewire.hook('commit', ({ component, respond }) => {
+    if (component.fingerprint.name === 'user.repost') {
+        this.isSubmitting = false;
+    }
+});" x-show="showRepostActionModal" x-cloak
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
+    x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+    @keydown.escape.window="if (!isSubmitting) { $wire.closeConfirmModal(); }" @modal-closed.window="reset()"
+    @reset-submission.window="reset()">
 
     @if ($showRepostActionModal && $campaign)
         <div class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
-            @click.outside="!isSubmitting && $wire.closeConfirmModal()">
+            @click.outside="if (!isSubmitting) { $wire.closeConfirmModal(); }">
 
             <!-- Header -->
             <div
@@ -49,9 +55,7 @@ class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-cent
                         {{ __('Repost Confirmation') }}
                     </h2>
                 </div>
-                <button 
-                    x-on:click="!isSubmitting && $wire.closeConfirmModal()" 
-                    type="button" 
+                <button @click="if (!isSubmitting) { $wire.closeConfirmModal(); }" type="button"
                     :disabled="isSubmitting"
                     class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     <x-lucide-x class="w-5 h-5" />
@@ -141,15 +145,22 @@ class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-cent
 
                 <!-- Submit Button -->
                 <div class="flex justify-center gap-4">
-                    <button 
-                        wire:click="repost" 
-                        @click="isSubmitting = true" 
-                        wire:loading.attr="disabled"
+                    <button type="button"
+                        @click="
+                            if (isSubmitting) return;
+                            isSubmitting = true;
+                            $wire.repost().then(() => {
+                                // Success case handled by events
+                            }).catch((error) => {
+                                // Always reset on error
+                                isSubmitting = false;
+                            });
+                        "
                         :disabled="isSubmitting"
                         class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-orange-500">
 
                         <!-- Loading Spinner -->
-                        <span wire:loading wire:target="repost" class="inline-block">
+                        <span x-show="isSubmitting" x-cloak class="inline-block">
                             <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -160,8 +171,8 @@ class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-cent
                             </svg>
                         </span>
 
-                        <!-- Icon and Text -->
-                        <span wire:loading.remove wire:target="repost" class="flex items-center gap-2">
+                        <!-- Button Text -->
+                        <span x-show="!isSubmitting" class="flex items-center gap-2">
                             <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
@@ -173,7 +184,7 @@ class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-cent
                             <span>{{ __('Repost') }}</span>
                         </span>
 
-                        <span wire:loading wire:target="repost">
+                        <span x-show="isSubmitting" x-cloak>
                             {{ __('Processing...') }}
                         </span>
                     </button>
@@ -182,23 +193,27 @@ class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-cent
         </div>
     @endif
 </div>
-
 <script>
     document.addEventListener('livewire:initialized', () => {
-        // Reset submission state when modal closes or repost succeeds
-        Livewire.on('repost-success', () => {
-            // Force reset of Alpine state
+        // Global reset function
+        const resetSubmissionState = () => {
             const modalElement = document.querySelector('[x-data*="showRepostActionModal"]');
             if (modalElement && modalElement.__x) {
                 modalElement.__x.$data.isSubmitting = false;
             }
-        });
+        };
 
-        Livewire.on('modal-closed', () => {
-            // Force reset of Alpine state
-            const modalElement = document.querySelector('[x-data*="showRepostActionModal"]');
-            if (modalElement && modalElement.__x) {
-                modalElement.__x.$data.isSubmitting = false;
+        // Reset on all relevant events
+        Livewire.on('repost-success', resetSubmissionState);
+        Livewire.on('modal-closed', resetSubmissionState);
+        Livewire.on('reset-submission', resetSubmissionState);
+
+        // CRITICAL: Reset after any Livewire update completes
+        Livewire.hook('commit', ({
+            component
+        }) => {
+            if (component.fingerprint.name === 'user.repost') {
+                setTimeout(resetSubmissionState, 100);
             }
         });
     });
