@@ -409,7 +409,7 @@
                                                         <div class="flex items-center gap-2 text-white!">
                                                             <template x-if="isEligibleForRepost(campaignId)">
                                                                 <svg width="26" height="18"
-                                                                    viewBox="0 0 26 18" class="text-white!"
+                                                                    viewBox="0 0 26 18" style="color: white !important"
                                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                     <rect x="1" y="1" width="24" height="16"
                                                                         rx="3" fill="none"
