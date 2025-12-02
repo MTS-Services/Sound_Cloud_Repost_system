@@ -883,6 +883,8 @@
                     this.init();
 
                     window.dispatchEvent(new CustomEvent('repost-action-modal-show'));
+                    const encryptedId = "{{ encrypt($campaignId) }}";
+                    Livewire.dispatch('callRepostAction', encryptedId);
                     console.log('🔄 Repost action modal shown');
 
                     // Livewire.dispatch('confirmRepost', {
