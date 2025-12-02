@@ -880,7 +880,7 @@
 
                     console.log('🔄 Initiating repost for:', campaignId);
                     // called init() again
-                    this.init();
+                    // this.init();
 
                     window.dispatchEvent(new CustomEvent('repost-action-modal-show'));
                     Livewire.dispatch('callRepostAction', {
