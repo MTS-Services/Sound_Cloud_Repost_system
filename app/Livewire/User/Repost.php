@@ -85,10 +85,6 @@ class Repost extends Component
                         $fail('Please avoid excessive punctuation.');
                     }
 
-                    if (preg_match('/\b(\w+)\b(?:.*\b\1\b){3,}/i', $value)) {
-                        $fail('Please avoid repeating the same word too many times.');
-                    }
-
                     $spamWords = ['check out', 'subscribe', 'follow me', 'free download', 'visit my profile'];
                     foreach ($spamWords as $spam) {
                         if (stripos($value, $spam) !== false) {
