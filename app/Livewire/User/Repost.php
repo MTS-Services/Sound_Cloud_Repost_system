@@ -101,57 +101,22 @@ class Repost extends Component
     {
         dd($campaignId);
         try {
-            // Decrypt if encrypted
-            if (is_string($campaignId) && strpos($campaignId, 'eyJpdiI6') === 0) {
-                try {
-                    $campaignId = decrypt($campaignId);
-                } catch (\Exception $e) {
-                    Log::error('Failed to decrypt campaign ID', ['error' => $e->getMessage()]);
-                    $this->dispatch('alert', type: 'error', message: 'Invalid campaign ID.');
-                    return;
-                }
-            }
-
-            Log::info('Loading repost modal for campaign', ['campaign_id' => $campaignId]);
-
             $this->resetModalState();
 
-            // Optimize query with specific selects
-            $this->campaign = ModelsCampaign::select([
-                'id',
-                'user_urn',
-                'music_id',
-                'music_type',
-                'title',
-                'likeable',
-                'commentable',
-                'budget_credits',
-                'credits_spent'
-            ])
-                ->with([
-                    'music:id,urn,soundcloud_urn,soundcloud_track_id,title,author_username,type,artwork_url,permalink_url,commentable',
-                    'music.user:id,urn,name,email,avatar',
-                    'music.user.userInfo:id,user_urn,followers_count',
-                    'user:id,urn,name,email'
-                ])
-                ->find($campaignId);
+            $this->campaign = ModelsCampaign::with([
+                'music.user:id,urn,name,email,avatar',
+                'music.user.userInfo:id,user_urn,followers_count',
+                'user:id,urn,name,email'
+            ])->findOrFail($campaignId);
 
-            if (!$this->campaign) {
-                Log::warning('Campaign not found', ['campaign_id' => $campaignId]);
-                $this->dispatch('alert', type: 'error', message: 'Campaign not found.');
-                $this->dispatch('reset-submission');
-                return;
+            if ($this->campaign) {
+                $this->checkUserInteractions();
+                $this->showRepostActionModal = true;
             }
-
-            $this->checkUserInteractions();
-            $this->showRepostActionModal = true;
-
-            Log::info('Repost modal loaded successfully', ['campaign_id' => $campaignId]);
         } catch (\Exception $e) {
             Log::error('Error loading repost modal: ' . $e->getMessage(), [
-                'campaign_id' => $campaignId ?? 'N/A',
-                'exception' => $e,
-                'trace' => $e->getTraceAsString()
+                'campaign_id' => $campaignId,
+                'exception' => $e
             ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to load repost details. Please try again.');
             $this->resetModalState();
@@ -190,21 +155,20 @@ class Repost extends Component
         $this->alreadyFollowing = false;
 
         try {
-            // Use shorter timeout and parallel requests if possible
-            $httpClient = Http::timeout(3)->withHeaders([
+            $httpClient = Http::timeout(5)->withHeaders([
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
-            // Check likes
             if ($this->campaign->likeable == 0) {
                 $this->liked = false;
             } else {
-                $likeAble = UserAnalytics::where('owner_user_urn', $this->campaign->music->user->urn)
-                    ->where('act_user_urn', user()->urn)
-                    ->where('type', UserAnalytics::TYPE_LIKE)
-                    ->where('source_type', get_class($this->campaign->music))
-                    ->where('source_id', $this->campaign->music->id)
-                    ->exists();
+                $likeAble = UserAnalytics::where([
+                    ['owner_user_urn', '=', $this->campaign->music->user->urn],
+                    ['act_user_urn', '=', user()->urn],
+                    ['type', '=', UserAnalytics::TYPE_LIKE],
+                    ['source_type', '=', get_class($this->campaign->music)],
+                    ['source_id', '=', $this->campaign->music->id]
+                ])->exists();
 
                 if ($likeAble) {
                     $this->liked = false;
@@ -212,21 +176,14 @@ class Repost extends Component
                 }
             }
 
-            // Check following status
-            if ($this->campaign->user?->urn) {
-                try {
-                    $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$this->campaign->user->urn}");
+            $userUrn = $this->campaign->user?->urn;
+            $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
-                    if ($checkResponse->getStatusCode() === 200) {
-                        $this->followed = false;
-                        $this->alreadyFollowing = true;
-                    }
-                } catch (\Exception $e) {
-                    Log::debug('Following check failed (user may not be following): ' . $e->getMessage());
-                }
+            if ($checkResponse->getStatusCode() === 200) {
+                $this->followed = false;
+                $this->alreadyFollowing = true;
             }
 
-            // Check commentable
             if ($this->campaign->commentable == 0) {
                 $this->commented = null;
             }
@@ -237,6 +194,7 @@ class Repost extends Component
 
     public function repost()
     {
+        // CRITICAL: Dispatch reset event at the start
         $this->dispatch('reset-submission');
 
         try {
@@ -250,10 +208,10 @@ class Repost extends Component
                 return;
             }
 
-            if (ModelsRepost::where('reposter_urn', $currentUserUrn)
-                ->where('campaign_id', $this->campaign->id)
-                ->exists()
-            ) {
+            if (ModelsRepost::where([
+                ['reposter_urn', '=', $currentUserUrn],
+                ['campaign_id', '=', $this->campaign->id]
+            ])->exists()) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
                 $this->dispatch('reset-submission');
                 return;
