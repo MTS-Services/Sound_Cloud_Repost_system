@@ -100,7 +100,6 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         try {
-            dd($campaignId);
             $this->resetModalState();
 
             $this->campaign = ModelsCampaign::with([
