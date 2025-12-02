@@ -883,7 +883,7 @@
                     // called init() again
                     this.init();
 
-                    showRepostActionModal = true;
+                    $wire.set('showRepostActionModal', true);
 
                     // Livewire.dispatch('confirmRepost', {
                     //     campaignId: campaignId
