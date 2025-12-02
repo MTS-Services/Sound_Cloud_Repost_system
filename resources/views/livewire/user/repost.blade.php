@@ -167,7 +167,7 @@
                         </button>
                     </div>
                 </div>
-            @elseif (!campaign && !$isLoading)
+            @elseif (!$campaign && !$isLoading)
                 <div class="px-6 py-6">
                     <div class="flex items-center justify-center gap-3 text-red-500">
                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
