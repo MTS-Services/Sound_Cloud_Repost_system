@@ -473,7 +473,6 @@
                 updateInterval: null,
                 isInitialized: false,
                 sessionSyncInProgress: false,
-                showRepostActionModal: false,
 
                 init() {
                     console.log('🎵 Initializing trackPlaybackManager');
@@ -883,7 +882,8 @@
                     // called init() again
                     this.init();
 
-                    $wire.set('showRepostActionModal', true);
+                    window.dispatchEvent(new CustomEvent('repost-action-modal-show'));
+                    console.log('🔄 Repost action modal shown');
 
                     // Livewire.dispatch('confirmRepost', {
                     //     campaignId: campaignId
