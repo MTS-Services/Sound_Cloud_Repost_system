@@ -885,7 +885,7 @@
                     window.dispatchEvent(new CustomEvent('repost-action-modal-show'));
                     Livewire.dispatch('callRepostAction', {
                         campaignId: campaignId
-                    });
+                    }); 
                     console.log('🔄 Repost action modal shown');
 
                     // Livewire.dispatch('confirmRepost', {
