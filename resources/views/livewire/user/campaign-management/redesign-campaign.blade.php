@@ -708,7 +708,7 @@
                                 });
                                 return;
                             } catch (e) {
-                                console.log('🔄 Rebinding stale widget for campaign:', campaignId);
+                                // console.log('🔄 Rebinding stale widget for campaign:', campaignId);
                             }
                         }
 
