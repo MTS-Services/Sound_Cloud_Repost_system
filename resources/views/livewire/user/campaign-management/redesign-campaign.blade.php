@@ -390,7 +390,7 @@
 
                                                 {{-- Reposted background --}}
                                                 <span x-show="isReposted(campaignId)"
-                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-5000 focus:ring-green-500"></span>
+                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-green-400 dark:bg-green-500 text-white hover:bg-orange-5000 focus:ring-green-500"></span>
 
                                                 {{-- Eligible background --}}
                                                 <span
