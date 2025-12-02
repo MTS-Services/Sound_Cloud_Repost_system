@@ -388,20 +388,23 @@
                                                     x-show="!isEligibleForRepost(campaignId) && !isReposted(campaignId)"
                                                     class="absolute top-0 left-0 w-full h-full cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300"></span>
 
-                                                {{-- Reposted background --}}
-                                                <span x-show="isReposted(campaignId)"
-                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-green-400 dark:bg-green-500 text-white hover:bg-orange-5000 focus:ring-green-500"></span>
+                                                <!-- Animated fill background -->
+                                                <div x-show="!isReposted(campaignId)"
+                                                    class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out z-0"
+                                                    :style="`width: ${getPlayTimePercentage(campaignId)}%`">
+                                                </div>
+
 
                                                 {{-- Eligible background --}}
                                                 <span
                                                     x-show="isEligibleForRepost(campaignId) && !isReposted(campaignId)"
                                                     class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-5000 focus:ring-orange-500"></span>
 
-                                                <!-- Animated fill background -->
-                                                <div x-show="!isReposted(campaignId)"
-                                                    class="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 transition-all duration-300 ease-out z-0"
-                                                    :style="`width: ${getPlayTimePercentage(campaignId)}%`">
-                                                </div>
+
+                                                {{-- Reposted background --}}
+                                                <span x-show="isReposted(campaignId)"
+                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-green-400 dark:bg-green-500 text-white hover:bg-orange-5000 focus:ring-green-500"></span>
+
 
                                                 <!-- Button content -->
                                                 <div class="relative z-10 flex items-center gap-2">
@@ -409,8 +412,9 @@
                                                         <div class="flex items-center gap-2 text-white!">
                                                             <template x-if="isEligibleForRepost(campaignId)">
                                                                 <svg width="26" height="18"
-                                                                    viewBox="0 0 26 18" style="color: white !important"
-                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    viewBox="0 0 26 18"
+                                                                    style="color: white !important" fill="none"
+                                                                    xmlns="http://www.w3.org/2000/svg">
                                                                     <rect x="1" y="1" width="24" height="16"
                                                                         rx="3" fill="none"
                                                                         stroke="currentColor" stroke-width="2" />
@@ -418,11 +422,11 @@
                                                                         fill="none" stroke="currentColor"
                                                                         stroke-width="2" />
                                                                 </svg>
-                                                            </template> 
+                                                            </template>
                                                             <template x-if="!isEligibleForRepost(campaignId)">
                                                                 <svg width="26" height="18"
-                                                                    viewBox="0 0 26 18"
-                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    viewBox="0 0 26 18" fill="none"
+                                                                    xmlns="http://www.w3.org/2000/svg">
                                                                     <rect x="1" y="1" width="24" height="16"
                                                                         rx="3" fill="none"
                                                                         stroke="currentColor" stroke-width="2" />
