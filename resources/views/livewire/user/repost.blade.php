@@ -233,21 +233,21 @@
             </div>
         @endif
     </div>
+    <style>
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: scaleY(0.4);
+            }
+
+            50% {
+                transform: scaleY(1);
+            }
+        }
+    </style>
+
 </div>
-
-<style>
-    @keyframes wave {
-
-        0%,
-        100% {
-            transform: scaleY(0.4);
-        }
-
-        50% {
-            transform: scaleY(1);
-        }
-    }
-</style>
 
 <script>
     document.addEventListener('livewire:initialized', () => {
