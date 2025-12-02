@@ -112,84 +112,88 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
                     <div wire:loading.remove wire:target="search"
-                        class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
-                        <!-- Profile Header -->
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="relative">
-                                <a class="cursor-pointer" wire:navigate
-                                    href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
-                                    <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
-                                        class="w-12 h-12 rounded-full">
-                                    @if ($user_->isOnline())
-                                        <div
-                                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
-                                        </div>
-                                    @elseif($user_->offlineStatus() != 'Offline')
-                                        <div
-                                            class="absolute -bottom-1 -right-1  bg-green-500 rounded text-white px-2 py-1 text-[0.5rem] leading-tight">
-                                            <span class="text-[0.5rem]">{{ $user_->offlineStatus() }}</span>
-                                        </div>
-                                    @endif
-                                </a>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
+                        class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex flex-col">
+                        <div class="flex-1">
+                            <!-- Profile Header -->
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="relative">
                                     <a class="cursor-pointer" wire:navigate
                                         href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
-                                        <h3 class="font-semibold text-lg dark:text-white hover:underline">
-                                            {{ $user_->name }}</h3>
+                                        <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
+                                            class="w-12 h-12 rounded-full">
+                                        @if ($user_->isOnline())
+                                            <div
+                                                class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card-blue">
+                                            </div>
+                                        @elseif($user_->offlineStatus() != 'Offline')
+                                            <div
+                                                class="absolute -bottom-1 -right-1  bg-green-500 rounded text-white px-2 py-1 text-[0.5rem] leading-tight">
+                                                <span class="text-[0.5rem]">{{ $user_->offlineStatus() }}</span>
+                                            </div>
+                                        @endif
                                     </a>
-                                    @if (proUser($user_->urn))
-                                        <span
-                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
-                                    @else
-                                        <span
-                                            class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
-                                    @endif
                                 </div>
-                                <p class="text-text-gray text-sm dark:text-white">
-                                    {{ $user_->created_at->format('M d, Y') }}
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <a class="cursor-pointer" wire:navigate
+                                            href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
+                                            <h3 class="font-semibold text-lg dark:text-white hover:underline">
+                                                {{ $user_->name }}</h3>
+                                        </a>
+                                        @if (proUser($user_->urn))
+                                            <span
+                                                class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                        @else
+                                            <span
+                                                class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-text-gray text-sm dark:text-white">
+                                        {{ $user_->created_at->format('M d, Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Genre Tags -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                @forelse ($user_->genres as $genre)
+                                    <span
+                                        class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
+                                @empty
+                                    <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
+                                @endforelse
+                            </div>
+
+                            <!-- Repost Price -->
+                            @php
+                                $followerCount = $userinfo ? $userinfo->count() : 0;
+                                $credit = max(1, floor($followerCount / 100));
+                            @endphp
+
+                            <div class="flex justify-between items-center w-full mb-4">
+                                <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
+                                <p class="text-sm font-medium dark:text-white">
+                                    {{-- {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }} --}}
+                                    {{ $user_->repost_price }} Credit{{ $user_->repost_price > 1 ? 's' : '' }}
                                 </p>
                             </div>
-                        </div>
-                        <!-- Genre Tags -->
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            @forelse ($user_->genres as $genre)
-                                <span
-                                    class="bg-gray-600 text-white text-xs px-2 py-1 rounded">{{ $genre->genre }}</span>
-                            @empty
-                                <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded">No genres</span>
-                            @endforelse
-                        </div>
 
-                        <!-- Repost Price -->
-                        @php
-                            $followerCount = $userinfo ? $userinfo->count() : 0;
-                            $credit = max(1, floor($followerCount / 100));
-                        @endphp
-
-                        <div class="flex justify-between items-center w-full mb-4">
-                            <p class="text-text-gray text-sm dark:text-white">Repost price:</p>
-                            <p class="text-sm font-medium dark:text-white">
-                                {{-- {{ repostPrice($user_) }} Credit{{ repostPrice($user_) > 1 ? 's' : '' }} --}}
-                                {{ $user_->repost_price }} Credit{{ $user_->repost_price > 1 ? 's' : '' }}
-                            </p>
-                        </div>
-
-                        <!-- Stats -->
-                        <div class="grid grid-cols-3 gap-4 mb-6">
-                            <div class="text-center">
-                                <p class="text-text-gray text-xs mb-1 dark:text-white">Credibility</p>
-                                <p class="text-green-400 font-bold">{{ $this->getCredibilityScore($user_) ?? 0 }}%</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-text-gray text-xs mb-1 dark:text-white">Response Rate</p>
-                                <p class="text-orange-500 font-bold">{{ $user_->responseRate() }}%</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
-                                <p class="text-black font-bold dark:text-white">{{ $user_->reposts?->count() ?? 0 }}
-                                </p>
+                            <!-- Stats -->
+                            <div class="grid grid-cols-3 gap-4 mb-6">
+                                <div class="text-center">
+                                    <p class="text-text-gray text-xs mb-1 dark:text-white">Credibility</p>
+                                    <p class="text-green-400 font-bold">{{ $this->getCredibilityScore($user_) ?? 0 }}%
+                                    </p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-text-gray text-xs mb-1 dark:text-white">Response Rate</p>
+                                    <p class="text-orange-500 font-bold">{{ $user_->responseRate() }}%</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-text-gray text-xs mb-1 dark:text-white">Total Reposts</p>
+                                    <p class="text-black font-bold dark:text-white">
+                                        {{ $user_->reposts?->count() ?? 0 }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
