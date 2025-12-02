@@ -115,6 +115,12 @@ class Repost extends Component
                 'user:id,urn,name,email'
             ])->findOrFail(decrypt($campaignId));
 
+            // Fast parallel checks using cache
+            // if (!$this->checkRepostEligibility()) {
+            //     $this->resetModalState();
+            //     return;
+            // }
+
             if ($this->campaign) {
                 $this->checkUserInteractions();
                 $this->showRepostActionModal = true;
@@ -126,7 +132,6 @@ class Repost extends Component
             ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to load repost details. Please try again.');
             $this->resetModalState();
-            $this->dispatch('reset-submission-state'); // NEW: Force reset Alpine state
         }
     }
 
@@ -153,6 +158,73 @@ class Repost extends Component
         // Clear validation errors
         $this->resetValidation();
         $this->resetErrorBag();
+    }
+
+    private function checkRepostEligibility()
+    {
+        $userUrn = user()->urn;
+
+        // Check 24-hour limit using cache
+        $todayRepostCount = Cache::remember(
+            "user_reposts_today_{$userUrn}",
+            60,
+            fn() => ModelsRepost::where('reposter_urn', $userUrn)
+                ->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])
+                ->count()
+        );
+
+        if ($todayRepostCount >= 20) {
+            $endOfDay = Carbon::today()->addDay();
+            $hoursLeft = round(now()->diffInHours($endOfDay));
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again in {$hoursLeft} hours.");
+            $this->showRepostActionModal = false;
+            return false;
+        }
+
+        // Check 12-hour limit
+        if (!$this->canRepost12Hours($userUrn)) {
+            $now = Carbon::now();
+            $diff = $now->diff($this->availableRepostTime);
+
+            $message = "You have reached your 12 hour repost limit. You can repost again in ";
+            if ($diff->h > 0) {
+                $message .= "{$diff->h} hour" . ($diff->h > 1 ? "s" : "");
+                if ($diff->i > 0) $message .= " ";
+            }
+            if ($diff->i > 0) {
+                $message .= "{$diff->i} minute" . ($diff->i > 1 ? "s" : "");
+            }
+
+            $this->dispatch('alert', type: 'error', message: $message);
+            $this->showRepostActionModal = false;
+            return false;
+        }
+
+        return true;
+    }
+
+    private function canRepost12Hours($userUrn)
+    {
+        $twelveHoursAgo = Carbon::now()->subHours(12);
+
+        $reposts = Cache::remember(
+            "user_reposts_12h_{$userUrn}",
+            300,
+            fn() => ModelsRepost::where('reposter_urn', $userUrn)
+                ->where('created_at', '>=', $twelveHoursAgo)
+                ->orderBy('created_at', 'asc')
+                ->take(10)
+                ->get()
+        );
+
+        if ($reposts->count() < 10) {
+            return true;
+        }
+
+        $oldestRepostTime = $reposts->first()->created_at;
+        $this->availableRepostTime = $oldestRepostTime->copy()->addHours(12);
+
+        return Carbon::now()->greaterThanOrEqualTo($this->availableRepostTime);
     }
 
     private function checkUserInteractions()
@@ -206,16 +278,14 @@ class Repost extends Component
 
     public function repost()
     {
-        try {
-            // Validate first
-            $this->validate($this->commentedRules());
+        $this->validate($this->commentedRules());
 
+        try {
             $currentUserUrn = user()->urn;
 
             // Quick validation checks
             if ($this->campaign->user_urn === $currentUserUrn) {
                 $this->dispatch('alert', type: 'error', message: 'You cannot repost your own campaign.');
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
                 return;
             }
 
@@ -224,7 +294,6 @@ class Repost extends Component
                 ['campaign_id', '=', $this->campaign->id]
             ])->exists()) {
                 $this->dispatch('alert', type: 'error', message: 'You have already reposted this campaign.');
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
                 return;
             }
 
@@ -237,7 +306,6 @@ class Repost extends Component
 
             if (!$musicUrn) {
                 $this->dispatch('alert', type: 'error', message: 'Invalid music type.');
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
                 return;
             }
 
@@ -245,6 +313,14 @@ class Repost extends Component
                 'Authorization' => 'OAuth ' . user()->token,
             ]);
 
+            // $message = 'Repost functionality is currently disabled for testing purposes. Please try again later.';
+            // $this->dispatch('alert', type: 'success', message: $message);
+            // $this->dispatch('repost-success', campaignId: $this->campaign->id);
+            // $this->dispatch('refreshCampaigns');
+
+            // // CRITICAL: Close modal and reset state
+            // $this->closeConfirmModal();
+            // return;
             // Perform repost and interactions
             $result = $this->performRepostActions($httpClient, $musicUrn);
 
@@ -285,12 +361,7 @@ class Repost extends Component
                 $this->closeConfirmModal();
             } else {
                 $this->dispatch('alert', type: 'error', message: $result['message']);
-                $this->dispatch('reset-submission-state'); // NEW: Reset on error
             }
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Validation errors - let Livewire handle them normally
-            $this->dispatch('reset-submission-state'); // NEW: Reset on validation error
-            throw $e;
         } catch (Throwable $e) {
             Log::error("Error in repost method: " . $e->getMessage(), [
                 'exception' => $e,
@@ -298,7 +369,6 @@ class Repost extends Component
                 'user_urn' => user()->urn ?? 'N/A',
             ]);
             $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
-            $this->dispatch('reset-submission-state'); // NEW: Reset on error
         }
     }
 
@@ -403,8 +473,7 @@ class Repost extends Component
         // CRITICAL: Reset all state after modal closes
         $this->resetModalState();
 
-        // Dispatch events to ensure UI updates
+        // Dispatch event to ensure UI updates
         $this->dispatch('modal-closed');
-        $this->dispatch('reset-submission-state'); // NEW: Force reset Alpine state
     }
 }
