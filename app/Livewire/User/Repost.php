@@ -106,7 +106,7 @@ class Repost extends Component
                 'music.user:id,urn,name,email,avatar',
                 'music.user.userInfo:id,user_urn,followers_count',
                 'user:id,urn,name,email'
-            ])->findOrFail(decrypt($campaignId));
+            ])->findOrFail($campaignId);
 
             if ($this->campaign) {
                 $this->checkUserInteractions();
