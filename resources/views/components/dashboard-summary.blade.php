@@ -1,7 +1,7 @@
 <section>
     @props([
         'earnings',
-        'dailyTotalReposts',
+        'dailyRepostCurrent',
         'dailyRepostMax',
         'responseRate',
         'pendingRequests',
@@ -41,7 +41,7 @@
                     <span class="text-sm font-medium text-[#718096] dark:text-gray-100">Daily repost limit</span>
                 </div>
                 <div class="text-xl font-semibold mt-3 dark:text-gray-100" id="repost-limit-value">
-                    {{ $dailyTotalReposts }}/{{ $dailyRepostMax }}</div>
+                    {{ $dailyRepostCurrent }}/{{ $dailyRepostMax }}</div>
                 <div class="mt-2 bg-[#e2e8f0] dark:bg-gray-700 h-1.5 rounded-full overflow-hidden">
                     <div id="repost-progress" class="prograss-fill bg-orange-500 h-full transition-all duration-500"
                         data-value="{{ $dailyRepostCurrent }}" data-max="{{ $dailyRepostMax }}"></div>

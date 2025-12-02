@@ -89,8 +89,8 @@ class CampaignCreator extends Component
 
     public function mount()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-        $this->calculateFollowersLimit();
+        // $this->soundCloudService->refreshUserTokenIfNeeded(user());
+        // $this->calculateFollowersLimit();
     }
 
     public function updated($propertyName)
