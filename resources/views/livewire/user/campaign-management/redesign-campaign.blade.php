@@ -418,7 +418,7 @@
                                                                         fill="none" stroke="currentColor"
                                                                         stroke-width="2" />
                                                                 </svg>
-                                                            </template>
+                                                            </template> 
                                                             <template x-if="!isEligibleForRepost(campaignId)">
                                                                 <svg width="26" height="18"
                                                                     viewBox="0 0 26 18"
