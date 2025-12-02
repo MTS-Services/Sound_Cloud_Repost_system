@@ -183,7 +183,7 @@
             @else
                 <div class="p-4 bg-gray-100 flex flex-col items-center justify-center w-full min-h-[500px]">
                     <div
-                        class="text-center p-8 bg-white shadow-2xl rounded-2xl transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] border-b-4 border-orange-600 w-11/12 max-w-sm md:max-w-md lg:max-w-lg">
+                        class="text-center">
 
                         <!-- Music Wave Visualizer Style -->
                         <div class="flex items-end justify-center gap-1.5 h-20 mb-6">
@@ -218,7 +218,7 @@
         @else
             <div class="p-4 bg-gray-100 flex flex-col items-center justify-center w-full min-h-[500px]">
                 <div
-                    class="text-center p-8 bg-white shadow-2xl rounded-2xl transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] border-b-4 border-orange-600 w-11/12 max-w-sm md:max-w-md lg:max-w-lg">
+                    class="text-center">
 
                     <!-- Music Wave Visualizer Style -->
                     <div class="flex items-end justify-center gap-1.5 h-20 mb-6">
