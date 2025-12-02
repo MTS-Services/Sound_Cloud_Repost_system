@@ -51,6 +51,7 @@ class SoundCloudController extends Controller
 
         try {
             $soundCloudUser = Socialite::driver('soundcloud')->user();
+            dd($soundCloudUser);
 
             if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
                 return redirect()->route('f.landing')
@@ -185,7 +186,7 @@ class SoundCloudController extends Controller
     private function notAnArtist($soundCloudUser)
     {
         $soundCloudUser = (array) $soundCloudUser;
-        if (isset($soundCloudUser['user']) && $soundCloudUser['user']['track_count'] <= 0) {
+        if (isset($soundCloudUser['user']) && ($soundCloudUser['user']['track_count'] <= 0 || $soundCloudUser['user']['avatar'] != null)) {
             return true;
         }
         return false;

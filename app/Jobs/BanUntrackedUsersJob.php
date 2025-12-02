@@ -43,12 +43,18 @@ class BanUntrackedUsersJob implements ShouldQueue
 
         foreach ($users as $user) {
             $trackCount = $this->soundCloudService->soundCloudRealTracksCount($user, $firstUser);
-            if ($trackCount === 0) {
-                Log::info("User {$user->urn} has no SoundCloud tracks. Banning user.");
+            if ($trackCount === 0 || empty($user->avatar)) {
+
+                $banReason = !empty($user->avatar)
+                    ? 'Your linked SoundCloud account has no public tracks. RepostChain is intended for active creators, so accounts without tracks may be temporarily suspended.'
+                    : 'Your linked SoundCloud account has no Avatar. RepostChain is intended for active creators, so accounts without Avatars may be temporarily suspended.';
+
+                Log::info("User {$user->urn} has no SoundCloud tracks or no avatar. reason : " . $banReason);
+
                 $user->update([
                     'banned_at' => now(),
                     'bander_id' => null,
-                    'ban_reason' => 'Your linked SoundCloud account has no public tracks. RepostChain is intended for active creators, so accounts without tracks may be temporarily suspended.',
+                    'ban_reason' =>  $banReason,
                     'status' => User::STATUS_INACTIVE,
                 ]);
                 $mailDatas = [[
@@ -56,7 +62,7 @@ class BanUntrackedUsersJob implements ShouldQueue
                     'subject' => 'Your RepostChain account is temporarily suspended',
                     'title' => 'Hi ' . $user->name . ',',
                     'body' => 'We’ve suspended your RepostChain account ' . $user->name . ' for a potential violation of our Community Guidelines.',
-                    'ban_reason' => 'Your linked SoundCloud account has no public tracks. RepostChain is intended for active creators, so accounts without tracks may be temporarily suspended.',
+                    'ban_reason' => $banReason,
                     'guideline_link' => route('f.terms-and-conditions'),
                     'unban' => false,
                 ]];
