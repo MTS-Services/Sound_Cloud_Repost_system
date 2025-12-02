@@ -103,6 +103,9 @@ class Repost extends Component
         try {
             $this->resetModalState();
 
+            // Fast parallel checks using cache
+            $this->checkRepostEligibility();
+
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
                 'music.user.userInfo:id,user_urn,followers_count',
@@ -148,6 +151,79 @@ class Repost extends Component
 
         $this->resetValidation();
         $this->resetErrorBag();
+    }
+
+    private function checkRepostEligibility()
+    {
+        // Check 24-hour limit using cache
+        $todayRepostCount = Cache::remember(
+            'user_reposts_today_' . user()->urn,
+            60, // 1 minute cache
+            fn() => ModelsRepost::where('reposter_urn', user()->urn)
+                ->whereBetween('created_at', [Carbon::today(), Carbon::tomorrow()])
+                ->count()
+        );
+
+        if ($todayRepostCount >= 20) {
+            $endOfDay = Carbon::today()->addDay();
+            $hoursLeft = round(now()->diffInHours($endOfDay));
+            $this->dispatch('alert', type: 'error', message: "You have reached your 24 hour repost limit. You can repost again in {$hoursLeft} hours.");
+            $this->resetModalState();
+            $this->dispatch('reset-submission');
+            return false;
+        }
+
+        // Check 12-hour limit
+        if (!$this->canRepost12Hours(user()->urn)) {
+            $now = Carbon::now();
+            $availableTime = $this->availableRepostTime;
+            $diff = $now->diff($availableTime);
+
+            $hoursLeft = $diff->h;
+            $minutesLeft = $diff->i;
+
+            $message = "You have reached your 12 hour repost limit. You can repost again in ";
+            if ($hoursLeft > 0) {
+                $message .= "{$hoursLeft} hour" . ($hoursLeft > 1 ? "s" : "");
+            }
+            if ($hoursLeft > 0 && $minutesLeft > 0) {
+                $message .= " ";
+            }
+            if ($minutesLeft > 0) {
+                $message .= "{$minutesLeft} minute" . ($minutesLeft > 1 ? "s" : "");
+            }
+
+            $this->dispatch('alert', type: 'error', message: $message);
+            $this->resetModalState();
+            $this->dispatch('reset-submission');
+            return false;
+        }
+
+        return true;
+    }
+
+    private function canRepost12Hours($userUrn)
+    {
+        $twelveHoursAgo = Carbon::now()->subHours(12);
+
+        $reposts = Cache::remember(
+            "user_reposts_12h_{$userUrn}",
+            300, // 5 minutes cache
+            fn() => ModelsRepost::where('reposter_urn', $userUrn)
+                ->where('created_at', '>=', $twelveHoursAgo)
+                ->orderBy('created_at', 'asc')
+                ->take(10)
+                ->get()
+        );
+
+        if ($reposts->count() < 10) {
+            return true;
+        }
+
+        $oldestRepostTime = $reposts->first()->created_at;
+        $this->availableRepostTime = $oldestRepostTime->copy()->addHours(12);
+
+        return Carbon::now()->greaterThanOrEqualTo($this->availableRepostTime);
     }
 
     private function checkUserInteractions()
