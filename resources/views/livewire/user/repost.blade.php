@@ -1,21 +1,29 @@
-<!-- repost.blade.php - MINIMAL CHANGES TO YOUR ORIGINAL CODE -->
 <div x-data="{
     showRepostActionModal: @entangle('showRepostActionModal').live,
     isSubmitting: false,
     reset() {
         this.isSubmitting = false;
     }
-}" x-init="$watch('showRepostActionModal', value => {
-    if (!value) {
-        reset();
-    }
-});" x-show="showRepostActionModal" x-cloak
-    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
-    x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150"
-    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-    @keydown.escape.window="!isSubmitting && $wire.closeConfirmModal()" @modal-closed.window="reset()"
-    @force-reset.window="reset()">
+}" 
+x-init="
+    $watch('showRepostActionModal', value => {
+        if (!value) {
+            reset();
+        }
+    });
+"
+x-show="showRepostActionModal" 
+x-cloak 
+x-transition:enter="transition ease-out duration-200"
+x-transition:enter-start="opacity-0 scale-95" 
+x-transition:enter-end="opacity-100 scale-100"
+x-transition:leave="transition ease-in duration-150" 
+x-transition:leave-start="opacity-100 scale-100"
+x-transition:leave-end="opacity-0 scale-95"
+class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+@keydown.escape.window="!isSubmitting && $wire.closeConfirmModal()"
+@modal-closed.window="reset()"
+@reset-submission.window="reset()">
 
     @if ($showRepostActionModal && $campaign)
         <div class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
@@ -42,7 +50,10 @@
                         {{ __('Repost Confirmation') }}
                     </h2>
                 </div>
-                <button x-on:click="!isSubmitting && $wire.closeConfirmModal()" type="button" :disabled="isSubmitting"
+                <button 
+                    x-on:click="!isSubmitting && $wire.closeConfirmModal()" 
+                    type="button" 
+                    :disabled="isSubmitting"
                     class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     <x-lucide-x class="w-5 h-5" />
                 </button>
@@ -129,10 +140,13 @@
                     </div>
                 @endif
 
-                <!-- Submit Button - ONLY CHANGE: Added wire:loading.attr -->
+                <!-- Submit Button -->
                 <div class="flex justify-center gap-4">
-                    <button wire:click="repost" @click="isSubmitting = true" wire:loading.attr="disabled"
-                        wire:loading.remove.attr="@click" :disabled="isSubmitting"
+                    <button 
+                        wire:click="repost" 
+                        @click="isSubmitting = true" 
+                        wire:loading.attr="disabled"
+                        :disabled="isSubmitting"
                         class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-orange-500">
 
                         <!-- Loading Spinner -->
@@ -172,19 +186,21 @@
 
 <script>
     document.addEventListener('livewire:initialized', () => {
-        // Simple function to force reset Alpine state
-        const forceReset = () => {
-            window.dispatchEvent(new CustomEvent('force-reset'));
-            // Livewire.dispatch('force-reset');
-        };
+        // Reset submission state when modal closes or repost succeeds
+        Livewire.on('repost-success', () => {
+            // Force reset of Alpine state
+            const modalElement = document.querySelector('[x-data*="showRepostActionModal"]');
+            if (modalElement && modalElement.__x) {
+                modalElement.__x.$data.isSubmitting = false;
+            }
+        });
 
-        // Reset on success
-        Livewire.on('repost-success', forceReset);
-
-        // Reset on modal close
-        Livewire.on('modal-closed', forceReset);
-
-        // CRITICAL: Reset after ANY Livewire request finishes (success or error)
-        document.addEventListener('livewire:finished', forceReset);
+        Livewire.on('modal-closed', () => {
+            // Force reset of Alpine state
+            const modalElement = document.querySelector('[x-data*="showRepostActionModal"]');
+            if (modalElement && modalElement.__x) {
+                modalElement.__x.$data.isSubmitting = false;
+            }
+        });
     });
 </script>
