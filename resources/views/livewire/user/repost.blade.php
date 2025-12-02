@@ -1,34 +1,30 @@
+<!-- repost.blade.php -->
 <div x-data="{
     showRepostActionModal: @entangle('showRepostActionModal').live,
     isSubmitting: false,
     reset() {
         this.isSubmitting = false;
     }
-}" x-init="$watch('showRepostActionModal', value => {
-    if (!value) {
-        reset();
-    }
-});
-
-// CRITICAL FIX: Reset on any Livewire request completion
-Livewire.hook('morph.updated', ({ component }) => {
-    if (component.fingerprint.name === 'user.repost') {
-        this.isSubmitting = false;
-    }
-});
-
-// CRITICAL FIX: Reset on commit (after any Livewire action completes)
-Livewire.hook('commit', ({ component, respond }) => {
-    if (component.fingerprint.name === 'user.repost') {
-        this.isSubmitting = false;
-    }
-});" x-show="showRepostActionModal" x-cloak
-    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
-    x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150"
-    x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-    class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-    @keydown.escape.window="if (!isSubmitting) { $wire.closeConfirmModal(); }" @modal-closed.window="reset()"
-    @reset-submission.window="reset()">
+}" 
+x-init="
+    $watch('showRepostActionModal', value => {
+        if (!value) {
+            reset();
+        }
+    });
+"
+x-show="showRepostActionModal" 
+x-cloak 
+x-transition:enter="transition ease-out duration-200"
+x-transition:enter-start="opacity-0 scale-95" 
+x-transition:enter-end="opacity-100 scale-100"
+x-transition:leave="transition ease-in duration-150" 
+x-transition:leave-start="opacity-100 scale-100"
+x-transition:leave-end="opacity-0 scale-95"
+class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+@keydown.escape.window="if (!isSubmitting) { $wire.closeConfirmModal(); }"
+@modal-closed.window="reset()"
+@reset-submission.window="reset()">
 
     @if ($showRepostActionModal && $campaign)
         <div class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
@@ -55,7 +51,9 @@ Livewire.hook('commit', ({ component, respond }) => {
                         {{ __('Repost Confirmation') }}
                     </h2>
                 </div>
-                <button @click="if (!isSubmitting) { $wire.closeConfirmModal(); }" type="button"
+                <button 
+                    @click="if (!isSubmitting) { $wire.closeConfirmModal(); }" 
+                    type="button" 
                     :disabled="isSubmitting"
                     class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
                     <x-lucide-x class="w-5 h-5" />
@@ -145,16 +143,27 @@ Livewire.hook('commit', ({ component, respond }) => {
 
                 <!-- Submit Button -->
                 <div class="flex justify-center gap-4">
-                    <button type="button"
+                    <button 
+                        type="button"
                         @click="
                             if (isSubmitting) return;
                             isSubmitting = true;
-                            $wire.repost().then(() => {
-                                // Success case handled by events
-                            }).catch((error) => {
-                                // Always reset on error
-                                isSubmitting = false;
-                            });
+                            
+                            $wire.repost()
+                                .then(() => {
+                                    // Success - event handlers will close modal
+                                })
+                                .catch((error) => {
+                                    // Error - always reset
+                                    console.error('Repost error:', error);
+                                    isSubmitting = false;
+                                })
+                                .finally(() => {
+                                    // Safety net - reset after delay
+                                    setTimeout(() => {
+                                        isSubmitting = false;
+                                    }, 1000);
+                                });
                         "
                         :disabled="isSubmitting"
                         class="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-orange-500">
@@ -193,27 +202,44 @@ Livewire.hook('commit', ({ component, respond }) => {
         </div>
     @endif
 </div>
+
 <script>
     document.addEventListener('livewire:initialized', () => {
-        // Global reset function
+        // Global reset function that safely accesses Alpine data
         const resetSubmissionState = () => {
-            const modalElement = document.querySelector('[x-data*="showRepostActionModal"]');
-            if (modalElement && modalElement.__x) {
-                modalElement.__x.$data.isSubmitting = false;
+            try {
+                const modalElement = document.querySelector('[x-data*="showRepostActionModal"]');
+                if (modalElement && modalElement.__x && modalElement.__x.$data) {
+                    modalElement.__x.$data.isSubmitting = false;
+                }
+            } catch (error) {
+                console.error('Error resetting submission state:', error);
             }
         };
 
-        // Reset on all relevant events
-        Livewire.on('repost-success', resetSubmissionState);
-        Livewire.on('modal-closed', resetSubmissionState);
-        Livewire.on('reset-submission', resetSubmissionState);
-
-        // CRITICAL: Reset after any Livewire update completes
-        Livewire.hook('commit', ({
-            component
-        }) => {
-            if (component.fingerprint.name === 'user.repost') {
-                setTimeout(resetSubmissionState, 100);
+        // Listen to success/close events
+        Livewire.on('repost-success', () => {
+            resetSubmissionState();
+        });
+        
+        Livewire.on('modal-closed', () => {
+            resetSubmissionState();
+        });
+        
+        Livewire.on('reset-submission', () => {
+            resetSubmissionState();
+        });
+        
+        // Fallback: Reset after any Livewire request completes
+        Livewire.hook('commit', ({component, respond}) => {
+            // Check if this is the repost component by looking at the element
+            const element = component.el;
+            if (element && element.hasAttribute('wire:id')) {
+                const wireId = element.getAttribute('wire:id');
+                // Only reset if this looks like our repost modal
+                if (element.querySelector('[x-data*="showRepostActionModal"]')) {
+                    setTimeout(resetSubmissionState, 100);
+                }
             }
         });
     });
