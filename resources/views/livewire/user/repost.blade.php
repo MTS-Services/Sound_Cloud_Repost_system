@@ -16,7 +16,6 @@
     class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
     @keydown.escape.window="!isSubmitting && $wire.closeConfirmModal()" @modal-closed.window="reset()"
     @reset-submission.window="reset()">
-    <p class="p-10 text-center text-2xl">Showing modal</p>
 
     @if ($showRepostActionModal && $campaign)
         <div class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
