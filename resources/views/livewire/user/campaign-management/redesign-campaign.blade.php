@@ -29,7 +29,7 @@
                     <span class="text-base lg:text-sm xl:text-base">
                         {{ __('Start a new campaign') }}
                     </span>
-                </x-gbutton>
+                </x-gbutton> 
             </div>
         </div>
 
