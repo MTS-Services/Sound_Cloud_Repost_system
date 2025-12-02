@@ -456,7 +456,7 @@
     </section>
 
     @if ($showCampaignCreator)
-        @livewire('user.campaign-management.campaign-creator')
+        @livewire('user.campaign-management.campaign-creator') 
     @endif
 
     <livewire:user.repost />
