@@ -203,7 +203,7 @@
             </div>
         @else
             <!-- Modern Loading State with Audio Wave -->
-            <div class="px-6 py-12">
+            <div class="p-6">
                 <div class="flex flex-col items-center justify-center text-center space-y-6">
                     <!-- Audio Wave Animation -->
                     <div class="flex items-end justify-center gap-1.5 h-24">
