@@ -878,7 +878,7 @@
                         return;
                     }
 
-                    // console.log('🔄 Initiating repost for:', campaignId);
+                    console.log('🔄 Initiating repost for:', campaignId);
                     Livewire.dispatch('confirmRepost', {
                         campaignId: campaignId
                     });
