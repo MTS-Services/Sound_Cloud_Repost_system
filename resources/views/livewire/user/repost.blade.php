@@ -19,35 +19,34 @@
 
     <div class="w-full max-w-md mx-auto rounded-2xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
         @click.outside="!isSubmitting && $wire.closeConfirmModal()">
-
-        <!-- Header -->
-        <div
-            class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
-            <div class="flex items-center gap-3">
-                <div>
-                    @if (app_setting('favicon') && app_setting('favicon_dark'))
-                        <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
-                            class="w-12 dark:hidden" />
-                        <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
-                            class="w-12 hidden dark:block" />
-                    @else
-                        <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
-                            class="w-12 dark:hidden" />
-                        <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
-                            class="w-12 hidden dark:block" />
-                    @endif
-                </div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">
-                    {{ __('Repost Confirmation') }}
-                </h2>
-            </div>
-            <button x-on:click="!isSubmitting && $wire.closeConfirmModal()" type="button" :disabled="isSubmitting"
-                class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-                <x-lucide-x class="w-5 h-5" />
-            </button>
-        </div>
-
         @if ($showRepostActionModal)
+            <!-- Header -->
+            <div
+                class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
+                <div class="flex items-center gap-3">
+                    <div>
+                        @if (app_setting('favicon') && app_setting('favicon_dark'))
+                            <img src="{{ storage_url(app_setting('favicon')) }}" alt="{{ config('app.name') }}"
+                                class="w-12 dark:hidden" />
+                            <img src="{{ storage_url(app_setting('favicon_dark')) }}" alt="{{ config('app.name') }}"
+                                class="w-12 hidden dark:block" />
+                        @else
+                            <img src="{{ asset('assets/favicons/fav icon 1.svg') }}" alt="{{ config('app.name') }}"
+                                class="w-12 dark:hidden" />
+                            <img src="{{ asset('assets/favicons/fav icon 2 (1).svg') }}" alt="{{ config('app.name') }}"
+                                class="w-12 hidden dark:block" />
+                        @endif
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                        {{ __('Repost Confirmation') }}
+                    </h2>
+                </div>
+                <button x-on:click="!isSubmitting && $wire.closeConfirmModal()" type="button" :disabled="isSubmitting"
+                    class="cursor-pointer w-8 h-8 rounded-xl bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-all duration-200 flex items-center justify-center border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <x-lucide-x class="w-5 h-5" />
+                </button>
+            </div>
+
             @if ($campaign && !$isLoading)
                 <div class="px-6 py-4 space-y-5">
                     <!-- Header Info -->
@@ -173,10 +172,15 @@
                     <div class="flex flex-col items-center justify-center text-center space-y-4">
                         <!-- Error Icon with Animation -->
                         <div class="relative">
-                            <div class="absolute inset-0 bg-red-100 dark:bg-red-900/20 rounded-full animate-ping opacity-75"></div>
-                            <div class="relative bg-red-50 dark:bg-red-900/30 p-4 rounded-full border-2 border-red-200 dark:border-red-800">
-                                <svg class="w-12 h-12 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            <div
+                                class="absolute inset-0 bg-red-100 dark:bg-red-900/20 rounded-full animate-ping opacity-75">
+                            </div>
+                            <div
+                                class="relative bg-red-50 dark:bg-red-900/30 p-4 rounded-full border-2 border-red-200 dark:border-red-800">
+                                <svg class="w-12 h-12 text-red-500 dark:text-red-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                             </div>
                         </div>
@@ -187,12 +191,13 @@
                                 Oops! Something Went Wrong
                             </h3>
                             <p class="text-sm text-gray-600 dark:text-gray-400 max-w-sm">
-                                We couldn't load the repost information. Please try again or contact support if the problem persists.
+                                We couldn't load the repost information. Please try again or contact support if the
+                                problem persists.
                             </p>
                         </div>
 
                         <!-- Action Button -->
-                        <button @click="$wire.closeConfirmModal()" 
+                        <button @click="$wire.closeConfirmModal()"
                             class="mt-4 px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg font-medium transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
                             Try Again
                         </button>
@@ -204,15 +209,33 @@
                     <div class="flex flex-col items-center justify-center text-center space-y-6">
                         <!-- Audio Wave Animation -->
                         <div class="flex items-end justify-center gap-1.5 h-24">
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-5"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                            <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-5">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2">
+                            </div>
+                            <div
+                                class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1">
+                            </div>
                         </div>
 
                         <!-- Loading Text -->
@@ -227,86 +250,122 @@
 
                         <!-- Progress Dots -->
                         <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
-                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
+                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce"
+                                style="animation-delay: 0s;">
+                            </div>
+                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce"
+                                style="animation-delay: 0.2s;">
+                            </div>
+                            <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce"
+                                style="animation-delay: 0.4s;">
+                            </div>
                         </div>
                     </div>
                 </div>
             @endif
-        @else
-            <!-- Initial Loading State -->
-            <div class="px-6 py-12">
-                <div class="flex flex-col items-center justify-center text-center space-y-6">
-                    <!-- Audio Wave Animation -->
-                    <div class="flex items-end justify-center gap-1.5 h-24">
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-5"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-4"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-3"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-2"></div>
-                        <div class="w-1.5 bg-gradient-to-t from-orange-600 to-orange-400 rounded-full shadow-lg shadow-orange-500/50 animate-audio-wave-1"></div>
-                    </div>
-
-                    <!-- Loading Text -->
-                    <div class="space-y-2">
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                            Preparing Your Repost
-                        </h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                            Please wait while we set everything up...
-                        </p>
-                    </div>
-
-                    <!-- Progress Dots -->
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
-                        <div class="w-2 h-2 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
-                    </div>
-                </div>
-            </div>
         @endif
     </div>
 
     <style>
         /* Audio Wave Animations */
         @keyframes audio-wave-1 {
-            0%, 100% { height: 1.5rem; }
-            25% { height: 3rem; }
-            50% { height: 2rem; }
-            75% { height: 4rem; }
+
+            0%,
+            100% {
+                height: 1.5rem;
+            }
+
+            25% {
+                height: 3rem;
+            }
+
+            50% {
+                height: 2rem;
+            }
+
+            75% {
+                height: 4rem;
+            }
         }
 
         @keyframes audio-wave-2 {
-            0%, 100% { height: 2rem; }
-            25% { height: 4.5rem; }
-            50% { height: 1.5rem; }
-            75% { height: 3.5rem; }
+
+            0%,
+            100% {
+                height: 2rem;
+            }
+
+            25% {
+                height: 4.5rem;
+            }
+
+            50% {
+                height: 1.5rem;
+            }
+
+            75% {
+                height: 3.5rem;
+            }
         }
 
         @keyframes audio-wave-3 {
-            0%, 100% { height: 3rem; }
-            25% { height: 2rem; }
-            50% { height: 5rem; }
-            75% { height: 2.5rem; }
+
+            0%,
+            100% {
+                height: 3rem;
+            }
+
+            25% {
+                height: 2rem;
+            }
+
+            50% {
+                height: 5rem;
+            }
+
+            75% {
+                height: 2.5rem;
+            }
         }
 
         @keyframes audio-wave-4 {
-            0%, 100% { height: 2.5rem; }
-            25% { height: 5.5rem; }
-            50% { height: 3rem; }
-            75% { height: 4.5rem; }
+
+            0%,
+            100% {
+                height: 2.5rem;
+            }
+
+            25% {
+                height: 5.5rem;
+            }
+
+            50% {
+                height: 3rem;
+            }
+
+            75% {
+                height: 4.5rem;
+            }
         }
 
         @keyframes audio-wave-5 {
-            0%, 100% { height: 4rem; }
-            25% { height: 3rem; }
-            50% { height: 6rem; }
-            75% { height: 3.5rem; }
+
+            0%,
+            100% {
+                height: 4rem;
+            }
+
+            25% {
+                height: 3rem;
+            }
+
+            50% {
+                height: 6rem;
+            }
+
+            75% {
+                height: 3.5rem;
+            }
         }
 
         .animate-audio-wave-1 {
