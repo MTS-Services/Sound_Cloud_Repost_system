@@ -181,28 +181,46 @@
                     </div>
                 </div>
             @else
-                <div class="px-6 py-6 flex items-center justify-center gap-3 animate-pulse">
-                    <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                            stroke="currentColor" stroke-width="2" />
-                        <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
-                            stroke-width="2" />
-                    </svg>
-                    <span class="text-sm text-gray-700 dark:text-gray-300">Loading...</span>
+                <div class="px-6 py-6 min-h-[250px] flex flex-col items-center justify-center gap-4">
+
+                    <!-- Modern Animated Dots Loader -->
+                    <div class="flex items-center gap-1">
+                        <div
+                            class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]">
+                        </div>
+                        <div
+                            class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.15s]">
+                        </div>
+                        <div class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce"></div>
+                    </div>
+
+                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                        Loading...
+                    </span>
+
                 </div>
+
             @endif
         @else
-            <div class="px-6 py-6 flex items-center justify-center gap-3 animate-pulse">
-                <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
-                        stroke="currentColor" stroke-width="2" />
-                    <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
-                        stroke-width="2" />
-                </svg>
-                <span class="text-sm text-gray-700 dark:text-gray-300">Loading...</span>
+            <div class="px-6 py-6 min-h-[250px] flex flex-col items-center justify-center gap-4">
+
+                <!-- Modern Animated Dots Loader -->
+                <div class="flex items-center gap-1">
+                    <div
+                        class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]">
+                    </div>
+                    <div
+                        class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.15s]">
+                    </div>
+                    <div class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce"></div>
+                </div>
+
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    Loading...
+                </span>
+
             </div>
+
         @endif
     </div>
 </div>
