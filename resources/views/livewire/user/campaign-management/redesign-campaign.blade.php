@@ -478,7 +478,7 @@
                     console.log('🎵 Initializing trackPlaybackManager');
 
                     if (!this.isInitialized) {
-                        console.log('🆕 First initialization - clearing old data');
+                        // console.log('🆕 First initialization - clearing old data');
                         this.clearSessionData();
                         localStorage.removeItem('campaign_tracking_data');
                         this.isInitialized = true;
@@ -500,7 +500,7 @@
                     Livewire.hook('morph.updated', ({
                         component
                     }) => {
-                        console.log('🔄 Livewire morphed - preserving tracking state');
+                        // console.log('🔄 Livewire morphed - preserving tracking state');
 
                         const currentTracks = JSON.parse(JSON.stringify(this.tracks));
 
@@ -530,7 +530,7 @@
                 },
 
                 resetForFilterChange() {
-                    console.log('🔁 Resetting for filter change');
+                    // console.log('🔁 Resetting for filter change');
 
                     this.syncAllTracksToBackend();
 
@@ -572,11 +572,11 @@
                 },
 
                 loadFromSession() {
-                    console.log('📥 Loading from session');
+                    // console.log('📥 Loading from session');
                     const sessionData = typeof window.sessionData !== 'undefined' ? window.sessionData : {};
 
                     if (sessionData && Object.keys(sessionData).length > 0) {
-                        console.log('✅ Session data found:', Object.keys(sessionData).length, 'campaigns');
+                        // console.log('✅ Session data found:', Object.keys(sessionData).length, 'campaigns');
 
                         Object.keys(sessionData).forEach(campaignId => {
                             if (!this.tracks[campaignId]) {
@@ -603,13 +603,13 @@
                 },
 
                 loadPersistedTrackingData() {
-                    console.log('💾 Loading from localStorage');
+                    // console.log('💾 Loading from localStorage');
                     const stored = localStorage.getItem('campaign_tracking_data');
 
                     if (stored) {
                         try {
                             const data = JSON.parse(stored);
-                            console.log('✅ localStorage data found:', Object.keys(data).length, 'campaigns');
+                            // console.log('✅ localStorage data found:', Object.keys(data).length, 'campaigns');
 
                             Object.keys(data).forEach(campaignId => {
                                 if (!this.tracks[campaignId]) {
@@ -654,7 +654,7 @@
                     });
 
                     localStorage.setItem('campaign_tracking_data', JSON.stringify(dataToSave));
-                    console.log('💾 Saved to localStorage:', Object.keys(dataToSave).length, 'campaigns');
+                    // console.log('💾 Saved to localStorage:', Object.keys(dataToSave).length, 'campaigns');
                 },
 
                 startUpdateLoop() {
@@ -670,14 +670,14 @@
 
                 initializeSoundCloudWidgets() {
                     if (typeof SC === 'undefined') {
-                        console.log('⏳ Waiting for SoundCloud SDK...');
+                        // console.log('⏳ Waiting for SoundCloud SDK...');
                         setTimeout(() => this.initializeSoundCloudWidgets(), 500);
                         return;
                     }
 
-                    console.log('🎧 Initializing SoundCloud widgets');
+                    // console.log('🎧 Initializing SoundCloud widgets');
                     const playerContainers = document.querySelectorAll('[id^="soundcloud-player-"]');
-                    console.log('🔍 Found', playerContainers.length, 'player containers');
+                    // console.log('🔍 Found', playerContainers.length, 'player containers');
 
                     playerContainers.forEach(container => {
                         const campaignId = container.dataset.campaignId;
@@ -704,7 +704,7 @@
                         if (this.tracks[campaignId].widget) {
                             try {
                                 this.tracks[campaignId].widget.isPaused((isPaused) => {
-                                    console.log('✅ Widget already bound for campaign:', campaignId);
+                                    // console.log('✅ Widget already bound for campaign:', campaignId);
                                 });
                                 return;
                             } catch (e) {
@@ -727,13 +727,13 @@
 
                         const widget = SC.Widget(iframe);
                         this.tracks[campaignId].widget = widget;
-                        console.log('🎵 Widget bound for campaign:', campaignId);
+                        // console.log('🎵 Widget bound for campaign:', campaignId);
 
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             const track = this.tracks[campaignId];
                             track.isPlaying = true;
                             track.playStartTime = Date.now();
-                            console.log('▶️ Play started:', campaignId);
+                            // console.log('▶️ Play started:', campaignId);
                             this.syncToBackend(campaignId, 'play');
                         });
 
@@ -741,7 +741,7 @@
                             const track = this.tracks[campaignId];
                             track.isPlaying = false;
                             track.playStartTime = null;
-                            console.log('⏸️ Paused:', campaignId);
+                            // console.log('⏸️ Paused:', campaignId);
                             this.syncToBackend(campaignId, 'pause');
                             this.saveTrackingData();
                         });
@@ -750,12 +750,12 @@
                             const track = this.tracks[campaignId];
                             track.isPlaying = false;
                             track.playStartTime = null;
-                            console.log('✅ Finished:', campaignId);
+                            // console.log('✅ Finished:', campaignId);
                             this.syncToBackend(campaignId, 'finish');
                             this.saveTrackingData();
 
                             if (nextCampaignId && nextIframe) {
-                                console.log('⏭️ Auto-playing next:', nextCampaignId);
+                                // console.log('⏭️ Auto-playing next:', nextCampaignId);
                                 const nextWidget = SC.Widget(nextIframe);
                                 setTimeout(() => nextWidget.play(), 100);
                             }
@@ -781,8 +781,8 @@
 
                                     if (track.actualPlayTime >= 2 && !track.isEligible) {
                                         track.isEligible = true;
-                                        console.log('✅ Eligible for repost:', campaignId, 'at', track
-                                            .actualPlayTime, 's');
+                                        // console.log('✅ Eligible for repost:', campaignId, 'at', track
+                                        //     .actualPlayTime, 's');
                                         this.syncToBackend(campaignId, 'eligible');
                                         this.saveTrackingData();
                                     }
@@ -830,11 +830,11 @@
                             })
                         })
                         .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                console.log('✅ Synced to backend:', action, campaignId);
-                            }
-                        })
+                        // .then(data => {
+                        //     if (data.success) {
+                        //         console.log('✅ Synced to backend:', action, campaignId);
+                        //     }
+                        // })
                         .catch(err => {
                             console.error('❌ Failed to sync:', err);
                         });
@@ -878,14 +878,14 @@
                         return;
                     }
 
-                    console.log('🔄 Initiating repost for:', campaignId);
+                    // console.log('🔄 Initiating repost for:', campaignId);
                     Livewire.dispatch('confirmRepost', {
                         campaignId: campaignId
                     });
                 },
 
                 clearAllTracking() {
-                    console.log('🧹 Complete cleanup');
+                    // console.log('🧹 Complete cleanup');
 
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
@@ -907,12 +907,12 @@
         }
 
         document.addEventListener('livewire:initialized', function() {
-            console.log('🚀 Livewire initialized');
+            // console.log('🚀 Livewire initialized');
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
 
         document.addEventListener('livewire:navigated', function() {
-            console.log('🔄 Livewire navigated');
+            // console.log('🔄 Livewire navigated');
             setTimeout(() => {
                 const mainElement = document.querySelector('div[x-data*="trackPlaybackManager"]');
                 if (mainElement && mainElement.__x) {
