@@ -287,130 +287,64 @@
             transform: translateY(-5%);
         }
     }
+}
 
-    --animate-music-wave: musicWave 2.0s ease-in-out infinite alternate;
-
-    @keyframes musicWave {
-        0%: {
-            transform: 'scaleY(0.1)'
-        }
-
-        15%: {
-            transform: 'scaleY(0.8)'
-        }
-
-        30%: {
-            transform: 'scaleY(0.3)'
-        }
-
-        45%: {
-            transform: 'scaleY(1.0)'
-        }
-
-        60%: {
-            transform: 'scaleY(0.5)'
-        }
-
-        75%: {
-            transform: 'scaleY(0.9)'
-        }
-
-        100%: {
-            transform: 'scaleY(0.1)'
-        }
+@layer components {
+    .cursor-wrapper {
+        @apply fixed top-0 left-0 pointer-events-none m-0 p-0 z-[9999999999];
+        transform: translate(-100%, -100%);
+        transition: transform 150ms ease-out;
     }
 
-    @keyframes musicWave {
-        0% {
-            transform: scaleY(0.1);
-        }
-
-        15% {
-            transform: scaleY(0.8);
-        }
-
-        30% {
-            transform: scaleY(0.3);
-        }
-
-        45% {
-            transform: scaleY(1.0);
-        }
-
-        60% {
-            transform: scaleY(0.5);
-        }
-
-        75% {
-            transform: scaleY(0.9);
-        }
-
-        100% {
-            transform: scaleY(0.1);
-        }
+    .custom-cursor {
+        @apply w-7 h-7 border-2 border-border-active rounded-full pointer-events-none transition-all duration-200 ease-out;
     }
 
-    .animate-music-wave {
-        /* INCREASED DURATION to 2.0s for slower movement */
-        animation: musicWave 2.0s ease-in-out infinite alternate;
+    .custom-cursor.click {
+        @apply bg-bg-active/20 shadow-[0_0_15px] shadow-shadow-active;
     }
 
-    @layer components {
-        .cursor-wrapper {
-            @apply fixed top-0 left-0 pointer-events-none m-0 p-0 z-[9999999999];
-            transform: translate(-100%, -100%);
-            transition: transform 150ms ease-out;
-        }
-
-        .custom-cursor {
-            @apply w-7 h-7 border-2 border-border-active rounded-full pointer-events-none transition-all duration-200 ease-out;
-        }
-
-        .custom-cursor.click {
-            @apply bg-bg-active/20 shadow-[0_0_15px] shadow-shadow-active;
-        }
-
-        .star {
-            @apply fixed w-1.5 h-1.5 rounded-full pointer-events-none z-[9999999999] animate-[var(--animate-starFade)];
-            background-image: radial-gradient(circle, rgba(153, 113, 3, 0.404), transparent);
-        }
-
+    .star {
+        @apply fixed w-1.5 h-1.5 rounded-full pointer-events-none z-[9999999999] animate-[var(--animate-starFade)];
+        background-image: radial-gradient(circle, rgba(153, 113, 3, 0.404), transparent);
     }
 
-    button {
-        @apply cursor-pointer;
+}
+
+button {
+    @apply cursor-pointer;
+}
+
+@layer utilities {
+    .bg-gradient-light {
+        @apply bg-gradient-to-b from-gradient-white to-gradient-light dark:bg-none;
     }
 
-    @layer utilities {
-        .bg-gradient-light {
-            @apply bg-gradient-to-b from-gradient-white to-gradient-light dark:bg-none;
-        }
-
-        .bg-gradient-dark {
-            @apply bg-none;
-        }
-
-        .dark .bg-gradient-dark {
-            @apply bg-gradient-to-b from-gradient-dark to-gradient-black;
-        }
-
-        .bg-gradient-theme {
-            @apply bg-gradient-to-b from-gradient-white to-gradient-light;
-        }
-
-        .dark .bg-gradient-theme {
-            @apply bg-gradient-to-b from-gradient-dark to-gradient-black;
-        }
-
+    .bg-gradient-dark {
+        @apply bg-none;
     }
 
-    /* input fieldset */
-    .form-input,
-    .form-textarea,
-    .form-select {
-        @apply border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200;
+    .dark .bg-gradient-dark {
+        @apply bg-gradient-to-b from-gradient-dark to-gradient-black;
     }
 
-    .form-radio {
-        @apply text-orange-600 dark:text-orange-400 focus:ring-orange-500 h-5 w-5;
+    .bg-gradient-theme {
+        @apply bg-gradient-to-b from-gradient-white to-gradient-light;
     }
+
+    .dark .bg-gradient-theme {
+        @apply bg-gradient-to-b from-gradient-dark to-gradient-black;
+    }
+
+}
+
+/* input fieldset */
+.form-input,
+.form-textarea,
+.form-select {
+    @apply border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200;
+}
+
+.form-radio {
+    @apply text-orange-600 dark:text-orange-400 focus:ring-orange-500 h-5 w-5;
+}

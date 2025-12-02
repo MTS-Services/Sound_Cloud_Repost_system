@@ -181,76 +181,71 @@
                     </div>
                 </div>
             @else
-                <div class="p-4 bg-gray-100 flex flex-col items-center justify-center w-full min-h-[500px]">
-                    <div
-                        class="text-center p-8 bg-white shadow-2xl rounded-2xl transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] border-b-4 border-orange-600 w-11/12 max-w-sm md:max-w-md lg:max-w-lg">
+                <div class="px-6 py-6 min-h-[400px] flex flex-col items-center justify-center gap-6">
 
-                        <!-- Music Wave Visualizer Style -->
-                        <div class="flex items-end justify-center gap-1.5 h-20 mb-6">
-                            <!-- Bars now use the more complex 'animate-music-wave' -->
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.0s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.1s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.2s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.3s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.4s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.5s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.6s;"></div>
-                            <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                                style="animation-delay: 0.7s;"></div>
+                    <!-- Modern Wave Loader -->
+                    <div class="flex items-end gap-1">
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite]">
                         </div>
-
-                        <h3 class="text-2xl font-bold text-gray-800 tracking-tight">
-                            Preparing for Repost
-                        </h3>
-                        <p class="text-md text-gray-500 mt-2">
-                            Please wait while we prepare your repost.
-                        </p>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.1s]">
+                        </div>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.2s]">
+                        </div>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.3s]">
+                        </div>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.4s]">
+                        </div>
                     </div>
+
+                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                        Loading...
+                    </span>
                 </div>
             @endif
         @else
-            <div class="p-4 bg-gray-100 flex flex-col items-center justify-center w-full min-h-[500px]">
-                <div
-                    class="text-center p-8 bg-white shadow-2xl rounded-2xl transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] border-b-4 border-orange-600 w-11/12 max-w-sm md:max-w-md lg:max-w-lg">
-
-                    <!-- Music Wave Visualizer Style -->
-                    <div class="flex items-end justify-center gap-1.5 h-20 mb-6">
-                        <!-- Bars now use the more complex 'animate-music-wave' -->
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.0s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.1s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.2s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.3s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.4s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.5s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.6s;"></div>
-                        <div class="w-2 h-8 bg-orange-600 rounded-full shadow-lg shadow-orange-300 animate-music-wave"
-                            style="animation-delay: 0.7s;"></div>
+            <div class="px-6 py-6 min-h-[400px] flex flex-col items-center justify-center gap-6">
+                <!-- Modern Wave Loader -->
+                <div class="flex items-end gap-1">
+                    <div class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite]">
                     </div>
-
-                    <h3 class="text-2xl font-bold text-gray-800 tracking-tight">
-                        Preparing for Repost
-                    </h3>
-                    <p class="text-md text-gray-500 mt-2">
-                        Please wait while we prepare your repost.
-                    </p>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.1s]">
+                    </div>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.2s]">
+                    </div>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.3s]">
+                    </div>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.4s]">
+                    </div>
                 </div>
+
+                <span class="text-sm text-gray-700 dark:text-gray-300">
+                    Loading...
+                </span>
             </div>
         @endif
     </div>
+    <style>
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: scaleY(0.4);
+            }
+
+            50% {
+                transform: scaleY(1);
+            }
+        }
+    </style>
 
 </div>
 
