@@ -168,7 +168,18 @@
                     </div>
                 </div>
             @else
-                <div class="px-6 py-6">
+                <div class="px-6 py-6 flex items-center justify-center gap-3 animate-pulse">
+                    <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <rect x="1" y="1" width="24" height="16" rx="3" fill="none"
+                            stroke="currentColor" stroke-width="2" />
+                        <circle cx="8" cy="9" r="3" fill="none" stroke="currentColor"
+                            stroke-width="2" />
+                    </svg>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Loading...</span>
+                </div>
+
+                {{-- <div class="px-6 py-6">
                     <div class="flex items-center justify-center gap-3 text-red-500">
                         <svg width="26" height="18" viewBox="0 0 26 18" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -179,7 +190,7 @@
                         </svg>
                         <span class="text-sm font-medium">Something went wrong! Please try again.</span>
                     </div>
-                </div>
+                </div> --}}
             @endif
         @else
             <div class="px-6 py-6 flex items-center justify-center gap-3 animate-pulse">
