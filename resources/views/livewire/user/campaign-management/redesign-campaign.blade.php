@@ -323,7 +323,7 @@
                                         })">
 
                                             <!-- Debug Box - Remove after testing -->
-                                            <div
+                                            {{-- <div
                                                 class="absolute -top-20 left-0 bg-yellow-100 p-2 text-xs rounded w-40 z-50 shadow">
                                                 <div>ID: {{ $campaign_->id }}</div>
                                                 <div>Time: <span x-text="getPlayTime(campaignId).toFixed(2)"></span>s
@@ -334,7 +334,7 @@
                                                 </div>
                                                 <div>Reposted: <span
                                                         x-text="isReposted(campaignId) ? '✅' : '❌'"></span></div>
-                                            </div>
+                                            </div> --}}
 
                                             <!-- Countdown Tooltip -->
                                             <div x-show="!isReposted(campaignId) && !isEligibleForRepost(campaignId) && getPlayTime(campaignId) > 0"
