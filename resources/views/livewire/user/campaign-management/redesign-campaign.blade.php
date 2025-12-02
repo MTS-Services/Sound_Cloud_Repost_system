@@ -29,7 +29,7 @@
                     <span class="text-base lg:text-sm xl:text-base">
                         {{ __('Start a new campaign') }}
                     </span>
-                </x-gbutton> 
+                </x-gbutton>
             </div>
         </div>
 
@@ -1694,18 +1694,15 @@
 
                 // Lightweight update loop
                 startUpdateLoop() {
-                    if (this.updateInterval) clearInterval(this.updateInterval);
+                    if (this.updateInterval) {
+                        clearInterval(this.updateInterval);
+                    }
 
-                    // Update every 1 second (reduced from 500ms)
+                    // Update every 500ms for smooth UI
                     this.updateInterval = setInterval(() => {
-                        // Process sync queue
-                        this.processSyncQueue();
-
-                        // Force minimal reactivity update
-                        if (Object.keys(this.tracks).length > 0) {
-                            this.$nextTick();
-                        }
-                    }, 1000);
+                        // Force Alpine reactivity by creating new object reference
+                        this.tracks = Object.assign({}, this.tracks);
+                    }, 500);
                 },
 
                 // Queue sync instead of immediate API call
