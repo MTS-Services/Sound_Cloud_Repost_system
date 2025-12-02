@@ -305,47 +305,26 @@
                                                 class="text-xs text-gray-500 dark:text-gray-500 mt-1">REMAINING</span>
                                         </div>
 
-                                        <!-- Repost Button Section -->
+                                        <!-- Repost Button Container -->
                                         <div class="relative" x-data="{
                                             campaignId: '{{ $campaign_->id }}',
                                             showReadyTooltip: false,
                                             justBecameEligible: false,
                                             wasEligible: false
-                                        }" x-init="$watch('$root', (value) => {
-                                            if (!value) return;
+                                        }" x-init="setInterval(() => {
+                                            const nowEligible = $root.closest('[x-data*=trackPlaybackManager]').__x.$data.isEligibleForRepost(campaignId);
+                                            const isAlreadyReposted = $root.closest('[x-data*=trackPlaybackManager]').__x.$data.isReposted(campaignId);
                                         
-                                            const checkEligibility = setInterval(() => {
-                                                // Find parent manager
-                                                let parentEl = $el;
-                                                let manager = null;
-                                        
-                                                while (parentEl && !manager) {
-                                                    if (parentEl.__x?.$data?.isEligibleForRepost) {
-                                                        manager = parentEl.__x.$data;
-                                                        break;
-                                                    }
-                                                    parentEl = parentEl.parentElement;
-                                                }
-                                        
-                                                if (!manager) {
-                                                    console.warn('Manager not found for campaign:', campaignId);
-                                                    return;
-                                                }
-                                        
-                                                const nowEligible = manager.isEligibleForRepost(campaignId);
-                                                const isAlreadyReposted = manager.isReposted(campaignId);
-                                        
-                                                if (nowEligible && !wasEligible && !isAlreadyReposted) {
-                                                    justBecameEligible = true;
-                                                    showReadyTooltip = true;
-                                                    setTimeout(() => {
-                                                        showReadyTooltip = false;
-                                                        justBecameEligible = false;
-                                                    }, 3000);
-                                                }
-                                                wasEligible = nowEligible;
-                                            }, 500);
-                                        });">
+                                            if (nowEligible && !wasEligible && !isAlreadyReposted) {
+                                                justBecameEligible = true;
+                                                showReadyTooltip = true;
+                                                setTimeout(() => {
+                                                    showReadyTooltip = false;
+                                                    justBecameEligible = false;
+                                                }, 3000);
+                                            }
+                                            wasEligible = nowEligible;
+                                        }, 500);">
 
                                             <!-- Debug info (REMOVE AFTER TESTING) -->
                                             <div class="absolute -top-24 left-0 bg-yellow-100 dark:bg-yellow-900 p-2 rounded text-xs z-50 w-48"
@@ -375,21 +354,12 @@
                                             </div>
 
                                             <!-- Countdown Tooltip -->
-                                            <div x-data="{
-                                                get manager() {
-                                                    let el = $root;
-                                                    while (el) {
-                                                        if (el.__x?.$data?.getPlayTime) return el.__x.$data;
-                                                        el = el.parentElement;
-                                                    }
-                                                    return null;
-                                                }
-                                            }"
+                                            <div x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
                                                 x-show="manager && !manager.isReposted(campaignId) && !manager.isEligibleForRepost(campaignId) && manager.getPlayTime(campaignId) > 0"
                                                 x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                 <span
-                                                    x-text="manager ? (Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining') : ''"></span>
+                                                    x-text="Math.max(0, Math.ceil(2 - manager.getPlayTime(campaignId))) + 's remaining'"></span>
                                                 <div
                                                     class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                     <div class="border-4 border-transparent border-t-gray-900"></div>
@@ -397,16 +367,7 @@
                                             </div>
 
                                             <!-- Ready Tooltip -->
-                                            <div x-data="{
-                                                get manager() {
-                                                    let el = $root;
-                                                    while (el) {
-                                                        if (el.__x?.$data?.isEligibleForRepost) return el.__x.$data;
-                                                        el = el.parentElement;
-                                                    }
-                                                    return null;
-                                                }
-                                            }"
+                                            <div x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
                                                 x-show="manager && !manager.isReposted(campaignId) && manager.isEligibleForRepost(campaignId) && showReadyTooltip"
                                                 x-transition
                                                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none"
@@ -426,30 +387,21 @@
                                             </div>
 
                                             <!-- Repost Button -->
-                                            <button type="button" x-data="{
-                                                get manager() {
-                                                    let el = $root;
-                                                    while (el) {
-                                                        if (el.__x?.$data?.handleRepost) return el.__x.$data;
-                                                        el = el.parentElement;
-                                                    }
-                                                    return null;
-                                                }
-                                            }"
+                                            <button type="button" x-data="{ manager: $root.closest('[x-data*=trackPlaybackManager]').__x.$data }"
                                                 :disabled="!manager || (!manager.isEligibleForRepost(campaignId) || manager
                                                     .isReposted(campaignId))"
-                                                @click="if (manager) manager.handleRepost(campaignId)"
+                                                @click="manager && manager.handleRepost(campaignId)"
                                                 class="repost-button relative overflow-hidden flex items-center gap-2 py-2 px-4 sm:px-5 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg shadow-sm text-sm sm:text-base transition-all duration-200"
-                                                :class="{
+                                                :class="manager ? {
                                                     'cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white': !
-                                                        manager || (!manager.isEligibleForRepost(campaignId) && !manager
-                                                            .isReposted(campaignId)),
-                                                    'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500': manager &&
-                                                        manager.isEligibleForRepost(campaignId) && !manager.isReposted(
+                                                        manager.isEligibleForRepost(campaignId) && !manager
+                                                        .isReposted(campaignId),
+                                                    'cursor-pointer hover:shadow-lg bg-orange-400 text-white hover:bg-orange-500': manager
+                                                        .isEligibleForRepost(campaignId) && !manager.isReposted(
                                                             campaignId),
-                                                    'bg-green-500 text-white cursor-not-allowed': manager && manager
+                                                    'bg-green-500 text-white cursor-not-allowed': manager
                                                         .isReposted(campaignId)
-                                                }">
+                                                } : 'bg-gray-300 cursor-not-allowed text-white'">
 
                                                 <!-- Fill animation -->
                                                 <template x-if="manager && !manager.isReposted(campaignId)">
@@ -1572,6 +1524,7 @@
         window.trackPlaybackRoute = "{{ route('user.api.campaign.track-playback') }}";
         window.clearSessionRoute = "{{ route('user.api.campaign.clear-tracking') }}";
 
+        // Optimized Alpine.js component for track playback management
         function trackPlaybackManager() {
             return {
                 tracks: {},
@@ -1582,26 +1535,26 @@
                 visibleCampaigns: new Set(),
 
                 init() {
-                    console.log('🎵 trackPlaybackManager INITIALIZED');
-                    console.log('📍 Component ID:', this.$el.id || 'no-id');
+                    console.log('🎵 Initializing trackPlaybackManager');
 
-                    // Only clear on fresh page load
-                    const isLivewireNav = document.querySelector('[wire\\:id]') !== null;
-
-                    if (!this.isInitialized && !isLivewireNav) {
-                        console.log('🆕 Fresh page load - clearing all data');
+                    // First initialization only
+                    if (!this.isInitialized) {
+                        console.log('🆕 First load - clearing old data');
                         this.clearSessionData();
                         localStorage.removeItem('campaign_tracking_data');
+                        this.isInitialized = true;
                     }
 
-                    this.isInitialized = true;
-
-                    // Load data
+                    // Load data efficiently
                     this.loadEssentialData();
+
+                    // Initialize widgets
                     this.initializeSoundCloudWidgets();
+
+                    // Start lightweight update loop
                     this.startUpdateLoop();
 
-                    // Cleanup interval
+                    // Cleanup old data every 30 seconds
                     setInterval(() => this.cleanupOldData(), 30000);
 
                     // Listen for repost success
@@ -1610,18 +1563,19 @@
                         if (this.tracks[campaignId]) {
                             this.tracks[campaignId].reposted = true;
                             this.queueSync(campaignId, 'repost');
-                            this.saveToLocalStorage();
                         }
                     });
 
-                    // Handle Livewire morph
+                    // Handle Livewire updates
                     Livewire.hook('morph.updated', () => {
-                        console.log('🔄 DOM morphed - preserving state');
+                        console.log('🔄 DOM updated');
 
+                        // Only preserve visible + active campaigns
                         const activeCampaigns = {};
                         Object.keys(this.tracks).forEach(id => {
-                            if (this.tracks[id].actualPlayTime > 0 || this.tracks[id].isPlaying || this
-                                .tracks[id].reposted) {
+                            if (this.tracks[id].isPlaying ||
+                                this.tracks[id].actualPlayTime > 0 ||
+                                this.visibleCampaigns.has(id)) {
                                 activeCampaigns[id] = {
                                     actualPlayTime: this.tracks[id].actualPlayTime,
                                     isEligible: this.tracks[id].isEligible,
@@ -1634,20 +1588,62 @@
                         setTimeout(() => {
                             this.initializeSoundCloudWidgets();
 
+                            // Restore only active campaigns
                             Object.keys(activeCampaigns).forEach(id => {
                                 if (this.tracks[id]) {
                                     Object.assign(this.tracks[id], activeCampaigns[id]);
-                                } else {
-                                    this.tracks[id] = {
-                                        ...this.createEmptyTrack(),
-                                        ...activeCampaigns[id]
-                                    };
                                 }
                             });
-
-                            this.saveToLocalStorage();
                         }, 100);
                     });
+                },
+
+                // Load only essential data
+                loadEssentialData() {
+                    console.log('📥 Loading essential data');
+
+                    // Get current visible campaigns
+                    this.updateVisibleCampaigns();
+
+                    // Load from session (backend has priority)
+                    const sessionData = window.sessionData || {};
+
+                    // Load from localStorage
+                    const stored = localStorage.getItem('campaign_tracking_data');
+                    let localData = {};
+
+                    if (stored) {
+                        try {
+                            localData = JSON.parse(stored);
+                        } catch (e) {
+                            console.error('Error parsing localStorage:', e);
+                            localStorage.removeItem('campaign_tracking_data');
+                        }
+                    }
+
+                    // Only load visible campaigns + those with progress
+                    this.visibleCampaigns.forEach(campaignId => {
+                        if (!this.tracks[campaignId]) {
+                            this.tracks[campaignId] = this.createEmptyTrack();
+                        }
+
+                        // Merge data (session > localStorage)
+                        if (sessionData[campaignId]) {
+                            this.tracks[campaignId].actualPlayTime = parseFloat(sessionData[campaignId]
+                                .actual_play_time) || 0;
+                            this.tracks[campaignId].isEligible = sessionData[campaignId].is_eligible || false;
+                            this.tracks[campaignId].reposted = sessionData[campaignId].reposted || false;
+                        } else if (localData[campaignId]) {
+                            this.tracks[campaignId].actualPlayTime = parseFloat(localData[campaignId]
+                                .actualPlayTime) || 0;
+                            this.tracks[campaignId].isEligible = localData[campaignId].isEligible || false;
+                            this.tracks[campaignId].reposted = localData[campaignId].reposted || false;
+                            this.tracks[campaignId].lastPosition = parseFloat(localData[campaignId].lastPosition) ||
+                                0;
+                        }
+                    });
+
+                    console.log('✅ Loaded', Object.keys(this.tracks).length, 'campaigns');
                 },
 
                 createEmptyTrack() {
@@ -1672,50 +1668,15 @@
                     });
                 },
 
-                loadEssentialData() {
-                    console.log('📥 Loading essential data');
-                    this.updateVisibleCampaigns();
-
-                    const sessionData = window.sessionData || {};
-
-                    let localData = {};
-                    try {
-                        const stored = localStorage.getItem('campaign_tracking_data');
-                        if (stored) localData = JSON.parse(stored);
-                    } catch (e) {
-                        console.error('Error parsing localStorage:', e);
-                        localStorage.removeItem('campaign_tracking_data');
-                    }
-
-                    this.visibleCampaigns.forEach(campaignId => {
-                        if (!this.tracks[campaignId]) {
-                            this.tracks[campaignId] = this.createEmptyTrack();
-                        }
-
-                        if (sessionData[campaignId]) {
-                            this.tracks[campaignId].actualPlayTime = parseFloat(sessionData[campaignId]
-                                .actual_play_time) || 0;
-                            this.tracks[campaignId].isEligible = sessionData[campaignId].is_eligible || false;
-                            this.tracks[campaignId].reposted = sessionData[campaignId].reposted || false;
-                        } else if (localData[campaignId]) {
-                            this.tracks[campaignId].actualPlayTime = parseFloat(localData[campaignId]
-                                .actualPlayTime) || 0;
-                            this.tracks[campaignId].isEligible = localData[campaignId].isEligible || false;
-                            this.tracks[campaignId].reposted = localData[campaignId].reposted || false;
-                            this.tracks[campaignId].lastPosition = parseFloat(localData[campaignId].lastPosition) ||
-                                0;
-                        }
-                    });
-
-                    console.log('✅ Loaded', Object.keys(this.tracks).length, 'campaigns');
-                },
-
+                // Cleanup old unused data
                 cleanupOldData() {
                     const now = Date.now();
                     const keysToDelete = [];
 
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
+
+                        // Remove if: not visible, not playing, no progress, and not synced recently
                         if (!this.visibleCampaigns.has(campaignId) &&
                             !track.isPlaying &&
                             track.actualPlayTime === 0 &&
@@ -1725,14 +1686,18 @@
                     });
 
                     keysToDelete.forEach(id => delete this.tracks[id]);
+
                     if (keysToDelete.length > 0) {
                         console.log('🧹 Cleaned up', keysToDelete.length, 'old campaigns');
                         this.saveToLocalStorage();
                     }
                 },
 
+                // Save only essential data to localStorage
                 saveToLocalStorage() {
                     const essentialData = {};
+
+                    // Only save campaigns with progress or recently played
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
                         if (track.actualPlayTime > 0 || track.isEligible || track.reposted) {
@@ -1744,21 +1709,34 @@
                             };
                         }
                     });
+
                     localStorage.setItem('campaign_tracking_data', JSON.stringify(essentialData));
                 },
 
+                // Lightweight update loop
                 startUpdateLoop() {
                     if (this.updateInterval) clearInterval(this.updateInterval);
+
+                    // Update every 1 second (reduced from 500ms)
                     this.updateInterval = setInterval(() => {
+                        // Process sync queue
                         this.processSyncQueue();
+
+                        // Force minimal reactivity update
+                        if (Object.keys(this.tracks).length > 0) {
+                            this.$nextTick();
+                        }
                     }, 1000);
                 },
 
+                // Queue sync instead of immediate API call
                 queueSync(campaignId, action) {
                     const track = this.tracks[campaignId];
                     if (!track) return;
 
+                    // Add to queue (replace if already queued)
                     const existingIndex = this.syncQueue.findIndex(item => item.campaignId === campaignId);
+
                     const syncData = {
                         campaignId,
                         actualPlayTime: track.actualPlayTime,
@@ -1774,15 +1752,18 @@
                     }
                 },
 
+                // Process sync queue in batches
                 processSyncQueue() {
                     if (this.isSyncing || this.syncQueue.length === 0) return;
 
                     this.isSyncing = true;
-                    const batch = this.syncQueue.splice(0, 5);
+                    const batch = this.syncQueue.splice(0, 5); // Process 5 at a time
 
                     Promise.all(batch.map(data => this.syncToBackend(data)))
                         .finally(() => {
                             this.isSyncing = false;
+
+                            // Save to localStorage after successful sync
                             if (batch.length > 0) {
                                 this.saveToLocalStorage();
                             }
@@ -1826,20 +1807,25 @@
 
                         if (!iframe || !campaignId) return;
 
+                        // Initialize track if needed
                         if (!this.tracks[campaignId]) {
                             this.tracks[campaignId] = this.createEmptyTrack();
                         }
 
+                        // Skip if widget already valid
                         if (this.tracks[campaignId].widget) {
                             try {
                                 this.tracks[campaignId].widget.getVolume(() => {});
                                 return;
-                            } catch (e) {}
+                            } catch (e) {
+                                // Widget stale, rebind
+                            }
                         }
 
                         const widget = SC.Widget(iframe);
                         this.tracks[campaignId].widget = widget;
 
+                        // Get next campaign for auto-play
                         const currentCard = container.closest('.campaign-card');
                         const nextCard = currentCard?.nextElementSibling;
                         let nextCampaignId = null;
@@ -1848,6 +1834,9 @@
                             const nextContainer = nextCard.querySelector('[id^="soundcloud-player-"]');
                             nextCampaignId = nextContainer?.dataset.campaignId;
                         }
+
+                        // Bind events (debounced where possible)
+                        let progressTimeout = null;
 
                         widget.bind(SC.Widget.Events.PLAY, () => {
                             const track = this.tracks[campaignId];
@@ -1869,12 +1858,12 @@
                             track.playStartTime = null;
                             this.queueSync(campaignId, 'finish');
 
+                            // Auto-play next
                             if (nextCampaignId && this.tracks[nextCampaignId]?.widget) {
                                 setTimeout(() => this.tracks[nextCampaignId].widget.play(), 100);
                             }
                         });
 
-                        let progressTimeout = null;
                         widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
                             if (progressTimeout) clearTimeout(progressTimeout);
 
@@ -1883,6 +1872,7 @@
                                 const track = this.tracks[campaignId];
                                 const positionDiff = Math.abs(currentPosition - track.lastPosition);
 
+                                // Detect seeking
                                 if (positionDiff > 1.5 && track.lastPosition > 0) {
                                     track.seekDetected = true;
                                     track.lastPosition = currentPosition;
@@ -1895,11 +1885,13 @@
                                     if (increment > 0 && increment < 2) {
                                         track.actualPlayTime += increment;
 
+                                        // Check eligibility at 2 seconds
                                         if (track.actualPlayTime >= 2 && !track.isEligible) {
                                             track.isEligible = true;
                                             this.queueSync(campaignId, 'eligible');
                                         }
 
+                                        // Queue sync every 5 seconds of play
                                         if (Math.floor(track.actualPlayTime) % 5 === 0) {
                                             this.queueSync(campaignId, 'progress');
                                         }
@@ -1908,7 +1900,7 @@
 
                                 track.lastPosition = currentPosition;
                                 track.seekDetected = false;
-                            }, 100);
+                            }, 100); // Debounce by 100ms
                         });
 
                         widget.bind(SC.Widget.Events.SEEK, (data) => {
@@ -1919,26 +1911,29 @@
                     });
                 },
 
+                // Reset for filter changes
                 resetForFilterChange() {
-                    console.log('🔄 Filter change reset');
+                    console.log('🔁 Filter change reset');
 
+                    // Stop playing tracks
                     Object.keys(this.tracks).forEach(campaignId => {
                         const track = this.tracks[campaignId];
                         if (track.widget && track.isPlaying) {
-                            try {
-                                track.widget.pause();
-                            } catch (e) {}
+                            track.widget.pause();
                         }
                         track.widget = null;
                         track.isPlaying = false;
                     });
 
+                    // Process any pending syncs
                     while (this.syncQueue.length > 0) {
                         this.processSyncQueue();
                     }
 
+                    // Save current state
                     this.saveToLocalStorage();
 
+                    // Reinitialize after a short delay
                     setTimeout(() => {
                         this.loadEssentialData();
                         this.initializeSoundCloudWidgets();
@@ -1958,6 +1953,7 @@
                     }).catch(err => console.error('Failed to clear session:', err));
                 },
 
+                // UI Helper methods
                 isEligibleForRepost(campaignId) {
                     return this.tracks[campaignId]?.isEligible || false;
                 },
@@ -1987,6 +1983,7 @@
                 clearAllTracking() {
                     console.log('🧹 Complete cleanup');
 
+                    // Stop all tracks
                     Object.keys(this.tracks).forEach(campaignId => {
                         if (this.tracks[campaignId].widget) {
                             try {
@@ -1995,6 +1992,7 @@
                         }
                     });
 
+                    // Clear everything
                     this.tracks = {};
                     this.syncQueue = [];
                     localStorage.removeItem('campaign_tracking_data');
@@ -2008,24 +2006,19 @@
             };
         }
 
-        // Initialize Alpine data BEFORE Livewire
-        document.addEventListener('alpine:init', () => {
-            console.log('🏔️ Alpine initializing...');
+        // Initialize on Livewire
+        document.addEventListener('livewire:initialized', () => {
+            window.sessionData = window.sessionData || {};
             Alpine.data('trackPlaybackManager', trackPlaybackManager);
         });
 
-        // Livewire initialization
-        document.addEventListener('livewire:initialized', () => {
-            console.log('⚡ Livewire initialized');
-            window.sessionData = window.sessionData || {};
-        });
-
-        // Save on page leave
+        // Cleanup on page leave
         window.addEventListener('beforeunload', () => {
-            const mainEl = document.querySelector('[x-data*="trackPlaybackManager"]');
+            const mainEl = document.querySelector('main[x-data*="trackPlaybackManager"]');
             if (mainEl?.__x?.$data) {
                 const manager = mainEl.__x.$data;
-                while (manager.syncQueue?.length > 0) {
+                // Process any pending syncs
+                while (manager.syncQueue.length > 0) {
                     manager.processSyncQueue();
                 }
                 manager.saveToLocalStorage();
