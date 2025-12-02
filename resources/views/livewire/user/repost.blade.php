@@ -181,49 +181,73 @@
                     </div>
                 </div>
             @else
-                <div class="px-6 py-6 min-h-[250px] flex flex-col items-center justify-center gap-4">
+                <div class="px-6 py-6 min-h-[400px] flex flex-col items-center justify-center gap-6">
 
-                    <!-- Modern Animated Dots Loader -->
-                    <div class="flex items-center gap-1">
+                    <!-- Modern Wave Loader -->
+                    <div class="flex items-end gap-1">
                         <div
-                            class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]">
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite]">
                         </div>
                         <div
-                            class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.15s]">
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.1s]">
                         </div>
-                        <div class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce"></div>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.2s]">
+                        </div>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.3s]">
+                        </div>
+                        <div
+                            class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.4s]">
+                        </div>
                     </div>
 
                     <span class="text-sm text-gray-700 dark:text-gray-300">
                         Loading...
                     </span>
-
                 </div>
-
             @endif
         @else
-            <div class="px-6 py-6 min-h-[250px] flex flex-col items-center justify-center gap-4">
-
-                <!-- Modern Animated Dots Loader -->
-                <div class="flex items-center gap-1">
-                    <div
-                        class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]">
+            <div class="px-6 py-6 min-h-[400px] flex flex-col items-center justify-center gap-6">
+                <!-- Modern Wave Loader -->
+                <div class="flex items-end gap-1">
+                    <div class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite]">
                     </div>
                     <div
-                        class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce [animation-delay:-0.15s]">
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.1s]">
                     </div>
-                    <div class="w-2 h-2 bg-gray-500 dark:bg-gray-300 rounded-full animate-bounce"></div>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.2s]">
+                    </div>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.3s]">
+                    </div>
+                    <div
+                        class="w-1.5 h-6 bg-gray-500 dark:bg-gray-300 rounded animate-[wave_1s_ease-in-out_infinite_0.4s]">
+                    </div>
                 </div>
 
                 <span class="text-sm text-gray-700 dark:text-gray-300">
                     Loading...
                 </span>
-
             </div>
-
         @endif
     </div>
 </div>
+
+<style>
+    @keyframes wave {
+
+        0%,
+        100% {
+            transform: scaleY(0.4);
+        }
+
+        50% {
+            transform: scaleY(1);
+        }
+    }
+</style>
 
 <script>
     document.addEventListener('livewire:initialized', () => {
