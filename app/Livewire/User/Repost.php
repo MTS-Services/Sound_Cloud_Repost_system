@@ -100,8 +100,8 @@ class Repost extends Component
     public function callRepostAction($campaignId)
     {
         try {
-            $this->resetModalState();
             dd($campaignId);
+            $this->resetModalState();
 
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',

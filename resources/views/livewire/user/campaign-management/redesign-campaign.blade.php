@@ -882,8 +882,10 @@
                     // called init() again
                     this.init();
 
-                    window.dispatchEvent(new CustomEvent('repost-action-modal-show'));         
-                    Livewire.dispatch('callRepostAction', campaignId);
+                    window.dispatchEvent(new CustomEvent('repost-action-modal-show'));
+                    Livewire.dispatch('callRepostAction', {
+                        campaignId: campaignId
+                    });
                     console.log('🔄 Repost action modal shown');
 
                     // Livewire.dispatch('confirmRepost', {
