@@ -101,6 +101,7 @@ class Repost extends Component
     {
         try {
             $this->resetModalState();
+            dd($campaignId);
 
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
