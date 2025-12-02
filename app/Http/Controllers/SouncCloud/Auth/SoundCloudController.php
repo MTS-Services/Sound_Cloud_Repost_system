@@ -185,7 +185,7 @@ class SoundCloudController extends Controller
     private function notAnArtist($soundCloudUser)
     {
         $soundCloudUser = (array) $soundCloudUser;
-        if (isset($soundCloudUser['user']) && ($soundCloudUser['user']['track_count'] <= 0 || !empty($soundCloudUser['avatar']))) {
+        if (isset($soundCloudUser['user']) && ($soundCloudUser['user']['track_count'] <= 0 || empty($soundCloudUser['avatar']))) {
             return true;
         }
         return false;
