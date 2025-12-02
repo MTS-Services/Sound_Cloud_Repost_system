@@ -473,7 +473,7 @@
         updateInterval: null,
         isInitialized: false,
         sessionSyncInProgress: false,
-        widgetCleanupTimeout: null,
+        widgetCleanupTimeout: null, 
 
         init() {
             console.log('🎵 Initializing trackPlaybackManager');
