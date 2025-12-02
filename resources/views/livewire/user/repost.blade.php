@@ -266,19 +266,19 @@
 
             0%,
             100% {
-                height: 1.5rem;
+                height: 0.5rem;
             }
 
             25% {
-                height: 3rem;
-            }
-
-            50% {
                 height: 2rem;
             }
 
+            50% {
+                height: 1rem;
+            }
+
             75% {
-                height: 4rem;
+                height: 3rem;
             }
         }
 
@@ -286,7 +286,47 @@
 
             0%,
             100% {
+                height: 1em;
+            }
+
+            25% {
+                height: 3.5rem;
+            }
+
+            50% {
+                height: 0.5rem;
+            }
+
+            75% {
+                height: 2.5rem;
+            }
+        }
+
+        @keyframes audio-wave-3 {
+
+            0%,
+            100% {
                 height: 2rem;
+            }
+
+            25% {
+                height: 1rem;
+            }
+
+            50% {
+                height: 4rem;
+            }
+
+            75% {
+                height: 1.5rem;
+            }
+        }
+
+        @keyframes audio-wave-4 {
+
+            0%,
+            100% {
+                height: 1em;
             }
 
             25% {
@@ -294,7 +334,7 @@
             }
 
             50% {
-                height: 1.5rem;
+                height: 2rem;
             }
 
             75% {
@@ -302,7 +342,7 @@
             }
         }
 
-        @keyframes audio-wave-3 {
+        @keyframes audio-wave-5 {
 
             0%,
             100% {
@@ -319,46 +359,6 @@
 
             75% {
                 height: 2.5rem;
-            }
-        }
-
-        @keyframes audio-wave-4 {
-
-            0%,
-            100% {
-                height: 2.5rem;
-            }
-
-            25% {
-                height: 5.5rem;
-            }
-
-            50% {
-                height: 3rem;
-            }
-
-            75% {
-                height: 4.5rem;
-            }
-        }
-
-        @keyframes audio-wave-5 {
-
-            0%,
-            100% {
-                height: 4rem;
-            }
-
-            25% {
-                height: 3rem;
-            }
-
-            50% {
-                height: 6rem;
-            }
-
-            75% {
-                height: 3.5rem;
             }
         }
 
