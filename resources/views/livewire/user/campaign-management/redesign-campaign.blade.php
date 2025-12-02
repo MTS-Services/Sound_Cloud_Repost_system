@@ -387,15 +387,15 @@
                                                 <span
                                                     x-show="!isEligibleForRepost(campaignId) && !isReposted(campaignId)"
                                                     class="absolute top-0 left-0 w-full h-full cursor-not-allowed bg-gray-300 dark:bg-gray-600 text-white dark:text-gray-300"></span>
-                                                    
+
                                                 {{-- Reposted background --}}
                                                 <span x-show="isReposted(campaignId)"
-                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-5000"></span>
+                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-5000 focus:ring-green-500"></span>
 
                                                 {{-- Eligible background --}}
                                                 <span
                                                     x-show="isEligibleForRepost(campaignId) && !isReposted(campaignId)"
-                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-5000"></span>
+                                                    class="absolute top-0 left-0 w-full h-full cursor-pointer hover:shadow-lg bg-orange-400 dark:bg-orange-500 text-white hover:bg-orange-5000 focus:ring-orange-500"></span>
 
                                                 <!-- Animated fill background -->
                                                 <div x-show="!isReposted(campaignId)"
