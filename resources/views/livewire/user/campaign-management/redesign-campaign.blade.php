@@ -50,8 +50,32 @@
                             class="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-slate-800 z-50">
                             <div class="py-1">
                                 @foreach (['all' => 'All', Track::class => 'Tracks', Playlist::class => 'Playlists'] as $value => $label)
-                                    <a wire:navigate href="{{ request()->fullUrlWithQuery(['trackType' => $value]) }}"
-                                        @class([
+                                    @php
+                                        // Build complete query params array
+                                        $queryParams = [
+                                            'tab' => $activeMainTab ?? 'recommendedPro',
+                                            'trackType' => $value,
+                                        ];
+
+                                        // Add search if present
+                                        if (!empty($search)) {
+                                            $queryParams['search'] = $search;
+                                        }
+
+                                        // Add selectedGenres if present
+                                        if (!empty($selectedGenres) && count($selectedGenres) > 0) {
+                                            $queryParams['selectedGenres'] = $selectedGenres;
+                                        }
+
+                                        // Add pagination if present
+                                        $pageName = ($activeMainTab ?? 'recommendedPro') . 'Page';
+                                        if (request()->has($pageName)) {
+                                            $queryParams[$pageName] = 1; // Reset to first page on filter change
+                                        }
+                                    @endphp
+
+                                    <a href="{{ route('user.cm.campaigns2', $queryParams) }}" wire:navigate
+                                        @click="openFilterByTrack = false" @class([
                                             'block w-full text-left px-4 py-2 text-sm border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700',
                                             'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' =>
                                                 $trackType === $value,
