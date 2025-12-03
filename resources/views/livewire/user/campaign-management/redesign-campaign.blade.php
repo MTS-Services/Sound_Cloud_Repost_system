@@ -46,7 +46,7 @@
                 <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
                     <div class="flex gap-1 sm:space-x-8">
                         @foreach (['recommendedPro' => 'Recommended Pro', 'recommended' => 'Recommended', 'all' => 'All'] as $tab => $label)
-                            <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" wire:navigate
+                            <a href="{{ route('user.cm.campaigns', ['tab' => $tab]) }}" wire:navigate
                                 @class([
                                     'tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2',
                                     'border-orange-500 text-orange-600' => $activeMainTab === $tab,
@@ -111,7 +111,7 @@
                                         }
                                     @endphp
 
-                                    <a href="{{ route('user.cm.campaigns2', $queryParams) }}" wire:navigate
+                                    <a href="{{ route('user.cm.campaigns', $queryParams) }}" wire:navigate
                                         @click="openFilterByTrack = false" @class([
                                             'block w-full text-left px-4 py-2 text-sm border-b border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700',
                                             'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300' =>
