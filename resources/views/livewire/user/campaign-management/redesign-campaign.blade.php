@@ -1,4 +1,4 @@
-<div x-data="trackPlaybackManager();" @clearCampaignTracking.window="clearAllTracking()" {{-- @reset-widget-initiallized.window="resetForFilterChange()"> --}}
+<div x-data="{ ...trackPlaybackManager(), dashboardSummary: false }" @clearCampaignTracking.window="clearAllTracking()" {{-- @reset-widget-initiallized.window="resetForFilterChange()"> --}}
     @reset-widget-initiallized.window="$data.init()">
 
     <x-slot name="page_slug">campaign-feed</x-slot>
@@ -6,31 +6,68 @@
 
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         <div class="w-full">
-            {{-- Header Tab section --}}
-            <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
-                <div class="flex gap-1 sm:space-x-8">
-                    @foreach (['recommendedPro' => 'Recommended Pro', 'recommended' => 'Recommended', 'all' => 'All'] as $tab => $label)
-                        <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" wire:navigate
-                            @class([
-                                'tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2',
-                                'border-orange-500 text-orange-600' => $activeMainTab === $tab,
-                                'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' =>
-                                    $activeMainTab !== $tab,
-                            ])>
-                            {{ __($label) }}
-                            <span
-                                class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCounts[$tab] }}</span>
-                        </a>
-                    @endforeach
+            <div class="flex flex-col">
+                <div class="flex flex-col 3xl:hidden">
+                    <div class="flex justify-between items-center">
+                        <!-- Start Campaign Button -->
+                        <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
+                            <span>
+                                <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
+                            </span>
+                            <span class="text-base lg:text-sm xl:text-base">
+                                {{ __('Start a new campaign') }}
+                            </span>
+                        </x-gbutton>
+
+                        <button type="button" x-on:click="dashboardSummary = !dashboardSummary"
+                            class="flex items-center gap-1 text-sm text-orange-500" aria-expanded="false"
+                            :aria-expanded="dashboardSummary.toString()">
+                            <template x-if="!dashboardSummary">
+                                <span class="flex items-center gap-1">
+                                    <span>Show Stats</span>
+                                    <x-lucide-chevron-down class="w-4 h-4" />
+                                </span>
+                            </template>
+
+                            <template x-if="dashboardSummary">
+                                <span class="flex items-center gap-1">
+                                    <span>Hide Stats</span>
+                                    <x-lucide-chevron-up class="w-4 h-4" />
+                                </span>
+                            </template>
+                        </button>
+                    </div>
+                    <div x-show="dashboardSummary" x-cloak x-transition>
+                        <livewire:user.dashboard-summary />
+                    </div>
                 </div>
-                <div>
-                    <x-gbutton variant="primary" class="mb-2"
-                        @click="$dispatch('open-campaign-modal'); $wire.set('showCampaignCreator', true);">
-                        <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
-                        <span class="text-base lg:text-sm xl:text-base">
-                            {{ __('Start a new campaign') }}
-                        </span>
-                    </x-gbutton>
+
+                {{-- Header Tab section --}}
+                <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex gap-1 sm:space-x-8">
+                        @foreach (['recommendedPro' => 'Recommended Pro', 'recommended' => 'Recommended', 'all' => 'All'] as $tab => $label)
+                            <a href="{{ route('user.cm.campaigns2', ['tab' => $tab]) }}" wire:navigate
+                                @class([
+                                    'tab-button py-3 pb-1 px-2 text-md lg:text-sm xl:text-base font-semibold transition-all duration-200 border-b-2',
+                                    'border-orange-500 text-orange-600' => $activeMainTab === $tab,
+                                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' =>
+                                        $activeMainTab !== $tab,
+                                ])>
+                                {{ __($label) }}
+                                <span
+                                    class="text-xs lg:text-[10px] xl:text-xs ml-2 text-orange-500">{{ $totalCounts[$tab] }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                    <div class="hidden 3xl:block">
+                        <x-gbutton variant="primary" class="mb-2"
+                            @click="$dispatch('open-campaign-modal'); $wire.set('showCampaignCreator', true);">
+                            <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
+                            <span class="text-base lg:text-sm xl:text-base">
+                                {{ __('Start a new campaign') }}
+                            </span>
+                        </x-gbutton>
+                    </div>
                 </div>
             </div>
 
@@ -529,7 +566,7 @@
         </div>
     </section>
 
-    <livewire:user.campaign-management.campaign-creator />
+    {{-- <livewire:user.campaign-management.campaign-creator /> --}}
 
     <livewire:user.repost />
 
