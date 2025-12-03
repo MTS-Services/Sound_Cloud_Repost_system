@@ -319,7 +319,7 @@ class RedesignCampaign extends Component
             if ($explicitSelection) {
                 $recommendedCountQuery->where(function ($query) {
                     $query->whereIn('target_genre', $this->selectedGenres);
-                    // ->orWhere('target_genre', 'anyGenre');
+                    // ->orWhere('target_genre', 'anyGenre'); 
                 });
             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
                 $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
