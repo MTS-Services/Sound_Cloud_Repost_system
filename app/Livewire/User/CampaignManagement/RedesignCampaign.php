@@ -195,6 +195,7 @@ class RedesignCampaign extends Component
     {
         $this->getAllTags();
         $this->resetPage($this->activeMainTab . 'Page');
+        $this->dispatch('reset-widget-initiallized');
     }
 
     // private function applyMusicTypeFilter($query)
@@ -362,8 +363,8 @@ class RedesignCampaign extends Component
             ->when(
                 $explicitSelection && $this->activeMainTab === 'all',
                 fn($q) => $q->where(function ($query) {
-                    $query->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
+                    $query->whereIn('target_genre', $this->selectedGenres);
+                    // ->orWhere('target_genre', 'anyGenre');
                 })
             )
             ->withoutSelf()
@@ -400,8 +401,8 @@ class RedesignCampaign extends Component
             ->when(
                 $explicitSelection && $this->activeMainTab === 'recommendedPro',
                 fn($q) => $q->where(function ($query) {
-                    $query->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
+                    $query->whereIn('target_genre', $this->selectedGenres);
+                    // ->orWhere('target_genre', 'anyGenre');
                 })
             )
             ->withoutSelf()
@@ -457,13 +458,13 @@ class RedesignCampaign extends Component
         if ($this->activeMainTab === 'recommended') {
             if ($explicitSelection) {
                 $recommendedCountQuery->where(function ($query) {
-                    $query->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
+                    $query->whereIn('target_genre', $this->selectedGenres);
+                    // ->orWhere('target_genre', 'anyGenre');
                 });
             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
                 $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
-                    $query->whereIn('target_genre', $userDefaultGenres)
-                        ->orWhere('target_genre', 'anyGenre');
+                    $query->whereIn('target_genre', $userDefaultGenres);
+                    // ->orWhere('target_genre', 'anyGenre');
                 });
             }
         } else {
@@ -523,13 +524,13 @@ class RedesignCampaign extends Component
             case 'recommended':
                 if ($explicitSelection) {
                     $query->where(function ($subQuery) {
-                        $subQuery->whereIn('target_genre', $this->selectedGenres)
-                            ->orWhere('target_genre', 'anyGenre');
+                        $subQuery->whereIn('target_genre', $this->selectedGenres);
+                        // ->orWhere('target_genre', 'anyGenre');
                     });
                 } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
                     $query->where(function ($subQuery) use ($userDefaultGenres) {
-                        $subQuery->whereIn('target_genre', $userDefaultGenres)
-                            ->orWhere('target_genre', 'anyGenre');
+                        $subQuery->whereIn('target_genre', $userDefaultGenres);
+                        // ->orWhere('target_genre', 'anyGenre');
                     });
                 }
                 break;
@@ -537,8 +538,8 @@ class RedesignCampaign extends Component
             case 'all':
             default:
                 $query->when($explicitSelection, fn($q) => $q->where(function ($subQuery) {
-                    $subQuery->whereIn('target_genre', $this->selectedGenres)
-                        ->orWhere('target_genre', 'anyGenre');
+                    $subQuery->whereIn('target_genre', $this->selectedGenres);
+                    // ->orWhere('target_genre', 'anyGenre');
                 }));
                 break;
         }
