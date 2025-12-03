@@ -646,7 +646,7 @@ function searchableRoutes()
         [
             'title' => 'Campaigns',
             'keywords' => ['campaign', 'all campaigns', 'repost campaigns', 'recommended', 'recommended pro', 'repost', 'reposts campaigns', 'create campaign'],
-            'route' => route('user.cm.campaigns'),
+            'route' => route('user.cm.campaigns2'),
         ],
         [
             'title' => 'Requests',

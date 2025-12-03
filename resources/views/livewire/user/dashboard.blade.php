@@ -209,7 +209,7 @@
             <!-- Right: Buttons group -->
             <div class="flex flex-col lg:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
                 <!-- Earn Credits -->
-                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
+                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns2') }}">
                     <span>💰</span>{{ __('Earn Credits') }}
                 </x-gbutton>
 
