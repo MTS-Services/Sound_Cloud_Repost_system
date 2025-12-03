@@ -262,10 +262,19 @@
                                                         class="font-semibold text-gray-900 dark:text-white truncate hover:text-orange-400 block w-full">
                                                         {{ Str::limit($source['source']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
+                                                    @php
+                                                        $user = $source['source']?->user;
+
+                                                        // Determine the slug parameter
+                                                        $slug = $user?->name ?? ($user?->urn ?? null);
+
+                                                        // If no slug available, disable link
+                                                        $link = $slug ? route('user.my-account.user', $slug) : '#';
+                                                    @endphp
                                                     {{-- <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}" --}}
-                                                    <a href="{{ $source['source'] ? route('user.my-account.user', $source['source']->user->name ?? $source['source']->user->urn) : '#' }}"
+                                                    <a href="{{ $link }}"
                                                         class="text-sm text-gray-600 dark:text-gray-400 truncate hover:text-orange-400 block">
-                                                        {{ $source['source']?->user?->name ?? 'Unknown' }}
+                                                        {{ $user?->name ?? 'Unknown' }}
                                                     </a>
                                                 </div>
                                             </div>
@@ -444,9 +453,16 @@
                                             class="font-bold text-black dark:text-white mb-1 cursor-pointer hover:text-orange-400 transition-colors truncate block w-full">
                                             {{ Str::limit($source['source']?->title ?? 'Unknown', 20, '...') }}</a>
                                         {{-- <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}" --}}
-                                        <a href="{{ $source['source'] ? route('user.my-account.user', $source['source']->user->name ?? $source['source']->user->urn) : '#' }}"
+                                        @php
+                                            $user = $source['source']?->user;
+                                            $slug = $user?->name ?? $user?->urn;
+                                            $link = $slug ? route('user.my-account.user', $slug) : '#';
+                                        @endphp
+
+                                        <a href="{{ $link }}"
                                             class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
-                                            {{ $source['source']?->user?->name ?? 'Unknown' }}</a>
+                                            {{ $user?->name ?? 'Unknown' }}
+                                        </a>
                                         <span
                                             class="inline-block bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600">
                                             {{ $source['source']?->genre ?? 'Unknown' }}
@@ -618,9 +634,16 @@
                                                         {{ Str::limit($source['source']?->title ?? 'Unknown', 30, '...') }}
                                                     </a>
                                                     {{-- <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}" --}}
-                                                    <a href="{{ $source['source'] ? route('user.my-account.user', $source['source']->user->name ?? $source['source']->user->urn) : '#' }}"
-                                                        class="text-gray-600 dark:text-gray-300 truncate">
-                                                        {{ $source['source']?->user?->name ?? 'Unknown' }}</a>
+                                                    @php
+                                                        $user = $source['source']?->user;
+                                                        $slug = $user?->name ?? $user?->urn;
+                                                        $link = $slug ? route('user.my-account.user', $slug) : '#';
+                                                    @endphp
+
+                                                    <a href="{{ $link }}"
+                                                        class="text-gray-600 dark:text-gray-300 text-sm mb-2 truncate">
+                                                        {{ $user?->name ?? 'Unknown' }}
+                                                    </a>
                                                     <span
                                                         class="inline-block mt-1 bg-gray-300 dark:bg-gray-700 px-2 py-1 rounded-full text-xs text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600">{{ $source['source']?->genre ?? 'Unknown' }}</span>
                                                 </div>
