@@ -296,7 +296,7 @@ class Campaign extends Component
             $params['type'] = $this->searchMusicType;
         }
 
-        return $this->redirect(route('user.cm.campaigns2') . '?' . http_build_query($params), navigate: true);
+        return $this->redirect(route('user.cm.campaigns') . '?' . http_build_query($params), navigate: true);
     }
 
     // protected function rules()

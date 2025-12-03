@@ -27,7 +27,7 @@
                         </a>
                     </span>
                 </div> --}}
-                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns2') }}">
+                <x-gbutton variant="secondary" wire:navigate href="{{ route('user.cm.campaigns') }}">
                     <span>💰</span>{{ __('Earn Credits') }}
                 </x-gbutton>
                 <!-- Submit Track -->
