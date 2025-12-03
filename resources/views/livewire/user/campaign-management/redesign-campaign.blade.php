@@ -407,7 +407,7 @@
                                                     x-transition
                                                     class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap z-20 pointer-events-none">
                                                     <span
-                                                        x-text="Math.max(0, Math.ceil(2 - getPlayTime(campaignId))) + 's remaining'"></span>
+                                                        x-text="Math.max(0, Math.ceil(15 - getPlayTime(campaignId))) + 's remaining'"></span>
                                                     <div
                                                         class="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                                                         <div class="border-4 border-transparent border-t-gray-900">
@@ -882,10 +882,10 @@
                         if (track.isPlaying && !track.seekDetected) {
                             const increment = currentPosition - track.lastPosition;
 
-                            if (increment > 0 && increment < 2) {
+                            if (increment > 0 && increment < 15) {
                                 track.actualPlayTime += increment;
 
-                                if (track.actualPlayTime >= 2 && !track.isEligible) {
+                                if (track.actualPlayTime >= 15 && !track.isEligible) {
                                     track.isEligible = true;
                                     this.syncToBackend(campaignId, 'eligible');
                                     this.saveTrackingData();
@@ -967,7 +967,7 @@
 
                 getPlayTimePercentage(campaignId) {
                     const playTime = this.getPlayTime(campaignId);
-                    const percentage = Math.min((playTime / 2) * 100, 100);
+                    const percentage = Math.min((playTime / 15) * 100, 100);
                     return percentage.toFixed(2);
                 },
 
