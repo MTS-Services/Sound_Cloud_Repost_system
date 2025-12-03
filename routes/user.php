@@ -50,7 +50,6 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/my-campaigns', MyCampaign::class)->name('my-campaigns');
         // Route::get('/campaigns', Campaign::class)->name('campaigns');
         Route::get('/campaigns', RedesignCampaign::class)->name('campaigns');
-        Route::get('/campaigns2', RedesignCampaign::class)->name('campaigns2');
     });
     Route::name('notifications.')->prefix('notifications')->group(function () {
         Route::get('/', NotificationList::class)->name('index');
