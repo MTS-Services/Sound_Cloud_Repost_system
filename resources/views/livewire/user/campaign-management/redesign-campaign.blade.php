@@ -566,7 +566,7 @@
         </div>
     </section>
 
-    {{-- <livewire:user.campaign-management.campaign-creator /> --}}
+    <livewire:user.campaign-management.campaign-creator />
 
     <livewire:user.repost />
 
