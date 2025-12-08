@@ -137,8 +137,9 @@
                                     <div class="flex items-center gap-2">
                                         <a class="cursor-pointer" wire:navigate
                                             href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
-                                            <h3 class="font-semibold text-lg dark:text-white hover:underline">
-                                                {{ $user_->name }}</h3>
+                                            <h3 class="font-semibold text-lg dark:text-white hover:underline line-clamp-1">
+                                                {{ $user_->name }}
+                                            </h3>
                                         </a>
                                         @if (proUser($user_->urn))
                                             <span
