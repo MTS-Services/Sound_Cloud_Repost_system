@@ -146,7 +146,6 @@ class Campaign extends BaseModel
     public function getStatusBtnLabelAttribute()
     {
         return self::getStatusList()[$this->status];
-
     }
 
     public function getStatusColorAttribute()
@@ -171,17 +170,19 @@ class Campaign extends BaseModel
 
     public function getStartDateFormattedAttribute()
     {
-        return Carbon::parse($this->start_date)->format('d M Y');
+        return Carbon::parse($this->created_at)->format('d M Y');
     }
 
     public function getEndDateFormattedAttribute()
     {
-        return Carbon::parse($this->end_date)->format('d M Y');
+        return Carbon::parse($this->created_at)
+            ->addDays(5)
+            ->format('d M Y');
     }
     // active_completed scope
     public function scopeActive_completed()
     {
-        return $this->where('status', '!=', self::STATUS_CANCELLED, )->where('status', '!=', self::STATUS_STOP);
+        return $this->where('status', '!=', self::STATUS_CANCELLED,)->where('status', '!=', self::STATUS_STOP);
     }
 
     public const BOOSTED = 1;
