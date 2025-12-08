@@ -936,12 +936,13 @@ class SoundCloudService
 
                     $playlistIdsInResponse[] = $playlistData['id'];
 
+                    dd($playlistData);
                     $playlist = Playlist::updateOrCreate(
                         [
-                            'soundcloud_id' => $playlistData['id'] ?? null,
                             'soundcloud_urn' => $playlistData['urn'] ?? null,
                         ],
                         [
+                            'soundcloud_id' => $playlistData['id'] ?? null,
                             'user_urn' => $playlistData['user']['urn'] ?? $user->urn,
                             'soundcloud_kind' => $playlistData['kind'] ?? null,
                             'title' => $playlistData['title'] ?? null,
