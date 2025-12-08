@@ -11,10 +11,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="2xl:col-span-6 grid grid-cols-1 gap-5 sm:grid-cols-2 h-fit">
                             <div class="space-y-2">
-                                <x-inputs.input name="application_name" label="{{ __('Application Name') }}"
+                                <x-inputs.input name="app_name" label="{{ __('Application Name') }}"
                                     placeholder="Enter Your Name"
-                                    value="{{ $general_settings['application_name'] ?? old('application_name') }}"
-                                    :messages="$errors->get('application_name')" />
+                                    value="{{ $general_settings['app_name'] ?? old('app_name') }}"
+                                    :messages="$errors->get('app_name')" />
                             </div>
                             <div class="space-y-2">
                                 <x-inputs.input name="application_short_name" label="{{ __('Application Short Name') }}"

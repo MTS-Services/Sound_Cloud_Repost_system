@@ -16,7 +16,7 @@ class ApplicationSettingSeeder extends Seeder
         $settings = [
             // General Settings
             ['key' => 'application_short_name', 'value' => 'LV', 'env_key' => 'APPLICATION_SHORT_NAME'],
-            ['key' => 'application_name', 'value' => 'laravel', 'env_key' => 'APPLICATION_NAME'],
+            ['key' => 'app_name', 'value' => 'laravel', 'env_key' => 'APP_NAME'],
             ['key' => 'timezone', 'value' => 'Asia/Dhaka', 'env_key' => 'TIMEZONE'],
             ['key' => 'date_format', 'value' => 'd/m/Y', 'env_key' => 'DATE_FORMAT'],
             ['key' => 'time_format', 'value' => 'H:i:s', 'env_key' => 'TIME_FORMAT'],

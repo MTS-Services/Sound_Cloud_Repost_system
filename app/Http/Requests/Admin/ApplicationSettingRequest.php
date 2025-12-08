@@ -25,7 +25,7 @@ class ApplicationSettingRequest extends FormRequest
     {
         return [
             // General Settings
-            'application_name' => 'sometimes|nullable|string|min:3|max:255',
+            'app_name' => 'sometimes|nullable|string|min:3|max:255',
             'application_short_name' => 'sometimes|required|string|min:2|max:255',
             'timezone' => 'sometimes|required|string',
             'date_format' => 'sometimes|required|string',
@@ -88,7 +88,7 @@ class ApplicationSettingRequest extends FormRequest
         return [
 
             // General Settings
-            'application_name' => 'Application Name',
+            'app_name' => 'Application Name',
             'application_short_name' => 'Application Short Name',
             'timezone' => 'Timezone',
             'date_format' => 'Date Format',
