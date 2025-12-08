@@ -204,7 +204,7 @@
                                 wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                         @else
                             <x-gbutton variant="primary" :full-width="true" disabled
-                                class="!cursor-not-allowed">Request
+                                class="cursor-not-allowed!">Request
                                 Later</x-gbutton>
                         @endif
 
