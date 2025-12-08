@@ -143,10 +143,10 @@
                                         </a>
                                         @if (proUser($user_->urn))
                                             <span
-                                                class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                                class="text-xs 3xl:text-sm text-nowrap badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
                                         @else
                                             <span
-                                                class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                                class="text-xs 3xl:text-sm text-nowrap badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
                                         @endif
                                     </div>
                                     <p class="text-text-gray text-sm dark:text-white">
