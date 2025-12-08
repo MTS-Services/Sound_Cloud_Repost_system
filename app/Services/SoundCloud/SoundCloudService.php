@@ -936,7 +936,7 @@ class SoundCloudService
 
                     $playlistIdsInResponse[] = $playlistData['id'];
 
-                    $playlist = Playlist::updateOrCreate(
+                    $playlist = Playlist::withTrashed()->updateOrCreate(
                         [
                             'soundcloud_urn' => $playlistData['urn'],
                         ],
