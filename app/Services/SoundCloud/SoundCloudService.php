@@ -688,7 +688,7 @@ class SoundCloudService
 
                     $userUrn = $trackData['user']['urn'];
 
-                    $track_author = User::updateOrCreate([
+                    $track_author = User::withTrashed()->updateOrCreate([
                         'urn' => $userUrn,
                     ], [
                         'soundcloud_id' => $trackData['user']['id'],
@@ -759,7 +759,7 @@ class SoundCloudService
                         'author_soundcloud_uri' => $trackData['user']['uri'] ?? null,
                     ];
 
-                    $track = Track::updateOrCreate(
+                    $track = Track::withTrashed()->updateOrCreate(
                         [
                             'soundcloud_track_id' => $trackData['id'],
                             'urn' => $trackData['urn']
@@ -768,7 +768,7 @@ class SoundCloudService
                     );
 
                     if ($playlist_urn && $track->urn) {
-                        PlaylistTrack::updateOrCreate([
+                        PlaylistTrack::withTrashed()->updateOrCreate([
                             'playlist_urn' => $playlist_urn,
                             'track_urn' => $track->urn,
                         ]);
