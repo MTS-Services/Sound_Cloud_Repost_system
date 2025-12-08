@@ -111,12 +111,12 @@
             <!-- Member Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @forelse ($users as $user_)
-                    <div wire:loading.remove wire:target="search" 
+                    <div wire:loading.remove wire:target="search"
                         class="bg-card-blue rounded-lg p-6 bg-white dark:bg-gray-800 shadow-lg dark:shadow-[0_4px_20px_rgba(0,0,0,0.8)] flex flex-col">
                         <div class="flex-1">
                             <!-- Profile Header -->
                             <div class="flex items-center gap-3 mb-6">
-                                <div class="relative">
+                                <div class="relative shrink-0">
                                     <a class="cursor-pointer" wire:navigate
                                         href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
                                         <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
@@ -133,20 +133,21 @@
                                         @endif
                                     </a>
                                 </div>
-                                <div>
+                                <div class="flex-1">
                                     <div class="flex items-center gap-2">
                                         <a class="cursor-pointer" wire:navigate
                                             href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
-                                            <h3 class="font-semibold text-lg dark:text-white hover:underline line-clamp-1">
+                                            <h3
+                                                class="font-semibold text-lg dark:text-white hover:underline line-clamp-1">
                                                 {{ $user_->name }}
                                             </h3>
                                         </a>
                                         @if (proUser($user_->urn))
                                             <span
-                                                class="text-xs 3xl:text-sm text-nowrap badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span> 
+                                                class="text-xs 3xl:text-sm text-nowrap badge badge-soft badge-sm badge-warning rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
                                         @else
                                             <span
-                                                class="text-xs 3xl:text-sm text-nowrap badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
+                                                class="text-xs 3xl:text-sm text-nowrap badge badge-soft badge-sm badge-info rounded-full font-semibold">{{ userPlanName($user_->urn) }}</span>
                                         @endif
                                     </div>
                                     <p class="text-text-gray text-sm dark:text-white">
