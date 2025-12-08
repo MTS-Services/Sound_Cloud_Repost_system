@@ -32,12 +32,12 @@
                                                 d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
-                                    @if (proUser(user()->urn))
+                                    @if (proUser($favouriteUser->follower?->urn))
                                         <span
-                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName(user()->urn) }}</span>
+                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($favouriteUser->follower?->urn) }}</span>
                                     @else
                                         <span
-                                            class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName(user()->urn) }}</span>
+                                            class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($favouriteUser->follower?->urn) }}</span>
                                     @endif
                                 </div>
                                 <div x-show="open" x-transition.opacity
@@ -130,8 +130,9 @@
                                 <div x-show="open" x-transition.opacity
                                     class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                     x-cloak>
-                                    <a href="{{ $favouriteUser->following?->soundcloud_permalink_url }}" target="_blank"
-                                        class="block hover:bg-gray-800 px-3 py-1 rounded">Visit SoundCloud Profile</a>
+                                    <a href="{{ $favouriteUser->following?->soundcloud_permalink_url }}"
+                                        target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
+                                        SoundCloud Profile</a>
                                     <a href="{{ route('user.my-account.user', !empty($favouriteUser->following?->name) ? $favouriteUser->following?->name : $favouriteUser->following_urn) }}"
                                         wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                         RepostChain Profile</a>
