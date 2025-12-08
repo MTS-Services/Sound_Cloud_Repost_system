@@ -119,7 +119,7 @@
                                                 d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
-                                    @dd($favouriteUser->following?->urn)
+                                    {{-- @dd($favouriteUser->following?->urn) --}}
                                     @if (proUser($favouriteUser->following?->urn))
                                         <span
                                             class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($favouriteUser->following?->urn) }}</span>
