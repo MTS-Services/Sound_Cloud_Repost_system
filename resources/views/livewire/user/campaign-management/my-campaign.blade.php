@@ -1,5 +1,4 @@
 <section x-data="{ $activeMainTab: @entangle('activeMainTab').live }">
-    @dd(config('app.name', 'No - name'));
 
     <x-slot name="page_slug">campaigns</x-slot>
 
