@@ -119,12 +119,12 @@
                                                 d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
-                                    @if (proUser(user()->urn))
+                                    @if (proUser($favouriteUser->following?->urn))
                                         <span
-                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName(user()->urn) }}</span>
+                                            class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($favouriteUser->following?->urn) }}</span>
                                     @else
                                         <span
-                                            class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName(user()->urn) }}</span>
+                                            class="text-sm badge badge-soft badge-info rounded-full font-semibold">{{ userPlanName($favouriteUser->following?->urn) }}</span>
                                     @endif
                                 </div>
                                 <div x-show="open" x-transition.opacity
