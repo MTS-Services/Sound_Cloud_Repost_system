@@ -119,7 +119,6 @@
                                                 d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </div>
-                                    {{-- @dd($favouriteUser->following?->urn) --}}
                                     @if (proUser($favouriteUser->following?->urn))
                                         <span
                                             class="text-sm badge badge-soft badge-warning rounded-full font-semibold">{{ userPlanName($favouriteUser->following?->urn) }}</span>
@@ -134,7 +133,7 @@
                                     <a href="{{ $favouriteUser->following?->soundcloud_permalink_url }}"
                                         target="_blank" class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                         SoundCloud Profile</a>
-                                    <a href="{{ route('user.my-account.user', !empty($favouriteUser->following?->name) ? $favouriteUser->following?->name : $favouriteUser->following_urn) }}"
+                                    <a href="{{ route('user.my-account.user', !empty($favouriteUser->following?->name) ? $favouriteUser->following?->name : $$favouriteUser->following?->urn) }}"
                                         wire:navigate class="block hover:bg-gray-800 px-3 py-1 rounded">Visit
                                         RepostChain Profile</a>
                                 </div>
@@ -154,9 +153,9 @@
 
                     <!-- Request Button -->
                     <div class="mt-4 sm:mt-0">
-                        @if (requestReceiveable($favouriteUser->following_urn))
+                        @if (requestReceiveable($favouriteUser->following?->urn))
                             <x-gbutton variant="primary" :full-width="false"
-                                wire:click="openModal('{{ $favouriteUser->following_urn }}')">Request</x-gbutton>
+                                wire:click="openModal('{{ $favouriteUser->following?->urn }}')">Request</x-gbutton>
                         @else
                             <x-gbutton variant="primary" :full-width="false" disabled
                                 class="!cursor-not-allowed !py-3">Request Later</x-gbutton>
