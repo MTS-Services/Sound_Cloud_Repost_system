@@ -936,13 +936,6 @@ class SoundCloudService
 
                     $playlistIdsInResponse[] = $playlistData['id'];
 
-                    dd([
-                        'db' => Playlist::where('soundcloud_urn', $playlistData['urn'])->first(),
-                        'incoming' => $playlistData['urn'],
-                        'stored' => Playlist::first()->soundcloud_urn,
-                        'equal' => ($playlistData['urn'] === Playlist::first()->soundcloud_urn),
-                    ]);
-
                     $playlist = Playlist::updateOrCreate(
                         [
                             'soundcloud_urn' => $playlistData['urn'],
