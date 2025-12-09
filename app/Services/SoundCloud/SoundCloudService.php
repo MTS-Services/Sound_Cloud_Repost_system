@@ -1511,4 +1511,27 @@ class SoundCloudService
             throw $e;
         }
     }
+
+    public function fetchUserInfo(User $user, ?User $firstUser = null)
+    {
+        try {
+            if (is_null($firstUser)) {
+                $firstUser = $user;
+            }
+            $this->refreshUserTokenIfNeeded($firstUser);
+
+            $repsonse = Http::withToken($firstUser->token)->get($this->baseUrl . '/users/' . $user->urn);
+            if ($repsonse->successful()) {
+                $data = $repsonse->json();
+                return $data;
+            }
+            return null;
+        } catch (Exception $e) {
+            Log::error('Error syncing user tracks in syncUserTracks', [
+                'user_urn' => user()->urn,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
 }
