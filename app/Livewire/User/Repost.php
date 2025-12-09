@@ -480,12 +480,12 @@ class Repost extends Component
 
             $newReposts = $newData['collection'][$countField] ?? 0;
 
-            if ($newReposts <= $previousReposts) {
-                return [
-                    'success' => false,
-                    'message' => 'You have already reposted this from SoundCloud.'
-                ];
-            }
+            // if ($newReposts <= $previousReposts) {
+            //     return [
+            //         'success' => false,
+            //         'message' => 'You have already reposted this from SoundCloud.'
+            //     ];
+            // }
 
             // --------------------------------------------------
             // 🔹 Default action results
