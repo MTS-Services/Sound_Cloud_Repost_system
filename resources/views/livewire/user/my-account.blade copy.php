@@ -10,7 +10,7 @@
                     <div class="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
                         {{-- Avatar --}}
                         <div class="flex-shrink-0 mx-auto sm:mx-0">
-                            <img src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name ?? 'name' }}"
+                            <img src="{{ soundcloud_image($user->avatar) }}" alt="{{ $user->name ?? 'name' }}"
                                 class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-gray-300 shadow-lg" />
                         </div>
 

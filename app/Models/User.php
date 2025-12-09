@@ -267,7 +267,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     }
     public function getModifiedImageAttribute()
     {
-        return auth_storage_url($this->image);
+        return soundcloud_image($this->image);
     }
 
     public function scopeActive(Builder $query): Builder

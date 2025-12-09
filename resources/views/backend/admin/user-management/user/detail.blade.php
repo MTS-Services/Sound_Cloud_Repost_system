@@ -46,7 +46,7 @@
                                 <div class="p-6 flex flex-col items-center text-center space-y-4">
                                     <div class="relative">
                                         <img class="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
-                                            src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}">
+                                            src="{{ soundcloud_image($user->avatar) }}" alt="{{ $user->name }}">
                                     </div>
                                     <div>
                                         <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $user->name }}

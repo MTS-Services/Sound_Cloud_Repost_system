@@ -309,7 +309,7 @@
                                         class="flex flex-col sm:flex-row relative items-start sm:items-center justify-between gap-4 mb-4">
                                         <div class="flex items-center gap-3 w-full">
                                             <img class="w-14 h-14 rounded-full object-cover"
-                                                src="{{ auth_storage_url($campaign_?->music?->user?->avatar) }}"
+                                                src="{{ soundcloud_image($campaign_?->music?->user?->avatar) }}"
                                                 alt="Avatar">
 
                                             <div x-data="{ open: false }" class="inline-block text-left">

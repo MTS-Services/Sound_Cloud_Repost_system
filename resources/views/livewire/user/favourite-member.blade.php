@@ -16,7 +16,7 @@
                     <!-- Member Card -->
                     <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                         <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
-                            <img src="{{ auth_storage_url($favouriteUser->follower?->avatar) }}" alt="Member Avatar"
+                            <img src="{{ soundcloud_image($favouriteUser->follower?->avatar) }}" alt="Member Avatar"
                                 class="w-16 h-16 rounded-full object-cover">
                         </div>
                         <div class="relative mt-2 sm:mt-0">
@@ -103,7 +103,7 @@
                     <!-- Member Card -->
                     <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                         <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
-                            <img src="{{ auth_storage_url($favouriteUser->following?->avatar) }}" alt="Member Avatar"
+                            <img src="{{ soundcloud_image($favouriteUser->following?->avatar) }}" alt="Member Avatar"
                                 class="w-16 h-16 rounded-full object-cover">
                         </div>
                         <div class="relative mt-2 sm:mt-0">
@@ -488,7 +488,7 @@
                             <div class="flex gap-3 items-center">
                                 <div class="flex-shrink-0">
                                     <img class="h-14 w-14 rounded-full object-cover shadow-md"
-                                        src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}" />
+                                        src="{{ soundcloud_image($user->avatar) }}" alt="{{ $user->name }}" />
                                 </div>
 
                                 <p

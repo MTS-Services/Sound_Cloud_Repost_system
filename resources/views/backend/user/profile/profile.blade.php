@@ -14,7 +14,7 @@
             <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between">
                 <div class="flex items-center space-x-4 mb-4 lg:mb-0">
                     <div class="relative">
-                        <img src="{{ auth_storage_url($user->avatar) }}" alt="{{ $user->name }}"
+                        <img src="{{ soundcloud_image($user->avatar) }}" alt="{{ $user->name }}"
                             class="w-20 h-20 rounded-full ring-2 ring-orange-500/30 dark:ring-orange-400/30">
                         <div
                             class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-gray-900">

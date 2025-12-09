@@ -119,7 +119,7 @@
                                 <div class="relative shrink-0">
                                     <a class="cursor-pointer" wire:navigate
                                         href="{{ route('user.my-account.user', !empty($user_->name) ? $user_->name : $user_->urn) }}">
-                                        <img src="{{ auth_storage_url($user_->avatar) }}" alt="{{ $user_->name }}"
+                                        <img src="{{ soundcloud_image($user_->avatar) }}" alt="{{ $user_->name }}"
                                             class="w-12 h-12 rounded-full">
                                         @if ($user_->isOnline())
                                             <div
@@ -543,7 +543,7 @@
                                     <div class="flex gap-3 items-center">
                                         <div class="flex-shrink-0">
                                             <img class="h-14 w-14 rounded-full object-cover shadow-md"
-                                                src="{{ auth_storage_url($user->avatar) }}"
+                                                src="{{ soundcloud_image($user->avatar) }}"
                                                 alt="{{ $user->name }}" />
                                         </div>
 

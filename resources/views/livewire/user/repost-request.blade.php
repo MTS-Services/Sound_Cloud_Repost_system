@@ -151,7 +151,7 @@
                                     <div class="flex flex-col items-start justify-between gap-0 h-full">
                                         <div class="flex items-center gap-2">
                                             <img class="w-12 h-12 rounded-full object-cover"
-                                                src="{{ auth_storage_url($repostRequest->requester->avatar) }}"
+                                                src="{{ soundcloud_image($repostRequest->requester->avatar) }}"
                                                 alt="{{ $repostRequest->requester->name }} avatar">
                                             <div x-data="{ open: false }" class="inline-block text-left">
                                                 <div @click="open = !open" @click.outside="open = false"
@@ -317,7 +317,7 @@
                                                     <a class="cursor-pointer" wire:navigate
                                                         href="{{ route('user.my-account.user', !empty($repostRequest->targetUser->name) ? $repostRequest->targetUser->name : $repostRequest->targetUser->urn) }}">
                                                         <img class="w-10 h-10 rounded-full object-cover"
-                                                            src="{{ auth_storage_url($repostRequest->targetUser->avatar) }}"
+                                                            src="{{ soundcloud_image($repostRequest->targetUser->avatar) }}"
                                                             alt="{{ $repostRequest->targetUser->name }} avatar">
                                                     </a>
                                                     <div x-data="{ open: false }" class="inline-block text-left">
