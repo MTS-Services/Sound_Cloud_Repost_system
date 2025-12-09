@@ -58,7 +58,7 @@ class Member extends Component
     public string $description = '';
     public bool $commentable = false;
     public bool $likeable = true;
-    public bool $following = true;
+    public bool $following = false;
     public bool $alreadyFollowing = false;
 
     // block_mismatch_genre

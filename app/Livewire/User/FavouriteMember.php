@@ -65,7 +65,7 @@ class FavouriteMember extends Component
 
     // Request form fields
     public $description = '';
-    public $following = true;
+    public $following = false;
     public $alreadyFollowing = false;
     public $commentable = false;
     public $likeable = true;

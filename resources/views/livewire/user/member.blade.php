@@ -205,8 +205,7 @@
                                 wire:click="openModal('{{ $user_->urn }}')">Request</x-gbutton>
                         @else
                             <x-gbutton variant="primary" :full-width="true" disabled
-                                class="cursor-not-allowed!">Request
-                                Later</x-gbutton>
+                                class="cursor-not-allowed!">Request Later</x-gbutton>
                         @endif
 
                     </div>
@@ -609,7 +608,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="relative flex items-start group">
+                                    {{-- <div class="relative flex items-start group">
                                         <div class="flex h-5 items-center">
                                             @if (!$alreadyFollowing)
                                                 <input id="following" name="following" type="checkbox"
@@ -623,7 +622,18 @@
                                                 <span
                                                     class="font-semibold text-orange-500">{{ $user->name }}</span></label>
                                         </div>
-                                    </div>
+                                    </div> --}}
+
+                                    @if (!$alreadyFollowing)
+                                        <div class="relative flex items-start group">
+                                            <div class="ml-3 text-sm">
+                                                <label class="text-sm text-gray-800 dark:text-gray-200">
+                                                    You are already following
+                                                    <span
+                                                        class="font-semibold text-orange-500">{{ $user->name }}</span></label>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     <div
                                         class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
