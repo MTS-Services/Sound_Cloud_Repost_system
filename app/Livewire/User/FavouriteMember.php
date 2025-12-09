@@ -29,8 +29,8 @@ class FavouriteMember extends Component
     // Properties for favorite members
     public $favouriteUsers = [];
 
-    #[Url(keep: true)]
-    public $starred = 'favourited';
+    #[Url]
+    public $starred = '';
 
     // Modal states
     public $showModal = false;
