@@ -560,7 +560,7 @@
                                     <label class="text-sm text-gray-800 dark:text-gray-200">
                                         {{ $alreadyFollowing ? 'You are already following' : 'Follow' }}
                                         <span class="font-semibold text-orange-500">{{ $user->name }}</span></label>
-                                </div>
+                                </div> 
                             </div> --}}
 
                             @if (!$alreadyFollowing)
