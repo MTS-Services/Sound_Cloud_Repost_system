@@ -100,7 +100,7 @@
                             </span>
                         @endif
                     </label>
-                    @if (!$alreadyLiked && $campaign->likeable == 1)
+                    @if (!$alreadyLiked && $campaign->likeable == 1 && $canAffordLike)
                         <span class="text-sm text-gray-700 dark:text-gray-300">
                             +<span class="font-medium text-orange-500">2</span> Credits
                         </span>
@@ -114,7 +114,7 @@
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
                                 Comment on this track (optional)
                             </span>
-                            @if ($campaign->commentable == 1)
+                            @if ($campaign->commentable == 1 && $canAffordComment)
                                 <span class="text-sm text-gray-700 dark:text-gray-300">
                                     +<span class="font-medium text-orange-500">2</span> Credits
                                 </span>

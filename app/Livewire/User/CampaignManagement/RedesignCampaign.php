@@ -212,6 +212,7 @@ class RedesignCampaign extends Component
     #[On('refreshCampaigns')]
     public function fetchCampaigns()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $explicitSelection = !empty($this->selectedGenres) && $this->selectedGenres !== ['all'];
         $explicitCleared = $this->selectedGenres === ['all'];
         $userDefaultGenres = user()->genres->pluck('genre')->toArray();

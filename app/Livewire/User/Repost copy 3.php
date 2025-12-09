@@ -36,10 +36,6 @@ class Repost extends Component
     public $availableRepostTime = null;
     public $isLoading = true;
 
-    // Budget check properties
-    public $canAffordLike = true;
-    public $canAffordComment = true;
-
     protected CampaignService $campaignService;
     protected SoundCloudService $soundCloudService;
     protected AnalyticsService $analyticsService;
@@ -119,7 +115,6 @@ class Repost extends Component
 
             if ($this->campaign) {
                 $this->checkUserInteractions();
-                $this->checkBudgetAvailability(); // NEW: Check budget when modal opens
                 $this->showRepostActionModal = true;
                 $this->isLoading = false;
             }
@@ -143,9 +138,7 @@ class Repost extends Component
             'commented',
             'followed',
             'alreadyFollowing',
-            'availableRepostTime',
-            'canAffordLike',
-            'canAffordComment'
+            'availableRepostTime'
         ]);
 
         $this->liked = true;
@@ -154,8 +147,6 @@ class Repost extends Component
         $this->alreadyFollowing = false;
         $this->commented = null;
         $this->availableRepostTime = null;
-        $this->canAffordLike = true;
-        $this->canAffordComment = true;
 
         $this->isLoading = true;
 
@@ -279,25 +270,6 @@ class Repost extends Component
         } catch (\Exception $e) {
             Log::warning('Error checking user interactions: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * NEW METHOD: Check budget availability when modal opens
-     * Determines if user can afford like and/or comment based on remaining budget
-     */
-    private function checkBudgetAvailability()
-    {
-        $repostPrice = user()->repost_price;
-        $remainingBudget = $this->campaign->budget_credits - $this->campaign->credits_spent;
-
-        $likeCost = 2;
-        $commentCost = 2;
-
-        // Check if user can afford like (repost + like)
-        $this->canAffordLike = $remainingBudget >= ($repostPrice + $likeCost);
-
-        // Check if user can afford comment (repost + comment)
-        $this->canAffordComment = $remainingBudget >= ($repostPrice + $commentCost);
     }
 
     private function canCommentOrLike($comment = false, $like = false): bool|null
