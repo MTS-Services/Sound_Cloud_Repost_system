@@ -293,11 +293,25 @@ class Repost extends Component
         $likeCost = 2;
         $commentCost = 2;
 
-        // Check if user can afford like (repost + like)
-        $this->canAffordLike = $remainingBudget >= ($repostPrice + $likeCost);
+        // Calculate worst case: if user checks both like AND comment
+        $maxPossibleCost = $repostPrice + $likeCost + $commentCost;
 
-        // Check if user can afford comment (repost + comment)
-        $this->canAffordComment = $remainingBudget >= ($repostPrice + $commentCost);
+        // If budget can't cover repost + both actions, disable individual bonuses
+        if ($remainingBudget < $maxPossibleCost) {
+            // Check what they can actually afford
+            $this->canAffordLike = $remainingBudget >= ($repostPrice + $likeCost);
+            $this->canAffordComment = $remainingBudget >= ($repostPrice + $commentCost);
+
+            // If both would be true but combined they exceed budget, disable both
+            if ($this->canAffordLike && $this->canAffordComment) {
+                $this->canAffordLike = false;
+                $this->canAffordComment = false;
+            }
+        } else {
+            // Budget can cover everything, show both bonuses
+            $this->canAffordLike = true;
+            $this->canAffordComment = true;
+        }
     }
 
     private function canCommentOrLike($comment = false, $like = false): bool|null
