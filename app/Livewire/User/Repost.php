@@ -314,31 +314,6 @@ class Repost extends Component
         }
     }
 
-    // private function canCommentOrLike($comment = false, $like = false): bool|null
-    // {
-    //     if (!$comment && !$like) {
-    //         return null;
-    //     }
-
-    //     $remaining = $this->campaign->budget_credits - $this->campaign->credits_spent;
-
-    //     // Cost definitions
-    //     $commentCost = 2;
-    //     $likeCost    = 2;
-
-    //     $required = 0;
-
-    //     if ($comment) {
-    //         $required += $commentCost;
-    //     }
-
-    //     if ($like) {
-    //         $required += $likeCost;
-    //     }
-
-    //     return $remaining >= $required;
-    // }
-
     public function repost()
     {
         // CRITICAL: Dispatch reset event at the start
@@ -480,12 +455,12 @@ class Repost extends Component
 
             $newReposts = $newData['collection'][$countField] ?? 0;
 
-            // if ($newReposts <= $previousReposts) {
-            //     return [
-            //         'success' => false,
-            //         'message' => 'You have already reposted this from SoundCloud.'
-            //     ];
-            // }
+            if ($newReposts <= $previousReposts) {
+                return [
+                    'success' => false,
+                    'message' => 'You have already reposted this from SoundCloud.'
+                ];
+            }
 
             // --------------------------------------------------
             // 🔹 Default action results
