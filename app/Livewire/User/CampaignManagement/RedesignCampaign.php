@@ -228,6 +228,7 @@ class RedesignCampaign extends Component
                 })
             )
             ->withoutSelf()
+            ->withoutBannedUsers()
             ->open();
 
         // RepostedIds return array of campaign ids
@@ -266,6 +267,7 @@ class RedesignCampaign extends Component
                 })
             )
             ->withoutSelf()
+            ->withoutBannedUsers()
             ->open();
 
         if (!empty($repostedIds)) {
@@ -295,6 +297,7 @@ class RedesignCampaign extends Component
         $recommendedCountQuery = ModelsCampaign::whereRaw('(budget_credits - credits_spent) >= ?', user()->repost_price)
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
+            ->withoutBannedUsers()
             ->open();
 
         if (!empty($repostedIds)) {
