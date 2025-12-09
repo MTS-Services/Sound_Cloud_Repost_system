@@ -49,7 +49,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {{-- <div
+            <div
                 class="bg-white  dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-gray-500 dark:text-white text-sm font-medium">Available Credits</h3>
@@ -78,7 +78,7 @@
                     @endif
                 </div>
 
-            </div> --}}
+            </div>
 
             <div
                 class="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 hover:-translate-y-2 transition-all duration-500 ease-in-out">
