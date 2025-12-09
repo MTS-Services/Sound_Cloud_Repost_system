@@ -6,9 +6,18 @@ use App\Models\Repost;
 use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
+use App\Models\UserSetting;
+use App\Services\User\UserSettingsService;
 
 class DashboardSummary extends Component
 {
+    protected UserSettingsService $userSettingsService;
+
+    public function boot(UserSettingsService $userSettingsService)
+    {
+        $this->userSettingsService = $userSettingsService;
+    }
+
     public function render()
     {
         $user = User::withCount([
@@ -32,5 +41,17 @@ class DashboardSummary extends Component
             'totalMyCampaign' => $campaigns,
             'pendingRequests' => $pendingRequests
         ]);
+    }
+
+    public function responseReset()
+    {
+        $responseAt = UserSetting::self()->value('response_rate_reset');
+        if ($responseAt && Carbon::parse($responseAt)->greaterThan(now()->subDays(30))) {
+            $this->dispatch('alert', type: 'error', message: 'You can only reset your response rate once every 30 days.');
+            return;
+        }
+        $userUrn = user()->urn;
+        $this->userSettingsService->createOrUpdate($userUrn, ['response_rate_reset' => now()]);
+        $this->dispatch('alert', type: 'success', message: 'Your response rate has been reset.');
     }
 }
