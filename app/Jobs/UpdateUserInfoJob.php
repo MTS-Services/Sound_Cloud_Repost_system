@@ -35,7 +35,7 @@ class UpdateUserInfoJob implements ShouldQueue
      */
     public function __construct()
     {
-        $this->onQueue('users');
+        //
     }
 
     /**

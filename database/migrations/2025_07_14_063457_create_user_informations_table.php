@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('user_urn')->unique();
             $table->foreign('user_urn')->references('urn')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('first_name')->index();
+            $table->string('first_name')->nullable()->index();
             $table->string('last_name')->nullable()->index();
             $table->string('full_name')->nullable()->index();
             $table->string('username')->nullable()->index();
@@ -58,7 +58,7 @@ return new class extends Migration {
             $table->bigInteger('private_playlist_count')->default(0)->unsigned();
             $table->bigInteger('private_tracks_count')->default(0)->unsigned();
 
-            
+
             $table->boolean('primary_email_confirmed')->default(false)->index();
             $table->string('local')->nullable();
             $table->bigInteger('upload_seconds_left')->nullable();
