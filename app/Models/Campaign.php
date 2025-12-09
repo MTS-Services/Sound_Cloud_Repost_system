@@ -106,6 +106,18 @@ class Campaign extends BaseModel
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
 
+    protected static function booted()
+    {
+        static::creating(function ($campaign) {
+            if (empty($campaign->created_at)) {
+                $campaign->created_at = now();
+            }
+
+            $campaign->end_date = Carbon::parse($campaign->created_at)->addDays(5);
+            $campaign->start_date = $campaign->created_at;
+        });
+    }
+
 
     public function __construct(array $attributes = [])
     {
@@ -176,7 +188,7 @@ class Campaign extends BaseModel
     public function getEndDateFormattedAttribute()
     {
         return $this->end_data ? Carbon::parse($this->end_date)
-            ->format('d M Y') : 'Running';
+            ->format('d M Y') : Carbon::parse($this->created_at)->addDays(5)->format('d M Y');
     }
     // active_completed scope
     public function scopeActive_completed()
