@@ -187,8 +187,9 @@ class Campaign extends BaseModel
 
     public function getEndDateFormattedAttribute()
     {
-        return $this->end_data ? Carbon::parse($this->end_date)
-            ->format('d M Y') : Carbon::parse($this->created_at)->addDays(5)->format('d M Y');
+        return $this->end_date
+            ? Carbon::parse($this->end_date)->format('d M Y')
+            : Carbon::parse($this->created_at)->addDays(5)->format('d M Y');
     }
     // active_completed scope
     public function scopeActive_completed()
