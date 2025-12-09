@@ -153,13 +153,13 @@ function storage_url($urlOrArray)
 function soundcloud_image($url)
 {
     $image = asset('default_img/no_img.jpg');
-    return $url ? asset('storage/' . $url) : $image;
+    return $url ? $url : $image;
 }
 
 function auth_storage_url($url)
 {
     $image = asset('default_img/other.png');
-    return $url ? $url : $image;
+    return $url ? asset('storage/' . $url) : $image;
 }
 
 function getSubmitterType($className)
