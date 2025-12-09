@@ -263,4 +263,11 @@ class Campaign extends BaseModel
     {
         return $query->where('status', self::STATUS_CANCELLED)->orWhere('status', self::STATUS_STOP);
     }
+
+    public function scopeWithoutBannedUsers(Builder $query): Builder
+    {
+        return $query->whereHas('user', function ($q) {
+            $q->whereNull('banned_at');
+        })->with('user');
+    }
 }

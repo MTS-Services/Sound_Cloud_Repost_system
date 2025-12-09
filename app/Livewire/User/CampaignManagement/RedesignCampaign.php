@@ -331,7 +331,7 @@ class RedesignCampaign extends Component
             if (!empty($userDefaultGenres)) {
                 $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
                     $query->whereIn('target_genre', $userDefaultGenres);
-                        // ->orWhere('target_genre', 'anyGenre');
+                    // ->orWhere('target_genre', 'anyGenre');
                 });
             }
         }
@@ -353,6 +353,7 @@ class RedesignCampaign extends Component
             ->with(['music', 'user', 'reposts', 'user.starredUsers'])
             ->whereHas('music', fn($q) => $q->whereNotNull('permalink_url'))
             ->withoutSelf()
+            ->withoutBannedUsers()
             ->open();
         if (!empty($repostedIds)) {
             $query->where(function ($que) use ($repostedIds) {
