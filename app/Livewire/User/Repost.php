@@ -109,7 +109,11 @@ class Repost extends Component
             $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
             // Fast parallel checks using cache
-            $this->checkRepostEligibility();
+            $eligibility = $this->checkRepostEligibility();
+
+            if (!$eligibility) {
+                return;
+            }
 
             $this->campaign = ModelsCampaign::with([
                 'music.user:id,urn,name,email,avatar',
@@ -163,7 +167,7 @@ class Repost extends Component
         $this->resetErrorBag();
     }
 
-    private function checkRepostEligibility()
+    private function checkRepostEligibility(): bool
     {
         // Check 24-hour limit using cache
         $todayRepostCount = Cache::remember(
