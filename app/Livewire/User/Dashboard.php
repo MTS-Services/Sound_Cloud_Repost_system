@@ -280,7 +280,7 @@ class Dashboard extends Component
         $this->recentTracks = Track::where('user_urn', user()->urn)->orderBy('created_at_soundcloud', 'desc')->latest()->take(5)->get();
 
         $this->totalCams = ModelsCampaign::where('user_urn', user()->urn)
-            ->orWhere('status', [ModelsCampaign::STATUS_COMPLETED, ModelsCampaign::STATUS_OPEN])
+            ->open()
             ->count();
 
         // Available Credit
