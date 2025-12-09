@@ -9,6 +9,7 @@ use App\Models\CreditTransaction;
 use App\Models\CustomNotification;
 use App\Models\Repost;
 use App\Models\Track;
+use App\Models\User;
 use App\Models\UserAnalytics;
 use App\Services\User\AnalyticsService;
 use Exception;
@@ -19,7 +20,7 @@ use Throwable;
 class CampaignService
 {
     protected AnalyticsService $analyticsService;
-    public function __construct(AnalyticsService $analyticsService)
+    public function __construct(AnalyticsService $analyticsService, protected Campaign $campaign)
     {
         $this->analyticsService = $analyticsService;
     }
@@ -314,5 +315,163 @@ class CampaignService
         }
 
         return false;
+    }
+
+    /**
+     * Complete expired campaigns and refund remaining credits
+     * 
+     * Campaigns are considered expired if:
+     * - end_date has passed, OR
+     * - end_date is null AND (created_at + 5 days) has passed
+     */
+    public function completeExpiredCampaigns(): int
+    {
+        $now = now();
+
+        // Fetch all expired open campaigns with eager loading to prevent N+1
+        $expiredCampaigns = Campaign::with(['user', 'music'])
+            ->where('status', Campaign::STATUS_OPEN)
+            ->where(function ($query) use ($now) {
+                // Campaigns with end_date that has passed
+                $query->where(function ($q) use ($now) {
+                    $q->whereNotNull('end_date')
+                        ->where('end_date', '<', $now);
+                })
+                    // OR campaigns without end_date where created_at + 5 days < now
+                    ->orWhere(function ($q) use ($now) {
+                        $q->whereNull('end_date')
+                            ->whereRaw('DATE_ADD(created_at, INTERVAL 5 DAY) < ?', [$now]);
+                    });
+            })
+            ->get();
+
+        if ($expiredCampaigns->isEmpty()) {
+            return 0;
+        }
+
+        // Process campaigns in chunks to avoid memory issues
+        $processedCount = 0;
+
+        foreach ($expiredCampaigns as $campaign) {
+            try {
+                DB::transaction(function () use ($campaign) {
+                    $this->completeCampaignWithRefund($campaign);
+                    Log::info("Campaign {$campaign->id} completed successfully");
+                });
+
+                $processedCount++;
+            } catch (\Throwable $e) {
+                Log::error("Failed to complete campaign {$campaign->id}", [
+                    'campaign_id' => $campaign->id,
+                    'error' => $e->getMessage()
+                ]);
+                // Continue processing other campaigns
+                continue;
+            }
+        }
+
+        return $processedCount;
+    }
+
+    /**
+     * Complete a single campaign and process refund
+     *
+     * @param Campaign $campaign
+     * @return void
+     */
+    protected function completeCampaignWithRefund(Campaign $campaign): void
+    {
+        $remainingCredits = $campaign->budget_credits - $campaign->credits_spent;
+
+        // Update campaign status
+        $campaign->update([
+            'status' => Campaign::STATUS_COMPLETED,
+            'refund_credits' => $remainingCredits,
+            'end_date' => $campaign->end_date ? $campaign->end_date : now()
+        ]);
+
+        // Only create refund transaction if there are remaining credits
+        if ($remainingCredits > 0) {
+            CreditTransaction::create([
+                'receiver_urn' => $campaign->user_urn,
+                'calculation_type' => CreditTransaction::CALCULATION_TYPE_DEBIT,
+                'source_id' => $campaign->id,
+                'source_type' => Campaign::class,
+                'status' => CreditTransaction::STATUS_SUCCEEDED,
+                'transaction_type' => CreditTransaction::TYPE_REFUND,
+                'amount' => 0,
+                'credits' => (float) $remainingCredits,
+                'description' => "Refund for expired campaign: {$campaign->title}",
+                'metadata' => [
+                    'campaign_id' => $campaign->id,
+                    'reason' => 'campaign_expired',
+                    'expired_at' => now()->toDateTimeString()
+                ]
+            ]);
+        }
+
+        // Send notification to campaign owner
+        $this->sendCampaignCompletionNotification($campaign, $remainingCredits);
+    }
+
+    /**
+     * Send notification to campaign owner about campaign completion
+     *
+     * @param Campaign $campaign
+     * @param float $remainingCredits
+     * @return void
+     */
+    protected function sendCampaignCompletionNotification(Campaign $campaign, float $remainingCredits): void
+    {
+        $musicType = $campaign->music_type == Track::class ? 'Track' : 'Playlist';
+
+        $notification = CustomNotification::create([
+            'receiver_id' => $campaign->user->id,
+            'receiver_type' => User::class,
+            'type' => CustomNotification::TYPE_USER,
+            'message_data' => [
+                'title' => 'Campaign Completed',
+                'message' => 'Your campaign has expired and been completed',
+                'description' => $remainingCredits > 0
+                    ? "Your campaign '{$campaign->title}' has expired. You have been refunded {$remainingCredits} credits."
+                    : "Your campaign '{$campaign->title}' has expired and completed successfully.",
+                'icon' => 'music',
+                'additional_data' => [
+                    "{$musicType} Title" => $campaign->music->title,
+                    'Completed Reposts' => $campaign->completed_reposts,
+                    'Credits Spent' => (float) $campaign->credits_spent,
+                    'Refunded Credits' => (float) $remainingCredits,
+                    'Campaign Duration' => $campaign->created_at->diffForHumans($campaign->end_date ?? now(), true)
+                ]
+            ]
+        ]);
+
+        broadcast(new UserNotificationSent($notification));
+
+        // Optional: Send email notification if user has email preferences enabled
+        // Check if the column exists in your user_settings table
+        // If 'em_campaign_summary' doesn't exist, use a different column or remove this
+        try {
+            $emailPermission = hasEmailSentPermission('em_campaign_summary', $campaign->user->urn);
+
+            if ($emailPermission && $campaign->user->email) {
+                NotificationMailSent::dispatch([[
+                    'email' => $campaign->user->email,
+                    'subject' => 'Campaign Completed - ' . $campaign->title,
+                    'title' => 'Dear ' . $campaign->user->name,
+                    'body' => "Your campaign '{$campaign->title}' has expired and been completed. " .
+                        ($remainingCredits > 0
+                            ? "You have been refunded {$remainingCredits} credits to your account."
+                            : "Thank you for using our service!"),
+                ]]);
+            }
+        } catch (\Exception $e) {
+            // Log but don't fail if email permission check fails
+            Log::warning("Could not check email permission for campaign completion", [
+                'campaign_id' => $campaign->id,
+                'user_urn' => $campaign->user->urn,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }
