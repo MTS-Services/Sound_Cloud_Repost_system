@@ -58,7 +58,7 @@ class UpdateUserInfoJob implements ShouldQueue
 
         // Use first user's token for all requests (as per your logic)
         $firstUser = $users->first();
-        
+
         $updateCount = 0;
         $failedCount = 0;
 
@@ -101,6 +101,7 @@ class UpdateUserInfoJob implements ShouldQueue
             throw new \Exception("Failed to fetch user info from SoundCloud");
         }
 
+        Log::info("Updating user {$user->urn}");
         DB::transaction(function () use ($user, $responseUser) {
             // Update User model
             $user->update([
@@ -141,11 +142,11 @@ class UpdateUserInfoJob implements ShouldQueue
             'soundcloud_permalink_url' => $responseUser['permalink_url'] ?? null,
             'soundcloud_permalink' => $responseUser['permalink'] ?? null,
             'soundcloud_uri' => $responseUser['uri'] ?? null,
-            'soundcloud_created_at' => isset($responseUser['created_at']) 
-                ? \Carbon\Carbon::parse($responseUser['created_at']) 
+            'soundcloud_created_at' => isset($responseUser['created_at'])
+                ? \Carbon\Carbon::parse($responseUser['created_at'])
                 : null,
-            'soundcloud_last_modified' => isset($responseUser['last_modified']) 
-                ? \Carbon\Carbon::parse($responseUser['last_modified']) 
+            'soundcloud_last_modified' => isset($responseUser['last_modified'])
+                ? \Carbon\Carbon::parse($responseUser['last_modified'])
                 : null,
             'description' => $responseUser['description'] ?? null,
             'country' => $responseUser['country'] ?? null,
