@@ -91,7 +91,6 @@ class CampaignService
                 if ($campaign->status == Campaign::STATUS_OPEN && $reachedBudget) {
 
                     $campaign->status = Campaign::STATUS_COMPLETED;
-                    $campaign->end_date = now();
                     $campaign->save();
 
                     $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
