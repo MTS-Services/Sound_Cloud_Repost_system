@@ -112,6 +112,8 @@ class Repost extends Component
             $eligibility = $this->checkRepostEligibility();
 
             if (!$eligibility) {
+                $this->resetModalState();
+                $this->showRepostActionModal = false;
                 return;
             }
 
