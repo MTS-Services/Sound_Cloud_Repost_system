@@ -102,15 +102,8 @@ class FavouriteMember extends Component
 
     public function mount()
     {
-        if ($this->starred === 'favourite') {
-            $this->loadYourFavouriteMembers();
-        } elseif ($this->starred === 'favourited') {
-            $this->loadFavouriteMembers();
-        }
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
-
-
 
     public function loadYourFavouriteMembers()
     {
@@ -618,6 +611,11 @@ class FavouriteMember extends Component
 
     public function render()
     {
+        if ($this->starred === 'favourite') {
+            $this->loadYourFavouriteMembers();
+        } elseif ($this->starred === 'favourited') {
+            $this->loadFavouriteMembers();
+        }
         return view('livewire.user.favourite-member');
     }
 }
