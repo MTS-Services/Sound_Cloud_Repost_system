@@ -271,31 +271,6 @@ class Repost extends Component
         }
     }
 
-    private function canCommentOrLike($comment = false, $like = false): bool|null
-    {
-        if (!$comment && !$like) {
-            return null;
-        }
-
-        $remaining = $this->campaign->budget_credits - $this->campaign->credits_spent;
-
-        // Cost definitions
-        $commentCost = 2;
-        $likeCost    = 2;
-
-        $required = 0;
-
-        if ($comment) {
-            $required += $commentCost;
-        }
-
-        if ($like) {
-            $required += $likeCost;
-        }
-
-        return $remaining >= $required;
-    }
-
     public function repost()
     {
         // CRITICAL: Dispatch reset event at the start
@@ -391,10 +366,6 @@ class Repost extends Component
     private function performRepostActions($httpClient, $musicUrn)
     {
         try {
-
-            // --------------------------------------------------
-            // 🔹 Detect endpoint and fetch initial repost count
-            // --------------------------------------------------
             $endpoint = $this->campaign->music_type === Track::class
                 ? "/tracks/{$musicUrn}"
                 : "/playlists/{$musicUrn}";
@@ -407,12 +378,8 @@ class Repost extends Component
             $countField = $this->campaign->music_type === Track::class
                 ? 'reposts_count'
                 : 'repost_count';
-
             $previousReposts = $initialData['collection'][$countField] ?? 0;
 
-            // --------------------------------------------------
-            // 🔹 Perform repost
-            // --------------------------------------------------
             $repostEndpoint = $this->campaign->music_type === Track::class
                 ? "{$this->baseUrl}/reposts/tracks/{$musicUrn}"
                 : "{$this->baseUrl}/reposts/playlists/{$musicUrn}";
@@ -426,15 +393,10 @@ class Repost extends Component
                 ];
             }
 
-
-            // --------------------------------------------------
-            // 🔹 Verify repost
-            // --------------------------------------------------
             $newData = $this->soundCloudService->makeGetApiRequest(
                 endpoint: $endpoint,
                 errorMessage: 'Failed to verify repost'
             );
-
             $newReposts = $newData['collection'][$countField] ?? 0;
 
             if ($newReposts <= $previousReposts) {
@@ -444,87 +406,34 @@ class Repost extends Component
                 ];
             }
 
-            // --------------------------------------------------
-            // 🔹 Default action results
-            // --------------------------------------------------
-
             $actions = [
                 'likeable' => false,
                 'comment' => false,
-                'follow' => false
+                'follow' => true
             ];
 
-            // --------------------------------------------------
-            // 🔹 Determine allowed actions
-            // --------------------------------------------------
-            $canLike = $this->liked && $this->campaign->likeable;
+            if ($this->liked && $this->campaign->likeable) {
+                $likeEndpoint = $this->campaign->music_type === Track::class
+                    ? "{$this->baseUrl}/likes/tracks/{$musicUrn}"
+                    : "{$this->baseUrl}/likes/playlists/{$musicUrn}";
 
-            $canComment = $this->commented &&
-                $this->campaign->music_type === Track::class &&
-                $this->campaign->music->commentable;
-
-            $canFollow = $this->followed && !$this->alreadyFollowing;
-
-            // --------------------------------------------------
-            // 🧮 Combined Budget Check (like + comment)
-            // --------------------------------------------------
-            $canBoth = $this->canCommentOrLike(
-                comment: $canComment,
-                like: $canLike
-            );
-
-            if ($canBoth === false) {
-                $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded.');
-                return [
-                    'success' => false,
-                    'message' => 'This campaign budget has been exceeded.'
-                ];
-            } else {
-                // --------------------------------------------------
-                // ❤️ LIKE Action
-                // --------------------------------------------------
-                if ($canLike) {
-                    $checkLike = $this->canCommentOrLike(comment: false, like: true);
-
-                    if ($checkLike === false || $checkLike === null) {
-                        $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded. Please try again without liking.');
-                    } else {
-                        $likeEndpoint = $this->campaign->music_type === Track::class
-                            ? "{$this->baseUrl}/likes/tracks/{$musicUrn}"
-                            : "{$this->baseUrl}/likes/playlists/{$musicUrn}";
-
-                        $likeResponse = $httpClient->post($likeEndpoint);
-                        $actions['likeable'] = $likeResponse->successful();
-                    }
-                }
-
-                // --------------------------------------------------
-                // 💬 COMMENT Action
-                // --------------------------------------------------
-                if ($canComment) {
-                    $checkComment = $this->canCommentOrLike(comment: true, like: false);
-
-                    if ($checkComment === false || $checkComment === null) {
-                        $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded. Please try again without commenting.');
-                    } else {
-                        $commentData = [
-                            'comment' => [
-                                'body' => $this->commented,
-                                'timestamp' => time()
-                            ]
-                        ];
-
-                        $commentResponse = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentData);
-                        $actions['comment'] = $commentResponse->successful();
-                    }
-                }
+                $likeResponse = $httpClient->post($likeEndpoint);
+                $actions['likeable'] = $likeResponse->successful();
             }
 
-            // --------------------------------------------------
-            // 👤 FOLLOW Action
-            // --------------------------------------------------
-            if ($canFollow) {
-                $followResponse = $httpClient->post("{$this->baseUrl}/users/{$this->campaign->user->urn}/follow");
+            if ($this->commented && $this->campaign->music_type === Track::class && $this->campaign->music->commentable) {
+                $commentData = [
+                    'comment' => [
+                        'body' => $this->commented,
+                        'timestamp' => time()
+                    ]
+                ];
+                $commentResponse = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentData);
+                $actions['comment'] = $commentResponse->successful();
+            }
+
+            if ($this->followed && !$this->alreadyFollowing) {
+                $followResponse = $httpClient->put("{$this->baseUrl}/me/followings/{$this->campaign->user->urn}");
                 $actions['follow'] = $followResponse->successful();
             }
 

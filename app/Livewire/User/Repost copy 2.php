@@ -391,10 +391,6 @@ class Repost extends Component
     private function performRepostActions($httpClient, $musicUrn)
     {
         try {
-
-            // --------------------------------------------------
-            // 🔹 Detect endpoint and fetch initial repost count
-            // --------------------------------------------------
             $endpoint = $this->campaign->music_type === Track::class
                 ? "/tracks/{$musicUrn}"
                 : "/playlists/{$musicUrn}";
@@ -407,12 +403,8 @@ class Repost extends Component
             $countField = $this->campaign->music_type === Track::class
                 ? 'reposts_count'
                 : 'repost_count';
-
             $previousReposts = $initialData['collection'][$countField] ?? 0;
 
-            // --------------------------------------------------
-            // 🔹 Perform repost
-            // --------------------------------------------------
             $repostEndpoint = $this->campaign->music_type === Track::class
                 ? "{$this->baseUrl}/reposts/tracks/{$musicUrn}"
                 : "{$this->baseUrl}/reposts/playlists/{$musicUrn}";
@@ -426,15 +418,10 @@ class Repost extends Component
                 ];
             }
 
-
-            // --------------------------------------------------
-            // 🔹 Verify repost
-            // --------------------------------------------------
             $newData = $this->soundCloudService->makeGetApiRequest(
                 endpoint: $endpoint,
                 errorMessage: 'Failed to verify repost'
             );
-
             $newReposts = $newData['collection'][$countField] ?? 0;
 
             if ($newReposts <= $previousReposts) {
@@ -444,49 +431,29 @@ class Repost extends Component
                 ];
             }
 
-            // --------------------------------------------------
-            // 🔹 Default action results
-            // --------------------------------------------------
-
             $actions = [
                 'likeable' => false,
                 'comment' => false,
-                'follow' => false
+                'follow' => true
             ];
 
-            // --------------------------------------------------
-            // 🔹 Determine allowed actions
-            // --------------------------------------------------
             $canLike = $this->liked && $this->campaign->likeable;
+            $canComment = $this->commented
+                && $this->campaign->music_type === Track::class
+                && $this->campaign->music->commentable;
 
-            $canComment = $this->commented &&
-                $this->campaign->music_type === Track::class &&
-                $this->campaign->music->commentable;
-
-            $canFollow = $this->followed && !$this->alreadyFollowing;
-
-            // --------------------------------------------------
-            // 🧮 Combined Budget Check (like + comment)
-            // --------------------------------------------------
             $canBoth = $this->canCommentOrLike(
                 comment: $canComment,
                 like: $canLike
             );
 
+
             if ($canBoth === false) {
                 $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded.');
-                return [
-                    'success' => false,
-                    'message' => 'This campaign budget has been exceeded.'
-                ];
             } else {
-                // --------------------------------------------------
-                // ❤️ LIKE Action
-                // --------------------------------------------------
                 if ($canLike) {
-                    $checkLike = $this->canCommentOrLike(comment: false, like: true);
-
-                    if ($checkLike === false || $checkLike === null) {
+                    $canLike = $this->canCommentOrLike(comment: false, like: true);
+                    if ($canLike == false || $canLike == null) {
                         $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded. Please try again without liking.');
                     } else {
                         $likeEndpoint = $this->campaign->music_type === Track::class
@@ -497,14 +464,9 @@ class Repost extends Component
                         $actions['likeable'] = $likeResponse->successful();
                     }
                 }
-
-                // --------------------------------------------------
-                // 💬 COMMENT Action
-                // --------------------------------------------------
                 if ($canComment) {
-                    $checkComment = $this->canCommentOrLike(comment: true, like: false);
-
-                    if ($checkComment === false || $checkComment === null) {
+                    $canComment = $this->canCommentOrLike(comment: true, like: false);
+                    if ($canComment == false || $canComment == null) {
                         $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded. Please try again without commenting.');
                     } else {
                         $commentData = [
@@ -513,18 +475,14 @@ class Repost extends Component
                                 'timestamp' => time()
                             ]
                         ];
-
                         $commentResponse = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentData);
                         $actions['comment'] = $commentResponse->successful();
                     }
                 }
             }
 
-            // --------------------------------------------------
-            // 👤 FOLLOW Action
-            // --------------------------------------------------
-            if ($canFollow) {
-                $followResponse = $httpClient->post("{$this->baseUrl}/users/{$this->campaign->user->urn}/follow");
+            if ($this->followed && !$this->alreadyFollowing) {
+                $followResponse = $httpClient->put("{$this->baseUrl}/me/followings/{$this->campaign->user->urn}");
                 $actions['follow'] = $followResponse->successful();
             }
 
