@@ -624,7 +624,7 @@
                                         </div>
                                     </div> --}}
 
-                                    @if (!$alreadyFollowing)
+                                    @if ($alreadyFollowing)
                                         <div class="relative flex items-start group">
                                             <div class="ml-3 text-sm">
                                                 <label class="text-sm text-gray-800 dark:text-gray-200">
