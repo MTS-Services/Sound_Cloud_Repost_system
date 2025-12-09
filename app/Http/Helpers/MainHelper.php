@@ -153,7 +153,7 @@ function storage_url($urlOrArray)
 function soundcloud_image($url)
 {
     $image = asset('default_img/no_img.jpg');
-    return $url ? $url : $image;
+    return $url ? asset('storage/' . $url) : $image;
 }
 
 function auth_storage_url($url)
