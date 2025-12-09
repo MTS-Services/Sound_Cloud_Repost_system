@@ -63,17 +63,27 @@ class CampaignService
                 // Update the Campaign record using atomic increments
                 $campaign->increment('completed_reposts');
                 $campaign->increment('credits_spent', (float) $totalCredits);
-                $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
-                if ($repostEmailPermission && ($campaign->budget_credits <= $campaign->credits_spent)) {
-                    $datas = [
-                        [
-                            'email' => $campaign->user->email,
-                            'subject' => 'Repost Budget Reached',
-                            'title' => 'Dear ' . $campaign->user->name,
-                            'body' => 'Your repost budget has been reached.',
-                        ],
-                    ];
-                    NotificationMailSent::dispatch($datas);
+
+                $reachedBudget = $campaign->budget_credits <= $campaign->credits_spent;
+
+                if ($campaign->status == Campaign::STATUS_OPEN && $reachedBudget) {
+
+                    $campaign->status = Campaign::STATUS_COMPLETED;
+                    $campaign->save();
+
+                    $repostEmailPermission = hasEmailSentPermission('em_repost_accepted', $campaign->user->urn);
+
+                    if ($repostEmailPermission) {
+                        $datas = [
+                            [
+                                'email' => $campaign->user->email,
+                                'subject' => 'Repost Budget Reached',
+                                'title' => 'Dear ' . $campaign->user->name,
+                                'body' => 'Your repost budget has been reached. Your campaign has been completed. Please check your dashboard for more details.',
+                            ],
+                        ];
+                        NotificationMailSent::dispatch($datas);
+                    }
                 }
 
                 if ($repost != null) {
