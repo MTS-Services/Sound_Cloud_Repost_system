@@ -314,30 +314,30 @@ class Repost extends Component
         }
     }
 
-    private function canCommentOrLike($comment = false, $like = false): bool|null
-    {
-        if (!$comment && !$like) {
-            return null;
-        }
+    // private function canCommentOrLike($comment = false, $like = false): bool|null
+    // {
+    //     if (!$comment && !$like) {
+    //         return null;
+    //     }
 
-        $remaining = $this->campaign->budget_credits - $this->campaign->credits_spent;
+    //     $remaining = $this->campaign->budget_credits - $this->campaign->credits_spent;
 
-        // Cost definitions
-        $commentCost = 2;
-        $likeCost    = 2;
+    //     // Cost definitions
+    //     $commentCost = 2;
+    //     $likeCost    = 2;
 
-        $required = 0;
+    //     $required = 0;
 
-        if ($comment) {
-            $required += $commentCost;
-        }
+    //     if ($comment) {
+    //         $required += $commentCost;
+    //     }
 
-        if ($like) {
-            $required += $likeCost;
-        }
+    //     if ($like) {
+    //         $required += $likeCost;
+    //     }
 
-        return $remaining >= $required;
-    }
+    //     return $remaining >= $required;
+    // }
 
     public function repost()
     {
@@ -494,7 +494,9 @@ class Repost extends Component
             $actions = [
                 'likeable' => false,
                 'comment' => false,
-                'follow' => false
+                'follow' => false,
+                'canAffordLike' => $this->canAffordLike,
+                'canAffordComment' => $this->canAffordComment
             ];
 
             // --------------------------------------------------
@@ -509,58 +511,30 @@ class Repost extends Component
             $canFollow = $this->followed && !$this->alreadyFollowing;
 
             // --------------------------------------------------
-            // 🧮 Combined Budget Check (like + comment)
+            // ❤️ LIKE Action
             // --------------------------------------------------
-            $canBoth = $this->canCommentOrLike(
-                comment: $canComment,
-                like: $canLike
-            );
+            if ($canLike) {
+                $likeEndpoint = $this->campaign->music_type === Track::class
+                    ? "{$this->baseUrl}/likes/tracks/{$musicUrn}"
+                    : "{$this->baseUrl}/likes/playlists/{$musicUrn}";
 
-            if ($canBoth === false) {
-                $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded.');
-                return [
-                    'success' => false,
-                    'message' => 'This campaign budget has been exceeded.'
+                $likeResponse = $httpClient->post($likeEndpoint);
+                $actions['likeable'] = $likeResponse->successful();
+            }
+
+            // --------------------------------------------------
+            // 💬 COMMENT Action
+            // --------------------------------------------------
+            if ($canComment) {
+                $commentData = [
+                    'comment' => [
+                        'body' => $this->commented,
+                        'timestamp' => time()
+                    ]
                 ];
-            } else {
-                // --------------------------------------------------
-                // ❤️ LIKE Action
-                // --------------------------------------------------
-                if ($canLike) {
-                    $checkLike = $this->canCommentOrLike(comment: false, like: true);
 
-                    if ($checkLike === false || $checkLike === null) {
-                        $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded. Please try again without liking.');
-                    } else {
-                        $likeEndpoint = $this->campaign->music_type === Track::class
-                            ? "{$this->baseUrl}/likes/tracks/{$musicUrn}"
-                            : "{$this->baseUrl}/likes/playlists/{$musicUrn}";
-
-                        $likeResponse = $httpClient->post($likeEndpoint);
-                        $actions['likeable'] = $likeResponse->successful();
-                    }
-                }
-
-                // --------------------------------------------------
-                // 💬 COMMENT Action
-                // --------------------------------------------------
-                if ($canComment) {
-                    $checkComment = $this->canCommentOrLike(comment: true, like: false);
-
-                    if ($checkComment === false || $checkComment === null) {
-                        $this->dispatch('alert', type: 'error', message: 'This campaign budget has been exceeded. Please try again without commenting.');
-                    } else {
-                        $commentData = [
-                            'comment' => [
-                                'body' => $this->commented,
-                                'timestamp' => time()
-                            ]
-                        ];
-
-                        $commentResponse = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentData);
-                        $actions['comment'] = $commentResponse->successful();
-                    }
-                }
+                $commentResponse = $httpClient->post("{$this->baseUrl}/tracks/{$musicUrn}/comments", $commentData);
+                $actions['comment'] = $commentResponse->successful();
             }
 
             // --------------------------------------------------

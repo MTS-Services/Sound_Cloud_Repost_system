@@ -41,10 +41,32 @@ class CampaignService
 
                 $trackOwnerUrn = $campaign->music->user?->urn ?? $campaign->user_urn;
                 $trackOwnerName = $campaign->music->user?->name ?? $campaign->user?->name;
-                // $totalCredits = repostPrice() + ($likeCommentAbleData['comment'] ? 2 : 0) + ($likeCommentAbleData['likeable'] ? 2 : 0);
+
+                // Determine what actions were actually performed
                 $likeable = $campaign->likeable && $likeCommentAbleData['likeable'] ? true : false;
                 $commentable = $campaign->commentable && $likeCommentAbleData['comment'] ? true : false;
-                $totalCredits = repostPrice(user()->repost_price, $commentable, $likeable);
+
+                // Check if these actions were affordable (passed from frontend checks)
+                $canAffordLike = isset($likeCommentAbleData['canAffordLike'])
+                    ? ($likeable && $likeCommentAbleData['canAffordLike'] == true ? true : false)
+                    : $likeable; // Default to likeable if not set
+
+                $canAffordComment = isset($likeCommentAbleData['canAffordComment'])
+                    ? ($commentable && $likeCommentAbleData['canAffordComment'] == true ? true : false)
+                    : $commentable; // Default to commentable if not set
+
+                // Calculate total credits based on what was affordable
+                $totalCredits = 0;
+                if ($canAffordLike && $canAffordComment) {
+                    $totalCredits = repostPrice(repost_price: $reposter->repost_price, commentend: true, liked: true);
+                } elseif ($canAffordLike && !$canAffordComment) {
+                    $totalCredits = repostPrice(repost_price: $reposter->repost_price, commentend: false, liked: true);
+                } elseif (!$canAffordLike && $canAffordComment) {
+                    $totalCredits = repostPrice(repost_price: $reposter->repost_price, commentend: true, liked: false);
+                } else {
+                    // Neither like nor comment affordable, just repost price
+                    $totalCredits = repostPrice(repost_price: $reposter->repost_price, commentend: false, liked: false);
+                }
 
                 // Create the Repost record
                 $repost = Repost::updateOrCreate(
@@ -90,18 +112,21 @@ class CampaignService
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_REPOST, $campaign->target_genre);
                 }
 
-                if ($likeCommentAbleData['comment'] == true) {
+                // Only record analytics for actions that were affordable
+                if ($canAffordComment) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_COMMENT, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('comment_count');
                     }
                 }
-                if ($likeCommentAbleData['likeable'] == true) {
+
+                if ($canAffordLike) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_LIKE, $campaign->target_genre);
                     if ($response != false || $response != null) {
                         $campaign->increment('like_count');
                     }
                 }
+
                 if ($likeCommentAbleData['follow'] == true) {
                     $response = $this->analyticsService->recordAnalytics($campaign->music, $campaign, UserAnalytics::TYPE_FOLLOW, $campaign->target_genre);
 
@@ -109,6 +134,7 @@ class CampaignService
                         $campaign->increment('followers_count');
                     }
                 }
+
                 if ($campaign->budget_credits == $campaign->credits_spent) {
                     $campaign->update(['status' => Campaign::STATUS_COMPLETED]);
                 }
@@ -130,26 +156,10 @@ class CampaignService
                         'repost_id' => $repost->id,
                         'campaign_id' => $campaign->id,
                         'soundcloud_repost_id' => $soundcloudRepostId,
+                        'like_credited' => $canAffordLike,
+                        'comment_credited' => $canAffordComment,
                     ]
                 ]);
-                // $reposterNotification = CustomNotification::create([
-                //     'receiver_id' => $reposter->id,
-                //     'receiver_type' => get_class($reposter),
-                //     'type' => CustomNotification::TYPE_USER,
-                //     'url' => route('user.my-account') . '?tab=reposts',
-                //     'message_data' => [
-                //         'title' => "Repost successful",
-                //         'message' => "You've been reposted on a campaign",
-                //         'description' => "You've been reposted on a campaign by {$trackOwnerName}.",
-                //         'icon' => 'music',
-                //         'additional_data' => [
-                //             'Track Title' => $campaign->music->title,
-                //             'Track Artist' => $trackOwnerName,
-                //             // 'Earned Credits' => (float) repostPrice($reposter),
-                //             'Earned Credits' => (float) $reposter->repost_price,
-                //         ]
-                //     ]
-                // ]);
 
                 $ownerNotificaion = CustomNotification::create([
                     'receiver_id' => $campaign?->user?->id,
@@ -163,13 +173,11 @@ class CampaignService
                         'additional_data' => [
                             'Track Title' => $campaign->music->title,
                             'Track Artist' => $trackOwnerName,
-                            // 'Spent Credits' => (float) repostPrice($reposter),
-                            'Spent Credits' => (float) $reposter->repost_price,
+                            'Spent Credits' => (float) $totalCredits,
                         ]
                     ]
                 ]);
 
-                // broadcast(new UserNotificationSent($reposterNotification));
                 broadcast(new UserNotificationSent($ownerNotificaion));
             });
             return true;
