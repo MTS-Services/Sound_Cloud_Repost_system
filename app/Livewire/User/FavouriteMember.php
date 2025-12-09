@@ -529,7 +529,7 @@ class FavouriteMember extends Component
             sleep(1);
             $this->closeRepostModal();
             $this->closeModal();
-            $this->reset();
+            $this->resetExcept('starred');
             $this->dispatch('alert', type: 'success', message: 'Repost request sent successfully!');
         } catch (InvalidArgumentException $e) {
             Log::error('Repost request failed', ['error' => $e->getMessage()]);
