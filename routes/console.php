@@ -13,4 +13,4 @@ Schedule::command('app:update-real-followers-daily')->daily();
 Schedule::command('app:top-performance-source-weekly-update')->weekly();
 Schedule::command('app:ban-untracked-users')->weekly();
 Schedule::command('app:user-plan-expired-inactive')->daily();
-Schedule::command('campaigns:complete-expired')->everyMinute();
+Schedule::command('campaigns:complete-expired')->daily();
