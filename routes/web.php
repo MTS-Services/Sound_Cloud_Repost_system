@@ -27,8 +27,8 @@ Route::get('/buttons', function () {
 Route::post('/webhook/stripe', [App\Http\Controllers\Webhooks\StripeWebhookController::class, 'handleWebhook'])
     ->name('stripe.webhook');
 
-Route::post('/payment/create-subscription', [PaymentController::class, 'createSubscription'])
-    ->name('user.payment.create-subscription')
-    ->middleware(['auth']);
+// Route::post('/payment/create-subscription', [PaymentController::class, 'createSubscription'])
+//     ->name('user.payment.create-subscription')
+//     ->middleware(['auth']);
 
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');

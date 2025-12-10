@@ -224,7 +224,6 @@ class PaymentController extends Controller
                 'price_id' => $price->id,
                 'customer_id' => $customer->id,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Subscription setup failed', [
                 'error' => $e->getMessage(),
@@ -271,9 +270,16 @@ class PaymentController extends Controller
                 ],
             ]);
 
-            Log::info('Subscription created', [
+            // IMPORTANT: Get period dates from subscription items, not directly from subscription
+            $subscriptionItem = $subscription->items->data[0];
+            $currentPeriodStart = $subscriptionItem->current_period_start;
+            $currentPeriodEnd = $subscriptionItem->current_period_end;
+
+            Log::info('Subscription created successfully', [
                 'subscription_id' => $subscription->id,
-                'status' => $subscription->status
+                'status' => $subscription->status,
+                'current_period_start' => date('Y-m-d H:i:s', $currentPeriodStart),
+                'current_period_end' => date('Y-m-d H:i:s', $currentPeriodEnd),
             ]);
 
             // Update payment record
@@ -287,28 +293,57 @@ class PaymentController extends Controller
                     'payment_intent_id' => $subscription->latest_invoice->payment_intent->id ?? $request->setup_intent_id,
                     'status' => $subscription->status === 'active' ? Payment::STATUS_SUCCEEDED : 'processing',
                     'processed_at' => $subscription->status === 'active' ? now() : null,
+                    'metadata' => [
+                        'subscription_id' => $subscription->id,
+                        'customer_id' => $request->customer_id,
+                        'current_period_start' => $currentPeriodStart,
+                        'current_period_end' => $currentPeriodEnd,
+                    ],
                 ]);
             }
 
-            // Update UserPlan
-            UserPlan::where('order_id', $order->id)->update([
-                'stripe_subscription_id' => $subscription->id,
-                'status' => $subscription->status === 'active' 
-                    ? UserPlan::STATUS_ACTIVE 
-                    : UserPlan::STATUS_PENDING,
-                'start_date' => now(),
-                'next_billing_date' => date('Y-m-d H:i:s', $subscription->current_period_end),
-            ]);
+            // Update UserPlan with CORRECT dates
+            $userPlan = UserPlan::where('order_id', $order->id)->first();
+
+            if ($userPlan) {
+                $startDate = now();
+                // Use subscription item's current_period_end as the next billing date
+                $nextBillingDate = \Carbon\Carbon::createFromTimestamp($currentPeriodEnd);
+
+                // Calculate end_date based on billing cycle
+                if ($userPlan->billing_cycle === 'yearly') {
+                    $endDate = $startDate->copy()->addYear();
+                } else {
+                    $endDate = $startDate->copy()->addMonth();
+                }
+
+                Log::info('Updating UserPlan with dates', [
+                    'user_plan_id' => $userPlan->id,
+                    'start_date' => $startDate->format('Y-m-d H:i:s'),
+                    'end_date' => $endDate->format('Y-m-d H:i:s'),
+                    'next_billing_date' => $nextBillingDate->format('Y-m-d H:i:s'),
+                ]);
+
+                $userPlan->update([
+                    'stripe_subscription_id' => $subscription->id,
+                    'status' => $subscription->status === 'active'
+                        ? UserPlan::STATUS_ACTIVE
+                        : UserPlan::STATUS_PENDING,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'next_billing_date' => $nextBillingDate,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
                 'subscription_id' => Crypt::encryptString($subscription->id),
                 'status' => $subscription->status,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Subscription creation failed', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -405,12 +440,19 @@ class PaymentController extends Controller
             $subscriptionId = Crypt::decryptString($request->sid);
             $subscription = $this->stripeService->retrieveSubscription($subscriptionId);
 
+            Log::info('Handling subscription success', [
+                'subscription_id' => $subscription->id,
+                'status' => $subscription->status,
+                'current_period_end' => $subscription->current_period_end,
+            ]);
+
             $payment = Payment::where('subscription_id', $subscription->id)->first();
 
             if (!$payment) {
                 throw new \Exception('Payment record not found');
             }
 
+            // Update payment if not already succeeded
             if ($payment->status !== Payment::STATUS_SUCCEEDED) {
                 $payment->update([
                     'status' => Payment::STATUS_SUCCEEDED,
@@ -418,15 +460,37 @@ class PaymentController extends Controller
                 ]);
             }
 
-            DB::transaction(function () use ($payment, $subscription) {
+            $subscriptionItem = $subscription->items->data[0];
+            DB::transaction(function () use ($payment, $subscriptionItem) {
                 $order = Order::findOrFail($payment->order_id);
+                $userPlan = UserPlan::where('order_id', $order->id)->first();
 
-                UserPlan::where('order_id', $order->id)->update([
-                    'status' => UserPlan::STATUS_ACTIVE,
-                    'start_date' => now(),
-                    'end_date' => date('Y-m-d H:i:s', $subscription->current_period_end),
-                    'next_billing_date' => date('Y-m-d H:i:s', $subscription->current_period_end),
-                ]);
+
+                if ($userPlan) {
+                    $startDate = now();
+                    $nextBillingDate = \Carbon\Carbon::createFromTimestamp($subscriptionItem->current_period_end);
+
+                    // Calculate end_date based on billing cycle
+                    if ($userPlan->billing_cycle === 'yearly') {
+                        $endDate = $startDate->copy()->addYear();
+                    } else {
+                        $endDate = $startDate->copy()->addMonth();
+                    }
+
+                    Log::info('Activating subscription on success page', [
+                        'user_plan_id' => $userPlan->id,
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'next_billing_date' => $nextBillingDate,
+                    ]);
+
+                    $userPlan->update([
+                        'status' => UserPlan::STATUS_ACTIVE,
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'next_billing_date' => $nextBillingDate,
+                    ]);
+                }
 
                 $this->sendNotifications($payment, (object)['status' => 'succeeded'], $order);
             });
@@ -636,7 +700,7 @@ class PaymentController extends Controller
 
             if ($order['status'] === 'COMPLETED') {
                 $capture = $order['purchase_units'][0]['payments']['captures'][0];
-                
+
                 $payment->update([
                     'payment_provider_id' => $order['id'],
                     'status' => Payment::STATUS_SUCCEEDED,

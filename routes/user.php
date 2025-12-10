@@ -90,6 +90,8 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
 
         Route::post('/subscription/cancel', 'cancelSubscription')->name('subscription.cancel');
+
+        Route::post('/create-subscription', 'createSubscription')->name('create-subscription');
     });
 
     // Favourite / Starred Users Routes
