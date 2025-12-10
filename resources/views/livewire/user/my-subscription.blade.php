@@ -144,7 +144,7 @@
                                     {{ $payment->notes ?? 'Payment' }}
                                 </p>
                                 <p class="text-xs text-gray-600 dark:text-gray-400">
-                                    {{ $payment->processed_at->format('M d, Y h:i A') }}
+                                    {{ $payment->processed_at ? $payment->processed_at->format('M d, Y h:i A') : '' }}
                                 </p>
                             </div>
 

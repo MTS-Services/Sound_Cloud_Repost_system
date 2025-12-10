@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'auth' => Authenticate::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'webhook/stripe',
+            'webhook/paypal',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

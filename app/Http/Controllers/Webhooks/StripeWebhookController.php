@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Webhooks;
 
 use App\Http\Controllers\Controller;
-use App\Models\CreditTransaction;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\UserPlan;
@@ -15,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Webhook;
 use Stripe\Exception\SignatureVerificationException;
+use Carbon\Carbon;
 
 class StripeWebhookController extends Controller
 {
@@ -37,7 +37,6 @@ class StripeWebhookController extends Controller
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        // Handle the event
         try {
             switch ($event->type) {
                 case 'customer.subscription.created':
@@ -64,6 +63,10 @@ class StripeWebhookController extends Controller
                     $this->handleTrialWillEnd($event->data->object);
                     break;
 
+                case 'payment_intent.succeeded':
+                    $this->handlePaymentIntentSucceeded($event->data->object);
+                    break;
+
                 default:
                     Log::info('Unhandled webhook event: ' . $event->type);
             }
@@ -72,15 +75,13 @@ class StripeWebhookController extends Controller
         } catch (\Exception $e) {
             Log::error('Webhook processing failed: ' . $e->getMessage(), [
                 'event_type' => $event->type,
-                'event_id' => $event->id
+                'event_id' => $event->id,
+                'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['error' => 'Webhook processing failed'], 500);
         }
     }
 
-    /**
-     * Handle subscription creation
-     */
     protected function handleSubscriptionCreated($subscription)
     {
         Log::info('Subscription created', ['subscription_id' => $subscription->id]);
@@ -88,17 +89,16 @@ class StripeWebhookController extends Controller
         $userPlan = UserPlan::where('stripe_subscription_id', $subscription->id)->first();
 
         if ($userPlan) {
+            $currentPeriodEnd = $subscription->current_period_end;
+
             $userPlan->update([
                 'status' => UserPlan::STATUS_ACTIVE,
                 'start_date' => now(),
-                'next_billing_date' => date('Y-m-d H:i:s', $subscription->current_period_end),
+                'next_billing_date' => Carbon::createFromTimestamp($currentPeriodEnd),
             ]);
         }
     }
 
-    /**
-     * Handle subscription updates
-     */
     protected function handleSubscriptionUpdated($subscription)
     {
         Log::info('Subscription updated', ['subscription_id' => $subscription->id]);
@@ -111,12 +111,15 @@ class StripeWebhookController extends Controller
                 'canceled' => UserPlan::STATUS_CANCELED,
                 'past_due' => UserPlan::STATUS_INACTIVE,
                 'unpaid' => UserPlan::STATUS_INACTIVE,
+                'incomplete' => UserPlan::STATUS_PENDING,
+                'incomplete_expired' => UserPlan::STATUS_EXPIRED,
+                'trialing' => UserPlan::STATUS_ACTIVE,
                 default => $userPlan->status,
             };
 
             $userPlan->update([
                 'status' => $status,
-                'next_billing_date' => date('Y-m-d H:i:s', $subscription->current_period_end),
+                'next_billing_date' => Carbon::createFromTimestamp($subscription->current_period_end),
                 'auto_renew' => !$subscription->cancel_at_period_end,
             ]);
 
@@ -126,9 +129,6 @@ class StripeWebhookController extends Controller
         }
     }
 
-    /**
-     * Handle subscription deletion/cancellation
-     */
     protected function handleSubscriptionDeleted($subscription)
     {
         Log::info('Subscription deleted', ['subscription_id' => $subscription->id]);
@@ -142,7 +142,6 @@ class StripeWebhookController extends Controller
                 'canceled_at' => now(),
             ]);
 
-            // Notify user
             $user = User::where('urn', $userPlan->user_urn)->first();
             if ($user) {
                 $notification = CustomNotification::create([
@@ -162,14 +161,19 @@ class StripeWebhookController extends Controller
     }
 
     /**
-     * Handle successful invoice payment (renewals)
+     * CRITICAL: This handles all subscription renewals automatically
      */
     protected function handleInvoicePaymentSucceeded($invoice)
     {
-        Log::info('Invoice payment succeeded', ['invoice_id' => $invoice->id]);
+        Log::info('Invoice payment succeeded', [
+            'invoice_id' => $invoice->id,
+            'subscription_id' => $invoice->subscription,
+            'amount_paid' => $invoice->amount_paid / 100
+        ]);
 
         if (!$invoice->subscription) {
-            return; // Not a subscription invoice
+            Log::info('Not a subscription invoice, skipping');
+            return;
         }
 
         $userPlan = UserPlan::where('stripe_subscription_id', $invoice->subscription)->first();
@@ -179,15 +183,19 @@ class StripeWebhookController extends Controller
             return;
         }
 
-        // Check if this is a renewal (not the first payment)
+        // Check if this is a renewal payment
         $existingPayments = Payment::where('subscription_id', $invoice->subscription)
             ->where('status', Payment::STATUS_SUCCEEDED)
             ->count();
 
         $isRenewal = $existingPayments > 0;
 
+        // Get accurate period dates from invoice
+        $periodEnd = $invoice->lines->data[0]->period->end ?? $invoice->period_end;
+        $periodStart = $invoice->lines->data[0]->period->start ?? $invoice->period_start;
+
         // Create payment record
-        $payment = Payment::create([
+        Payment::create([
             'user_urn' => $userPlan->user_urn,
             'order_id' => $userPlan->order_id,
             'payment_gateway' => Payment::PAYMENT_GATEWAY_STRIPE,
@@ -204,18 +212,32 @@ class StripeWebhookController extends Controller
                 'invoice_id' => $invoice->id,
                 'subscription_id' => $invoice->subscription,
                 'is_renewal' => $isRenewal,
+                'period_start' => $periodStart,
+                'period_end' => $periodEnd,
             ],
             'processed_at' => now(),
             'creater_id' => $userPlan->creater_id,
             'creater_type' => $userPlan->creater_type,
         ]);
 
-        // Update user plan
-        $newEndDate = date('Y-m-d H:i:s', $invoice->lines->data[0]->period->end);
+        // FIXED: Update next billing date to the actual next period
+        $nextBillingDate = Carbon::createFromTimestamp($periodEnd);
+
+        // Calculate display end_date based on billing cycle
+        $displayEndDate = $userPlan->billing_cycle === 'yearly'
+            ? Carbon::createFromTimestamp($periodStart)->addYear()
+            : Carbon::createFromTimestamp($periodStart)->addMonth();
+
         $userPlan->update([
             'status' => UserPlan::STATUS_ACTIVE,
-            'end_date' => $newEndDate,
-            'next_billing_date' => $newEndDate,
+            'end_date' => $displayEndDate,
+            'next_billing_date' => $nextBillingDate,
+        ]);
+
+        Log::info('User plan updated after payment', [
+            'user_plan_id' => $userPlan->id,
+            'next_billing_date' => $nextBillingDate->format('Y-m-d H:i:s'),
+            'is_renewal' => $isRenewal
         ]);
 
         // Send notification
@@ -238,7 +260,7 @@ class StripeWebhookController extends Controller
                     'additional_data' => [
                         'Plan' => $userPlan->plan->name,
                         'Amount' => '$' . ($invoice->amount_paid / 100),
-                        'Next Billing Date' => date('M d, Y', $invoice->lines->data[0]->period->end),
+                        'Next Billing Date' => $nextBillingDate->format('M d, Y'),
                         'Receipt URL' => $invoice->hosted_invoice_url,
                     ]
                 ]
@@ -261,12 +283,13 @@ class StripeWebhookController extends Controller
         }
     }
 
-    /**
-     * Handle failed invoice payment
-     */
     protected function handleInvoicePaymentFailed($invoice)
     {
-        Log::error('Invoice payment failed', ['invoice_id' => $invoice->id]);
+        Log::error('Invoice payment failed', [
+            'invoice_id' => $invoice->id,
+            'subscription_id' => $invoice->subscription,
+            'attempt_count' => $invoice->attempt_count ?? 1
+        ]);
 
         if (!$invoice->subscription) {
             return;
@@ -278,12 +301,17 @@ class StripeWebhookController extends Controller
             return;
         }
 
-        // Update status
         $userPlan->update([
             'status' => UserPlan::STATUS_INACTIVE,
         ]);
 
-        // Create failed payment record
+        $failureReason = 'Payment failed';
+        if (isset($invoice->last_finalization_error->message)) {
+            $failureReason = $invoice->last_finalization_error->message;
+        } elseif (isset($invoice->charge->failure_message)) {
+            $failureReason = $invoice->charge->failure_message;
+        }
+
         Payment::create([
             'user_urn' => $userPlan->user_urn,
             'order_id' => $userPlan->order_id,
@@ -295,17 +323,17 @@ class StripeWebhookController extends Controller
             'currency' => strtoupper($invoice->currency),
             'status' => Payment::STATUS_FAILED,
             'is_recurring' => true,
-            'failure_reason' => $invoice->last_finalization_error->message ?? 'Payment failed',
-            'notes' => 'Subscription renewal payment failed',
+            'failure_reason' => $failureReason,
+            'notes' => 'Subscription renewal payment failed (Attempt ' . ($invoice->attempt_count ?? 1) . ')',
             'metadata' => [
                 'invoice_id' => $invoice->id,
                 'subscription_id' => $invoice->subscription,
+                'attempt_count' => $invoice->attempt_count ?? 1,
             ],
             'creater_id' => $userPlan->creater_id,
             'creater_type' => $userPlan->creater_type,
         ]);
 
-        // Notify user
         $user = User::where('urn', $userPlan->user_urn)->first();
         if ($user) {
             $notification = CustomNotification::create([
@@ -317,15 +345,16 @@ class StripeWebhookController extends Controller
                     'message' => 'Your subscription payment failed.',
                     'description' => 'Please update your payment method to continue your subscription.',
                     'icon' => 'alert-triangle',
+                    'additional_data' => [
+                        'Reason' => $failureReason,
+                        'Attempt' => $invoice->attempt_count ?? 1,
+                    ]
                 ]
             ]);
             broadcast(new UserNotificationSent($notification));
         }
     }
 
-    /**
-     * Handle trial ending soon
-     */
     protected function handleTrialWillEnd($subscription)
     {
         $userPlan = UserPlan::where('stripe_subscription_id', $subscription->id)->first();
@@ -336,18 +365,43 @@ class StripeWebhookController extends Controller
 
         $user = User::where('urn', $userPlan->user_urn)->first();
         if ($user) {
+            $trialEndDate = Carbon::createFromTimestamp($subscription->trial_end);
+            $daysRemaining = now()->diffInDays($trialEndDate);
+
             $notification = CustomNotification::create([
                 'receiver_id' => $user->id,
                 'receiver_type' => User::class,
                 'type' => CustomNotification::TYPE_USER,
                 'message_data' => [
                     'title' => 'Trial Ending Soon',
-                    'message' => 'Your free trial is ending in 3 days.',
+                    'message' => "Your free trial is ending in {$daysRemaining} days.",
                     'description' => 'Your subscription will automatically renew unless you cancel.',
                     'icon' => 'info',
+                    'additional_data' => [
+                        'Trial End Date' => $trialEndDate->format('M d, Y'),
+                        'Days Remaining' => $daysRemaining,
+                    ]
                 ]
             ]);
             broadcast(new UserNotificationSent($notification));
+        }
+    }
+
+    protected function handlePaymentIntentSucceeded($paymentIntent)
+    {
+        Log::info('Payment intent succeeded (backup event)', [
+            'payment_intent_id' => $paymentIntent->id
+        ]);
+
+        if (!$paymentIntent->invoice) {
+            $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
+
+            if ($payment && $payment->status !== Payment::STATUS_SUCCEEDED) {
+                $payment->update([
+                    'status' => Payment::STATUS_SUCCEEDED,
+                    'processed_at' => now(),
+                ]);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CampaignPlaybackController;
 use App\Http\Controllers\Backend\User\PaymentController;
+use App\Http\Controllers\Backend\User\PayPalSubscriptionController;
 use App\Livewire\User\AddCredit;
 use App\Livewire\User\Analytics;
 use App\Livewire\User\CampaignManagement\Campaign;
@@ -80,19 +81,26 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
 
     // Payment Routes
     Route::controller(PaymentController::class)->name('payment.')->prefix('payment')->group(function () {
+
+        // Stripe
         Route::get('/method/{order_id}', 'paymentMethod')->name('method');
         Route::get('/{order_id}', 'showPaymentForm')->name('form');
         Route::post('/create-intent', 'createPaymentIntent')->name('create-intent');
         Route::get('/success/page', 'paymentSuccess')->name('success');
         Route::get('/cancel', 'paymentCancel')->name('cancel');
+        Route::post('/subscription/cancel', 'cancelSubscription')->name('subscription.cancel');
+        Route::post('/create-subscription', 'createSubscription')->name('create-subscription');
+
+        // Paypal 
         Route::get('/paypal/paymentLink/{encryptedOrderId}', 'paypalPaymentLink')->name('paypal.paymentLink');
         Route::get('/paypal/payment/success/', 'paypalPaymentSuccess')->name('paypal.paymentSuccess');
         Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
-
-        Route::post('/subscription/cancel', 'cancelSubscription')->name('subscription.cancel');
-
-        Route::post('/create-subscription', 'createSubscription')->name('create-subscription');
+        Route::get('/success/{order_id}', 'paypalSubscriptionSuccess')->name('paypal.subscription-success');
+        Route::get('/cancel/{order_id}', 'paypalSubscriptionCancel')->name('paypal.subscription-cancel');
+        Route::post('/cancel-active', 'cancelSubscription')->name('cancel-active');
     });
+
+
 
     // Favourite / Starred Users Routes
     Route::get('favourites', FavouriteMember::class)->name('favourites');
