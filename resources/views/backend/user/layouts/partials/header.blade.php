@@ -6,44 +6,44 @@
         selectedIndex: -1,
         suggestions: {{ searchableRoutes() }},
         filteredSuggestions: [],
-
+    
         init() {
             // No initial filtering. The list will be empty by default.
         },
-
+    
         filterSuggestions() {
             if (!Array.isArray(this.suggestions)) {
                 console.error('Suggestions data is not a valid array.');
                 return;
             }
-
+    
             const query = this.searchQuery.trim().toLowerCase();
-
+    
             // ✅ Only filter if the query is not empty.
             if (query === '') {
                 this.filteredSuggestions = [];
             } else {
                 this.filteredSuggestions = this.suggestions.filter(item => {
                     if (!item || !item.title || !item.keywords) return false;
-
+    
                     // Check if the query matches the title
                     const titleMatch = item.title.toLowerCase().includes(query);
-
+    
                     // Check if the query matches any of the keywords
                     const keywordMatch = item.keywords.some(keyword =>
                         keyword.toLowerCase().includes(query)
                     );
-
+    
                     return titleMatch || keywordMatch;
                 });
             }
             this.selectedIndex = -1;
         },
-
+    
         selectSuggestion(index) {
             this.selectedIndex = index;
         },
-
+    
         handleKeydown(event) {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -61,7 +61,7 @@
                 this.searchModalOpen = false;
             }
         },
-
+    
         // `performSearch` is no longer needed since we are using <a> tags
         performSearch(url) {
             this.searchModalOpen = false;
@@ -202,6 +202,13 @@
                             class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
                             <x-heroicon-o-credit-card class="w-5 h-5" />
                             {{ __('Credit History') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a wire:navigate href="{{ route('user.my-subscription') }}"
+                            class="flex items-center  px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md text-sm block">
+                            <x-heroicon-o-wallet class="w-5 h-5" />
+                            {{ __('My Subscription') }}
                         </a>
                     </li>
                     <li class="border-t border-gray-200 dark:border-slate-700 pt-2">

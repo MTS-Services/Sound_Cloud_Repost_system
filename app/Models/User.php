@@ -55,6 +55,8 @@ class User extends AuthBaseModel implements MustVerifyEmail
         'updater_type',
         'deleter_id',
         'deleter_type',
+
+        'stripe_customer_id',
     ];
 
     /**

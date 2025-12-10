@@ -103,15 +103,10 @@ class StripeService
     public function cancelSubscription(string $subscriptionId, bool $immediately = false): Subscription
     {
         try {
-            // Retrieve the subscription instance first
-            $subscription = Subscription::retrieve($subscriptionId);
-
             if ($immediately) {
-                // Cancel immediately using instance method
-                return $subscription->cancel();
+                return Subscription::cancel($subscriptionId);
             }
 
-            // Cancel at period end using update method
             return Subscription::update($subscriptionId, [
                 'cancel_at_period_end' => true,
             ]);

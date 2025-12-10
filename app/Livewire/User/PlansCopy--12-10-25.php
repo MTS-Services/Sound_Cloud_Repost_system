@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
-class Plans extends Component
+class PlansCopy extends Component
 {
     public $isYearly = false;
     public Collection $plans;
@@ -23,7 +23,6 @@ class Plans extends Component
     protected OrderService $orderService;
     protected UserPlanService $userPlanService;
     protected UserSettingsService $userSettingsService;
-
     public function boot(
         PlanService $planService,
         OrderService $orderService,
@@ -31,6 +30,7 @@ class Plans extends Component
         UserSettingsService $userSettingsService
     ) {
         $this->planService = $planService;
+        $this->orderService = $orderService;
         $this->orderService = $orderService;
         $this->userPlanService = $userPlanService;
         $this->userSettingsService = $userSettingsService;
@@ -49,14 +49,16 @@ class Plans extends Component
                 $data['user_urn'] = user()->urn;
                 $data['creater_id'] = user()->id;
                 $data['creater_type'] = User::class;
+                $data['plan_id'] = $plan->id;
 
                 $activeUserPlan = $this->userPlanService->getUserActivePlan(user()->urn);
 
-                if ($activeUserPlan && $activeUserPlan->plan?->monthly_price > $plan->monthly_price) {
-                    $this->dispatch('alert', type: 'error', message: 'You have already subscribed to a plan with higher price. Cannot downgrade to a lower price plan.');
-                    return null;
-                } elseif ($activeUserPlan && $activeUserPlan->plan?->monthly_price < $plan->monthly_price) {
-                    // Calculate prorated amount for upgrade
+                if ($activeUserPlan && $activeUserPlan->plan?->price > $plan->price) {
+
+                    $this->dispatch('alert', type: 'error', message: 'You have already subscribed to a plan with higher price. Cannot upgrade a lower price plan.');
+
+                    return null; // Return null here
+                } elseif ($activeUserPlan && $activeUserPlan->plan?->price < $plan->price) {
                     $data['amount'] = $this->isYearly
                         ? $plan->yearly_price - $activeUserPlan->plan->yearly_price
                         : $plan->monthly_price - $activeUserPlan->plan->monthly_price;
@@ -64,49 +66,20 @@ class Plans extends Component
                     $data['start_date'] = $activeUserPlan->start_date;
                     $data['end_date'] = $activeUserPlan->end_date;
                     $data['duration'] = $activeUserPlan->duration;
-                    $billingCycle = $activeUserPlan->billing_cycle;
                 } else {
-                    // New subscription
                     $data['amount'] = $this->isYearly ? $plan->yearly_price : $plan->monthly_price;
                     $data['notes'] = "Plan subscription for " . $plan->name;
                     $data['start_date'] = now();
-                    
-                    if ($this->isYearly) {
-                        $data['end_date'] = now()->addYear();
-                        $billingCycle = 'yearly';
-                    } else {
-                        $data['end_date'] = now()->addMonth();
-                        $billingCycle = 'monthly';
-                    }
-                    
+                    $data['end_date'] = $this->isYearly ? now()->addYear() : now()->addMonth();
                     $data['duration'] = now()->diffInDays($data['end_date']);
                 }
 
                 $order = $this->orderService->createOrder($data);
-                
-                // Create or update UserPlan
                 $data['order_id'] = $order->id;
                 $data['price'] = $data['amount'];
-                $data['billing_cycle'] = $billingCycle;
-                $data['auto_renew'] = true; // Enable auto-renewal by default
-                $data['next_billing_date'] = $data['end_date'];
-                
-                if ($activeUserPlan && $activeUserPlan->plan?->monthly_price < $plan->monthly_price) {
-                    // Update existing plan for upgrade
-                    $activeUserPlan->update([
-                        'plan_id' => $plan->id,
-                        'order_id' => $order->id,
-                        'price' => $data['price'],
-                        'billing_cycle' => $billingCycle,
-                        'status' => \App\Models\UserPlan::STATUS_PENDING,
-                        'notes' => $data['notes'],
-                    ]);
-                } else {
-                    // Create new plan
-                    $this->userPlanService->createUserPlan($data);
-                }
+                $this->userPlanService->createUserPlan($data);
 
-                return $order;
+                return $order; // Return the order to the outer scope
             });
 
             if ($order) {
@@ -117,20 +90,18 @@ class Plans extends Component
             }
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            $this->dispatch('alert', type: 'error', message: 'An error occurred. Please try again.');
+            session()->flash('error', $e->getMessage());
         }
     }
 
     public function mount()
     {
-        $this->plans = $this->planService->getPlans('monthly_price', 'asc')
-            ->with('featureRelations.feature')
-            ->active()
-            ->get();
+        $this->plans = $this->planService->getPlans('monthly_price', 'asc')->with('featureRelations.feature')->active()->get();
     }
 
     public function render()
     {
+
         return view('livewire.user.plans');
     }
 }

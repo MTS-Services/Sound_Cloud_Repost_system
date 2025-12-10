@@ -23,6 +23,7 @@ use App\Livewire\User\Plans;
 use App\Livewire\User\MyAccount;
 use App\Livewire\User\Settings;
 use App\Livewire\User\TrackSubmit;
+use App\Livewire\User\MySubscription;
 
 // SoundCloud Routes
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -65,8 +66,8 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         ->name('my-account.user');
 
     // Route for default "My Account"
-    Route::get('/my-account', MyAccount::class)
-        ->name('my-account');
+    Route::get('/my-account', MyAccount::class)->name('my-account');
+    Route::get('/subscription', MySubscription::class)->name('my-subscription');
     Route::get('help-support', HelpAndSupport::class)->name('help-support');
     Route::get('track/submit', TrackSubmit::class)->name('track.submit');
     Route::get('settings', Settings::class)->name('settings');
@@ -87,6 +88,8 @@ Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user']
         Route::get('/paypal/paymentLink/{encryptedOrderId}', 'paypalPaymentLink')->name('paypal.paymentLink');
         Route::get('/paypal/payment/success/', 'paypalPaymentSuccess')->name('paypal.paymentSuccess');
         Route::get('/paypal/payment/cancel', 'paypalPaymentCancel')->name('paypal.paymentCancel');
+
+        Route::post('/subscription/cancel', 'cancelSubscription')->name('subscription.cancel');
     });
 
     // Favourite / Starred Users Routes
