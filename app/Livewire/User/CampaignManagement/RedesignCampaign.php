@@ -21,6 +21,8 @@ use App\Services\User\CampaignManagement\CampaignService;
 use App\Services\User\CampaignManagement\MyCampaignService;
 use App\Services\User\StarredUserService;
 use App\Services\User\UserSettingsService;
+use App\Jobs\TrackViewCount;
+use Illuminate\Support\Facades\Bus;
 
 class RedesignCampaign extends Component
 {
@@ -435,7 +437,9 @@ class RedesignCampaign extends Component
             $query->where('music_type', 'like', "%{$this->searchMusicType}%");
         }
 
-        return $query->latest()->paginate(10, ['*'], $this->activeMainTab . 'Page');
+        $campaignLists = $query->latest()->paginate(10, ['*'], $this->activeMainTab . 'Page');
+        Bus::dispatch(new TrackViewCount($campaignLists, user()->urn, 'campaign'));
+        return $campaignLists;
     }
 
 
@@ -497,6 +501,7 @@ class RedesignCampaign extends Component
         $music = $campaign->music;
         $response = $this->analyticsService->recordAnalytics(source: $music, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
         if ($response != false || $response != null) {
+            dd($response);
             $campaign->increment('playback_count');
         }
     }
