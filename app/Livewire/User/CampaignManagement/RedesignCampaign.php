@@ -323,7 +323,7 @@ class RedesignCampaign extends Component
             if ($explicitSelection) {
                 $recommendedCountQuery->where(function ($query) {
                     $query->whereIn('target_genre', $this->selectedGenres);
-                    // ->orWhere('target_genre', 'anyGenre'); 
+                    // ->orWhere('target_genre', 'anyGenre');
                 });
             } elseif (!$explicitCleared && !empty($userDefaultGenres)) {
                 $recommendedCountQuery->where(function ($query) use ($userDefaultGenres) {
@@ -485,6 +485,19 @@ class RedesignCampaign extends Component
                 'exception' => $e,
             ]);
             $this->dispatch('alert', type: 'error', message: 'Failed to repost. Please try again.');
+        }
+    }
+
+    #[On('updatePlayCount')]
+    public function updatePlayCount($campaignId)
+    {
+        $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+        $campaign->load('music');
+        $music = $campaign->music;
+        dd($campaign, $music);
+        $response = $this->analyticsService->recordAnalytics(source: $this->track, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
+        if ($response != false || $response != null) {
+            $campaign->increment('playback_count');
         }
     }
 }

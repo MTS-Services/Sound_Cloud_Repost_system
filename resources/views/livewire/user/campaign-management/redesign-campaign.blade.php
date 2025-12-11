@@ -843,6 +843,7 @@
                         const track = this.tracks[campaignId];
                         track.isPlaying = true;
                         track.playStartTime = Date.now();
+                        Livewire.dispatch('updatePlayCount', campaignId);
                         this.syncToBackend(campaignId, 'play');
                     });
 
