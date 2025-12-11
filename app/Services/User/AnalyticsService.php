@@ -77,7 +77,9 @@ class AnalyticsService
             return null;
         }
         // Use the new reusable method to check if the update is allowed.
-        if (!$this->syncUserAction($source, $actUserUrn, $type)) {
+        $syncAction = $this->syncUserAction($source, $actUserUrn, $type);
+        dd($syncAction);
+        if (!$syncAction) {
             return false;
         }
         Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()} and actuser urn: {$actUserUrn}.");

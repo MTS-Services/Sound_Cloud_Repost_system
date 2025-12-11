@@ -501,7 +501,6 @@ class RedesignCampaign extends Component
         $music = $campaign->music;
         $response = $this->analyticsService->recordAnalytics(source: $music, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
         if ($response != false || $response != null) {
-            dd($response);
             $campaign->increment('playback_count');
         }
     }
