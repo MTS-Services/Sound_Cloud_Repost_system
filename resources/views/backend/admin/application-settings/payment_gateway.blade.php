@@ -43,9 +43,13 @@
                                 placeholder="Enter stripe secret"
                                 value="{{ $payment_settings['stripe_secret'] ?? '' }}" :messages="$errors->get('stripe_secret')" />
                         </div>
+                        <div class="space-y-2  sm:col-span-2">
+                            <x-inputs.input name="stripe_webhook_secret" label="{{ __('Stripe Webhook Secret (All events selected key)') }}"
+                                placeholder="Enter stripe webhook secret"
+                                value="{{ $payment_settings['stripe_webhook_secret'] ?? '' }}" :messages="$errors->get('stripe_webhook_secret')" />
+                        </div>
                         <div class="space-y-2 sm:col-span-1">
-                            <x-inputs.select name="stripe_gateway_status" label="{{ __('Active') }}"
-                                :options="App\Models\ApplicationSetting::PAYMENT_GATEWAY_STATUSES"
+                            <x-inputs.select name="stripe_gateway_status" label="{{ __('Active') }}" :options="App\Models\ApplicationSetting::PAYMENT_GATEWAY_STATUSES"
                                 selected="{{ $payment_settings['stripe_gateway_status'] ?? 'active' }}"
                                 :messages="$errors->get('stripe_gateway_status')" />
                         </div>
