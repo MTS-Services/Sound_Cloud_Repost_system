@@ -492,12 +492,10 @@ class RedesignCampaign extends Component
     #[On('updatePlayCount')]
     public function updatePlayCount($campaignId)
     {
-        // dd($campaignId);
         $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
         $campaign->load('music');
         $music = $campaign->music;
-        dd($campaign, $music);
-        $response = $this->analyticsService->recordAnalytics(source: $this->track, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
+        $response = $this->analyticsService->recordAnalytics(source: $music, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
         if ($response != false || $response != null) {
             $campaign->increment('playback_count');
         }
