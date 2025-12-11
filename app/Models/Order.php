@@ -228,7 +228,6 @@ class Order extends BaseModel
                         'end_date' => now()->addDays($model->userPlan->duration)
                     ]);
                 }
-
             }
             if ($model->isDirty('status') && $model->status == self::STATUS_FAILED) {
                 if ($model->transaction) {
@@ -255,7 +254,52 @@ class Order extends BaseModel
 
 
 
+    /**
+     * Get the plan if this order is for a plan
+     */
+    public function plan()
+    {
+        if ($this->source_type === Plan::class) {
+            return $this->source;
+        }
+        return null;
+    }
 
+    /**
+     * Get the credit package if this order is for credits
+     */
+    public function credit()
+    {
+        if ($this->source_type === Credit::class) {
+            return $this->source;
+        }
+        return null;
+    }
 
+    /**
+     * Check if this order is for a plan subscription
+     */
+    public function isPlanOrder(): bool
+    {
+        return $this->source_type === Plan::class || $this->type === self::TYPE_PLAN;
+    }
 
+    /**
+     * Check if this order is for credit purchase
+     */
+    public function isCreditOrder(): bool
+    {
+        return $this->source_type === Credit::class || $this->type === self::TYPE_CREDIT;
+    }
+
+    /**
+     * Accessor to get plan_id for backward compatibility
+     */
+    public function getPlanIdAttribute(): ?int
+    {
+        if ($this->source_type === Plan::class) {
+            return $this->source_id;
+        }
+        return null;
+    }
 }

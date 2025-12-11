@@ -39,12 +39,15 @@ class Payment extends BaseModel
         'updater_type',
         'deleter_type',
 
+        'subscription_id',
+        'is_recurring',
     ];
 
     protected $casts = [
         'metadata' => 'array',
         'processed_at' => 'datetime',
         'amount' => 'decimal:2',
+        'is_recurring' => 'boolean',
     ];
 
     public function __construct(array $attributes = [])
@@ -53,7 +56,7 @@ class Payment extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
             'status_color',
-            
+
             'payment_gateway_label',
             'payment_gateway_color',
         ]);
@@ -66,7 +69,6 @@ class Payment extends BaseModel
     public const STATUS_SUCCEEDED = "succeeded";
     public const STATUS_CANCELED = "canceled";
     public const STATUS_FAILED = "failed";
-
 
     public function getStatusColorList(): array
     {
@@ -92,7 +94,7 @@ class Payment extends BaseModel
             self::STATUS_FAILED => 'Failed',
         ];
     }
-         public function getStatusColorAttribute()
+    public function getStatusColorAttribute()
     {
         return [
             self::STATUS_SUCCEEDED => 'badge-success',
@@ -203,5 +205,4 @@ class Payment extends BaseModel
             }
         });
     }
-
 }

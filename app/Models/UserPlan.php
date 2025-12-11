@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserPlan extends BaseModel
 {
-    //
-
     protected $fillable = [
         'sort_order',
         'user_urn',
@@ -22,12 +20,28 @@ class UserPlan extends BaseModel
         'notes',
         'duration',
 
+        'stripe_subscription_id',
+        'paypal_subscription_id',
+        'auto_renew',
+        'next_billing_date',
+        'billing_cycle',
+        'canceled_at',
+
         'creater_id',
         'updater_id',
         'deleter_id',
         'creator_type',
         'updater_type',
         'deleter_type',
+    ];
+
+    protected $casts = [
+        'auto_renew' => 'boolean',
+        'next_billing_date' => 'datetime',
+        'canceled_at' => 'datetime',
+
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
 
@@ -170,5 +184,4 @@ class UserPlan extends BaseModel
             ->whereDate('end_date', '<', now())
             ->update(['status' => self::STATUS_INACTIVE]);
     }
-
 }
