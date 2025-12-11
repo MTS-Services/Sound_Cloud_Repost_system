@@ -36,7 +36,7 @@ class AnalyticsService
                 'act_user_urn' => $actUserUrn,
                 'owner_user_urn' => $ownerUserUrn,
                 'source_id' => $source->id,
-                'source_type' => $source->getMorphClass(),
+                'source_type' => get_class($source),
                 'type' => $type,
                 'ip_address' => $ipAddress
             ]);
@@ -50,16 +50,16 @@ class AnalyticsService
 
         $response = UserAnalytics::where('act_user_urn', $actUserUrn)
             ->where('source_id', $source->id)
-            ->where('source_type', $source->getMorphClass())
+            ->where('source_type', get_class($source))
             ->where('owner_user_urn', $ownerUserUrn)
             ->where('type', $type)
             ->where('ip_address', $ipAddress)
             ->whereDate('created_at', '>=', $today->startOfDay())
             ->first();
 
-        
+        dd('response : ', $response, 'actUserUrn: ',  $actUserUrn, 'ownerUserUrn: ', $ownerUserUrn, 'source_id: ', $source->id, 'source_type: ', get_class($source), 'type: ', $type, 'ip_address: ', $ipAddress, 'logged user: ', user()->urn);
         if ($response) {
-            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type:{$source->getMorphClass()} for ip address: {$ipAddress}. Already updated today.");
+            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type: " .get_class($source) . " for ip address: {$ipAddress}. Already updated today.");
             return false;
         }
 
@@ -74,7 +74,7 @@ class AnalyticsService
 
         // If no user URN is found, log and exit early.
         if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()}. No user URN found.");
+            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:" . get_class($source) . " . No user URN found.");
             return null;
         }
         // Use the new reusable method to check if the update is allowed.
@@ -82,16 +82,16 @@ class AnalyticsService
         if (!$syncAction) {
             return false;
         }
-        Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:{$source->getMorphClass()} and actuser urn: {$actUserUrn}.");
+        Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type: " . get_class($source) . " and actuser urn: {$actUserUrn}.");
 
         // Find or create the UserAnalytics record based on the unique combination if created_at is today then update else create.
         $analytics = UserAnalytics::create([
             'owner_user_urn' => $ownerUserUrn,
             'act_user_urn' => $actUserUrn,
             'source_id' => $source->id,
-            'source_type' => $source->getMorphClass(),
+            'source_type' => get_class($source),
             'actionable_id' => $actionable ? $actionable->id : null,
-            'actionable_type' => $actionable ? $actionable->getMorphClass() : null,
+            'actionable_type' => $actionable ? get_class($actionable) : null,
             'ip_address' => request()->ip(),
             'type' => $type,
             'genre' => $genre == '' ? 'anyGenre' : $genre,
@@ -219,7 +219,7 @@ class AnalyticsService
 
         if ($source !== null) {
             $query->where('source_id', $source->id)
-                ->where('source_type', $source->getMorphClass());
+                ->where('source_type', get_class($source));
         }
 
         if ($actionableType !== null) {
