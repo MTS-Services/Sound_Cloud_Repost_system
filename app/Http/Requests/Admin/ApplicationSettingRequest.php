@@ -66,19 +66,26 @@ class ApplicationSettingRequest extends FormRequest
             Rule::in([App::SMTP_DRIVER_MAILER, App::SMTP_DRIVER_MAILGUN, App::SMTP_DRIVER_SES, App::SMTP_DRIVER_POSTMARK, App::SMTP_DRIVER_SENDMAIL]),
             'smtp_from_address' => 'sometimes|nullable|string',
             'smtp_from_name' => 'sometimes|nullable|string',
+
+
             'plan_yearly_save_persentage' => 'sometimes|nullable|numeric|min:0|max:100',
+
+
             'paypal_mode' => 'sometimes|required|string',
             Rule::in([App::PAYMENT_GATEWAY_LIVE, App::PAYMENT_GATEWAY_SANDBOX]),
             'paypal_key' => 'sometimes|required|string',
             'paypal_secret' => 'sometimes|required|string',
+            'paypal_gateway_status' => 'sometimes|required|integer',
+            Rule::in([App::PAYMENT_GATEWAY_STATUS_ACTIVE, App::PAYMENT_GATEWAY_STATUS_INACTIVE]),
+
             'stripe_mode' => 'sometimes|required|string',
             Rule::in([App::PAYMENT_GATEWAY_LIVE, App::PAYMENT_GATEWAY_SANDBOX]),
             'stripe_key' => 'sometimes|required|string',
             'stripe_secret' => 'sometimes|required|string',
+            'stripe_webhook_secret' => 'sometimes|required|string',
             'stripe_gateway_status' => 'sometimes|required|integer',
             Rule::in([App::PAYMENT_GATEWAY_STATUS_ACTIVE, App::PAYMENT_GATEWAY_STATUS_INACTIVE]),
-            'paypal_gateway_status' => 'sometimes|required|integer',
-            Rule::in([App::PAYMENT_GATEWAY_STATUS_ACTIVE, App::PAYMENT_GATEWAY_STATUS_INACTIVE]),
+
             'login_bonus' => 'sometimes|required|numeric|min:0|max:100',
         ];
     }
