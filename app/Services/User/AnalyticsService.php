@@ -57,7 +57,7 @@ class AnalyticsService
             ->whereDate('created_at', '>=', $today->startOfDay())
             ->first();
 
-        dd($response, $actUserUrn, $ownerUserUrn, $source->id, $source->getMorphClass(), $type, $ipAddress);
+        dd('response : ', $response, 'actUserUrn: ',  $actUserUrn, 'ownerUserUrn: ', $ownerUserUrn, 'source_id: ', $source->id, 'source_type: ', $source->getMorphClass(), 'type: ', $type, 'ip_address: ', $ipAddress, 'logged user: ', user()->urn);
         if ($response) {
             Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type:{$source->getMorphClass()} for ip address: {$ipAddress}. Already updated today.");
             return false;
