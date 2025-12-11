@@ -57,6 +57,7 @@ class AnalyticsService
             ->whereDate('created_at', '>=', $today->startOfDay())
             ->first();
 
+        dd($response, $actUserUrn, $ownerUserUrn, $source->id, $source->getMorphClass(), $type, $ipAddress);
         if ($response) {
             Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type:{$source->getMorphClass()} for ip address: {$ipAddress}. Already updated today.");
             return false;
@@ -78,7 +79,6 @@ class AnalyticsService
         }
         // Use the new reusable method to check if the update is allowed.
         $syncAction = $this->syncUserAction($source, $actUserUrn, $type);
-        dd($syncAction);
         if (!$syncAction) {
             return false;
         }
