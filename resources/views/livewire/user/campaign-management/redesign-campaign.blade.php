@@ -844,7 +844,7 @@
                         track.isPlaying = true;
                         track.playStartTime = Date.now();
                         console.log('play', campaignId);
-                        // Livewire.dispatch('updatePlayCount', campaignId);
+                        Livewire.dispatch('updatePlayCount', campaignId);
                         this.syncToBackend(campaignId, 'play');
                     });
 
