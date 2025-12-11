@@ -18,12 +18,59 @@ class AnalyticsService
      * Checks if an action update is allowed for a given action, user, and source today.
      * If allowed, it sets a session flag to prevent subsequent updates for the day.
      */
+    // public function syncUserAction(
+    //     object $source,
+    //     string $actUserUrn,
+    //     int $type,
+    //     ?string $ipAddress = null,
+
+    // ): bool|null {
+    //     $ownerUserUrn = $source->user?->urn ?? null;
+
+    //     if ($ipAddress == null) {
+    //         $ipAddress = request()->ip();
+    //     }
+
+    //     if (!$actUserUrn || !$ownerUserUrn) {
+    //         Log::info("Analytics recording skipped - missing user URN", [
+    //             'act_user_urn' => $actUserUrn,
+    //             'owner_user_urn' => $ownerUserUrn,
+    //             'source_id' => $source->id,
+    //             'source_type' => get_class($source),
+    //             'type' => $type,
+    //             'ip_address' => $ipAddress
+    //         ]);
+    //         return null;
+    //     }
+
+    //     // first check on datbase with created at time to check is updated on current or not
+
+    //     $today = Carbon::today();
+    //     Log::info("date: {$today} and start date: {$today->startOfDay()}");
+
+    //     $response = UserAnalytics::where('act_user_urn', $actUserUrn)
+    //         ->where('source_id', $source->id)
+    //         ->where('source_type', get_class($source))
+    //         ->where('owner_user_urn', $ownerUserUrn)
+    //         ->where('type', $type)
+    //         ->where('ip_address', $ipAddress)
+    //         ->whereDate('created_at', '>=', $today->startOfDay())
+    //         ->first();
+
+    //     // dd('response : ', $response, 'actUserUrn: ',  $actUserUrn, 'ownerUserUrn: ', $ownerUserUrn, 'source_id: ', $source->id, 'source_type: ', get_class($source), 'type: ', $type, 'ip_address: ', $ipAddress, 'logged user: ', user()->urn);
+    //     if ($response) {
+    //         Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type: " .get_class($source) . " for ip address: {$ipAddress}. Already updated today.");
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
+
     public function syncUserAction(
         object $source,
         string $actUserUrn,
         int $type,
         ?string $ipAddress = null,
-
     ): bool|null {
         $ownerUserUrn = $source->user?->urn ?? null;
 
@@ -43,23 +90,46 @@ class AnalyticsService
             return null;
         }
 
-        // first check on datbase with created at time to check is updated on current or not
+        $today = Carbon::today()->toDateString();
 
-        $today = Carbon::today();
-        Log::info("date: {$today} and start date: {$today->startOfDay()}");
+        // ✅ ADD: Log search parameters
+        Log::info("Searching for duplicate with parameters:", [
+            'act_user_urn' => $actUserUrn,
+            'source_id' => $source->id,
+            'source_type' => get_class($source),
+            'owner_user_urn' => $ownerUserUrn,
+            'type' => $type,
+            'ip_address' => $ipAddress,
+            'date' => $today
+        ]);
 
-        $response = UserAnalytics::where('act_user_urn', $actUserUrn)
+        $query = UserAnalytics::where('act_user_urn', $actUserUrn)
             ->where('source_id', $source->id)
             ->where('source_type', get_class($source))
             ->where('owner_user_urn', $ownerUserUrn)
             ->where('type', $type)
             ->where('ip_address', $ipAddress)
-            ->whereDate('created_at', '>=', $today->startOfDay())
-            ->first();
+            ->whereDate('created_at', $today);
 
-        // dd('response : ', $response, 'actUserUrn: ',  $actUserUrn, 'ownerUserUrn: ', $ownerUserUrn, 'source_id: ', $source->id, 'source_type: ', get_class($source), 'type: ', $type, 'ip_address: ', $ipAddress, 'logged user: ', user()->urn);
+        // ✅ ADD: Log the actual SQL query
+        Log::info("SQL Query: " . $query->toSql());
+        Log::info("Query Bindings: " . json_encode($query->getBindings()));
+
+        $response = $query->first();
+
+        // ✅ ADD: Log what was found
         if ($response) {
-            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type: " .get_class($source) . " for ip address: {$ipAddress}. Already updated today.");
+            Log::info("Found existing record:", [
+                'id' => $response->id,
+                'created_at' => $response->created_at,
+                'all_data' => $response->toArray()
+            ]);
+        } else {
+            Log::info("No existing record found - will create new one");
+        }
+
+        if ($response) {
+            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type: " . get_class($source) . " for ip address: {$ipAddress}. Already updated today.");
             return false;
         }
 
