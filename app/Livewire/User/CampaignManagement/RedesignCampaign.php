@@ -5,6 +5,7 @@ namespace App\Livewire\User\CampaignManagement;
 use App\Models\Campaign as ModelsCampaign;
 use App\Models\Playlist;
 use App\Models\Track;
+use App\Models\UserAnalytics;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
