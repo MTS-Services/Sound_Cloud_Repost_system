@@ -491,6 +491,7 @@ class RedesignCampaign extends Component
     #[On('updatePlayCount')]
     public function updatePlayCount($campaignId)
     {
+        dd($campaignId);
         $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
         $campaign->load('music');
         $music = $campaign->music;
