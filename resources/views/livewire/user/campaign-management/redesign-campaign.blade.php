@@ -582,6 +582,7 @@
                 isInitialized: false,
                 sessionSyncInProgress: false,
                 widgetCleanupTimeout: null,
+                playCountDispatched: {}, // ✅ NEW: Track which campaigns have dispatched play count
 
                 init() {
                     console.log('🎵 Initializing trackPlaybackManager');
@@ -589,6 +590,7 @@
                     if (!this.isInitialized) {
                         this.clearSessionData();
                         localStorage.removeItem('campaign_tracking_data');
+                        this.playCountDispatched = {}; // ✅ Reset on init
                         this.isInitialized = true;
                     }
 
@@ -843,8 +845,17 @@
                         const track = this.tracks[campaignId];
                         track.isPlaying = true;
                         track.playStartTime = Date.now();
-                        console.log('play', campaignId);
-                        Livewire.dispatch('updatePlayCount', { campaignId: campaignId });
+                        console.log('🎵 Play event for campaign:', campaignId);
+                        // ✅ FIX: Only dispatch updatePlayCount ONCE per campaign per page load
+                        if (!this.playCountDispatched[campaignId]) {
+                            console.log('📊 Dispatching updatePlayCount for:', campaignId);
+                            Livewire.dispatch('updatePlayCount', {
+                                campaignId: campaignId
+                            });
+                            this.playCountDispatched[campaignId] = true; // Mark as dispatched
+                        } else {
+                            console.log('⏭️ Skipping updatePlayCount (already dispatched) for:', campaignId);
+                        }
                         this.syncToBackend(campaignId, 'play');
                     });
 
