@@ -23,6 +23,7 @@ use App\Services\User\StarredUserService;
 use App\Services\User\UserSettingsService;
 use App\Jobs\TrackViewCount;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 
 class RedesignCampaign extends Component
 {
@@ -493,14 +494,48 @@ class RedesignCampaign extends Component
         }
     }
 
+    // #[On('updatePlayCount')]
+    // public function updatePlayCount($campaignId)
+    // {
+    //     $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
+    //     $campaign->load('music');
+    //     $music = $campaign->music;
+    //     $response = $this->analyticsService->recordAnalytics(source: $music, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
+    //     if ($response != false || $response != null) {
+    //         $campaign->increment('playback_count');
+    //     }
+    // }
+
+    // In RedesignCampaign.php
+
+    protected array $debounceTimers = [];
+
     #[On('updatePlayCount')]
     public function updatePlayCount($campaignId)
     {
+        // ✅ Debounce: Ignore if called within last 2 seconds for same campaign
+        $cacheKey = "play_count_debounce_{$campaignId}_" . user()->urn;
+
+        if (Cache::has($cacheKey)) {
+            Log::info("updatePlayCount debounced for campaign {$campaignId}");
+            return;
+        }
+
+        // Set debounce lock for 2 seconds
+        Cache::put($cacheKey, true, now()->addSeconds(2));
+
         $campaign = $this->campaignService->getCampaign(encrypt($campaignId));
         $campaign->load('music');
         $music = $campaign->music;
-        $response = $this->analyticsService->recordAnalytics(source: $music, actionable: $campaign, type: UserAnalytics::TYPE_PLAY, genre: $campaign->target_genre);
-        if ($response != false || $response != null) {
+
+        $response = $this->analyticsService->recordAnalytics(
+            source: $music,
+            actionable: $campaign,
+            type: UserAnalytics::TYPE_PLAY,
+            genre: $campaign->target_genre
+        );
+
+        if ($response != false && $response != null) {
             $campaign->increment('playback_count');
         }
     }

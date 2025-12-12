@@ -66,109 +66,218 @@ class AnalyticsService
     //     return true;
     // }
 
-    public function syncUserAction(
+    // public function syncUserAction(
+    //     object $source,
+    //     string $actUserUrn,
+    //     int $type,
+    //     ?string $ipAddress = null,
+    // ): bool|null {
+    //     $ownerUserUrn = $source->user?->urn ?? null;
+
+    //     if ($ipAddress == null) {
+    //         $ipAddress = request()->ip();
+    //     }
+
+    //     if (!$actUserUrn || !$ownerUserUrn) {
+    //         Log::info("Analytics recording skipped - missing user URN", [
+    //             'act_user_urn' => $actUserUrn,
+    //             'owner_user_urn' => $ownerUserUrn,
+    //             'source_id' => $source->id,
+    //             'source_type' => get_class($source),
+    //             'type' => $type,
+    //             'ip_address' => $ipAddress
+    //         ]);
+    //         return null;
+    //     }
+
+    //     $today = Carbon::today()->toDateString();
+
+    //     // ✅ ADD: Log search parameters
+    //     Log::info("Searching for duplicate with parameters:", [
+    //         'act_user_urn' => $actUserUrn,
+    //         'source_id' => $source->id,
+    //         'source_type' => get_class($source),
+    //         'owner_user_urn' => $ownerUserUrn,
+    //         'type' => $type,
+    //         'ip_address' => $ipAddress,
+    //         'date' => $today
+    //     ]);
+
+    //     $query = UserAnalytics::where('act_user_urn', $actUserUrn)
+    //         ->where('source_id', $source->id)
+    //         ->where('source_type', get_class($source))
+    //         ->where('owner_user_urn', $ownerUserUrn)
+    //         ->where('type', $type)
+    //         ->where('ip_address', $ipAddress)
+    //         ->whereDate('created_at', $today);
+
+    //     // ✅ ADD: Log the actual SQL query
+    //     Log::info("SQL Query: " . $query->toSql());
+    //     Log::info("Query Bindings: " . json_encode($query->getBindings()));
+
+    //     $response = $query->first();
+
+    //     // ✅ ADD: Log what was found
+    //     if ($response) {
+    //         Log::info("Found existing record:", [
+    //             'id' => $response->id,
+    //             'created_at' => $response->created_at,
+    //             'all_data' => $response->toArray()
+    //         ]);
+    //     } else {
+    //         Log::info("No existing record found - will create new one");
+    //     }
+
+    //     if ($response) {
+    //         Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type: " . get_class($source) . " for ip address: {$ipAddress}. Already updated today.");
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
+
+    // public function recordAnalytics(object $source, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
+    // {
+    //     // Get the owner's URN from the track model.
+    //     $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $source?->user?->urn);
+    //     $actUserUrn = $actUserUrn ?? user()->urn;
+
+    //     // If no user URN is found, log and exit early.
+    //     if (!$ownerUserUrn) {
+    //         Log::info("User action update skipped for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:" . get_class($source) . " . No user URN found.");
+    //         return null;
+    //     }
+    //     // Use the new reusable method to check if the update is allowed.
+    //     $syncAction = $this->syncUserAction($source, $actUserUrn, $type);
+    //     if (!$syncAction) {
+    //         return false;
+    //     }
+    //     Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type: " . get_class($source) . " and actuser urn: {$actUserUrn}.");
+
+    //     // Find or create the UserAnalytics record based on the unique combination if created_at is today then update else create.
+    //     $analytics = UserAnalytics::create([
+    //         'owner_user_urn' => $ownerUserUrn,
+    //         'act_user_urn' => $actUserUrn,
+    //         'source_id' => $source->id,
+    //         'source_type' => get_class($source),
+    //         'actionable_id' => $actionable ? $actionable->id : null,
+    //         'actionable_type' => $actionable ? get_class($actionable) : null,
+    //         'ip_address' => request()->ip(),
+    //         'type' => $type,
+    //         'genre' => $genre == '' ? 'anyGenre' : $genre,
+    //     ]);
+    //     Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
+
+    //     return $analytics;
+    // }
+
+    /**
+     * ✅ FIXED: Proper duplicate checking with transaction and firstOrCreate
+     */
+    public function recordAnalytics(
         object $source,
-        string $actUserUrn,
+        ?object $actionable = null,
         int $type,
-        ?string $ipAddress = null,
-    ): bool|null {
-        $ownerUserUrn = $source->user?->urn ?? null;
+        string $genre,
+        $actUserUrn = null
+    ): UserAnalytics|bool|null {
 
-        if ($ipAddress == null) {
-            $ipAddress = request()->ip();
-        }
+        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $source?->user?->urn);
+        $actUserUrn = $actUserUrn ?? user()->urn;
+        $ipAddress = request()->ip();
 
-        if (!$actUserUrn || !$ownerUserUrn) {
+        if (!$ownerUserUrn || !$actUserUrn) {
             Log::info("Analytics recording skipped - missing user URN", [
-                'act_user_urn' => $actUserUrn,
                 'owner_user_urn' => $ownerUserUrn,
+                'act_user_urn' => $actUserUrn,
                 'source_id' => $source->id,
                 'source_type' => get_class($source),
-                'type' => $type,
-                'ip_address' => $ipAddress
+                'type' => $type
             ]);
             return null;
         }
 
         $today = Carbon::today()->toDateString();
 
-        // ✅ ADD: Log search parameters
-        Log::info("Searching for duplicate with parameters:", [
+        Log::info("Attempting to record analytics", [
             'act_user_urn' => $actUserUrn,
+            'owner_user_urn' => $ownerUserUrn,
             'source_id' => $source->id,
             'source_type' => get_class($source),
-            'owner_user_urn' => $ownerUserUrn,
             'type' => $type,
             'ip_address' => $ipAddress,
             'date' => $today
         ]);
 
-        $query = UserAnalytics::where('act_user_urn', $actUserUrn)
-            ->where('source_id', $source->id)
-            ->where('source_type', get_class($source))
-            ->where('owner_user_urn', $ownerUserUrn)
-            ->where('type', $type)
-            ->where('ip_address', $ipAddress)
-            ->whereDate('created_at', $today);
+        try {
+            // ✅ SOLUTION 1: Use DB transaction with lockForUpdate
+            return DB::transaction(function () use (
+                $source,
+                $actionable,
+                $type,
+                $genre,
+                $actUserUrn,
+                $ownerUserUrn,
+                $ipAddress,
+                $today
+            ) {
 
-        // ✅ ADD: Log the actual SQL query
-        Log::info("SQL Query: " . $query->toSql());
-        Log::info("Query Bindings: " . json_encode($query->getBindings()));
+                // Check for existing record with row-level lock
+                $existing = UserAnalytics::where('act_user_urn', $actUserUrn)
+                    ->where('source_id', $source->id)
+                    ->where('source_type', get_class($source))
+                    ->where('owner_user_urn', $ownerUserUrn)
+                    ->where('type', $type)
+                    ->where('ip_address', $ipAddress)
+                    ->whereDate('created_at', $today)
+                    ->lockForUpdate() // ✅ CRITICAL: Lock the rows during check
+                    ->first();
 
-        $response = $query->first();
+                if ($existing) {
+                    Log::info("User action update skipped - already exists today", [
+                        'existing_id' => $existing->id,
+                        'act_user_urn' => $actUserUrn,
+                        'source_id' => $source->id,
+                        'type' => $type
+                    ]);
+                    return false;
+                }
 
-        // ✅ ADD: Log what was found
-        if ($response) {
-            Log::info("Found existing record:", [
-                'id' => $response->id,
-                'created_at' => $response->created_at,
-                'all_data' => $response->toArray()
+                // Create new record
+                $analytics = UserAnalytics::create([
+                    'owner_user_urn' => $ownerUserUrn,
+                    'act_user_urn' => $actUserUrn,
+                    'source_id' => $source->id,
+                    'source_type' => get_class($source),
+                    'actionable_id' => $actionable ? $actionable->id : null,
+                    'actionable_type' => $actionable ? get_class($actionable) : null,
+                    'ip_address' => $ipAddress,
+                    'type' => $type,
+                    'genre' => $genre == '' ? 'anyGenre' : $genre,
+                ]);
+
+                Log::info("User action created successfully", [
+                    'id' => $analytics->id,
+                    'act_user_urn' => $actUserUrn,
+                    'source_id' => $source->id,
+                    'type' => $type
+                ]);
+
+                return $analytics;
+            });
+        } catch (\Exception $e) {
+            Log::error("Error recording analytics", [
+                'message' => $e->getMessage(),
+                'act_user_urn' => $actUserUrn,
+                'source_id' => $source->id,
+                'type' => $type,
+                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine()
             ]);
-        } else {
-            Log::info("No existing record found - will create new one");
-        }
 
-        if ($response) {
-            Log::info("User action update skipped for user: {$actUserUrn} on type: {$type} for source id:{$source->id} and type: " . get_class($source) . " for ip address: {$ipAddress}. Already updated today.");
+            // Return false on error to prevent further processing
             return false;
         }
-
-        return true;
-    }
-
-    public function recordAnalytics(object $source, ?object $actionable = null, int $type, string $genre, $actUserUrn = null): UserAnalytics|bool|null
-    {
-        // Get the owner's URN from the track model.
-        $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $source?->user?->urn);
-        $actUserUrn = $actUserUrn ?? user()->urn;
-
-        // If no user URN is found, log and exit early.
-        if (!$ownerUserUrn) {
-            Log::info("User action update skipped for {$ownerUserUrn} on {$type} for source id:{$source->id} and type:" . get_class($source) . " . No user URN found.");
-            return null;
-        }
-        // Use the new reusable method to check if the update is allowed.
-        $syncAction = $this->syncUserAction($source, $actUserUrn, $type);
-        if (!$syncAction) {
-            return false;
-        }
-        Log::info("Start User action update for {$ownerUserUrn} on {$type} for source id:{$source->id} and type: " . get_class($source) . " and actuser urn: {$actUserUrn}.");
-
-        // Find or create the UserAnalytics record based on the unique combination if created_at is today then update else create.
-        $analytics = UserAnalytics::create([
-            'owner_user_urn' => $ownerUserUrn,
-            'act_user_urn' => $actUserUrn,
-            'source_id' => $source->id,
-            'source_type' => get_class($source),
-            'actionable_id' => $actionable ? $actionable->id : null,
-            'actionable_type' => $actionable ? get_class($actionable) : null,
-            'ip_address' => request()->ip(),
-            'type' => $type,
-            'genre' => $genre == '' ? 'anyGenre' : $genre,
-        ]);
-        Log::info("User action updated for {$ownerUserUrn} on {$type} for source id:{$source->id} and actuser urn: {$actUserUrn}. analytics:" . json_encode($analytics));
-
-        return $analytics;
     }
 
     /**
