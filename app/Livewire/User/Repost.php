@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use SebastianBergmann\Environment\Console;
 use Throwable;
 
 class Repost extends Component
@@ -523,8 +524,10 @@ class Repost extends Component
             $followedUrn = $this->campaign->music->user->urn ?? $this->campaign->user->urn;
             Log::info('Followed URN: ' . $followedUrn);
             if ($canFollow) {
-                $followResponse = $httpClient->post("{$this->baseUrl}/users/{$followedUrn}/follow");
+                // $followResponse = $httpClient->post("{$this->baseUrl}/users/{$followedUrn}/follow");
+                $followResponse = $httpClient->post("{$this->baseUrl}/me/followings/{$followedUrn}");
                 $actions['follow'] = $followResponse->successful();
+                Log::info('Follow Response: ' . $followResponse->body());
             }
 
             return [
