@@ -525,7 +525,7 @@ class Repost extends Component
             Log::info('Followed URN: ' . $followedUrn);
             if ($canFollow) {
                 // $followResponse = $httpClient->post("{$this->baseUrl}/users/{$followedUrn}/follow");
-                $followResponse = $httpClient->post("{$this->baseUrl}/me/followings/{$followedUrn}");
+                $followResponse = $httpClient->put("{$this->baseUrl}/me/followings/{$followedUrn}");
                 $actions['follow'] = $followResponse->successful();
                 Log::info('Follow Response: ' . $followResponse->body());
             }
