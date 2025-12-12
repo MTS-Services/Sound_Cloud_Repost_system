@@ -520,8 +520,9 @@ class Repost extends Component
             // --------------------------------------------------
             // 👤 FOLLOW Action
             // --------------------------------------------------
+            $followedUrn = $this->campaign->music->user->urn ?? $this->campaign->user->urn;
             if ($canFollow) {
-                $followResponse = $httpClient->post("{$this->baseUrl}/users/{$this->campaign->user->urn}/follow");
+                $followResponse = $httpClient->post("{$this->baseUrl}/users/{$followedUrn}/follow");
                 $actions['follow'] = $followResponse->successful();
             }
 
