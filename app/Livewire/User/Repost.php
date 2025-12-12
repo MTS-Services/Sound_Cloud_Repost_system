@@ -270,8 +270,9 @@ class Repost extends Component
                     $this->alreadyLiked = true;
                 }
             }
+            dd($this->campaign->music->user->urn);
 
-            $userUrn = $this->campaign->user?->urn;
+            $userUrn = $this->campaign->music?->user?->urn ?? $this->campaign->user->urn;
             $checkResponse = $httpClient->get("{$this->baseUrl}/me/followings/{$userUrn}");
 
             if ($checkResponse->getStatusCode() === 200) {
