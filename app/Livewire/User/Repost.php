@@ -373,12 +373,12 @@ class Repost extends Component
                     ]]);
                 }
 
-                // $this->campaignService->syncReposts(
-                //     $this->campaign,
-                //     user(),
-                //     $this->campaign->music->soundcloud_track_id ?? null,
-                //     $result['actions']
-                // );
+                $this->campaignService->syncReposts(
+                    $this->campaign,
+                    user(),
+                    $this->campaign->music->soundcloud_track_id ?? null,
+                    $result['actions']
+                );
 
                 Cache::forget("user_reposts_today_{$currentUserUrn}");
                 Cache::forget("user_reposts_12h_{$currentUserUrn}");
@@ -441,14 +441,14 @@ class Repost extends Component
                 ? "{$this->baseUrl}/reposts/tracks/{$musicUrn}"
                 : "{$this->baseUrl}/reposts/playlists/{$musicUrn}";
 
-            // $repostResponse = $httpClient->post($repostEndpoint);
+            $repostResponse = $httpClient->post($repostEndpoint);
 
-            // if (!$repostResponse->successful()) {
-            //     return [
-            //         'success' => false,
-            //         'message' => 'Failed to repost to SoundCloud.'
-            //     ];
-            // }
+            if (!$repostResponse->successful()) {
+                return [
+                    'success' => false,
+                    'message' => 'Failed to repost to SoundCloud.'
+                ];
+            }
 
 
             // --------------------------------------------------
@@ -461,12 +461,12 @@ class Repost extends Component
 
             $newReposts = $newData['collection'][$countField] ?? 0;
 
-            // if ($newReposts <= $previousReposts) {
-            //     return [
-            //         'success' => false,
-            //         'message' => 'You have already reposted this from SoundCloud.'
-            //     ];
-            // }
+            if ($newReposts <= $previousReposts) {
+                return [
+                    'success' => false,
+                    'message' => 'You have already reposted this from SoundCloud.'
+                ];
+            }
 
             // --------------------------------------------------
             // 🔹 Default action results
