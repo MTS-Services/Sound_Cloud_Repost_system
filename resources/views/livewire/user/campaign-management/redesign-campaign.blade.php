@@ -845,16 +845,16 @@
                         const track = this.tracks[campaignId];
                         track.isPlaying = true;
                         track.playStartTime = Date.now();
-                        console.log('🎵 Play event for campaign:', campaignId);
+                        // console.log('🎵 Play event for campaign:', campaignId);
                         // ✅ FIX: Only dispatch updatePlayCount ONCE per campaign per page load
                         if (!this.playCountDispatched[campaignId]) {
-                            console.log('📊 Dispatching updatePlayCount for:', campaignId);
+                            // console.log('📊 Dispatching updatePlayCount for:', campaignId);
                             Livewire.dispatch('updatePlayCount', {
                                 campaignId: campaignId
                             });
                             this.playCountDispatched[campaignId] = true; // Mark as dispatched
                         } else {
-                            console.log('⏭️ Skipping updatePlayCount (already dispatched) for:', campaignId);
+                            console.log('⏭️ Skipping updatePlayCount (already dispatched).');
                         }
                         this.syncToBackend(campaignId, 'play');
                     });
