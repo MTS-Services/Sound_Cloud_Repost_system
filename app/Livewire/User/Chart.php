@@ -271,7 +271,7 @@ class Chart extends Component
             ->toArray();
 
         $id4474 = UserAnalytics::where('source_id', '4474')->get();
-        dd($id4474);
+        dd($id4474); 
 
         $itemsWithMetrics = $items->map(function ($source) use ($reposts, $likes) {
             $source['repost'] = $source['actionable'] && in_array($source['actionable']['id'], $reposts);
