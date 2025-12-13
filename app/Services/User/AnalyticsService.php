@@ -1076,6 +1076,7 @@ class AnalyticsService
             return [
                 'actionable' => $item->actionable ?? null,
                 'source' => $item->source ?? null,
+                'source_id' => $item->source_id ?? null,
                 'source_type' => $item->source_type,
                 'views' => (int) $item->total_views,
                 'streams' => (int) $item->total_streams,
@@ -1087,6 +1088,16 @@ class AnalyticsService
                 'engagement_score' => round(($item->engagement_rate / 100) * 10, 2),
             ];
         });
+
+        $id4474 = UserAnalytics::where('source_id', 4474)
+            ->where('source_type', Track::class)
+            ->where('type', UserAnalytics::TYPE_FOLLOW)
+            ->whereBetween('created_at', [
+                $periods['current']['start']->startOfDay(),
+                $periods['current']['end']->endOfDay(),
+            ])
+            ->get();
+        dd($id4474, $id4474->count(), $topSourcesFormatted->toArray());
 
         return $topSourcesFormatted->toArray();
     }
