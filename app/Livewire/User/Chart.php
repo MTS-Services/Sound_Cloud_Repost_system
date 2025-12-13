@@ -271,7 +271,7 @@ class Chart extends Component
             ->toArray();
 
         $countId4474 = UserAnalytics::where('source_id', '4474')->where('type', 6)->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count();
-        // dd($countId4474, $items);
+        dd($countId4474, $items);
 
         $itemsWithMetrics = $items->map(function ($source) use ($reposts, $likes) {
             $source['repost'] = $source['actionable'] && in_array($source['actionable']['id'], $reposts);
