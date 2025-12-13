@@ -10,10 +10,9 @@
                 <div class="flex flex-col 3xl:hidden">
                     <div class="flex justify-between items-center">
                         <!-- Start Campaign Button -->
-                        <x-gbutton variant="primary" wire:click="toggleCampaignsModal" class="mb-2">
-                            <span>
-                                <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
-                            </span>
+                        <x-gbutton variant="primary" class="mb-2"
+                            @click="$dispatch('open-campaign-modal'); $wire.set('showCampaignCreator', true);">
+                            <x-lucide-plus class="w-5 h-5 mr-1 lg:w-4 lg:h-4 xl:w-5 xl:h-5" />
                             <span class="text-base lg:text-sm xl:text-base">
                                 {{ __('Start a new campaign') }}
                             </span>
