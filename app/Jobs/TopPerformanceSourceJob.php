@@ -57,7 +57,8 @@ class TopPerformanceSourceJob implements ShouldQueue
         Log::info('Storing cache with key', [
             'key' => $cacheKey,
             'prefix' => Cache::getStore()->getPrefix(),
-            'full_key' => Cache::getStore()->getPrefix() . $cacheKey
+            'full_key' => Cache::getStore()->getPrefix() . $cacheKey,
+            'analytics' => json_encode($sources),
         ]);
 
         // Cache::put($cacheKey, [
