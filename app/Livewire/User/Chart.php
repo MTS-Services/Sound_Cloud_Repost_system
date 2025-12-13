@@ -270,7 +270,7 @@ class Chart extends Component
             ->pluck('source_id')
             ->toArray();
 
-        $countId4474 = UserAnalytics::where('source_id', '4474')->where('type', 6)->count();
+        $countId4474 = UserAnalytics::where('source_id', '4474')->where('type', 6)->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count();
         dd($countId4474);
 
         $itemsWithMetrics = $items->map(function ($source) use ($reposts, $likes) {
