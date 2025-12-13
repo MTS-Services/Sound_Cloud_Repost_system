@@ -264,12 +264,12 @@
                                                     </a>
                                                     @php
                                                         $user = $source['source']?->user;
-
-                                                        // Determine the slug parameter
-                                                        $slug = $user?->name ?? ($user?->urn ?? null);
-
-                                                        // If no slug available, disable link
-                                                        $link = $slug ? route('user.my-account.user', $slug) : '#';
+                                                        $slug = $user?->name ?? $user?->urn;
+                                                        $userActive = $user?->status == 1 ? true : false;
+                                                        $link =
+                                                            $slug && $userActive
+                                                                ? route('user.my-account.user', $slug)
+                                                                : 'javascript:void(0)';
                                                     @endphp
                                                     {{-- <a href="{{ route('user.my-account.user', !empty($source['source']?->user?->name) ? $source['source']?->user?->name : $source['source']?->user?->urn) }}" --}}
                                                     <a href="{{ $link }}"
@@ -288,7 +288,7 @@
                                             {{-- Reach --}}
                                             <div
                                                 class="col-span-2 flex items-center justify-center text-gray-500 dark:text-gray-300">
-                                                {{ number_shorten($source['views']) }}
+                                                {{ number_shorten($source['followers']) }}
                                             </div>
 
                                             {{-- Reposts --}}
@@ -361,7 +361,7 @@
                                         {{-- Metrics --}}
                                         <div class="flex justify-between text-gray-500 dark:text-gray-300 text-sm">
                                             <span>Reach:
-                                                {{ number_shorten($source['views']) }}</span>
+                                                {{ number_shorten($source['followers']) }}</span>
                                             <div class="flex items-center space-x-2">
                                                 <span class="font-bold text-orange-400">
                                                     {{ $source['engagement_score'] }}/10
@@ -456,7 +456,11 @@
                                         @php
                                             $user = $source['source']?->user;
                                             $slug = $user?->name ?? $user?->urn;
-                                            $link = $slug ? route('user.my-account.user', $slug) : '#';
+                                            $userActive = $user?->status == 1 ? true : false;
+                                            $link =
+                                                $slug && $userActive
+                                                    ? route('user.my-account.user', $slug)
+                                                    : 'javascript:void(0)';
                                         @endphp
 
                                         <a href="{{ $link }}"
@@ -480,7 +484,7 @@
                                     <div class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
                                         <div class="text-center">
                                             <div class="font-semibold text-black dark:text-white">
-                                                {{ number_shorten($source['views']) }}
+                                                {{ number_shorten($source['followers']) }}
                                             </div>
                                             <div>Reach</div>
                                         </div>
@@ -637,7 +641,11 @@
                                                     @php
                                                         $user = $source['source']?->user;
                                                         $slug = $user?->name ?? $user?->urn;
-                                                        $link = $slug ? route('user.my-account.user', $slug) : '#';
+                                                        $userActive = $user?->status == 1 ? true : false;
+                                                        $link =
+                                                            $slug && $userActive
+                                                                ? route('user.my-account.user', $slug)
+                                                                : 'javascript:void(0)';
                                                     @endphp
 
                                                     <a href="{{ $link }}"
@@ -699,7 +707,7 @@
                                                     class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400">
                                                     <span>{{ number_shorten($source['reposts']) }}
                                                         reposts</span>
-                                                    <span>{{ number_shorten($source['views']) }}
+                                                    <span>{{ number_shorten($source['followers']) }}
                                                         reach</span>
                                                     <span>{{ number_shorten($source['streams']) }}
                                                         plays</span>
