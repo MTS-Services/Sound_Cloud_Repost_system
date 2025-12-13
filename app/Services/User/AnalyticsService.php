@@ -1079,7 +1079,7 @@ class AnalyticsService
                 $periods['current']['end']->endOfDay(),
             ])
             ->get();
-        dd($topSources, $id4474);
+        dd($id4474, $id4474->count(), $topSources);
 
         // 🔹 Map results
         $topSourcesFormatted = $topSources->map(function ($item) {
