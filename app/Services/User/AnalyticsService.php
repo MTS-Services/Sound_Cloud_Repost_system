@@ -1070,7 +1070,18 @@ class AnalyticsService
             'ownerUser', // Direct UserAnalytics relations
             'actUser'    // Direct UserAnalytics relations
         ]);
-        dd($topSources);
+
+        $id4474 = UserAnalytics::where(
+            fn($query) =>
+            $query->where('source_id', 4474),
+            $query->where('source_type', Track::class),
+            $query->where('type', UserAnalytics::TYPE_FOLLOW),
+            $query->whereBetween('created_at', [
+                $periods['current']['start']->format('Y-m-d'),
+                $periods['current']['end']->format('Y-m-d'),
+            ])
+        )->get();
+        dd($topSources, $id4474);
 
         // 🔹 Map results
         $topSourcesFormatted = $topSources->map(function ($item) {
