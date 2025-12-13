@@ -4,7 +4,7 @@
     <div class="text-center mb-12">
         <h1 class="text-5xl font-bold text-slate-900 dark:text-white mb-4">Choose Your Perfect Plan</h1>
         <p class="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">Pro Plans unlock the full potential of
-            Repostxchange
+            {{ config('app.name', 'RepostChain') }}
             with exclusive features designed to supercharge your music promotion.</p>
     </div>
     <div class="flex items-center justify-center mb-12">
