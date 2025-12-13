@@ -44,19 +44,19 @@ class Chart extends Component
     {
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
-        $period = [
-            'start' => $startDate,
-            'end' => $endDate,
-        ];
+        // $period = [
+        //     'start' => $startDate,
+        //     'end' => $endDate,
+        // ];
 
 
-        $sources = $this->analyticsService->getTopSources(
-            filter: 'date_range',
-            dateRange: $period,
-            actionableType: Campaign::class
-        );
+        // $sources = $this->analyticsService->getTopSources(
+        //     filter: 'date_range',
+        //     dateRange: $period,
+        //     actionableType: Campaign::class
+        // );
 
-        // TopPerformanceSourceJob::dispatch($startDate, $endDate);
+        TopPerformanceSourceJob::dispatch($startDate, $endDate);
         $this->redirectRoute('user.charts', navigate: true);
     }
 
