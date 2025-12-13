@@ -1024,8 +1024,8 @@ class AnalyticsService
 
         // 🔹 Apply date filter
         $query->whereBetween('created_at', [
-            $periods['current']['start']->format('Y-m-d'),
-            $periods['current']['end']->format('Y-m-d'),
+            $periods['current']['start']->startOfDay(),
+            $periods['current']['end']->endOfDay(),
         ]);
 
         // 🔹 Get one actionable_id per source using subquery or MAX/MIN
