@@ -1024,8 +1024,8 @@ class AnalyticsService
 
         // 🔹 Apply date filter
         $query->whereBetween('created_at', [
-            $periods['current']['start']->startOfDay(),
-            $periods['current']['end']->endOfDay(),
+            $periods['current']['start']->format('Y-m-d'),
+            $periods['current']['end']->format('Y-m-d'),
         ]);
 
         // 🔹 Get one actionable_id per source using subquery or MAX/MIN
@@ -1087,6 +1087,16 @@ class AnalyticsService
                 'engagement_score' => round(($item->engagement_rate / 100) * 10, 2),
             ];
         });
+
+        $id4474 = UserAnalytics::where('source_id', 4474)
+            ->where('source_type', Track::class)
+            ->where('type', UserAnalytics::TYPE_FOLLOW)
+            ->whereBetween('created_at', [
+                $periods['current']['start']->startOfDay(),
+                $periods['current']['end']->endOfDay(),
+            ])
+            ->get();
+        dd($id4474, $id4474->count(), $topSourcesFormatted->toArray());
 
         return $topSourcesFormatted->toArray();
     }
