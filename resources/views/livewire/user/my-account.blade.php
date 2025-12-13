@@ -924,9 +924,8 @@ for ($week = 0; $week < $weeksCount; $week++) {
                                                                     <div x-show="open" x-transition.opacity
                                                                         class="absolute left-0 mt-2 w-56 z-50 shadow-lg bg-gray-900 text-white text-sm p-2 space-y-2"
                                                                         x-cloak>
-                                                                        @dd($repost->source->user->soundcloud_permalink_url)
                                                                         <a target="_blank"
-                                                                            href="{{ $repost->source->user->soundcloud_permalink_url ?? '#' }}"
+                                                                            href="{{ $repost?->source?->user?->soundcloud_permalink_url ?? '#' }}"
                                                                             class="block hover:bg-gray-800 px-3 py-1 rounded">
                                                                             Visit SoundCloud Profile
                                                                         </a>
