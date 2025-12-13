@@ -45,7 +45,7 @@ class Chart extends Component
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
         TopPerformanceSourceJob::dispatch($startDate, $endDate);
-        $this->redirectRoute('user.charts',navigate:true);
+        $this->redirectRoute('user.charts', navigate: true);
     }
 
     public function baseValidation($encryptedCampaignId, $encryptedSourceId)
@@ -232,14 +232,13 @@ class Chart extends Component
         }
 
         $items = collect($paginated);
-        dd($items);
 
         // // Map over items to calculate engagement score and rate
         // $itemsWithMetrics = $items->map(function ($source) {
         //     $source['repost'] = false;
         //     // NOTE: The access path below needs to be checked carefully against what the service returns
         //     if ($source['actionable'] != null) {
-                
+
         //         // If the service returns an array, the subsequent database query is okay here.
         //         $repost = Repost::where('reposter_urn', user()->urn)->where('campaign_id', $source['actionable']['id'])->exists();
         //         if ($repost) {
@@ -270,6 +269,9 @@ class Chart extends Component
             ->whereIn('source_id', $sourceIds)
             ->pluck('source_id')
             ->toArray();
+
+        $id4474 = UserAnalytics::where('source_id', '4474')->get();
+        dd($id4474);
 
         $itemsWithMetrics = $items->map(function ($source) use ($reposts, $likes) {
             $source['repost'] = $source['actionable'] && in_array($source['actionable']['id'], $reposts);
