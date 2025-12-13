@@ -270,8 +270,8 @@ class Chart extends Component
             ->pluck('source_id')
             ->toArray();
 
-        $id4474 = UserAnalytics::where('source_id', '4474')->get();
-        dd($id4474); 
+        $countId4474 = UserAnalytics::where('source_id', '4474')->where('type', 6)->count();
+        dd($countId4474);
 
         $itemsWithMetrics = $items->map(function ($source) use ($reposts, $likes) {
             $source['repost'] = $source['actionable'] && in_array($source['actionable']['id'], $reposts);
