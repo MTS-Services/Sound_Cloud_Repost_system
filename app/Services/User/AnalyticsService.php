@@ -1070,6 +1070,7 @@ class AnalyticsService
             'ownerUser', // Direct UserAnalytics relations
             'actUser'    // Direct UserAnalytics relations
         ]);
+        dd($topSources);
 
         // 🔹 Map results
         $topSourcesFormatted = $topSources->map(function ($item) {
