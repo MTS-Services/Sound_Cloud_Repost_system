@@ -232,6 +232,7 @@ class Chart extends Component
         }
 
         $items = collect($paginated);
+        dd($items);
 
         // // Map over items to calculate engagement score and rate
         // $itemsWithMetrics = $items->map(function ($source) {
