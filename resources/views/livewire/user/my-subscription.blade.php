@@ -23,15 +23,17 @@
                 <div class="bg-linear-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white shadow-md mb-8">
                     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
                         <div>
-                            <h3 class="text-2xl font-semibold">{{ $userPlan->plan->name }}</h3>
-                            <p class="text-sm text-orange-100 mt-1">
+                            <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                                {{ $userPlan->plan->name }}</h3>
+                            <p class="text-sm text-orange-700 dark:text-orange-300 mt-1">
                                 {{ ucfirst($userPlan->billing_cycle) }} Plan
                             </p>
                         </div>
 
                         <div class="text-right">
-                            <p class="text-4xl font-bold">${{ number_format($userPlan->price, 2) }}</p>
-                            <p class="text-sm text-orange-200">
+                            <p class="text-4xl font-bold text-gray-800 dark:text-gray-100">
+                                ${{ number_format($userPlan->price, 2) }}</p>
+                            <p class="text-sm text-orange-700 dark:text-orange-300">
                                 per {{ $userPlan->billing_cycle === 'yearly' ? 'year' : 'month' }}
                             </p>
                         </div>
