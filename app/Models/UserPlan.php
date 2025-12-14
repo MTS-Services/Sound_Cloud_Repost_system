@@ -95,18 +95,18 @@ class UserPlan extends BaseModel
         ];
     }
 
-    public function getStatusLabelAttribute(): string
+    public function getStatusLabelAttribute()
     {
-        return self::getStatusList()[$this->status]
-            ?? self::getStatusList()[self::STATUS_INACTIVE];
+        return $this->status
+            ? self::getStatusList()[$this->status]
+            : self::getStatusList()[self::STATUS_INACTIVE];
     }
 
-    public function getStatusColorAttribute(): string
+    public function getStatusColorAttribute()
     {
-        return 'badge-' . (
-            self::getStatusColorList()[$this->status]
-            ?? self::getStatusColorList()[self::STATUS_INACTIVE]
-        );
+        return $this->status
+            ? 'badge-' . self::getStatusColorList()[$this->status]
+            : 'badge-' . self::getStatusColorList()[self::STATUS_INACTIVE];
     }
 
     public function getStatusBtnLabelAttribute()
