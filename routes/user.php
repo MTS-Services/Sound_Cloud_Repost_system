@@ -35,7 +35,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 });
 
 // User routes (The 'verified' middleware has been removed)
-Route::group(['middleware' => ['auth:web'], 'as' => 'user.', 'prefix' => 'user'], function () {
+Route::group(['middleware' => ['auth:web', 'refreshSoundCloudToken'], 'as' => 'user.', 'prefix' => 'user'], function () {
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
     Route::get('/user-profile/{user_urn}', [ProfileController::class, 'profile'])->name('profile');

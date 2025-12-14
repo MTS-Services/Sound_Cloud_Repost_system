@@ -303,153 +303,147 @@ class SoundCloudService
     //     }
     // }
 
-    /**
-     * Refreshes the user's access token if it has expired.
-     * This method is called automatically before every API request.
-     *
-     * @param User $user The user model instance.
-     * @throws Exception
-     */
     public function refreshUserTokenIfNeeded(User $user): void
     {
         $this->ensureSoundCloudConnection($user);
 
-        // Check if the token needs a refresh based on the stored `last_synced_at` and `expires_in`.
-        $expirationTime = is_null($user->last_synced_at) ? null : $user->last_synced_at->addSeconds($user->expires_in);
+        // Check if the token needs a refresh
+        $expirationTime = is_null($user->last_synced_at)
+            ? null
+            : $user->last_synced_at->addSeconds($user->expires_in);
 
-        // If the token is null, has no expiration time, or is past its expiration, we need to refresh.
-        if (is_null($user->token) || is_null($expirationTime) || $expirationTime->isPast()) {
+        // Refresh proactively: 5 minutes before expiration
+        $refreshBuffer = 300; // 5 minutes in seconds
+        $shouldRefresh = is_null($user->token)
+            || is_null($expirationTime)
+            || $expirationTime->subSeconds($refreshBuffer)->isPast();
 
-            Log::info('SoundCloud token expired or missing. Attempting to refresh for user ' . $user->urn);
+        if ($shouldRefresh) {
+            Log::info('SoundCloud token expired or expiring soon. Attempting to refresh for user ' . $user->urn);
 
             if (is_null($user->refresh_token)) {
                 Log::warning('Attempted to refresh token without a refresh token available', [
                     'user_urn' => $user->urn,
                 ]);
 
-                // Disconnect SoundCloud and logout user
-                $this->disconnectSoundCloudAndLogout($user);
-
+                $this->disconnectSoundCloud($user);
                 throw new Exception('No refresh token available. Please re-authenticate with SoundCloud.');
             }
 
-            try {
-                $response = Http::asForm()->post("{$this->oauthUrl}/oauth2/token", [
-                    'grant_type' => 'refresh_token',
-                    'client_id' => config('services.soundcloud.client_id'),
-                    'client_secret' => config('services.soundcloud.client_secret'),
-                    'refresh_token' => $user->refresh_token,
-                ]);
-
-                if (!$response->successful()) {
-                    $responseBody = $response->json();
-                    $errorCode = $responseBody['error_code'] ?? $responseBody['error'] ?? 'unknown';
-
-                    Log::error('Failed to refresh token from SoundCloud API', [
-                        'user_urn' => $user->urn,
-                        'status' => $response->status(),
-                        'error_code' => $errorCode,
-                        'response_body' => $response->body(),
-                    ]);
-
-                    // If it's an invalid_grant error or 401, disconnect and logout
-                    // This handles all token refresh failures
-                    if ($errorCode === 'invalid_grant' || $response->status() === 401) {
-                        Log::warning('Invalid grant or unauthorized. Disconnecting SoundCloud and logging out user ' . $user->urn);
-                        $this->disconnectSoundCloudAndLogout($user);
-                        throw new Exception('Your SoundCloud authorization has expired or been revoked. Please reconnect your account.');
-                    }
-
-                    // For other errors, still disconnect and logout as the token is not working
-                    Log::warning('Token refresh failed with error. Disconnecting SoundCloud and logging out user ' . $user->urn);
-                    $this->disconnectSoundCloudAndLogout($user);
-                    throw new Exception('Failed to refresh SoundCloud token. Please reconnect your account.');
-                }
-
-                $data = $response->json();
-
-                // Verify we got the required data
-                if (!isset($data['access_token']) || !isset($data['refresh_token'])) {
-                    Log::error('Invalid token response from SoundCloud', [
-                        'user_urn' => $user->urn,
-                        'response_data' => $data,
-                    ]);
-                    $this->disconnectSoundCloudAndLogout($user);
-                    throw new Exception('Invalid response from SoundCloud. Please reconnect your account.');
-                }
-
-                // Update the user model with the new credentials.
-                $user->update([
-                    'token' => $data['access_token'],
-                    'refresh_token' => $data['refresh_token'], // This is crucial for token rotation
-                    'expires_in' => $data['expires_in'],
-                    'last_synced_at' => now(), // Important: update the timestamp of the refresh
-                ]);
-
-                Log::info('SoundCloud access token refreshed successfully for user ' . $user->urn);
-            } catch (\Illuminate\Http\Client\RequestException $e) {
-                // Network or HTTP client errors
-                Log::error('HTTP request failed during token refresh', [
-                    'user_urn' => $user->urn,
-                    'error' => $e->getMessage(),
-                ]);
-                $this->disconnectSoundCloudAndLogout($user);
-                throw new Exception('Failed to connect to SoundCloud. Please reconnect your account.');
-            } catch (Exception $e) {
-                // If exception already contains our custom message, just rethrow it
-                if (str_contains($e->getMessage(), 'Please reconnect your account')) {
-                    throw $e;
-                }
-
-                // For any other unexpected errors during token refresh
-                Log::error('Unexpected error during token refresh', [
-                    'user_urn' => $user->urn,
-                    'error' => $e->getMessage(),
-                ]);
-                $this->disconnectSoundCloudAndLogout($user);
-                throw new Exception('An error occurred with your SoundCloud connection. Please reconnect your account.');
-            }
+            $this->performTokenRefresh($user);
         }
     }
 
     /**
-     * Disconnect SoundCloud and logout the user
+     * Perform the actual token refresh
+     *
+     * @param User $user
+     * @throws Exception
+     */
+    private function performTokenRefresh(User $user): void
+    {
+        try {
+            $response = Http::asForm()->post("{$this->oauthUrl}/oauth2/token", [
+                'grant_type' => 'refresh_token',
+                'client_id' => config('services.soundcloud.client_id'),
+                'client_secret' => config('services.soundcloud.client_secret'),
+                'refresh_token' => $user->refresh_token,
+            ]);
+
+            if (!$response->successful()) {
+                $this->handleRefreshFailure($user, $response);
+            }
+
+            $data = $response->json();
+
+            // Verify we got the required data
+            if (!isset($data['access_token']) || !isset($data['refresh_token'])) {
+                Log::error('Invalid token response from SoundCloud', [
+                    'user_urn' => $user->urn,
+                    'response_data' => $data,
+                ]);
+                $this->disconnectSoundCloud($user);
+                throw new Exception('Invalid response from SoundCloud. Please reconnect your account.');
+            }
+
+            // Update the user model with the new credentials
+            $user->update([
+                'token' => $data['access_token'],
+                'refresh_token' => $data['refresh_token'],
+                'expires_in' => $data['expires_in'],
+                'last_synced_at' => now(),
+            ]);
+
+            Log::info('SoundCloud access token refreshed successfully for user ' . $user->urn);
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::error('HTTP request failed during token refresh', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            $this->disconnectSoundCloud($user);
+            throw new Exception('Failed to connect to SoundCloud. Please reconnect your account.');
+        } catch (Exception $e) {
+            if (str_contains($e->getMessage(), 'Please reconnect your account')) {
+                throw $e;
+            }
+
+            Log::error('Unexpected error during token refresh', [
+                'user_urn' => $user->urn,
+                'error' => $e->getMessage(),
+            ]);
+            $this->disconnectSoundCloud($user);
+            throw new Exception('An error occurred with your SoundCloud connection. Please reconnect your account.');
+        }
+    }
+
+    /**
+     * Handle token refresh failure
+     *
+     * @param User $user
+     * @param \Illuminate\Http\Client\Response $response
+     * @throws Exception
+     */
+    private function handleRefreshFailure(User $user, $response): void
+    {
+        $responseBody = $response->json();
+        $errorCode = $responseBody['error_code'] ?? $responseBody['error'] ?? 'unknown';
+
+        Log::error('Failed to refresh token from SoundCloud API', [
+            'user_urn' => $user->urn,
+            'status' => $response->status(),
+            'error_code' => $errorCode,
+            'response_body' => $response->body(),
+        ]);
+
+        $this->disconnectSoundCloud($user);
+
+        if ($errorCode === 'invalid_grant' || $response->status() === 401) {
+            throw new Exception('Your SoundCloud authorization has expired or been revoked. Please reconnect your account.');
+        }
+
+        throw new Exception('Failed to refresh SoundCloud token. Please reconnect your account.');
+    }
+
+    /**
+     * Disconnect SoundCloud credentials (NO LOGOUT HERE)
      *
      * @param User $user
      */
-    private function disconnectSoundCloudAndLogout(User $user): void
+    private function disconnectSoundCloud(User $user): void
     {
         try {
-            // Clear SoundCloud credentials
             $user->update([
                 'token' => null,
                 'refresh_token' => null,
-                'expires_in' => null,
-                'last_synced_at' => null,
-                'urn' => null,
-                'soundcloud_username' => null,
-                'soundcloud_avatar' => null,
+                'expires_in' => null
             ]);
 
             Log::info('SoundCloud disconnected for user ' . $user->id);
-
-            // Check if user is currently authenticated before attempting logout
-            if (Auth::check() && Auth::id() === $user->id) {
-                // Logout the user
-                Auth::logout();
-
-                // Invalidate the session
-                request()->session()->invalidate();
-                request()->session()->regenerateToken();
-
-                Log::info('User logged out due to SoundCloud authentication failure: ' . $user->id);
-            }
         } catch (Exception $e) {
-            Log::error('Error during SoundCloud disconnection and logout', [
+            Log::error('Error during SoundCloud disconnection', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
-            // Don't throw here - we still want to continue with the exception handling
         }
     }
 
@@ -466,9 +460,7 @@ class SoundCloudService
                 'user_urn' => $user->urn,
             ]);
 
-            // Also logout if not connected
-            $this->disconnectSoundCloudAndLogout($user);
-
+            $this->disconnectSoundCloud($user);
             throw new Exception('User is not connected to SoundCloud. Please reconnect your account.');
         }
     }

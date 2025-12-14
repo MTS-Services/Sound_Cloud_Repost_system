@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'auth' => Authenticate::class,
+            'refreshSoundCloudToken' => \App\Http\Middleware\RefreshSoundCloudToken::class,
         ]);
         $middleware->validateCsrfTokens(except: [
             'webhook/stripe',
