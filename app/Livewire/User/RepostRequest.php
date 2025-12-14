@@ -83,6 +83,7 @@ class RepostRequest extends Component
 
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->requestReceiveable = UserSetting::self()->value('accept_repost') ?? 0 ? false : true;
         $this->dataLoad();
 

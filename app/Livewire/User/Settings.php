@@ -10,6 +10,7 @@ use App\Models\UserGenre;
 use App\Models\UserPlan;
 use App\Models\UserSetting;
 use App\Models\UserSocialInformation;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\UserSettingsService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
@@ -85,13 +86,16 @@ class Settings extends Component
 
 
     protected UserSettingsService $userSettingsService;
+    protected SoundCloudService $soundCloudService;
 
-    public function boot(UserSettingsService $userSettingsService)
+    public function boot(UserSettingsService $userSettingsService, SoundCloudService $soundCloudService)
     {
         $this->userSettingsService = $userSettingsService;
+        $this->soundCloudService = $soundCloudService;
     }
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();
@@ -269,6 +273,11 @@ class Settings extends Component
         } catch (\Exception $e) {
             $this->dispatch('alert', type: 'error', message: $e->getMessage());
         }
+    }
+
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function getAlertsProperty()

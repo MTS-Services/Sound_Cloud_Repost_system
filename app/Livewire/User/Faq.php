@@ -5,6 +5,7 @@ namespace App\Livewire\User;
 use Livewire\Component;
 use App\Models\FaqCategory;
 use App\Models\Faq as FaqModel;
+use App\Services\SoundCloud\SoundCloudService;
 
 class Faq extends Component
 {
@@ -13,9 +14,23 @@ class Faq extends Component
     public $categoryCount;
     public $faqCount;
 
+    protected SoundCloudService $soundCloudService;
+
+    public function boot(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
+
+
     public function mount()
     {
         $this->loadFaqs();
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function loadFaqs()

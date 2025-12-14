@@ -99,12 +99,18 @@
                 <span class="text-xs md:text-sm">{{ __('Settings') }}</span>
             </a>
 
-            <a href="{{ route('user.help-support') }}" wire:navigate
+            <a href="{{ route('f.help') }}" wire:navigate
                 class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
                 text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'help') active sidebar-item @endif">
                 <x-heroicon-o-question-mark-circle class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
                 <span class="text-xs md:text-sm">{{ __('Help & Support') }}</span>
             </a>
+            {{-- <a href="{{ route('user.help-support') }}" wire:navigate
+                class="flex items-center px-2 py-1.5 md:px-3 md:py-2 rounded-lg transition-colors
+                text-slate-500 dark:text-slate-300 hover:text-orange-600 hover:bg-slate-100 dark:hover:text-slate-50 dark:hover:bg-slate-700 @if ($page_slug == 'help') active sidebar-item @endif">
+                <x-heroicon-o-question-mark-circle class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" />
+                <span class="text-xs md:text-sm">{{ __('Help & Support') }}</span>
+            </a> --}}
         </div>
     </nav>
 

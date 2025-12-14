@@ -78,6 +78,7 @@ class Chart extends Component
 
     public function likeSource($encryptedCampaignId, $encryptedSourceId)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $campaign = $this->baseValidation($encryptedCampaignId, $encryptedSourceId);
             if (!$campaign) {
@@ -147,6 +148,7 @@ class Chart extends Component
     }
     public function repostSource($encryptedCampaignId, $encryptedSourceId)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $campaign = $this->baseValidation($encryptedCampaignId, $encryptedSourceId);
 
@@ -231,6 +233,15 @@ class Chart extends Component
             $this->dispatch('alert', type: 'error', message: 'An unexpected error occurred. Please try again later.');
             return;
         }
+    }
+
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+    public function mount()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function render()

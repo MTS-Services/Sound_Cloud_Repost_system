@@ -5,16 +5,19 @@ namespace App\Livewire\User;
 use App\Models\Credit;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\CreditService;
+use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 
 class AddCredit extends Component
 {
     protected CreditService $creditService;
     protected OrderService $orderService;
-    public function boot(CreditService $creditService, OrderService $orderService)
+    protected SoundCloudService $soundCloudService;
+    public function boot(CreditService $creditService, OrderService $orderService, SoundCloudService $soundCloudService)
     {
         $this->creditService = $creditService;
         $this->orderService = $orderService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function buyCredits($envryptedCreditId)
@@ -33,6 +36,16 @@ class AddCredit extends Component
             $this->dispatch('alert', type: 'error', message: $e->getMessage());
         }
     }
+
+    public function mount()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+
     public function render()
     {
         $data['activeCredits'] = $this->creditService->getCredits()->active()->get();

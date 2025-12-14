@@ -113,6 +113,8 @@ class Member extends Component
     }
     public function updated($propertyName)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+
         $this->validateOnly($propertyName);
         if ($propertyName === 'likeable' || $propertyName === 'commentable') {
             $this->creditSpent = repostPrice($this->user->repost_price, $this->commentable, $this->likeable);

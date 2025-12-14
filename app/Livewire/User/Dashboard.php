@@ -254,6 +254,7 @@ class Dashboard extends Component
 
     public function updated($propertyName)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         if (in_array($propertyName, ['credit', 'likeable', 'commentable'])) {
             $this->calculateFollowersLimit();
         }
@@ -264,8 +265,10 @@ class Dashboard extends Component
         $this->followersLimit = ($this->credit - ($this->likeable ? 2 : 0) - ($this->commentable ? 2 : 0)) * 100;
     }
 
+
     public function loadDashboardData()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->total_credits = $this->creditTransactionService->getUserTotalCredits();
 
         $this->totalCount = Repost::where('track_owner_urn', user()->urn)->count();
@@ -410,6 +413,8 @@ class Dashboard extends Component
     // Also update fetchTracks method to properly set allTracks
     public function fetchTracks()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+
         try {
             $this->soundCloudService->syncUserTracks(user(), []);
 
@@ -432,6 +437,7 @@ class Dashboard extends Component
     // Also update fetchPlaylists method to properly set allPlaylists
     public function fetchPlaylists()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         try {
             $this->soundCloudService->syncUserPlaylists(user());
 
@@ -1203,6 +1209,8 @@ class Dashboard extends Component
     }
     public function repost($requestId)
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+
         $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
 
         if ($result['status'] === 'success') {

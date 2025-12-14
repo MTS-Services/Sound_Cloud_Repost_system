@@ -188,6 +188,7 @@ class MyCampaign extends Component
         ];
     }
 
+
     public function updated($propertyName): void
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
@@ -428,7 +429,7 @@ class MyCampaign extends Component
             $exists = Campaign::where('music_id', $musicId)
                 ->where('music_type', $this->musicType)
                 ->open()->exists();
-                
+
             if ($exists) {
                 $this->dispatch('alert', type: 'error', message: 'You already have an active campaign for this track. Please end or close it before creating a new one.');
                 return;

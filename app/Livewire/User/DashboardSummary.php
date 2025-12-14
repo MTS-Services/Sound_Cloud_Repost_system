@@ -7,15 +7,27 @@ use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\UserSetting;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\UserSettingsService;
 
 class DashboardSummary extends Component
 {
     protected UserSettingsService $userSettingsService;
+    protected SoundCloudService $soundCloudService;
 
-    public function boot(UserSettingsService $userSettingsService)
+    public function boot(UserSettingsService $userSettingsService, SoundCloudService $soundCloudService)
     {
         $this->userSettingsService = $userSettingsService;
+        $this->soundCloudService = $soundCloudService;
+    }
+
+    public function mount()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function render()

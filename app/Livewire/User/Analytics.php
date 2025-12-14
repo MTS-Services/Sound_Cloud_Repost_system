@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\UserGenre;
+use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Component;
 use App\Services\User\AnalyticsService;
 use Livewire\Attributes\On;
@@ -33,19 +34,22 @@ class Analytics extends Component
     public array $topSources = [];
     public array $genreBreakdown = [];
 
-    protected AnalyticsService $analyticsService;
 
     // For performance pagination
     public int $sourcesPerPage = 10;
     public string $pageName = 'sourcePage';
 
-    public function boot(AnalyticsService $analyticsService)
+    protected AnalyticsService $analyticsService;
+    protected SoundCloudService $soundCloudService;
+    public function boot(AnalyticsService $analyticsService, SoundCloudService $soundCloudService)
     {
         $this->analyticsService = $analyticsService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
         $this->selectedGenres = request()->query('selectedGenres', ['Any Genre']);
@@ -55,6 +59,11 @@ class Analytics extends Component
         $this->loadData();
         $this->loadAdditionalData();
         $this->getChartData();
+    }
+
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     /**

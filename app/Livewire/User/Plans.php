@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Admin\OrderManagement\OrderService;
 use App\Services\Admin\PackageManagement\PlanService;
 use App\Services\Admin\PackageManagement\UserPlanService;
+use App\Services\SoundCloud\SoundCloudService;
 use App\Services\User\UserSettingsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -23,17 +24,20 @@ class Plans extends Component
     protected OrderService $orderService;
     protected UserPlanService $userPlanService;
     protected UserSettingsService $userSettingsService;
+    protected SoundCloudService $soundCloudService;
 
     public function boot(
         PlanService $planService,
         OrderService $orderService,
         UserPlanService $userPlanService,
-        UserSettingsService $userSettingsService
+        UserSettingsService $userSettingsService,
+        SoundCloudService $soundCloudService
     ) {
         $this->planService = $planService;
         $this->orderService = $orderService;
         $this->userPlanService = $userPlanService;
         $this->userSettingsService = $userSettingsService;
+        $this->soundCloudService = $soundCloudService;
     }
 
     public function subscribe(string $plan_id)
@@ -70,7 +74,7 @@ class Plans extends Component
                     $data['amount'] = $this->isYearly ? $plan->yearly_price : $plan->monthly_price;
                     $data['notes'] = "Plan subscription for " . $plan->name;
                     $data['start_date'] = now();
-                    
+
                     if ($this->isYearly) {
                         $data['end_date'] = now()->addYear();
                         $billingCycle = 'yearly';
@@ -78,19 +82,19 @@ class Plans extends Component
                         $data['end_date'] = now()->addMonth();
                         $billingCycle = 'monthly';
                     }
-                    
+
                     $data['duration'] = now()->diffInDays($data['end_date']);
                 }
 
                 $order = $this->orderService->createOrder($data);
-                
+
                 // Create or update UserPlan
                 $data['order_id'] = $order->id;
                 $data['price'] = $data['amount'];
                 $data['billing_cycle'] = $billingCycle;
                 $data['auto_renew'] = true; // Enable auto-renewal by default
                 $data['next_billing_date'] = $data['end_date'];
-                
+
                 if ($activeUserPlan && $activeUserPlan->plan?->monthly_price < $plan->monthly_price) {
                     // Update existing plan for upgrade
                     $activeUserPlan->update([
@@ -123,10 +127,15 @@ class Plans extends Component
 
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->plans = $this->planService->getPlans('monthly_price', 'asc')
             ->with('featureRelations.feature')
             ->active()
             ->get();
+    }
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function render()

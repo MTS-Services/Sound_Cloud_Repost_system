@@ -144,7 +144,10 @@ class MyAccount extends Component
         // dd($this->chart_data);
     }
 
-    public function updated() {}
+    public function updated() 
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
 
     public function updatedActiveTab()
     {

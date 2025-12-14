@@ -4,6 +4,7 @@ namespace App\Livewire\User;
 
 use App\Models\Payment;
 use App\Models\UserPlan;
+use App\Services\SoundCloud\SoundCloudService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,9 +18,17 @@ class MySubscription extends Component
 
     protected $listeners = ['confirmCancelSubscription' => 'cancelSubscription'];
 
+    protected SoundCloudService $soundCloudService;
+
     public function mount()
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->loadUserPlan();
+    }
+
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     /**

@@ -83,6 +83,8 @@ class RedesignCampaign extends Component
 
     public function mount(): void
     {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
 
         // Clear session tracking on fresh page load only
@@ -195,6 +197,11 @@ class RedesignCampaign extends Component
         }
     }
 
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
+    
     public function updatedSearch(): void
     {
         $this->getAllTags();

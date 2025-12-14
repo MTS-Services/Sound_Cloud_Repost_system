@@ -104,6 +104,10 @@ class FavouriteMember extends Component
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
+    public function updated()
+    {
+        $this->soundCloudService->refreshUserTokenIfNeeded(user());
+    }
 
     public function loadYourFavouriteMembers()
     {
