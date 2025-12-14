@@ -93,7 +93,6 @@ class MyAccount extends Component
         $user = $user_name ? User::where('name', $user_name)->orWhere('urn', $user_name)->first() : user();
 
         $this->user_name = $user->name;
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->getAnalyticsData($user);
 
         $this->activeTab = request()->query('tab', $this->activeTab);

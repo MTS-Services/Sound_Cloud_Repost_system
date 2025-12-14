@@ -49,7 +49,6 @@ class Analytics extends Component
 
     public function mount()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->filterOptions = $this->analyticsService->getFilterOptions();
         $this->userGenres = $this->fetchUserGenres();
         $this->selectedGenres = request()->query('selectedGenres', ['Any Genre']);

@@ -549,10 +549,6 @@ class Repost extends Component
         $this->dispatch('reset-widget-initiallized');
     }
 
-    public function mount()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    }
     public function updated()
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());

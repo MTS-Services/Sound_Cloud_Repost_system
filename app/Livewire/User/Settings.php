@@ -95,7 +95,6 @@ class Settings extends Component
     }
     public function mount()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->availableGenres = AllGenres();
         $this->selectedGenres = UserGenre::where('user_urn', user()->urn)->pluck('genre')->toArray();
         $this->credits = CreditTransaction::where('receiver_urn', user()->urn)->latest()->get();

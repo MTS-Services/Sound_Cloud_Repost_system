@@ -127,7 +127,6 @@ class Plans extends Component
 
     public function mount()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->plans = $this->planService->getPlans('monthly_price', 'asc')
             ->with('featureRelations.feature')
             ->active()

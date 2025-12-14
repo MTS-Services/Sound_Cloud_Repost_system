@@ -208,7 +208,6 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->getAnalyticsData(user());
         $this->loadDashboardData();

@@ -22,7 +22,6 @@ class MySubscription extends Component
 
     public function mount()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->loadUserPlan();
     }
 

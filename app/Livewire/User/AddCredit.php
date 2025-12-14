@@ -37,10 +37,6 @@ class AddCredit extends Component
         }
     }
 
-    public function mount()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    }
     public function updated()
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());

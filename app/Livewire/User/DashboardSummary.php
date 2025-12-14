@@ -21,10 +21,6 @@ class DashboardSummary extends Component
         $this->soundCloudService = $soundCloudService;
     }
 
-    public function mount()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    }
     public function updated()
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());

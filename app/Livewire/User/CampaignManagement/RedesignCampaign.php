@@ -83,7 +83,6 @@ class RedesignCampaign extends Component
 
     public function mount(): void
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
 
         $this->activeMainTab = request()->query('tab', 'recommendedPro');
 

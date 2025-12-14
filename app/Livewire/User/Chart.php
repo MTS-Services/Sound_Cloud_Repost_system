@@ -239,11 +239,7 @@ class Chart extends Component
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
-    public function mount()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    }
-
+    
     public function render()
     {
         $paginated = Cache::store('database')->get('top_20_sources_cache');

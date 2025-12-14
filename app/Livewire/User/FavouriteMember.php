@@ -100,10 +100,7 @@ class FavouriteMember extends Component
         $this->baseUrl = config('services.soundcloud.api_url');
     }
 
-    public function mount()
-    {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
-    }
+
     public function updated()
     {
         $this->soundCloudService->refreshUserTokenIfNeeded(user());

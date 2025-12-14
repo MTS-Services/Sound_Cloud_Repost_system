@@ -25,7 +25,6 @@ class Faq extends Component
     public function mount()
     {
         $this->loadFaqs();
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
 
     public function updated()

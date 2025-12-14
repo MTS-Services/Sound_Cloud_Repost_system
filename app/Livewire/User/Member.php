@@ -133,7 +133,6 @@ class Member extends Component
         $this->genres = AllGenres();
         $this->userinfo = user()->userInfo;
         $this->costFilter = request()->get('cost', 'low_to_high');
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
     }
     public function updatedSearch()
     {
