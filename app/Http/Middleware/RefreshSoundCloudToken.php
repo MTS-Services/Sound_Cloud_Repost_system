@@ -2,12 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\SoundCloud\SoundCloudService;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Services\SoundCloud\SoundCloudService;
+use Symfony\Component\HttpFoundation\Response;
 
 class RefreshSoundCloudToken
 {
@@ -25,32 +26,51 @@ class RefreshSoundCloudToken
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
+        // Log middleware execution for debugging
+        Log::info('RefreshSoundCloudToken middleware executed', [
+            'url' => $request->url(),
+            'route_name' => $request->route() ? $request->route()->getName() : 'unknown',
+            'is_authenticated' => Auth::check(),
+        ]);
+
         // Only process if user is authenticated
         if (!Auth::check()) {
+            Log::info('User not authenticated, skipping SoundCloud token check');
             return $next($request);
         }
 
         $user = Auth::user();
 
-        // Only process if user has SoundCloud connection
+        // Log user connection status
+        Log::info('Checking SoundCloud connection', [
+            'user_id' => $user->id,
+            'is_connected' => $user->isSoundCloudConnected(),
+            'has_token' => !is_null($user->token),
+            'has_refresh_token' => !is_null($user->refresh_token),
+        ]);
+
+        // Skip if user is not connected to SoundCloud
         if (!$user->isSoundCloudConnected()) {
+            Log::info('User not connected to SoundCloud, skipping token refresh');
             return $next($request);
         }
 
         try {
             // Attempt to refresh token if needed
             $this->soundCloudService->refreshUserTokenIfNeeded($user);
-            
+
+            Log::info('SoundCloud token check passed, continuing request');
+
             // Token is valid, continue with request
             return $next($request);
-            
         } catch (Exception $e) {
             // Token refresh failed - disconnect and logout
-            Log::warning('SoundCloud token refresh failed in middleware. Logging out user.', [
+            Log::error('SoundCloud token refresh failed in middleware', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             // Disconnect SoundCloud
@@ -61,7 +81,9 @@ class RefreshSoundCloudToken
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            Log::info('User logged out due to SoundCloud authentication failure: ' . $user->id);
+            Log::info('User logged out due to SoundCloud authentication failure', [
+                'user_id' => $user->id,
+            ]);
 
             // Handle different request types
             return $this->handleFailedAuthentication($request, $e->getMessage());
@@ -81,13 +103,11 @@ class RefreshSoundCloudToken
                 'token' => null,
                 'refresh_token' => null,
                 'expires_in' => null,
-                'last_synced_at' => null,
-                'urn' => null,
-                'soundcloud_username' => null,
-                'soundcloud_avatar' => null,
             ]);
 
-            Log::info('SoundCloud disconnected for user ' . $user->id);
+            Log::info('SoundCloud credentials cleared for user', [
+                'user_id' => $user->id,
+            ]);
         } catch (Exception $e) {
             Log::error('Error during SoundCloud disconnection in middleware', [
                 'user_id' => $user->id,
@@ -103,13 +123,22 @@ class RefreshSoundCloudToken
      * @param  string  $message
      * @return \Illuminate\Http\Response
      */
-    private function handleFailedAuthentication(Request $request, string $message)
+    private function handleFailedAuthentication(Request $request, string $message): Response
     {
-        // For Livewire requests
+        Log::info('Handling failed authentication', [
+            'is_livewire' => $request->header('X-Livewire') ? 'yes' : 'no',
+            'expects_json' => $request->expectsJson() ? 'yes' : 'no',
+            'message' => $message,
+        ]);
+
+        // For Livewire requests - Return HTML with redirect script
         if ($request->header('X-Livewire')) {
+            // This will cause Livewire to reload the entire page
+            // which will then hit the auth middleware and redirect to login
             return response()->json([
-                'message' => $message,
-                'redirect' => route('login')
+                'effects' => [
+                    'html' => '<script>window.location.href = "' . route('f.landing') . '";</script>',
+                ],
             ], 401);
         }
 
@@ -117,12 +146,13 @@ class RefreshSoundCloudToken
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => $message,
-                'redirect' => route('login')
+                'redirect' => route('f.landing'),
             ], 401);
         }
 
         // For regular web requests
-        return redirect()->route('login')
-            ->with('error', $message);
+        return redirect()->route('f.landing')
+            ->with('error', $message)
+            ->with('soundcloud_error', true);
     }
 }

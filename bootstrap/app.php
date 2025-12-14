@@ -6,6 +6,7 @@ use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use App\Http\Middleware\RefreshSoundCloudToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'auth' => Authenticate::class,
-            'refreshSoundCloudToken' => \App\Http\Middleware\RefreshSoundCloudToken::class,
+            'soundcloud' => RefreshSoundCloudToken::class,
         ]);
         $middleware->validateCsrfTokens(except: [
             'webhook/stripe',
