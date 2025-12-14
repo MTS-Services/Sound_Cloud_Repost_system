@@ -149,7 +149,7 @@
                         <div
                             class="bg-gray-100 dark:bg-slate-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-slate-700">
                             <h3 class="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4">About</h3>
-                            <p class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4">
+                            <p class="text-gray-600 dark:text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4 text-wrap">
                                 {{ $user->userInfo->description ?? 'description' }}
                             </p>
                             <p class="text-gray-500 dark:text-slate-400 text-xs">Bio from
