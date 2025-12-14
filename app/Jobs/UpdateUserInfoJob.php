@@ -108,7 +108,7 @@ class UpdateUserInfoJob implements ShouldQueue
             $user->update([
                 'avatar' => $responseUser['avatar_url'] ?? $user->avatar,
                 'nickname' => $responseUser['username'] ?? $user->nickname,
-                'name' => $responseUser['username'] ?? $responseUser['full_name'] ?? $user->name,
+                'name' => $responseUser['username'] ?? $user->name,
                 'soundcloud_permalink_url' => $responseUser['permalink_url'] ?? $user->soundcloud_permalink_url,
             ]);
 
