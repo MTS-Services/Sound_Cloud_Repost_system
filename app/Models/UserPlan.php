@@ -52,10 +52,6 @@ class UserPlan extends BaseModel
             'status_label',
             'status_color',
 
-            'created_at_label',
-            'updated_at_label',
-            'deleted_at_label',
-
             'start_date_formatted',
             'end_date_formatted',
             'next_billing_date_formatted',
@@ -95,18 +91,18 @@ class UserPlan extends BaseModel
         ];
     }
 
-    public function getStatusLabelAttribute()
+    public function getStatusLabelAttribute(): string
     {
-        return $this->status
-            ? self::getStatusList()[$this->status]
-            : self::getStatusList()[self::STATUS_INACTIVE];
+        return self::getStatusList()[$this->status]
+            ?? self::getStatusList()[self::STATUS_INACTIVE];
     }
 
-    public function getStatusColorAttribute()
+    public function getStatusColorAttribute(): string
     {
-        return $this->status
-            ? 'badge-' . self::getStatusColorList()[$this->status]
-            : 'badge-' . self::getStatusColorList()[self::STATUS_INACTIVE];
+        return 'badge-' . (
+            self::getStatusColorList()[$this->status]
+            ?? self::getStatusColorList()[self::STATUS_INACTIVE]
+        );
     }
 
     public function getStatusBtnLabelAttribute()
