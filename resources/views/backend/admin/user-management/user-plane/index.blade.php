@@ -63,7 +63,7 @@
                     table_columns: table_columns,
                     main_class: '.datatable',
                     displayLength: 10,
-                    main_route: "{{ route('um.user-plane.index') }}",
+                    main_route: "{{ route('um.user-plan.index') }}",
                     order_route: "{{ route('update.sort.order') }}",
                     export_columns: [0, 1, 2, 3,4],
                     model: 'Repost',
@@ -78,7 +78,7 @@
 
                 $(document).on('click', '.view', function() {
                     const id = $(this).data('id');
-                    const route = "{{ route('um.user-plane.details', ':id') }}";
+                    const route = "{{ route('um.user-plan.details', ':id') }}";
 
                     const details = [
                         {

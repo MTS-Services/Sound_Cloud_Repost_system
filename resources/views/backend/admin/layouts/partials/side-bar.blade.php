@@ -92,7 +92,7 @@
                     ],
                     [
                         'name' => 'User Plan',
-                        'route' => route('um.user-plane.index'),
+                        'route' => route('um.user-plan.index'),
                         'icon' => 'user',
                         'active' => 'users_plane',
                         'permission' => 'user-plane-list',

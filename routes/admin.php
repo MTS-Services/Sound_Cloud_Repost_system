@@ -120,7 +120,7 @@ Route::group(['middleware' => ['auth:admin', 'admin'], 'prefix' => 'admin'], fun
         });
 
         Route::resource('user-plan', UserPlaneController::class);
-        Route::controller(UserPlaneController::class)->name('user-plane.')->prefix('user-plan')->group(function () {
+        Route::controller(UserPlaneController::class)->name('user-plan.')->prefix('user-plane')->group(function () {
             Route::post('/show/{user_plane}', 'show')->name('details');
             Route::get('/status/{user_plane}', 'status')->name('status');
         });
