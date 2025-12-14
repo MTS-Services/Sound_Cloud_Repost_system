@@ -72,6 +72,12 @@ class UserPlaneController extends Controller implements HasMiddleware
                 ->editColumn('created_at', function ($userPlan) {
                     return $userPlan->created_at_formatted;
                 })
+                ->editColumn('start_date', function ($userPlan) {
+                    return $userPlan->start_date_formatted ?? 'N/A';
+                })
+                ->editColumn('end_date', function ($userPlan) {
+                    return $userPlan->end_date_formatted ?? 'N/A';
+                })
                 ->editColumn('action', function ($service) {
                     $menuItems = $this->menuItems($service);
                     return view('components.action-buttons', compact('menuItems'))->render();
