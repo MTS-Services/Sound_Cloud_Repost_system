@@ -80,7 +80,7 @@
                                 Auto-Renew Enabled
                             </p>
                             <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                                Your subscription will renew on {{ $userPlan?->next_billing_date_formatted ?? '-' }}.
+                                Your subscription will renew on {{ $userPlan?->next_billing_date_formatted ?? 'N/A' }}.
                             </p>
                         </div>
 
@@ -98,8 +98,8 @@
                                 Subscription Cancelled
                             </p>
                             <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                                Cancelled on {{ $userPlan->canceled_at_formatted ?? '-' }}.
-                                Access until {{ $userPlan->end_date_formatted ?? '-' }}.
+                                Cancelled on {{ $userPlan->canceled_at_formatted ?? 'N/A' }}.
+                                Access until {{ $userPlan->end_date_formatted ?? 'N/A' }}.
                             </p>
                         </div>
                     @endif
