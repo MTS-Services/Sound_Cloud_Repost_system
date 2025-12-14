@@ -267,7 +267,6 @@ class Dashboard extends Component
 
     public function loadDashboardData()
     {
-        $this->soundCloudService->refreshUserTokenIfNeeded(user());
         $this->total_credits = $this->creditTransactionService->getUserTotalCredits();
 
         $this->totalCount = Repost::where('track_owner_urn', user()->urn)->count();
