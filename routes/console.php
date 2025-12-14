@@ -14,5 +14,5 @@ Schedule::command('app:top-performance-source-weekly-update')->weekly();
 Schedule::command('app:ban-untracked-users')->weekly();
 Schedule::command('app:user-plan-expired-inactive')->daily();
 Schedule::command('campaigns:complete-expired')->daily();
-Schedule::command('users:update-info')->everyMinute();
-Schedule::command('subscriptions:check-expired')->everyMinute();
+Schedule::command('users:update-info')->daily();
+Schedule::command('subscriptions:check-expired')->daily();
