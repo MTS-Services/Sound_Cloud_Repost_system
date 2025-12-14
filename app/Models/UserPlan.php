@@ -51,6 +51,15 @@ class UserPlan extends BaseModel
         $this->appends = array_merge(parent::getAppends(), [
             'status_label',
             'status_color',
+
+            'created_at_label',
+            'updated_at_label',
+            'deleted_at_label',
+
+            'start_date_formatted',
+            'end_date_formatted',
+            'next_billing_date_formatted',
+            'canceled_at_formatted',
         ]);
     }
 
@@ -86,18 +95,18 @@ class UserPlan extends BaseModel
         ];
     }
 
-    public function getStatusLabelAttribute()
+    public function getStatusLabelAttribute(): string
     {
-        return $this->status
-            ? self::getStatusList()[$this->status]
-            : self::getStatusList()[self::STATUS_INACTIVE];
+        return self::getStatusList()[$this->status]
+            ?? self::getStatusList()[self::STATUS_INACTIVE];
     }
 
-    public function getStatusColorAttribute()
+    public function getStatusColorAttribute(): string
     {
-        return $this->status
-            ? 'badge-' . self::getStatusColorList()[$this->status]
-            : 'badge-' . self::getStatusColorList()[self::STATUS_INACTIVE];
+        return 'badge-' . (
+            self::getStatusColorList()[$this->status]
+            ?? self::getStatusColorList()[self::STATUS_INACTIVE]
+        );
     }
 
     public function getStatusBtnLabelAttribute()
@@ -129,10 +138,6 @@ class UserPlan extends BaseModel
         return '<span class="badge ' . $this->status_color . '">' . $this->status_label . '</span>';
     }
 
-
-
-
-
     public function scopePending(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PENDING);
@@ -140,7 +145,11 @@ class UserPlan extends BaseModel
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE)->whereDate('end_date', '>=', now());
+        return $query->where('status', self::STATUS_ACTIVE)
+            ->where(function ($q) {
+                $q->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', now());
+            });
     }
 
     public function scopeInactive(Builder $query): Builder
@@ -183,5 +192,25 @@ class UserPlan extends BaseModel
         return self::where('status', self::STATUS_ACTIVE)
             ->whereDate('end_date', '<', now())
             ->update(['status' => self::STATUS_INACTIVE]);
+    }
+
+    public function getStartDateFormattedAttribute(): ?string
+    {
+        return $this->start_date?->format('M d, Y');
+    }
+
+    public function getEndDateFormattedAttribute(): ?string
+    {
+        return $this->end_date?->format('M d, Y');
+    }
+
+    public function getNextBillingDateFormattedAttribute(): ?string
+    {
+        return $this->next_billing_date?->format('M d, Y');
+    }
+
+    public function getCanceledAtFormattedAttribute(): ?string
+    {
+        return $this->canceled_at?->format('M d, Y');
     }
 }

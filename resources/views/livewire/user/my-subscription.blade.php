@@ -20,7 +20,7 @@
             @if ($userPlan)
 
                 {{-- Plan Card --}}
-                <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white shadow-md mb-8">
+                <div class="bg-linear-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white shadow-md mb-8">
                     <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
                         <div>
                             <h3 class="text-2xl font-semibold">{{ $userPlan->plan->name }}</h3>
@@ -65,9 +65,8 @@
                             {{ $userPlan->auto_renew ? 'Next Billing' : 'Expires On' }}
                         </p>
                         <p class="mt-2 text-lg text-gray-900 dark:text-white font-semibold">
-                            {{ $userPlan->auto_renew
-                                ? $userPlan->next_billing_date->format('M d, Y')
-                                : $userPlan->end_date->format('M d, Y') }}
+                            {{ $userPlan->auto_renew ? $userPlan->next_billing_date_formatted : $userPlan->end_date_formatted }}
+
                         </p>
                     </div>
                 </div>
@@ -81,7 +80,7 @@
                                 Auto-Renew Enabled
                             </p>
                             <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                                Your subscription will renew on {{ $userPlan->next_billing_date->format('M d, Y') }}.
+                                Your subscription will renew on {{ $userPlan?->next_billing_date_formatted ?? '-' }}.
                             </p>
                         </div>
 
@@ -99,8 +98,8 @@
                                 Subscription Cancelled
                             </p>
                             <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                                Cancelled on {{ $userPlan->canceled_at->format('M d, Y') }}.
-                                Access until {{ $userPlan->end_date->format('M d, Y') }}.
+                                Cancelled on {{ $userPlan->canceled_at_formatted ?? '-' }}.
+                                Access until {{ $userPlan->end_date_formatted ?? '-' }}.
                             </p>
                         </div>
                     @endif

@@ -205,4 +205,9 @@ class Payment extends BaseModel
             }
         });
     }
+
+    public function getProcessAtFormattedAttribute(): ?string
+    {
+        return $this->processed_at?->format('M d, Y');
+    }
 }
