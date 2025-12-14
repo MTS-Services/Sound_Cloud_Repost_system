@@ -27,12 +27,12 @@ class UserPlaneController extends Controller implements HasMiddleware
 
     protected function redirectIndex(): RedirectResponse
     {
-        return redirect()->route('um.user-plane.index');
+        return redirect()->route('um.user-plan.index');
     }
 
     protected function redirectTrashed(): RedirectResponse
     {
-        return redirect()->route('um.user-plane.trash');
+        return redirect()->route('um.user-plan.trash');
     }
 
   
@@ -93,7 +93,7 @@ class UserPlaneController extends Controller implements HasMiddleware
                 'permissions' => ['permission-list', 'permission-delete', 'permission-status']
             ],
              [
-                'routeName' => 'um.user-plane.status',
+                'routeName' => 'um.user-plan.status',
                 'params' => [encrypt($model->id)],
                 'label' => $model->status ? 'Deactivate' : 'Activate',
                 'permissions' => ['userPlane-status']
@@ -106,7 +106,7 @@ class UserPlaneController extends Controller implements HasMiddleware
             ],
 
             [
-                'routeName' => 'um.user-plane.destroy',
+                'routeName' => 'um.user-plan.destroy',
                 'params' => [encrypt($model->id)],
                 'label' => 'Delete',
                 'delete' => true,
@@ -160,7 +160,7 @@ class UserPlaneController extends Controller implements HasMiddleware
          $user_plan = UserPlan::findOrFail(decrypt($id));
         $user_plan->update(['status' => !$user_plan->status, 'updated_by' => admin()->id]);
         session()->flash('success', 'User plan status updated successfully!');
-        return redirect()->route('um.user-plane.index');
+        return redirect()->route('um.user-plan.index');
     }
 
     /**
