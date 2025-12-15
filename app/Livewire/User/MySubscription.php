@@ -20,6 +20,11 @@ class MySubscription extends Component
 
     protected SoundCloudService $soundCloudService;
 
+    public function boot(SoundCloudService $soundCloudService)
+    {
+        $this->soundCloudService = $soundCloudService;
+    }
+
     public function mount()
     {
         $this->loadUserPlan();
