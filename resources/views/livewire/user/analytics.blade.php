@@ -167,7 +167,7 @@
                             label: 'Reposts Reach',
                             data: this.chartData.length > 0 ? this.chartData.map((item) => item.repost_reach || 0) : [0],
                             borderColor: '#3bdeff',
-                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            backgroundColor: 'rgba(59, 222, 255, 0.1)',
                             tension: 0.4,
                             fill: true,
                             pointBackgroundColor: '#3bdeff',
