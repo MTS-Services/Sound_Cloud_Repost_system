@@ -26,8 +26,8 @@
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: '#f5540b',
                 }, {
-                    label: 'Reposts',
-                    data: this.chartData.length > 0 ? this.chartData.map(item => item.total_reposts || 0) : [0],
+                    label: 'Repost Reach',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.repost_reach || 0) : [0],
                     borderColor: '#8b5cf6',
                     backgroundColor: 'rgba(139, 92, 246, 0.1)',
                     tension: 0.4,

@@ -1246,20 +1246,18 @@ class Dashboard extends Component
     // Analytics data
     public function getChartData(): array
     {
-        // try {
-            $data =  $this->analyticsService->getChartData(
+        try {
+            return $this->analyticsService->getChartData(
                 'last_month',
                 null,
                 [],
                 null,
                 null
             );
-            dd($data);
-            return $data;
-        // } catch (Throwable $e) {
-        //     Log::error('Chart data loading failed', ['error' => $e->getMessage()]);
-        //     throw $e;
-        // }
+        } catch (Throwable $e) {
+            Log::error('Chart data loading failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 
     public function render()
