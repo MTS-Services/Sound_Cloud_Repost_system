@@ -286,7 +286,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return $this->userPlans()
             ->active()
-            ->where('monthly_price', '>', 0)
+            ->where('price', '>', 0)
             ->exists();
     }
 
@@ -294,7 +294,7 @@ class User extends AuthBaseModel implements MustVerifyEmail
     {
         return $query->whereHas('userPlans', function ($q) {
             $q->active()
-                ->where('monthly_price', '>', 0);
+                ->where('price', '>', 0);
         });
     }
 
