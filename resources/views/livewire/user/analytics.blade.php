@@ -164,7 +164,7 @@
                             pointHoverBorderColor: '#8b5cf6',
                         },
                         {
-                            label: 'Reposts Reach',
+                            label: 'Repost Reach',
                             data: this.chartData.length > 0 ? this.chartData.map((item) => item.repost_reach || 0) : [0],
                             borderColor: '#3bdeff',
                             backgroundColor: 'rgba(59, 222, 255, 0.1)',
