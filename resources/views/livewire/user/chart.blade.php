@@ -288,7 +288,7 @@
                                             {{-- Reach --}}
                                             <div
                                                 class="col-span-2 flex items-center justify-center text-gray-500 dark:text-gray-300">
-                                                {{ number_shorten($source['track_reach']) }}
+                                                {{ number_shorten($source['track_reach'] ?? 0) }}
                                             </div>
 
                                             {{-- Reposts --}}
@@ -361,7 +361,7 @@
                                         {{-- Metrics --}}
                                         <div class="flex justify-between text-gray-500 dark:text-gray-300 text-sm">
                                             <span>Reach:
-                                                {{ number_shorten($source['track_reach']) }}</span>
+                                                {{ number_shorten($source['track_reach'] ?? 0) }}</span>
                                             <div class="flex items-center space-x-2">
                                                 <span class="font-bold text-orange-400">
                                                     {{ $source['engagement_score'] }}/10
@@ -484,7 +484,7 @@
                                     <div class="grid grid-cols-3 gap-2 mb-4 text-xs text-gray-800 dark:text-gray-400">
                                         <div class="text-center">
                                             <div class="font-semibold text-black dark:text-white">
-                                                {{ number_shorten($source['track_reach']) }}
+                                                {{ number_shorten($source['track_reach'] ?? 0) }}
                                             </div>
                                             <div>Reach</div>
                                         </div>
@@ -707,7 +707,7 @@
                                                     class="flex items-center gap-4 text-xs text-gray-800 dark:text-gray-400">
                                                     <span>{{ number_shorten($source['reposts']) }}
                                                         reposts</span>
-                                                    <span>{{ number_shorten($source['track_reach']) }}
+                                                    <span>{{ number_shorten($source['track_reach'] ?? 0) }}
                                                         reach</span>
                                                     <span>{{ number_shorten($source['streams']) }}
                                                         plays</span>
