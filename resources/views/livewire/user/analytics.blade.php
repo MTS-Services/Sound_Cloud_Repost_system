@@ -164,6 +164,18 @@
                             pointHoverBorderColor: '#8b5cf6',
                         },
                         {
+                            label: 'Reposts Reach',
+                            data: this.chartData.length > 0 ? this.chartData.map((item) => item.repost_reach || 0) : [0],
+                            borderColor: '#3bdeff',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#3bdeff',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#3bdeff',
+                        },
+                        {
                             label: 'Comments',
                             data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_comments || 0) : [0],
                             borderColor: '#f59e0b',
