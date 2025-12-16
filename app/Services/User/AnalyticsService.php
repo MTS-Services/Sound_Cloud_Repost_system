@@ -613,81 +613,6 @@ class AnalyticsService
         return $metricsBySource;
     }
 
-    /**
-     * Compare and build final result, grouped by track
-     */
-    // private function buildComparisonResultByTrack(array $currentMetrics, array $previousMetrics): array
-    // {
-    //     $result = [];
-    //     $allTrackUrns = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
-
-    //     foreach ($allTrackUrns as $trackUrn) {
-    //         $current = $currentMetrics[$trackUrn] ?? null;
-    //         $previous = $previousMetrics[$trackUrn] ?? null;
-
-    //         $trackName = $current['track_name'] ?? $previous['track_name'] ?? 'Unknown Track';
-    //         $trackDetails = $current['track_details'] ?? $previous['track_details'] ?? null;
-    //         $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
-
-    //         $trackResult = [
-    //             'track_urn' => $trackUrn,
-    //             'track_name' => $trackName,
-    //             'track_details' => $trackDetails,
-    //             'actionable_details' => $actionDetails
-    //         ];
-
-    //         $metrics = ['total_plays', 'total_likes', 'total_comments', 'total_views', 'total_requests', 'total_reposts', 'total_followers'];
-
-    //         foreach ($metrics as $metric) {
-    //             $currentTotal = $current['metrics'][$metric] ?? 0;
-    //             $previousTotal = $previous['metrics'][$metric] ?? 0;
-
-    //             $trackResult['metrics'][$metric] = [
-    //                 'current_total' => $currentTotal,
-    //                 'previous_total' => $previousTotal,
-    //                 'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
-    //             ];
-    //         }
-    //         $result[] = $trackResult;
-    //     }
-
-    //     return $result;
-    // }
-
-    // private function buildComparisonResultBySource(array $currentMetrics, array $previousMetrics): array
-    // {
-    //     $result = [];
-    //     $allSources = array_unique(array_merge(array_keys($currentMetrics), array_keys($previousMetrics)));
-
-    //     foreach ($allSources as $source) {
-    //         $current = $currentMetrics[$source] ?? null;
-    //         $previous = $previousMetrics[$source] ?? null;
-
-    //         $sourceDetails = $current['source_details'] ?? $previous['source_details'] ?? null;
-    //         $actionDetails = $current['actionable_details'] ?? $previous['actionable_details'] ?? null;
-
-    //         $sourceResult = [
-    //             'source_type' => $current['source_type'] ?? $previous['source_type'] ?? 'Unknown',
-    //             'source_details' => $sourceDetails,
-    //             'actionable_details' => $actionDetails
-    //         ];
-
-    //         foreach (self::METRICS as $metric) {
-    //             $currentTotal = $current['metrics'][$metric] ?? 0;
-    //             $previousTotal = $previous['metrics'][$metric] ?? 0;
-
-    //             $sourceResult['metrics'][$metric] = [
-    //                 'current_total' => $currentTotal,
-    //                 'previous_total' => $previousTotal,
-    //                 'change_rate' => $this->calculatePercentageChange($currentTotal, $previousTotal)
-    //             ];
-    //         }
-    //         $result[] = $sourceResult;
-    //     }
-
-    //     return $result;
-    // }
-
     private function buildComparisonResultBySource(array $currentMetrics, array $previousMetrics): Collection
     {
         $result = collect(); // Use a Laravel collection
@@ -882,6 +807,62 @@ class AnalyticsService
     /**
      * Get chart data for visualization
      */
+    // public function getChartData(
+    //     string $filter = 'last_week',
+    //     ?array $dateRange = null,
+    //     ?array $genres = null,
+    //     ?object $source = null,
+    //     ?string $actionableType = null,
+    //     ?string $ownerUserUrn = null,
+    //     ?string $actUserUrn = null
+    // ): array {
+    //     if ($actUserUrn == null) {
+    //         $ownerUserUrn = $ownerUserUrn ?? user()->urn;
+    //     } else {
+    //         $ownerUserUrn = null;
+    //     }
+    //     $periods = $this->calculatePeriods($filter, $dateRange);
+
+    //     $data = $this->fetchAnalyticsData(
+    //         ownerUserUrn: $ownerUserUrn,
+    //         startDate: $periods['current']['start'],
+    //         endDate: $periods['current']['end'],
+    //         genres: $genres,
+    //         source: $source,
+    //         actionableType: $actionableType,
+    //         actUserUrn: $actUserUrn
+    //     );
+
+    //     // Group by date for chart
+    //     $chartData = $data->groupBy(function ($item) {
+    //         return Carbon::parse($item->created_at)->format('Y-m-d');
+    //     })->map(function ($group, $date) {
+    //         $typeGroups = $group->groupBy('type');
+    //         $total_plays = $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count();
+    //         $total_likes = $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count();
+    //         $total_comments = $typeGroups->get(UserAnalytics::TYPE_COMMENT, collect())->count();
+    //         $total_views = $typeGroups->get(UserAnalytics::TYPE_VIEW, collect())->count();
+    //         $total_requests = $typeGroups->get(UserAnalytics::TYPE_REQUEST, collect())->count();
+    //         $total_reposts = $typeGroups->get(UserAnalytics::TYPE_REPOST, collect())->count();
+    //         $total_followers = $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count();
+    //         $avg_total = ($total_plays + $total_likes + $total_comments + $total_requests + $total_reposts + $total_followers) / 6;
+    //         $avg_activities_rate = $total_views >= $avg_total ? round(min(100, ($avg_total / $total_views) * 100), 2) : 0;
+    //         return [
+    //             'date' => $date,
+    //             'total_plays' => $total_plays,
+    //             'total_likes' => $total_likes,
+    //             'total_comments' => $total_comments,
+    //             'total_views' => $total_views,
+    //             'total_requests' => $total_requests,
+    //             'total_reposts' => $total_reposts,
+    //             'total_followers' => $total_followers,
+    //             'avg_activities_rate' => round($avg_activities_rate, 2),
+
+    //         ];
+    //     })->values()->toArray();
+    //     return $chartData;
+    // }
+
     public function getChartData(
         string $filter = 'last_week',
         ?array $dateRange = null,
@@ -908,10 +889,50 @@ class AnalyticsService
             actUserUrn: $actUserUrn
         );
 
+        // 🔹 Calculate repost reach (sum of reposters' followers) per date
+        $repostReachByDate = [];
+
+        // Filter only reposts and group by date
+        $repostsByDate = $data->filter(function ($item) {
+            return $item->type == UserAnalytics::TYPE_REPOST;
+        })->groupBy(function ($item) {
+            return Carbon::parse($item->created_at)->format('Y-m-d');
+        });
+
+        if ($repostsByDate->isNotEmpty()) {
+            // Get all unique act_user_urns from all reposts
+            $allRepostUserUrns = collect();
+            foreach ($repostsByDate as $reposts) {
+                $allRepostUserUrns = $allRepostUserUrns->merge($reposts->pluck('act_user_urn'));
+            }
+            $allRepostUserUrns = $allRepostUserUrns->unique();
+
+            // Fetch followers_count for all reposters in one query
+            $userFollowerCounts = [];
+            if ($allRepostUserUrns->isNotEmpty()) {
+                $userFollowerCounts = UserInformation::whereIn('user_urn', $allRepostUserUrns->toArray())
+                    ->pluck('followers_count', 'user_urn')
+                    ->toArray();
+            }
+
+            // Calculate total reach for each date
+            foreach ($repostsByDate as $date => $reposts) {
+                $totalReach = 0;
+                // Get unique reposters for this date (avoid counting same user multiple times)
+                $uniqueRepostersForDate = $reposts->pluck('act_user_urn')->unique();
+
+                foreach ($uniqueRepostersForDate as $userUrn) {
+                    $totalReach += $userFollowerCounts[$userUrn] ?? 0;
+                }
+
+                $repostReachByDate[$date] = $totalReach;
+            }
+        }
+
         // Group by date for chart
         $chartData = $data->groupBy(function ($item) {
             return Carbon::parse($item->created_at)->format('Y-m-d');
-        })->map(function ($group, $date) {
+        })->map(function ($group, $date) use ($repostReachByDate) {
             $typeGroups = $group->groupBy('type');
             $total_plays = $typeGroups->get(UserAnalytics::TYPE_PLAY, collect())->count();
             $total_likes = $typeGroups->get(UserAnalytics::TYPE_LIKE, collect())->count();
@@ -920,8 +941,13 @@ class AnalyticsService
             $total_requests = $typeGroups->get(UserAnalytics::TYPE_REQUEST, collect())->count();
             $total_reposts = $typeGroups->get(UserAnalytics::TYPE_REPOST, collect())->count();
             $total_followers = $typeGroups->get(UserAnalytics::TYPE_FOLLOW, collect())->count();
+
+            // 🔹 Get repost reach for this date
+            $repost_reach = $repostReachByDate[$date] ?? 0;
+
             $avg_total = ($total_plays + $total_likes + $total_comments + $total_requests + $total_reposts + $total_followers) / 6;
             $avg_activities_rate = $total_views >= $avg_total ? round(min(100, ($avg_total / $total_views) * 100), 2) : 0;
+
             return [
                 'date' => $date,
                 'total_plays' => $total_plays,
@@ -931,10 +957,11 @@ class AnalyticsService
                 'total_requests' => $total_requests,
                 'total_reposts' => $total_reposts,
                 'total_followers' => $total_followers,
+                'repost_reach' => $repost_reach, // 🔹 Sum of all reposters' followers for this date
                 'avg_activities_rate' => round($avg_activities_rate, 2),
-
             ];
         })->values()->toArray();
+
         return $chartData;
     }
 
