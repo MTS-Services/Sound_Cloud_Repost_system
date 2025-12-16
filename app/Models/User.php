@@ -284,13 +284,18 @@ class User extends AuthBaseModel implements MustVerifyEmail
 
     public function getIsProAttribute(): bool
     {
-        $activePlan = $this->activePlan();
-        return ($activePlan && $activePlan->monthly_price != 0) ? true : false;
+        return $this->userPlans()
+            ->active()
+            ->where('monthly_price', '>', 0)
+            ->exists();
     }
 
-    public function scopeIsPro()
+    public function scopeIsPro(Builder $query): Builder
     {
-        return $this->is_pro == true;
+        return $query->whereHas('userPlans', function ($q) {
+            $q->active()
+                ->where('monthly_price', '>', 0);
+        });
     }
 
 
