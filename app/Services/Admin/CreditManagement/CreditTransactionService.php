@@ -13,7 +13,7 @@ use App\Models\RepostRequest;
 
 class CreditTransactionService
 {
-    public function getTransactions($orderBy = 'id', $order = 'asc')
+    public function getTransactions($orderBy = 'created_at', $order = 'desc')
     {
         return CreditTransaction::orderBy($orderBy, $order)->latest();
     }
