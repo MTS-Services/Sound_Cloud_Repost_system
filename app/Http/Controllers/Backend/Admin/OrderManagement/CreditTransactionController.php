@@ -54,7 +54,7 @@ class CreditTransactionController extends Controller  implements HasMiddleware
             $query = $this->creditTransactionService->getTransactions()->with(['receiver', 'source', 'sender']);
             return DataTables::eloquent($query)
                 ->editColumn('name', function ($credit) {
-                    return $credit->receiver?->name;
+                    return $credit->receiver?->name ?? 'N/A';
                 })
                 ->editColumn('credit', function ($credit) {
                     return $credit->credit;
