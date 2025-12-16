@@ -301,11 +301,11 @@
                                             <div class="col-span-1 flex items-center justify-center space-x-1">
                                                 @if (isset($source['actionable']))
                                                     <button
-                                                        class="w-8 h-8 rounded-full flex items-center justify-center transition duration-200 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-red-500 hover:text-white cursor-default">
+                                                        class="w-8 h-8 rounded-full flex items-center justify-center transition duration-200 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-red-500 hover:text-white cursor-default!">
                                                         <x-lucide-heart class="w-3 h-3" />
                                                     </button>
                                                     <button
-                                                        class="w-8 h-8 rounded-full flex items-center justify-center transition duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white cursor-default">
+                                                        class="w-8 h-8 rounded-full flex items-center justify-center transition duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white cursor-default!">
                                                         <x-lucide-rotate-ccw class="w-3 h-3" />
                                                     </button>
                                                 @endif
@@ -373,11 +373,11 @@
                                         <div class="flex items-center justify-center space-x-2">
                                             @if (isset($source['source']))
                                                 <button
-                                                    class="w-8 h-8 rounded-full flex items-center justify-center {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-red-500 hover:text-white cursor-default">
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-red-500 hover:text-white cursor-default!">
                                                     <x-lucide-heart class="w-3 h-3" />
                                                 </button>
                                                 <button
-                                                    class="w-8 h-8 rounded-full flex items-center justify-center {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white cursor-default">
+                                                    class="w-8 h-8 rounded-full flex items-center justify-center {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white cursor-default!">
                                                     <x-lucide-rotate-ccw class="w-3 h-3" />
                                                 </button>
                                             @endif
@@ -514,7 +514,7 @@
                                         </button> --}}
                                         @if (isset($source['source']))
                                             <button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 cursor-default {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 cursor-default! {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -525,7 +525,7 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 cursor-default {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"><svg
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 cursor-default! {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600"><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -536,7 +536,7 @@
                                             </button>
                                         @else
                                             <button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 cursor-default">
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-600 cursor-default!">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -547,7 +547,7 @@
                                                 </svg>
                                             </button>
                                             <button
-                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600 cursor-default">
+                                                class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-600 cursor-default!">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -725,7 +725,7 @@
                                                     </button> --}}
                                                     @if (isset($source['source']))
                                                         <button
-                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }} hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default"
+                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 {{ $source['like'] ? 'bg-red-500 text-white shadow-lg' : '' }} hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default!"
                                                             title="Like">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
@@ -738,7 +738,7 @@
                                                             </svg>
                                                         </button>
                                                         <button
-                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default"
+                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 {{ $source['repost'] ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-700 text-gray-300' }} hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default!"
                                                             title="Repost">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
@@ -753,7 +753,7 @@
                                                         </button>
                                                     @else
                                                         <button
-                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default"
+                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-red-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default!"
                                                             title="Like">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
@@ -766,7 +766,7 @@
                                                             </svg>
                                                         </button>
                                                         <button
-                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default"
+                                                            class="flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 bg-gray-700 text-gray-300 hover:bg-green-500 hover:text-white hover:shadow-lg border border-gray-300 dark:border-gray-600 cursor-default!"
                                                             title="Repost">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" viewBox="0 0 24 24" fill="none"
