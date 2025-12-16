@@ -1107,6 +1107,7 @@ class AnalyticsService
                     $periods['current']['start']->startOfDay(),
                     $periods['current']['end']->endOfDay(),
                 ])
+                ->where('type', UserAnalytics::TYPE_REPOST)
                 ->groupBy(['source_id', 'source_type', 'act_user_urn']);
 
             if ($sourceTypes->count() === 1) {
