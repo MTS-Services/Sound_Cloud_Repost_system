@@ -1096,18 +1096,18 @@ class AnalyticsService
             $sourceIds = $topSources->pluck('source_id')->unique();
             $sourceTypes = $topSources->pluck('source_type')->unique();
 
-            // Get all unique act_user_urns per source
+            // Get all unique act_user_urns per source (only for REPOST type)
             $actUsersQuery = UserAnalytics::select([
                 'source_id',
                 'source_type',
                 'act_user_urn'
             ])
+                ->where('type', UserAnalytics::TYPE_REPOST) // 🔹 Only count reposts
                 ->whereIn('source_id', $sourceIds)
                 ->whereBetween('created_at', [
                     $periods['current']['start']->startOfDay(),
                     $periods['current']['end']->endOfDay(),
                 ])
-                ->where('type', UserAnalytics::TYPE_REPOST)
                 ->groupBy(['source_id', 'source_type', 'act_user_urn']);
 
             if ($sourceTypes->count() === 1) {
@@ -1167,7 +1167,7 @@ class AnalyticsService
                 'comments' => (int) $item->total_comments,
                 'reposts' => (int) $item->total_reposts,
                 'followers' => (int) $item->total_followers,
-                'track_reach' => $trackReach, // 🔹 Sum of actUsers' followers_count from UserInformation
+                'track_reach' => $trackReach, // 🔹 Sum of reposters' followers_count from UserInformation
                 'engagement_rate' => round($item->engagement_rate, 2),
                 'engagement_score' => round(($item->engagement_rate / 100) * 10, 2),
             ];
