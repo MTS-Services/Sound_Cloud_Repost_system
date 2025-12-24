@@ -357,7 +357,7 @@ class MyCampaign extends Component
         }
         // $this->resetAllFormData();
         if ($this->myCampaignService->thisMonthCampaignsCount() >= (int) userFeatures()[Feature::KEY_SIMULTANEOUS_CAMPAIGNS]) {
-            return $this->dispatch('alert', type: 'error', message: 'You have reached the maximum number of campaigns for this month.');
+            return $this->dispatch('alert', type: 'error', message: 'You’ve reached the maximum number of active campaigns. Please wait for the current campaigns to finish before starting a new one.');
         }
         $this->showCampaignsModal = !$this->showCampaignsModal;
 
