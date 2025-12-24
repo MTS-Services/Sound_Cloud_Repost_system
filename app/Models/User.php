@@ -333,9 +333,32 @@ class User extends AuthBaseModel implements MustVerifyEmail
         return round(($respondedWithin24Hours / $totalRequests) * 100, 2);
     }
 
-    public function getRepostPriceAttribute()
+    // public function getRepostPriceAttribute()
+    // {
+    //     return $this->real_followers && ceil($this->real_followers / 100) > 0 ? ceil($this->real_followers / 100) : 1;
+    // }
+
+    public function getRepostPriceAttribute(): int
     {
-        return $this->real_followers && ceil($this->real_followers / 100) > 0 ? ceil($this->real_followers / 100) : 1;
+        $followers = (int) ($this->real_followers ?? 0);
+
+        // Accounts with less than 1000 followers
+        if ($followers > 0 && $followers < 1000) {
+            return 10;
+        }
+
+        // Accounts with 1000 to 9999 followers
+        if ($followers >= 1000 && $followers < 10000) {
+            return (int) floor($followers / 100);
+        }
+
+        // Accounts with 10000+ followers
+        if ($followers >= 10000) {
+            return 100;
+        }
+
+        // Fallback safety (in case followers = 0 or null)
+        return 10;
     }
 
     public function canResetResponseRate(): bool
