@@ -86,7 +86,7 @@ class ApplicationSettingRequest extends FormRequest
             'stripe_gateway_status' => 'sometimes|required|integer',
             Rule::in([App::PAYMENT_GATEWAY_STATUS_ACTIVE, App::PAYMENT_GATEWAY_STATUS_INACTIVE]),
 
-            'login_bonus' => 'sometimes|required|numeric|min:0|max:100',
+            'login_bonus' => 'sometimes|required|numeric|min:0',
         ];
     }
 
