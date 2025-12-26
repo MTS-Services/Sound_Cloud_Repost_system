@@ -473,10 +473,10 @@ class RepostRequest extends Component
                 $query->incoming()->where('campaign_id', null)->approved();
                 break;
         }
+        // // Order by created_at desc and paginate
+        // return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
         // Order by created_at desc and paginate
-        return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
-        // Order by created_at desc and paginate
-        $this->repostRequests = $query->latest()->orderBy('status', 'asc')->take(10)->get();
+        $this->repostRequests = $query->orderBy('status', 'asc')->take(100)->get();
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
 
         return $this->repostRequests;
