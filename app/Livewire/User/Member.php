@@ -352,10 +352,36 @@ class Member extends Component
 
         $alreadyRequested = RepostRequest::where('requester_urn', user()->urn)->where('status', RepostRequest::STATUS_PENDING)->count();
 
-        if(!proUser(user()->urn) && $alreadyRequested >= 20) {
+        if (!proUser(user()->urn) && $alreadyRequested >= 20) {
+            $this->reset([
+                'showModal',
+                'user',
+                'selectedPlaylistId',
+                'selectedMusicId',
+                'activeTab',
+                'tracks',
+                'playlists',
+                'trackLimit',
+                'playlistLimit',
+                'searchQuery',
+                'playListTrackShow',
+            ]);
             $this->dispatch('alert', type: 'error', message: 'You have reached the limit of 20 requests.');
         }
-        if(proUser(user()->urn) && $alreadyRequested >= 100) {
+        if (proUser(user()->urn) && $alreadyRequested >= 100) {
+            $this->reset([
+                'showModal',
+                'user',
+                'selectedPlaylistId',
+                'selectedMusicId',
+                'activeTab',
+                'tracks',
+                'playlists',
+                'trackLimit',
+                'playlistLimit',
+                'searchQuery',
+                'playListTrackShow',
+            ]);
             $this->dispatch('alert', type: 'error', message: 'You have reached the limit of 100 requests.');
         }
 
