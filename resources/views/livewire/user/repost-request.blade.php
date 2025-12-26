@@ -215,7 +215,7 @@
                                     @if ($activeMainTab == 'incoming_request' || $activeMainTab == 'previously_reposted')
                                         <div class="flex flex-col items-end gap-2 h-full">
                                             <div class="flex flex-col justify-between w-full h-full">
-                                                <div class="flex gap-3">
+                                                <div class="flex gap-3" style="margin-left: auto;">
                                                     <div
                                                         class="text-sm font-semibold text-gray-500 dark:text-gray-400 text-right">
                                                         {{ strtoupper($repostRequest->created_at->diffForHumans()) }}
