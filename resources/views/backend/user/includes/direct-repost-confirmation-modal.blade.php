@@ -110,6 +110,9 @@
                         </svg>
                         {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
                             {{ __('Repost') }} --}}
+                        @php
+                            $request->commentable == 1 ? ($commented = true) : ($commented = false);
+                        @endphp
                         <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
                         {{ __('Repost') }}
                     </button>

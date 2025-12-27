@@ -346,10 +346,10 @@ class RepostRequest extends Component
             $this->liked = false;
             $this->alreadyLiked = true;
         }
-        if ($this->request->likeable === 0) {
+        if ($this->request->likeable == 0) {
             $this->liked = false;
         }
-        if ($this->request->commentable === 0) {
+        if ($this->request->commentable == 0) {
             $this->commented = '';
         }
 
