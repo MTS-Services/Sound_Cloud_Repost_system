@@ -36,9 +36,7 @@
                             </template>
                         </button>
                     </div>
-                    @php
-                        $repostLimit = proUser() ? 100 : 20;
-                    @endphp
+                    
                     <div x-show="dashboardSummary" x-cloak x-transition>
                         <livewire:user.dashboard-summary />
                     </div>
