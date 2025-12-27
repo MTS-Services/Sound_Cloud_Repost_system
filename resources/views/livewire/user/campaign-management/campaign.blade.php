@@ -318,7 +318,7 @@
                                                         ? 'text-orange-300 '
                                                         : 'text-gray-400 dark:text-gray-500' }}"
                                                     fill="{{ $campaign_->user?->starredUsers?->contains('follower_urn', user()->urn) ? 'orange ' : 'none' }}" />
-                                                
+
                                             </button> --}}
 
                                             <div x-show="open" x-transition.opacity
@@ -427,10 +427,13 @@
                 </div>
             @endif
         </div>
+        @php
+            $repostLimit = proUser() ? 100 : 20;
+        @endphp
         {{-- Right Side --}}
         <div class="max-w-[400px] hidden 3xl:block" x-cloak x-transition>
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="user()->responseRate()"
-                :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
+                :pendingRequests="$data['pendingRequests']" :requestLimit="$repostLimit" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
 
     </section>
