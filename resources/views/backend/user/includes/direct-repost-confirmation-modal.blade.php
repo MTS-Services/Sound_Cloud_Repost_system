@@ -111,9 +111,9 @@
                         {{-- <span>{{ repostPrice() + ($liked ? 2 : 0) + ($commented ? 2 : 0) }}</span>
                             {{ __('Repost') }} --}}
                         @php
-                            $request->commentable == 1 ? ($commented = true) : ($commented = false);
+                            $comment = $request->commentable == 1 && $commented ? true : false;
                         @endphp
-                        <span>{{ repostPrice(user()->repost_price, $commented, $liked) }}</span>
+                        <span>{{ repostPrice(user()->repost_price, $comment, $liked) }}</span>
                         {{ __('Repost') }}
                     </button>
                 </div>
