@@ -396,7 +396,7 @@
         {{-- Right Side --}}
         <div class="max-w-[400px] hidden 4xl:block" x-cloak x-transition>
             <x-dashboard-summary :earnings="user()->repost_price" :dailyRepostCurrent="$data['dailyRepostCurrent']" :dailyRepostMax="20" :responseRate="user()->responseRate()"
-                :pendingRequests="$data['pendingRequests']" :requestLimit="25" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
+                :pendingRequests="$data['pendingRequests']" :requestLimit="{{ proUser() ? 100 : 20 }}" :credits="userCredits()" :campaigns="$data['totalMyCampaign']" :campaignLimit="proUser() ? 10 : 2" />
         </div>
     </section>
     {{-- Repost Confirmation Modal --}}
