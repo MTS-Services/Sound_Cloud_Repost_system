@@ -15,8 +15,6 @@ class DashboardSummary extends Component
     protected UserSettingsService $userSettingsService;
     protected SoundCloudService $soundCloudService;
 
-    public $repostLimit = proUser() ? 100 : 20;
-
 
     public function boot(UserSettingsService $userSettingsService, SoundCloudService $soundCloudService)
     {
