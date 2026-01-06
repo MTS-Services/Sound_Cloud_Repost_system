@@ -132,32 +132,6 @@
             }
         });
     },
-
-    {{-- updateCharts() {
-        if (this.performanceChart) {
-            this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map((item) => {
-                const date = new Date(item.date);
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            }) : ['No Data'];
-
-            const metrics = ['total_views', 'total_plays', 'total_likes', 'total_reposts', 'total_comments'];
-            this.performanceChart.data.datasets.forEach((dataset, index) => {
-                dataset.data = this.chartData.length > 0 ?
-                    this.chartData.map((item) => item[metrics[index]] || 0) : [0];
-            });
-
-            this.performanceChart.update();
-        }
-
-        if (this.genreChart) {
-            this.genreChart.data.labels = this.genreBreakdown.length > 0 ?
-                this.genreBreakdown.map((item) => item.genre) : ['No Data'];
-            this.genreChart.data.datasets[0].data = this.genreBreakdown.length > 0 ?
-                this.genreBreakdown.map((item) => item.percentage) : [100];
-            this.genreChart.update();
-        }
-    }, --}}
-
     init() {
         // Initialize charts after DOM is ready
         this.$nextTick(() => {
@@ -177,45 +151,25 @@
                 checkChart();
             }
         });
-
-        {{-- Livewire.on('initialized', () => {
-            this.chartData = $wire.getChartData();
-            this.genreBreakdown = $wire.genreBreakdown;
-
-            this.$nextTick(() => {
-                if (this.performanceChart) {
-                    this.updateCharts();
-                } else {
-                    this.initializeCharts();
-                }
-            });
-        }); --}}
-
-
-    }
-    destroyCharts() {
+    },
+    
+    resetCharts()
+    {
         if (this.performanceChart) {
             this.performanceChart.destroy();
-            this.performanceChart = null;
         }
-
         if (this.genreChart) {
             this.genreChart.destroy();
-            this.genreChart = null;
         }
-    },
-
-    resetCharts() {
-        this.destroyCharts();
-
+        
         this.$nextTick(() => {
-            if (typeof Chart !== 'undefined') {
-                this.initPerformanceChart();
-                this.initGenreChart();
-            }
+            this.init();
         });
     },
-}" @reset-chart-initiallized.window="resetCharts()">
+}"
+
+@reset-charts.window="resetCharts()" x-cloak
+    >
     <x-slot name="page_slug">dashboard</x-slot>
 
     <div id="content-dashboard" class="page-content py-2 px-2">
@@ -856,15 +810,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
 
-    @once
+</div>
+
+@once
+    @push('js')
         <script>
-            document.addEventListener('livewire:navigated', () => {
+            // Reset editor on Livewire navigation to pick up theme changes
+            document.addEventListener('livewire:initialized', () => {
                 setTimeout(() => {
-                    window.dispatchEvent(
-                        new CustomEvent('reset-chart-initiallized')
-                    );
+                    window.dispatchEvent(new CustomEvent('reset-charts'));
                 }, 500);
             });
         </script>
-    @endonce
-</div>
+    @endpush
+@endonce
