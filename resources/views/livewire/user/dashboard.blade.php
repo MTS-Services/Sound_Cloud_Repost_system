@@ -1,4 +1,115 @@
-<div x-data="dashboardCharts()" x-init="init()">
+<div x-data="{
+    chartData: {{ Js::from($this->getChartData()) }},
+    performanceChart: null,
+    genreBreakdown: {{ Js::from($genreBreakdown) }},
+    genreChart: null,
+
+    initPerformanceChart() {
+        const ctx = document.getElementById('campaignChart');
+        if (!ctx) return;
+
+        // 🔴 destroy old instance (SPA fix)
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+        }
+
+        this.performanceChart = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: this.chartData.length ?
+                    this.chartData.map(item => {
+                        const date = new Date(item.date);
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }) :
+                    ['No Data'],
+                datasets: [{
+                        label: 'Followers',
+                        data: this.chartData.length ?
+                            this.chartData.map(item => item.total_followers || 0) :
+                            [0],
+                        borderColor: '#f5540b',
+                        backgroundColor: 'rgba(245, 84, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                    },
+                    {
+                        label: 'Repost Reach',
+                        data: this.chartData.length ?
+                            this.chartData.map(item => item.repost_reach || 0) :
+                            [0],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { intersect: false, mode: 'index' },
+            }
+        });
+    },
+
+    initGenreChart() {
+        const ctx = document.getElementById('genreChart');
+        if (!ctx) return;
+
+        // 🔴 destroy old instance
+        if (this.genreChart) {
+            this.genreChart.destroy();
+        }
+
+        const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+        const displayedGenres = hasData ?
+            this.genreBreakdown.filter(item => item.percentage > 0) :
+            [{ genre: 'No Data', percentage: 100 }];
+
+        this.genreChart = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: displayedGenres.map(item => item.genre),
+                datasets: [{
+                    data: displayedGenres.map(item => item.percentage),
+                    backgroundColor: hasData ?
+                        ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'] :
+                        ['#9ca3af'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+    },
+
+    initCharts() {
+        // ✅ wait for Chart.js (SPA safe)
+        if (typeof Chart === 'undefined') {
+            setTimeout(() => this.initCharts(), 100);
+            return;
+        }
+
+        this.initPerformanceChart();
+        this.initGenreChart();
+    },
+
+    init() {
+        // First load
+        this.$nextTick(() => {
+            this.initCharts();
+        });
+
+        // 🔥 SPA navigation fix (wire:navigate)
+        document.addEventListener('livewire:navigated', () => {
+            this.$nextTick(() => {
+                this.initCharts();
+            });
+        });
+    }
+}">
+
     <x-slot name="page_slug">dashboard</x-slot>
 
     <div id="content-dashboard" class="page-content py-2 px-2">
@@ -636,126 +747,6 @@
     </div>
 
     {{-- JavaScript for Chart --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-    <script>
-        document.addEventListener('alpine:init', () => {
-
-            Alpine.data('dashboardCharts', () => ({
-                chartData: @json($this->getChartData()),
-                genreBreakdown: @json($genreBreakdown),
-
-                performanceChart: null,
-                genreChart: null,
-
-                init() {
-                    // First load
-                    this.$nextTick(() => {
-                        this.initCharts();
-                    });
-
-                    // SPA navigation (wire:navigate)
-                    document.addEventListener('livewire:navigated', () => {
-                        this.$nextTick(() => {
-                            this.initCharts();
-                        });
-                    });
-                },
-
-                initCharts() {
-                    if (typeof Chart === 'undefined') {
-                        // Wait until Chart.js is ready
-                        setTimeout(() => this.initCharts(), 100);
-                        return;
-                    }
-
-                    this.initPerformanceChart();
-                    this.initGenreChart();
-                },
-
-                initPerformanceChart() {
-                    const ctx = document.getElementById('campaignChart');
-                    if (!ctx) return;
-
-                    if (this.performanceChart) {
-                        this.performanceChart.destroy();
-                    }
-
-                    this.performanceChart = new Chart(ctx.getContext('2d'), {
-                        type: 'line',
-                        data: {
-                            labels: this.chartData.length ?
-                                this.chartData.map(i =>
-                                    new Date(i.date).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })
-                                ) :
-                                ['No Data'],
-                            datasets: [{
-                                    label: 'Followers',
-                                    data: this.chartData.map(i => i.total_followers ?? 0),
-                                    borderColor: '#f5540b',
-                                    backgroundColor: 'rgba(245,84,11,0.15)',
-                                    tension: 0.4,
-                                    fill: true,
-                                },
-                                {
-                                    label: 'Repost Reach',
-                                    data: this.chartData.map(i => i.repost_reach ?? 0),
-                                    borderColor: '#8b5cf6',
-                                    backgroundColor: 'rgba(139,92,246,0.15)',
-                                    tension: 0.4,
-                                    fill: true,
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: {
-                                intersect: false,
-                                mode: 'index'
-                            }
-                        }
-                    });
-                },
-
-                initGenreChart() {
-                    const ctx = document.getElementById('genreChart');
-                    if (!ctx) return;
-
-                    if (this.genreChart) {
-                        this.genreChart.destroy();
-                    }
-
-                    const hasData = this.genreBreakdown.some(g => g.percentage > 0);
-                    const data = hasData ?
-                        this.genreBreakdown.filter(g => g.percentage > 0) :
-                        [{
-                            genre: 'No Data',
-                            percentage: 100
-                        }];
-
-                    this.genreChart = new Chart(ctx.getContext('2d'), {
-                        type: 'pie',
-                        data: {
-                            labels: data.map(i => i.genre),
-                            datasets: [{
-                                data: data.map(i => i.percentage),
-                                backgroundColor: hasData ?
-                                    ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b',
-                                        '#ef4444'
-                                    ] :
-                                    ['#9ca3af'],
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false
-                        }
-                    });
-                }
-            }));
-        });
-    </script>
 </div>
