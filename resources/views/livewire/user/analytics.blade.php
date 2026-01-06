@@ -318,7 +318,7 @@
             }, 300);
         },
     
-        init() {
+        {{-- init() {
             // Initial setup
             this.setupCharts();
     
@@ -359,8 +359,35 @@
                     }
                 });
             });
-        }
-    }">
+        }, --}}
+        resetCharts() {
+    
+            if (this.performanceChart) {
+                this.performanceChart.destroy();
+            }
+            if (this.genreChart) {
+                this.genreChart.destroy();
+            }
+    
+            this.$nextTick(() => {
+                if (typeof Chart !== 'undefined') {
+                    this.initPerformanceChart();
+                    this.initGenreChart();
+                } else {
+                    // Wait for Chart.js to load
+                    const checkChart = () => {
+                        if (typeof Chart !== 'undefined') {
+                            this.initPerformanceChart();
+                            this.initGenreChart();
+                        } else {
+                            checkChart();
+                        }
+                    };
+                    checkChart();
+                }
+            });
+        },
+    }" @reset-charts.window="resetCharts()" x-cloak>
         <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
             <div class="px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 gap-4">
@@ -1359,7 +1386,7 @@
         </div>
 
         @push('js')
-            {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
             <script>
                 function initializeAnalyticsCharts() {
@@ -1377,5 +1404,18 @@
             </script>
         @endpush
 
+
     </div>
 </div>
+@once
+    @push('js')
+        <script>
+            // Reset editor on Livewire navigation to pick up theme changes
+            document.addEventListener('livewire:navigated', () => {
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('reset-charts'));
+                }, 300);
+            });
+        </script>
+    @endpush
+@endonce

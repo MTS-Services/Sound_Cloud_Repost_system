@@ -132,19 +132,18 @@
             }
         });
     },
-   
-    
-    resetCharts()
-    {
-        
+
+
+    resetCharts() {
+
         if (this.performanceChart) {
             this.performanceChart.destroy();
         }
         if (this.genreChart) {
             this.genreChart.destroy();
         }
-        
-       this.$nextTick(() => {
+
+        this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initPerformanceChart();
                 this.initGenreChart();
@@ -162,10 +161,7 @@
             }
         });
     },
-}"
-
-@reset-charts.window="resetCharts()" x-cloak
-    >
+}" @reset-charts.window="resetCharts()" x-cloak>
     <x-slot name="page_slug">dashboard</x-slot>
 
     <div id="content-dashboard" class="page-content py-2 px-2">
@@ -805,8 +801,8 @@
     {{-- JavaScript for Chart --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-
 </div>
+
 
 @once
     @push('js')
