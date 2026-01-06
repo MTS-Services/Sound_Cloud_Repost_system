@@ -67,6 +67,8 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/custome.css') }}">
     <!-- Scripts -->
     <script src="{{ asset('assets/js/toggle-theme-3.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
     @vite(['resources/css/user-dashboard.css', 'resources/js/user-dashboard.js', 'resources/css/frontend.css'])
 
@@ -253,7 +255,7 @@
             localStorage.removeItem('campaign_tracking_data');
         </script>
     @endif
-    
+
     {{ $slot }}
     @if (auth()->guard('web')->check() && Route::is('user.*'))
         </div>
