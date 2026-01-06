@@ -190,30 +190,31 @@
                 }
             });
         }); --}}
-        destroyCharts() {
-                if (this.performanceChart) {
-                    this.performanceChart.destroy();
-                    this.performanceChart = null;
-                }
 
-                if (this.genreChart) {
-                    this.genreChart.destroy();
-                    this.genreChart = null;
-                }
-            },
-
-            resetCharts() {
-                this.destroyCharts();
-
-                this.$nextTick(() => {
-                    if (typeof Chart !== 'undefined') {
-                        this.initPerformanceChart();
-                        this.initGenreChart();
-                    }
-                });
-            },
 
     }
+    destroyCharts() {
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+            this.performanceChart = null;
+        }
+
+        if (this.genreChart) {
+            this.genreChart.destroy();
+            this.genreChart = null;
+        }
+    },
+
+    resetCharts() {
+        this.destroyCharts();
+
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            }
+        });
+    },
 }" @reset-chart-initiallized.window="resetCharts()">
     <x-slot name="page_slug">dashboard</x-slot>
 
