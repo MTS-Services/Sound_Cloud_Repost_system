@@ -166,7 +166,7 @@
                 this.initGenreChart();
             } else {
                 // Wait for Chart.js to load
-                const checkChart = () => {
+                {{-- const checkChart = () => {
                     if (typeof Chart !== 'undefined') {
                         this.initPerformanceChart();
                         this.initGenreChart();
@@ -174,7 +174,15 @@
                         checkChart();
                     }
                 };
-                checkChart();
+                checkChart(); --}}
+                const checkChart = () => {
+                    if (typeof Chart !== 'undefined') {
+                        this.initPerformanceChart();
+                        this.initGenreChart();
+                    } else {
+                        setTimeout(checkChart, 100);
+                    }
+                };
             }
         });
 
@@ -214,7 +222,7 @@
                 </x-gbutton>
 
                 <!-- Submit Track -->
-                <x-gbutton variant="primary" wire:click="toggleCampaignsModal" >
+                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
                     <span>
                         <x-lucide-plus class="inline-block text-center h-5 w-5 text-white mr-1" />
                     </span>{{ __('Start a new campaign') }}
