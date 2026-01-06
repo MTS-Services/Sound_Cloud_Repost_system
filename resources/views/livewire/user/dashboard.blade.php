@@ -132,9 +132,19 @@
             }
         });
     },
-    init() {
-        // Initialize charts after DOM is ready
-        this.$nextTick(() => {
+   
+    
+    resetCharts()
+    {
+        
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+        }
+        if (this.genreChart) {
+            this.genreChart.destroy();
+        }
+        
+       this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initPerformanceChart();
                 this.initGenreChart();
@@ -150,20 +160,6 @@
                 };
                 checkChart();
             }
-        });
-    },
-    
-    resetCharts()
-    {
-        if (this.performanceChart) {
-            this.performanceChart.destroy();
-        }
-        if (this.genreChart) {
-            this.genreChart.destroy();
-        }
-        
-        this.$nextTick(() => {
-            this.init();
         });
     },
 }"
@@ -816,10 +812,10 @@
     @push('js')
         <script>
             // Reset editor on Livewire navigation to pick up theme changes
-            document.addEventListener('livewire:initialized', () => {
+            document.addEventListener('livewire:navigated', () => {
                 setTimeout(() => {
                     window.dispatchEvent(new CustomEvent('reset-charts'));
-                }, 500);
+                }, 300);
             });
         </script>
     @endpush
