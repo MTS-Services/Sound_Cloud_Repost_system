@@ -160,21 +160,11 @@
 
     init() {
         // Initialize charts after DOM is ready
+
         this.$nextTick(() => {
             if (typeof Chart !== 'undefined') {
                 this.initPerformanceChart();
                 this.initGenreChart();
-            } else {
-                // Wait for Chart.js to load
-                const checkChart = () => {
-                    if (typeof Chart !== 'undefined') {
-                        this.initPerformanceChart();
-                        this.initGenreChart();
-                    } else {
-                        checkChart();
-                    }
-                };
-                checkChart();
             }
         });
 
@@ -191,7 +181,30 @@
             });
         }); --}}
     }
-}">
+    destroyCharts() {
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+            this.performanceChart = null;
+        }
+
+        if (this.genreChart) {
+            this.genreChart.destroy();
+            this.genreChart = null;
+        }
+    },
+
+    resetCharts() {
+        this.destroyCharts();
+
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            }
+        });
+    },
+
+}" @reset-chart-initiallized.window="resetCharts()">
     <x-slot name="page_slug">dashboard</x-slot>
 
     <div id="content-dashboard" class="page-content py-2 px-2">
@@ -214,7 +227,7 @@
                 </x-gbutton>
 
                 <!-- Submit Track -->
-                <x-gbutton variant="primary" wire:click="toggleCampaignsModal" >
+                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
                     <span>
                         <x-lucide-plus class="inline-block text-center h-5 w-5 text-white mr-1" />
                     </span>{{ __('Start a new campaign') }}
@@ -828,7 +841,20 @@
         </div>
     </div>
 
-    {{-- JavaScript for Chart --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
+    @once
+        @push('scripts')
+            {{-- JavaScript for Chart --}}
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
+            <script>
+                document.addEventListener('livewire:navigated', () => {
+                    setTimeout(() => {
+                        window.dispatchEvent(
+                            new CustomEvent('reset-chart-initiallized')
+                        );
+                    }, 500);
+                });
+            </script>
+        @endpush
+    @endonce
 </div>
