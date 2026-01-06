@@ -1,67 +1,122 @@
 <div x-data="{
     chartData: {{ Js::from($this->getChartData()) }},
     performanceChart: null,
+
     genreBreakdown: {{ Js::from($genreBreakdown) }},
     genreChart: null,
 
+    /* ------------------------------
+     * PERFORMANCE CHART
+     * ------------------------------ */
     initPerformanceChart() {
         const ctx = document.getElementById('campaignChart');
         if (!ctx) return;
 
-        // 🔴 destroy old instance (SPA fix)
+        // Destroy old instance if exists
         if (this.performanceChart) {
             this.performanceChart.destroy();
+            this.performanceChart = null;
         }
 
         this.performanceChart = new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: this.chartData.length ?
+                labels: this.chartData.length > 0 ?
                     this.chartData.map(item => {
                         const date = new Date(item.date);
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        return date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric'
+                        });
                     }) :
                     ['No Data'],
                 datasets: [{
                         label: 'Followers',
-                        data: this.chartData.length ?
+                        data: this.chartData.length > 0 ?
                             this.chartData.map(item => item.total_followers || 0) :
                             [0],
                         borderColor: '#f5540b',
                         backgroundColor: 'rgba(245, 84, 11, 0.1)',
                         tension: 0.4,
                         fill: true,
+                        pointBackgroundColor: '#f5540b',
+                        pointBorderColor: '#fff',
                     },
                     {
                         label: 'Repost Reach',
-                        data: this.chartData.length ?
+                        data: this.chartData.length > 0 ?
                             this.chartData.map(item => item.repost_reach || 0) :
                             [0],
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.1)',
                         tension: 0.4,
                         fill: true,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#fff',
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: { intersect: false, mode: 'index' },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 10 }
+                        },
+                        grid: { drawBorder: false }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 10 }
+                        },
+                        grid: { drawBorder: false }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                }
             }
         });
     },
 
+    /* ------------------------------
+     * GENRE CHART
+     * ------------------------------ */
     initGenreChart() {
         const ctx = document.getElementById('genreChart');
         if (!ctx) return;
 
-        // 🔴 destroy old instance
         if (this.genreChart) {
             this.genreChart.destroy();
+            this.genreChart = null;
         }
 
-        const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+        const hasData = this.genreBreakdown.some(
+            item => item.percentage > 0
+        );
+
         const displayedGenres = hasData ?
             this.genreBreakdown.filter(item => item.percentage > 0) :
             [{ genre: 'No Data', percentage: 100 }];
@@ -75,40 +130,65 @@
                     backgroundColor: hasData ?
                         ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'] :
                         ['#9ca3af'],
+                    borderColor: '#1f2937',
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                }
             }
         });
     },
 
-    initCharts() {
-        // ✅ wait for Chart.js (SPA safe)
-        if (typeof Chart === 'undefined') {
-            setTimeout(() => this.initCharts(), 100);
-            return;
+    /* ------------------------------
+     * DESTROY + RESET
+     * ------------------------------ */
+    destroyCharts() {
+        if (this.performanceChart) {
+            this.performanceChart.destroy();
+            this.performanceChart = null;
         }
 
-        this.initPerformanceChart();
-        this.initGenreChart();
+        if (this.genreChart) {
+            this.genreChart.destroy();
+            this.genreChart = null;
+        }
     },
 
-    init() {
-        // First load
-        this.$nextTick(() => {
-            this.initCharts();
-        });
+    resetCharts() {
+        this.destroyCharts();
 
-        // 🔥 SPA navigation fix (wire:navigate)
-        document.addEventListener('livewire:navigated', () => {
-            this.$nextTick(() => {
-                this.initCharts();
-            });
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            }
+        });
+    },
+
+    /* ------------------------------
+     * INIT
+     * ------------------------------ */
+    init() {
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            }
         });
     }
-}">
+}" @reset-chart-initiallized.window="resetCharts()">
 
     <x-slot name="page_slug">dashboard</x-slot>
 
@@ -746,7 +826,20 @@
         </div>
     </div>
 
-    {{-- JavaScript for Chart --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
+    @once
+        @push('scripts')
+            {{-- JavaScript for Chart --}}
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
+            <script>
+                document.addEventListener('livewire:navigated', () => {
+                    setTimeout(() => {
+                        window.dispatchEvent(
+                            new CustomEvent('reset-chart-initiallized')
+                        );
+                    }, 500);
+                });
+            </script>
+        @endpush
+    @endonce
 </div>
