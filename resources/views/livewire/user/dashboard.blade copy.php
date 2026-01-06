@@ -1,4 +1,197 @@
-<div x-data="dashboardCharts()" x-init="init()">
+<div x-data="{
+    chartData: {{ Js::from($this->getChartData()) }},
+    performanceChart: null,
+    genreBreakdown: {{ Js::from($genreBreakdown) }},
+    genreChart: null,
+
+    initPerformanceChart() {
+        const ctx = document.getElementById('campaignChart');
+        if (!ctx) return;
+        this.performanceChart = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: this.chartData.length > 0 ? this.chartData.map(item => {
+                    const date = new Date(item.date);
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }) : ['No Data'],
+                datasets: [{
+                    label: 'Followers',
+                    data: this.chartData.length > 0 ? this.chartData.map((item) => item.total_followers || 0) : [0],
+                    borderColor: '#f5540b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#f5540b',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#f5540b',
+                }, {
+                    label: 'Repost Reach',
+                    data: this.chartData.length > 0 ? this.chartData.map(item => item.repost_reach || 0) : [0],
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#8b5cf6',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#8b5cf6',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        {{-- beginAtZero: true, --}}
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            drawBorder: false,
+                        },
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            drawBorder: false,
+                        },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'center',
+                        labels: {
+                            {{-- color: '#e2e8f0', --}}
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    },
+
+    initGenreChart() {
+        const ctx = document.getElementById('genreChart');
+        if (!ctx) return;
+
+        // Check if there's any data with a percentage greater than 0
+        const hasData = this.genreBreakdown.some(item => item.percentage > 0);
+
+        const displayedGenres = hasData ? this.genreBreakdown.filter(item => item.percentage > 0) : [{ genre: 'No Data', percentage: 100 }];
+
+        this.genreChart = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: displayedGenres.map(item => item.genre),
+                datasets: [{
+                    data: displayedGenres.map(item => item.percentage),
+                    backgroundColor: hasData ? ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444'].slice(0, displayedGenres.length) : ['#9ca3af'],
+                    borderColor: '#1f2937',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return (context.label || '') + ': ' + (context.parsed || 0) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    },
+
+    {{-- updateCharts() {
+        if (this.performanceChart) {
+            this.performanceChart.data.labels = this.chartData.length > 0 ? this.chartData.map((item) => {
+                const date = new Date(item.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }) : ['No Data'];
+
+            const metrics = ['total_views', 'total_plays', 'total_likes', 'total_reposts', 'total_comments'];
+            this.performanceChart.data.datasets.forEach((dataset, index) => {
+                dataset.data = this.chartData.length > 0 ?
+                    this.chartData.map((item) => item[metrics[index]] || 0) : [0];
+            });
+
+            this.performanceChart.update();
+        }
+
+        if (this.genreChart) {
+            this.genreChart.data.labels = this.genreBreakdown.length > 0 ?
+                this.genreBreakdown.map((item) => item.genre) : ['No Data'];
+            this.genreChart.data.datasets[0].data = this.genreBreakdown.length > 0 ?
+                this.genreBreakdown.map((item) => item.percentage) : [100];
+            this.genreChart.update();
+        }
+    }, --}}
+
+    init() {
+        // Initialize charts after DOM is ready
+        this.$nextTick(() => {
+            if (typeof Chart !== 'undefined') {
+                this.initPerformanceChart();
+                this.initGenreChart();
+            } else {
+                // Wait for Chart.js to load
+                const checkChart = () => {
+                    if (typeof Chart !== 'undefined') {
+                        this.initPerformanceChart();
+                        this.initGenreChart();
+                    } else {
+                        checkChart();
+                    }
+                };
+                checkChart();
+            }
+        });
+
+        {{-- Livewire.on('initialized', () => {
+            this.chartData = $wire.getChartData();
+            this.genreBreakdown = $wire.genreBreakdown;
+
+            this.$nextTick(() => {
+                if (this.performanceChart) {
+                    this.updateCharts();
+                } else {
+                    this.initializeCharts();
+                }
+            });
+        }); --}}
+    }
+}">
     <x-slot name="page_slug">dashboard</x-slot>
 
     <div id="content-dashboard" class="page-content py-2 px-2">
@@ -21,7 +214,7 @@
                 </x-gbutton>
 
                 <!-- Submit Track -->
-                <x-gbutton variant="primary" wire:click="toggleCampaignsModal">
+                <x-gbutton variant="primary" wire:click="toggleCampaignsModal" >
                     <span>
                         <x-lucide-plus class="inline-block text-center h-5 w-5 text-white mr-1" />
                     </span>{{ __('Start a new campaign') }}
@@ -636,126 +829,6 @@
     </div>
 
     {{-- JavaScript for Chart --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.0"></script>
-    <script>
-        document.addEventListener('alpine:init', () => {
-
-            Alpine.data('dashboardCharts', () => ({
-                chartData: @json($this->getChartData()),
-                genreBreakdown: @json($genreBreakdown),
-
-                performanceChart: null,
-                genreChart: null,
-
-                init() {
-                    // First load
-                    this.$nextTick(() => {
-                        this.initCharts();
-                    });
-
-                    // SPA navigation (wire:navigate)
-                    document.addEventListener('livewire:navigated', () => {
-                        this.$nextTick(() => {
-                            this.initCharts();
-                        });
-                    });
-                },
-
-                initCharts() {
-                    if (typeof Chart === 'undefined') {
-                        // Wait until Chart.js is ready
-                        setTimeout(() => this.initCharts(), 100);
-                        return;
-                    }
-
-                    this.initPerformanceChart();
-                    this.initGenreChart();
-                },
-
-                initPerformanceChart() {
-                    const ctx = document.getElementById('campaignChart');
-                    if (!ctx) return;
-
-                    if (this.performanceChart) {
-                        this.performanceChart.destroy();
-                    }
-
-                    this.performanceChart = new Chart(ctx.getContext('2d'), {
-                        type: 'line',
-                        data: {
-                            labels: this.chartData.length ?
-                                this.chartData.map(i =>
-                                    new Date(i.date).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric'
-                                    })
-                                ) :
-                                ['No Data'],
-                            datasets: [{
-                                    label: 'Followers',
-                                    data: this.chartData.map(i => i.total_followers ?? 0),
-                                    borderColor: '#f5540b',
-                                    backgroundColor: 'rgba(245,84,11,0.15)',
-                                    tension: 0.4,
-                                    fill: true,
-                                },
-                                {
-                                    label: 'Repost Reach',
-                                    data: this.chartData.map(i => i.repost_reach ?? 0),
-                                    borderColor: '#8b5cf6',
-                                    backgroundColor: 'rgba(139,92,246,0.15)',
-                                    tension: 0.4,
-                                    fill: true,
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: {
-                                intersect: false,
-                                mode: 'index'
-                            }
-                        }
-                    });
-                },
-
-                initGenreChart() {
-                    const ctx = document.getElementById('genreChart');
-                    if (!ctx) return;
-
-                    if (this.genreChart) {
-                        this.genreChart.destroy();
-                    }
-
-                    const hasData = this.genreBreakdown.some(g => g.percentage > 0);
-                    const data = hasData ?
-                        this.genreBreakdown.filter(g => g.percentage > 0) :
-                        [{
-                            genre: 'No Data',
-                            percentage: 100
-                        }];
-
-                    this.genreChart = new Chart(ctx.getContext('2d'), {
-                        type: 'pie',
-                        data: {
-                            labels: data.map(i => i.genre),
-                            datasets: [{
-                                data: data.map(i => i.percentage),
-                                backgroundColor: hasData ?
-                                    ['#ff6b35', '#10b981', '#8b5cf6', '#f59e0b',
-                                        '#ef4444'
-                                    ] :
-                                    ['#9ca3af'],
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false
-                        }
-                    });
-                }
-            }));
-        });
-    </script>
 </div>
