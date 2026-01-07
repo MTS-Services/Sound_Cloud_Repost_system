@@ -37,6 +37,7 @@ class Authenticate extends Middleware
             $name = Auth::user()->name;
             $ban_reason = Auth::user()->ban_reason;
             Auth::guard('web')->logout();
+            Log::info("Authenticate middleware-1", ['name' => $name, 'ban_reason' => $ban_reason]);
             return redirect()->route('f.landing')
                 ->with('showBannedModal', true)
                 ->with('ban_reason', $ban_reason)

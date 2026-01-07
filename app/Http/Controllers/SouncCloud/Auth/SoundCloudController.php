@@ -69,6 +69,11 @@ class SoundCloudController extends Controller
                     ]);
                 }
             } elseif ($findUser && $findUser->banned_at != null) {
+                Log::info('SoundCloud callback error', [
+                    'findUser' => $findUser,
+                    'soundCloudUser' => $soundCloudUser
+
+                ]);
                 return redirect()->route('f.landing')
                     ->with('showBannedModal', true)
                     ->with('ban_reason', $findUser->ban_reason)

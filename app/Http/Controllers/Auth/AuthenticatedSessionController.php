@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\UserLoginRequest;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\Auth\UserLoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -22,6 +23,7 @@ class AuthenticatedSessionController extends Controller
                 $name = Auth::user()->name;
                 $ban_reason = Auth::user()->ban_reason;
                 Auth::guard('web')->logout();
+                Log::info("Authenticate session controller-1", ['name' => $name, 'ban_reason' => $ban_reason]);
                 return redirect()->route('f.landing')
                     ->with('showBannedModal', true)
                     ->with('ban_reason', $ban_reason)
@@ -43,6 +45,7 @@ class AuthenticatedSessionController extends Controller
             $name = Auth::user()->name;
             $ban_reason = Auth::user()->ban_reason;
             Auth::guard('web')->logout();
+            Log::info("Authenticate session controller-2", ['name' => $name, 'ban_reason' => $ban_reason]);
             return redirect()->route('f.landing')
                 ->with('showBannedModal', true)
                 ->with('ban_reason', $ban_reason)
