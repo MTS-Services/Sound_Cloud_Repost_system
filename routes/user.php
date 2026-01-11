@@ -25,6 +25,7 @@ use App\Livewire\User\MyAccount;
 use App\Livewire\User\Settings;
 use App\Livewire\User\TrackSubmit;
 use App\Livewire\User\MySubscription;
+use App\Livewire\User\RepostRequest2nd;
 
 // SoundCloud Routes
 Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
@@ -35,7 +36,7 @@ Route::prefix('auth/soundcloud')->name('soundcloud.')->group(function () {
 });
 
 // User routes (The 'verified' middleware has been removed)
-Route::group(['middleware' => ['auth:web', 'soundcloud'], 'as' => 'user.', 'prefix' => 'user'], function () { 
+Route::group(['middleware' => ['auth:web', 'soundcloud'], 'as' => 'user.', 'prefix' => 'user'], function () {
     Route::get('/profile-info', [ProfileController::class, 'emailAdd'])->name('email.add');
     Route::post('/profile-info/update', [ProfileController::class, 'emailStore'])->name('email.store');
     Route::get('/user-profile/{user_urn}', [ProfileController::class, 'profile'])->name('profile');
@@ -59,6 +60,7 @@ Route::group(['middleware' => ['auth:web', 'soundcloud'], 'as' => 'user.', 'pref
     });
     Route::get('members', Member::class)->name('members');
     Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
+    Route::get('reposts-request-2nd', RepostRequest2nd::class)->name('reposts-request-2nd');
     Route::get('frequently-asked-questions', Faq::class)->name('faq');
     Route::get('plans', Plans::class)->name('plans');
     // Route::get('my-account/{user_name?}', MyAccount::class)->name('my-account');
