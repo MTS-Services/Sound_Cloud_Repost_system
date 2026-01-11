@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CampaignPlaybackController;
+use App\Http\Controllers\Api\RepostPlaybackController;
 use App\Http\Controllers\Backend\User\PaymentController;
 use App\Http\Controllers\Backend\User\PayPalSubscriptionController;
 use App\Livewire\User\AddCredit;
@@ -110,6 +111,12 @@ Route::group(['middleware' => ['auth:web', 'soundcloud'], 'as' => 'user.', 'pref
 
     Route::post('/campaign/track-playback', [CampaignPlaybackController::class, 'trackPlayback'])
         ->name('api.campaign.track-playback');
-    Route::post('/campaign/clear-tracking', [CampaignPlaybackController::class, 'trackPlayback'])
+    Route::post('/campaign/clear-tracking', [CampaignPlaybackController::class, 'clearTracking'])
         ->name('api.campaign.clear-tracking');
+    Route::post('/request/track-playback', [RepostPlaybackController::class, 'trackPlayback'])
+        ->name('api.request.track-playback');
+    Route::post('/request/clear-tracking', [RepostPlaybackController::class, 'clearTracking'])
+        ->name('api.request.clear-tracking');
+    Route::post('/request/tracking-data', [RepostPlaybackController::class, 'getTrackingData'])
+        ->name('api.request.tracking-data');
 });
