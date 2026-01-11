@@ -1,6 +1,8 @@
 <div x-data="{ activeMainTab: @entangle('activeMainTab').live, dashboardSummary: false }">
     <x-slot name="page_slug">request</x-slot>
 
+    <h1>Repostsssss. </h1>
+
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
         <div class="w-full">
@@ -473,29 +475,6 @@
                 });
             }
 
-
-            // const iframe = container.querySelector('iframe');
-
-            // if (iframe && requestId) {
-            //     const widget = SC.Widget(iframe);
-
-            //     widget.bind(SC.Widget.Events.PLAY, () => {
-            //         @this.call('handleAudioPlay', requestId);
-            //     });
-
-            //     widget.bind(SC.Widget.Events.PAUSE, () => {
-            //         @this.call('handleAudioPause', requestId);
-            //     });
-
-            //     widget.bind(SC.Widget.Events.FINISH, () => {
-            //         @this.call('handleAudioEnded', requestId);
-            //     });
-
-            //     widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
-            //         const currentTime = data.currentPosition / 1000;
-            //         @this.call('handleAudioTimeUpdate', requestId, currentTime);
-            //     });
-            // }
         });
     }
 
