@@ -42,11 +42,15 @@ class RepostRequest extends BaseModel
                 Start of RELATIONSHIPS
      =#=#=#=#=#=#=#=#=#=#==#=#=#=#= =#=#=#=#=#=#=#=#=#=#==#=#=#=#= */
 
-     public function music(): MorphTo
+    public function music(): MorphTo
     {
         return $this->morphTo();
     }
     public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requester_urn', 'urn');
+    }
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requester_urn', 'urn');
     }
@@ -182,5 +186,4 @@ class RepostRequest extends BaseModel
     {
         return $query->where('campaign_id', null);
     }
-
 }
