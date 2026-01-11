@@ -182,9 +182,6 @@ class AnalyticsService
         string $genre,
         $actUserUrn = null
     ): UserAnalytics|bool|null {
-        Log::info('Actionalble class: ' . get_class($actionable));
-        Log::info('Actionalble: ' . json_encode($actionable));
-
         $ownerUserUrn = ($actionable ? $actionable?->user?->urn : $source?->user?->urn);
         $actUserUrn = $actUserUrn ?? user()->urn;
         $ipAddress = request()->ip();
