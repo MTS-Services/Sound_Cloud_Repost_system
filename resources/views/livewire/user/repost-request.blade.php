@@ -1,8 +1,6 @@
 <div x-data="{ activeMainTab: @entangle('activeMainTab').live, dashboardSummary: false }">
     <x-slot name="page_slug">request</x-slot>
 
-    <h1>Repostsssss. </h1>
-
     <section class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {{-- Left Side --}}
         <div class="w-full">
