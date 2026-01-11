@@ -108,7 +108,6 @@ class RepostRequest2nd extends Component
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load(['music', 'requester', 'targetUser']);
 
         $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
-        dd($this->request);
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
