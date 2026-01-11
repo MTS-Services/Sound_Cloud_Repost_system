@@ -21,6 +21,7 @@ use App\Services\User\UserSettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Locked;
@@ -33,16 +34,11 @@ class RepostRequest2nd extends Component
     public $repostRequests;
     public $pendingRequestCount = 0;
     public $track;
-    public $activeMainTab = 'incoming_request'; // Default tab
+    public $activeMainTab = 'incoming_request';
 
     #[Locked]
     protected string $baseUrl = 'https://api.soundcloud.com';
-    public $playingRequests = [];
-    public $playStartTimes = [];
-    public $playTimes = [];
-    public $playedRequests = [];
-    public $repostedRequests = [];
-    public $playCount = false;
+
     public $requestReceiveable = false;
     public bool $showRepostRequestModal = false;
     public bool $showRepostConfirmationModal = false;
@@ -56,15 +52,6 @@ class RepostRequest2nd extends Component
     public string $commented = '';
     public $followed = true;
     public $alreadyFollowing = false;
-
-
-    // Listeners for browser events
-    protected $listeners = [
-        'audioPlay' => 'handleAudioPlay',
-        'audioPause' => 'handleAudioPause',
-        'audioTimeUpdate' => 'handleAudioTimeUpdate',
-        'audioEnded' => 'handleAudioEnded'
-    ];
 
     protected SoundCloudService $soundCloudService;
     protected UserSettingsService $userSettingsService;
@@ -86,8 +73,14 @@ class RepostRequest2nd extends Component
         $this->requestReceiveable = UserSetting::self()->value('accept_repost') ?? 0 ? false : true;
         $this->dataLoad();
 
-        foreach ($this->repostRequests as $request) {
-            $this->playTimes[$request->id] = 0;
+        // Clear session tracking on fresh page load only
+        if (!request()->hasHeader('X-Livewire')) {
+            session()->forget('repost_request_playback_tracking');
+            Log::info('Repost request tracking cleared on fresh page load');
+        }
+
+        if (session()->get('repostedRequestIds')) {
+            session()->forget('repostedRequestIds');
         }
     }
 
@@ -100,223 +93,6 @@ class RepostRequest2nd extends Component
     {
         return $this->redirect(route('user.reposts-request') . '?tab=' . $this->activeMainTab, navigate: true);
     }
-    /**
-     * Handle audio play event
-     */
-    public function handleAudioPlay($requestId)
-    {
-        $this->playingRequests[$requestId] = true;
-        $this->playStartTimes[$requestId] = now()->timestamp;
-    }
-
-    /**
-     * Handle audio pause event
-     */
-    public function handleAudioPause($requestId)
-    {
-        $this->updatePlayTime($requestId);
-        unset($this->playingRequests[$requestId]);
-        unset($this->playStartTimes[$requestId]);
-    }
-
-    /**
-     * Handle audio time update event
-     */
-    public function handleAudioTimeUpdate($requestId, $currentTime)
-    {
-        if ($currentTime >= 5 && !in_array($requestId, $this->playedRequests)) {
-            $this->playedRequests[] = $requestId;
-            $this->dispatch('requestPlayedEnough', $requestId);
-        }
-    }
-
-    /**
-     * Handle audio ended event
-     */
-    public function handleAudioEnded($requestId)
-    {
-        $this->handleAudioPause($requestId);
-    }
-
-    /**
-     * Update play time for a request
-     */
-    private function updatePlayTime($requestId)
-    {
-        if (isset($this->playStartTimes[$requestId])) {
-            $playDuration = now()->timestamp - $this->playStartTimes[$requestId];
-            $this->playTimes[$requestId] = ($this->playTimes[$requestId] ?? 0) + $playDuration;
-
-            if ($this->playTimes[$requestId] >= 5 && !in_array($requestId, $this->playedRequests)) {
-                $this->playedRequests[] = $requestId;
-                $this->dispatch('requestPlayedEnough', $requestId);
-            }
-        }
-    }
-
-    /**
-     * Polling method to update play times for currently playing requests
-     */
-    public function updatePlayingTimes()
-    {
-        foreach ($this->playingRequests as $requestId => $isPlaying) {
-            if ($isPlaying && isset($this->playStartTimes[$requestId])) {
-                $playDuration = now()->timestamp - $this->playStartTimes[$requestId];
-                $totalPlayTime = ($this->playTimes[$requestId] ?? 0) + $playDuration;
-
-                if ($totalPlayTime >= 5 && !in_array($requestId, $this->playedRequests)) {
-                    $this->playedRequests[] = $requestId;
-                    $this->dispatch('requestPlayedEnough', $requestId);
-                }
-            }
-        }
-    }
-
-    /**
-     * Start playing a request manually
-     */
-    public function startPlaying($requestId)
-    {
-        $this->handleAudioPlay($requestId);
-    }
-
-    /**
-     * Stop playing a request manually
-     */
-    public function stopPlaying($requestId)
-    {
-        $this->handleAudioPause($requestId);
-    }
-
-    /**
-     * Simulate audio progress (for testing without actual audio)
-     */
-    public function simulateAudioProgress($requestId, $seconds = 1)
-    {
-        if (!isset($this->playTimes[$requestId])) {
-            $this->playTimes[$requestId] = 0;
-        }
-
-        $this->playTimes[$requestId] += $seconds;
-
-        if ($this->playTimes[$requestId] >= 5 && !in_array($requestId, $this->playedRequests)) {
-            $this->playedRequests[] = $requestId;
-
-            $this->dispatch('alert', type: 'success', message: 'Request marked as played for 5+ seconds!');
-        }
-    }
-
-    /**
-     * Check if request can be reposted
-     */
-    public function canRepost($requestId): bool
-    {
-        $request = $this->repostRequests->find($requestId);
-
-        if (!$request) {
-            return false;
-        }
-
-        // Can only repost pending requests
-        if ($request->status != ModelsRepostRequest::STATUS_PENDING) {
-            return false;
-        }
-
-        if ($request->expired_at <= now()) {
-            return false;
-        }
-
-
-
-        // Check if already reposted
-        if (in_array($requestId, $this->repostedRequests)) {
-            return false;
-        }
-
-        // Must have played for 5+ seconds
-        $canRepost = in_array($requestId, $this->playedRequests);
-
-
-        if ($canRepost && !$this->playCount) {
-            Log::info('Entering playcount logic', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
-
-            $request = $this->repostRequests->find($requestId);
-
-            if ($request && $request->music) {
-                Log::info('Request and music found', ['requestId' => $requestId]);
-
-                try {
-                    // Record analytics for the play
-                    $response = $this->analyticsService->recordAnalytics(
-                        source: $request->music,
-                        actionable: $request,
-                        type: UserAnalytics::TYPE_PLAY,
-                        genre: $request->music->genre ?? 'anyGenre'
-                    );
-
-                    Log::info('Analytics response', ['requestId' => $requestId, 'response' => $response]);
-
-                    // Only increment if analytics recording was successful
-                    if ($response !== false && $response !== null) {
-                        $request->increment('playback_count');
-                        Log::info('Playback count incremented', ['requestId' => $requestId]);
-                    } else {
-                        Log::warning('Analytics failed - no increment', ['requestId' => $requestId, 'response' => $response]);
-                    }
-
-                    $this->playCount = true;
-                } catch (\Exception $e) {
-                    Log::error('Analytics recording failed for repost request', [
-                        'requestId' => $requestId,
-                        'error' => $e->getMessage()
-                    ]);
-
-                    $this->playCount = true;
-                }
-            } else {
-                Log::warning('Request or music not found', ['requestId' => $requestId, 'hasRequest' => !!$request, 'hasMusic' => $request ? !!$request->music : false]);
-            }
-        } else {
-            Log::info('Playcount condition not met', ['requestId' => $requestId, 'canRepost' => $canRepost, 'playCount' => $this->playCount]);
-        }
-        return $canRepost;
-    }
-
-    /**
-     * Check if request is currently playing
-     */
-    public function isPlaying($requestId): bool
-    {
-        return isset($this->playingRequests[$requestId]) && $this->playingRequests[$requestId] === true;
-    }
-
-    /**
-     * Get total play time for a request
-     */
-    public function getPlayTime($requestId): int
-    {
-        $baseTime = $this->playTimes[$requestId] ?? 0;
-
-        if ($this->isPlaying($requestId) && isset($this->playStartTimes[$requestId])) {
-            $currentSessionTime = now()->timestamp - $this->playStartTimes[$requestId];
-            return $baseTime + $currentSessionTime;
-        }
-
-        return $baseTime;
-    }
-
-    /**
-     * Get remaining time until repost is enabled
-     */
-    public function getRemainingTime($requestId): int
-    {
-        $playTime = $this->getPlayTime($requestId);
-        return max(0, 5 - $playTime);
-    }
-
-    /**
-     * Handle repost action
-     */
 
     public function confirmRepost($requestId)
     {
@@ -327,10 +103,6 @@ class RepostRequest2nd extends Component
             return;
         }
 
-        if (!$this->canRepost($requestId)) {
-            $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
-            return;
-        }
         $this->showRepostConfirmationModal = true;
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load(['music', 'requester', 'targetUser']);
 
@@ -338,7 +110,6 @@ class RepostRequest2nd extends Component
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
-        // $followAble = (clone $baseQuery)->followed()->first();
         $likeAble = (clone $baseQuery)->liked()->where('source_type', get_class($this->request?->music))
             ->where('source_id', $this->request?->music?->id)->first();
 
@@ -364,17 +135,14 @@ class RepostRequest2nd extends Component
             $this->alreadyFollowing = true;
         }
     }
+
     public function repost($requestId)
     {
-        if (!$this->canRepost($requestId)) {
-            $this->dispatch('alert', type: 'error', message: 'You cannot repost this request. Please play it for at least 5 seconds first.');
-            return;
-        }
-
         $result = $this->repostRequestService->handleRepost($requestId, $this->commented, $this->liked, $this->followed);
 
         if ($result['status'] === 'success') {
-            $this->repostedRequests[] = $requestId;
+            session()->push('repostedRequestIds', $requestId);
+            $this->dispatch('repost-success', requestId: $requestId);
         }
 
         $this->dispatch('alert', type: $result['status'], message: $result['message']);
@@ -412,6 +180,7 @@ class RepostRequest2nd extends Component
             $this->dispatch('alert', type: 'error', message: 'Failed to decline repost request. Please try again.');
         }
     }
+
     public function cancleRepostRequest($requestId)
     {
         try {
@@ -420,7 +189,7 @@ class RepostRequest2nd extends Component
                 'status' => ModelsRepostRequest::STATUS_CANCELLED,
                 'responded_at' => now(),
             ]);
-            // Create credit transaction
+            
             $creditTransaction = new CreditTransaction();
             $creditTransaction->receiver_urn = $request->requester_urn;
             $creditTransaction->transaction_type = CreditTransaction::TYPE_REFUND;
@@ -448,6 +217,7 @@ class RepostRequest2nd extends Component
             $this->dispatch('alert', type: 'error', message: 'Failed to cancel repost request. Please try again.');
         }
     }
+
     public function requestReceiveableToggle()
     {
         $userUrn = user()->urn;
@@ -473,14 +243,13 @@ class RepostRequest2nd extends Component
                 $query->incoming()->where('campaign_id', null)->approved();
                 break;
         }
-        // // Order by created_at desc and paginate
-        // return $this->repostRequests = $query->orderBy('status', 'asc')->take(10)->get();
-        // Order by created_at desc and paginate
+        
         $this->repostRequests = $query->orderBy('status', 'asc')->take(100)->get();
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
 
         return $this->repostRequests;
     }
+
     public function responseReset()
     {
         $responseAt = UserSetting::self()->value('response_rate_reset');
@@ -505,10 +274,37 @@ class RepostRequest2nd extends Component
         } catch (\Exception $e) {
             Log::error('Error in starMarkUser: ' . $e->getMessage(), [
                 'user_urn' => user()->urn ?? 'N/A',
-                'target_user_urn' => $user->urn ?? 'N/A',
+                'target_user_urn' => $userUrn ?? 'N/A',
                 'exception' => $e,
             ]);
             $this->dispatch('alert', type: 'error', message: 'An error occurred while updating star mark status. Please try again later.');
+        }
+    }
+
+    #[On('updatePlayCount')]
+    public function updatePlayCount($requestId)
+    {
+        $cacheKey = "play_count_debounce_{$requestId}_" . user()->urn;
+
+        if (Cache::has($cacheKey)) {
+            Log::info("updatePlayCount debounced for request {$requestId}");
+            return;
+        }
+
+        Cache::put($cacheKey, true, now()->addSeconds(2));
+
+        $request = ModelsRepostRequest::with('music')->findOrFail($requestId);
+        $music = $request->music;
+
+        $response = $this->analyticsService->recordAnalytics(
+            source: $music,
+            actionable: $request,
+            type: UserAnalytics::TYPE_PLAY,
+            genre: $music->genre ?? 'anyGenre'
+        );
+
+        if ($response != false && $response != null) {
+            $request->increment('playback_count');
         }
     }
 
@@ -529,6 +325,7 @@ class RepostRequest2nd extends Component
         $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
         $data['pendingRequests'] = $user->requests_count ?? 0;
+        
         return view(
             'livewire.user.repost-request-2nd',
             [
