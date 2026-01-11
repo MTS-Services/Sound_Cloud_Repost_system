@@ -29,7 +29,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Throwable;
 
-class RepostRequest2nd extends Component
+class RepostRequest extends Component
 {
     public $repostRequests;
     public $pendingRequestCount = 0;
