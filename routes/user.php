@@ -60,8 +60,8 @@ Route::group(['middleware' => ['auth:web', 'soundcloud'], 'as' => 'user.', 'pref
         Route::get('/{encryptedId}', NotificationShow::class)->name('show');
     });
     Route::get('members', Member::class)->name('members');
-    Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
-    Route::get('reposts-request-2nd', RepostRequest2nd::class)->name('reposts-request-2nd');
+    // Route::get('reposts-request', RepostRequest::class)->name('reposts-request');
+    Route::get('reposts-request', RepostRequest2nd::class)->name('reposts-request');
     Route::get('frequently-asked-questions', Faq::class)->name('faq');
     Route::get('plans', Plans::class)->name('plans');
     // Route::get('my-account/{user_name?}', MyAccount::class)->name('my-account');
