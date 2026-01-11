@@ -328,7 +328,7 @@ class RepostRequest extends Component
         $data['pendingRequests'] = $user->requests_count ?? 0;
 
         return view(
-            'livewire.user.repost-request-2nd',
+            'livewire.user.repost-request',
             [
                 'repostRequests' => $this->repostRequests,
                 'data' => $data,
