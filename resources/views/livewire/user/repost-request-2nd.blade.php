@@ -437,8 +437,8 @@
 
     <script>
         window.requestSessionData = @json(session('repost_request_playback_tracking', []));
-        window.trackRequestPlaybackRoute = "{{ route('user.api.request.track-playback') }}";
-        window.clearRequestSessionRoute = "{{ route('user.api.request.clear-tracking') }}";
+        // window.trackRequestPlaybackRoute = "{{ route('user.api.request.track-playback') }}";
+        // window.clearRequestSessionRoute = "{{ route('user.api.request.clear-tracking') }}";
 
         function trackPlaybackManagerForRequests() {
             return {
