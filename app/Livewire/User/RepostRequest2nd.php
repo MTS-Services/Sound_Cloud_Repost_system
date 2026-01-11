@@ -94,6 +94,7 @@ class RepostRequest2nd extends Component
         return $this->redirect(route('user.reposts-request') . '?tab=' . $this->activeMainTab, navigate: true);
     }
 
+    #[On('confirmRepost')]
     public function confirmRepost($requestId)
     {
         if ($this->todayRepost >= 20) {
@@ -107,6 +108,7 @@ class RepostRequest2nd extends Component
         $this->request = ModelsRepostRequest::findOrFail($requestId)->load(['music', 'requester', 'targetUser']);
 
         $this->reset(['liked', 'alreadyLiked', 'commented', 'followed', 'alreadyFollowing']);
+        dd($this->request);
         $baseQuery = UserAnalytics::where('owner_user_urn', $this->request?->music?->user?->urn)
             ->where('act_user_urn', user()->urn);
 
@@ -189,7 +191,7 @@ class RepostRequest2nd extends Component
                 'status' => ModelsRepostRequest::STATUS_CANCELLED,
                 'responded_at' => now(),
             ]);
-            
+
             $creditTransaction = new CreditTransaction();
             $creditTransaction->receiver_urn = $request->requester_urn;
             $creditTransaction->transaction_type = CreditTransaction::TYPE_REFUND;
@@ -243,7 +245,7 @@ class RepostRequest2nd extends Component
                 $query->incoming()->where('campaign_id', null)->approved();
                 break;
         }
-        
+
         $this->repostRequests = $query->orderBy('status', 'asc')->take(100)->get();
         Bus::dispatch(new TrackViewCount($this->repostRequests, user()->urn, 'request'));
 
@@ -325,7 +327,7 @@ class RepostRequest2nd extends Component
         $data['dailyRepostCurrent'] = $user->reposts_count_today ?? 0;
         $data['totalMyCampaign'] = $user->campaigns_count ?? 0;
         $data['pendingRequests'] = $user->requests_count ?? 0;
-        
+
         return view(
             'livewire.user.repost-request-2nd',
             [
