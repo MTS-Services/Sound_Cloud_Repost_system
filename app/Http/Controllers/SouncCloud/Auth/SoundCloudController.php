@@ -50,7 +50,7 @@ class SoundCloudController extends Controller
         }
 
         try {
-            $soundCloudUser = Socialite::driver('soundcloud')->user();
+            $soundCloudUser = Socialite::driver('soundcloud')->stateless()->user();
 
             if ($this->notAnArtist(soundCloudUser: $soundCloudUser)) {
                 return redirect()->route('f.landing')
