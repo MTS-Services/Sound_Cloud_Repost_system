@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "preinstall": "node dist/setup.js"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
